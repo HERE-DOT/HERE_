@@ -1,6 +1,6 @@
 # HERE
 
-Un lugar para volver a Dios: Biblia, oración y acompañamiento espiritual.
+Un lugar para volver a Dios: Biblia, oración AYUDA  y acompañamiento espiritual.
 
 Este repositorio contiene una sola página (index.html) — toda la app vive ahí,
 sin backend ni dependencias externas más allá de Google Fonts.
