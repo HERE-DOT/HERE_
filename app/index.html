@@ -33,10 +33,32 @@
     --shadow-md: 0 14px 34px rgba(33,31,26,0.09);
     --shadow-lg: 0 24px 52px rgba(33,31,26,0.15);
   }
-  /* HERE always renders in its light palette, regardless of the device's
-     system theme or any dark-mode media query — intentionally no dark
-     variant of --bg/--ink is defined anywhere in this file. */
   :root{ color-scheme: light; }
+  /* Modo noche: se activa con data-theme="dark" en <html>, controlado por
+     el interruptor de Preferencias (ver setTheme() en el script). No sigue
+     el tema del sistema automáticamente — es una elección explícita de la
+     persona, guardada en localStorage. */
+  :root[data-theme="dark"]{
+    --bg:#17140F;
+    --bg-warm:#211C15;
+    --ink:#F2EDE2;
+    --ink-soft:#AFA890;
+    --sage:#8FBF9B;
+    --sage-deep:#4C7A5C;
+    --sage-deeper:#2E4A38;
+    --slate:#7FA3C4;
+    --beige:#2A251C;
+    --gold:#D9B25F;
+    --gold-light:#E9CD8E;
+    --gold-deep:#B48A3C;
+    --gold-grad: linear-gradient(135deg, var(--gold-light), var(--gold));
+    --line: rgba(242,237,226,0.10);
+    --card:#211C15;
+    --shadow-sm: 0 3px 14px rgba(0,0,0,0.38);
+    --shadow-md: 0 14px 34px rgba(0,0,0,0.42);
+    --shadow-lg: 0 24px 52px rgba(0,0,0,0.55);
+    color-scheme: dark;
+  }
   *{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
   html,body{height:100%;}
   body{
@@ -134,8 +156,10 @@
     box-shadow:0 18px 38px rgba(27,53,39,0.32); transition:transform .15s ease, box-shadow .15s ease;
   }
   .hero-card:active{transform:scale(0.985); box-shadow:0 10px 22px rgba(27,53,39,0.28);}
-  .hero-card .light{position:absolute; width:160px; height:160px; border-radius:50%; background:radial-gradient(circle, rgba(231,204,139,0.35), transparent 70%); top:-50px; right:-40px;}
-  .hero-card .light.two{width:110px; height:110px; top:auto; right:auto; bottom:-30px; left:-20px; background:radial-gradient(circle, rgba(255,255,255,0.18), transparent 70%);}
+  .hero-card .light{position:absolute; width:160px; height:160px; border-radius:50%; background:radial-gradient(circle, rgba(231,204,139,0.35), transparent 70%); top:-50px; right:-40px; animation:breatheLight 7s ease-in-out infinite;}
+  .hero-card .light.two{width:110px; height:110px; top:auto; right:auto; bottom:-30px; left:-20px; background:radial-gradient(circle, rgba(255,255,255,0.18), transparent 70%); animation-duration:9s; animation-delay:-3s;}
+  @keyframes breatheLight{ 0%,100%{ transform:scale(1); opacity:.85; } 50%{ transform:scale(1.18); opacity:1; } }
+  @media (prefers-reduced-motion: reduce){ .hero-card .light{ animation:none; } }
   .hero-card h2{font-family:'Fraunces'; font-size:22px; font-weight:400; line-height:1.4;}
   .hero-card .arrow{margin-top:18px; font-size:14px; opacity:.9; font-weight:600;}
   .section-title{padding:4px 24px; font-size:12px; color:var(--ink-soft); letter-spacing:.6px; margin-top:6px; text-transform:uppercase; font-weight:700; display:flex; align-items:center; gap:7px;}
@@ -148,6 +172,21 @@
   .list-card:active{transform:scale(0.985); box-shadow:var(--shadow-sm);}
   .list-card .t{font-size:15.5px; font-weight:600;}
   .list-card .s{font-size:13px; color:var(--ink-soft); margin-top:3px;}
+
+  /* ---------- theme switch ---------- */
+  .theme-switch{display:inline-block; flex:none;}
+  .theme-switch input{position:absolute; opacity:0; width:0; height:0;}
+  .theme-switch .track{
+    display:block; width:46px; height:27px; border-radius:100px; background:var(--line);
+    border:1px solid var(--line); position:relative; transition:background .2s ease;
+  }
+  .theme-switch .thumb{
+    position:absolute; top:2px; left:2px; width:21px; height:21px; border-radius:50%;
+    background:var(--card); box-shadow:0 2px 6px rgba(0,0,0,0.2); transition:transform .2s ease;
+  }
+  .theme-switch input:checked + .track{ background:var(--gold-grad); border-color:transparent; }
+  .theme-switch input:checked + .track .thumb{ transform:translateX(19px); background:#fff; }
+  .theme-switch input:focus-visible + .track{ outline:2px solid var(--sage-deep); outline-offset:2px; }
 
   /* ---------- feelings grid ---------- */
   .feel-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px; padding:8px 24px 24px;}
@@ -171,6 +210,13 @@
     background:var(--gold-grad); font-size:12.5px; color:#fff; font-weight:700; white-space:nowrap;
     box-shadow:0 6px 16px rgba(138,106,38,0.28);
   }
+  .profile-icon-btn{
+    width:38px; height:38px; border-radius:50%; background:var(--card); border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center; cursor:pointer; flex:none;
+    box-shadow:var(--shadow-sm); color:var(--ink-soft); transition:transform .15s ease;
+  }
+  .profile-icon-btn svg{width:18px; height:18px;}
+  .profile-icon-btn:active{transform:scale(0.92);}
 
   /* ---------- weekly streak row (home) ---------- */
   .week-streak{display:flex; justify-content:space-between; gap:6px; padding:2px 24px 18px;}
@@ -332,6 +378,23 @@
   .navbtn{display:flex; flex-direction:column; align-items:center; gap:4px; font-size:11px; color:var(--ink-soft);
     background:none; border:none; cursor:pointer; padding:6px 10px; border-radius:14px; transition:background .15s ease, color .15s ease;}
   .navbtn.active{color:var(--sage-deep); font-weight:700; background:rgba(44,79,59,0.08);}
+  .navbtn-here{
+    position:relative; top:-22px; flex-direction:column; gap:5px; padding:0; background:none; border:none;
+  }
+  .navbtn-here .orb{
+    width:52px; height:52px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    background:radial-gradient(circle at 32% 28%, var(--gold-light), var(--gold) 55%, var(--gold-deep) 100%);
+    box-shadow:0 10px 26px rgba(138,106,38,0.4), 0 0 0 5px var(--bg);
+    animation:hereGlow 3.6s ease-in-out infinite;
+  }
+  .navbtn-here .orb::before{content:''; width:14px; height:14px; border-radius:50%; background:rgba(255,255,255,0.85); filter:blur(1px);}
+  .navbtn-here span.lbl{font-size:10.5px; color:var(--ink-soft); font-weight:700;}
+  .navbtn-here.active .lbl{color:var(--gold-deep);}
+  @keyframes hereGlow{
+    0%,100%{ box-shadow:0 10px 26px rgba(138,106,38,0.4), 0 0 0 5px var(--bg); }
+    50%{ box-shadow:0 10px 30px rgba(138,106,38,0.55), 0 0 0 5px var(--bg); }
+  }
+  @media (prefers-reduced-motion: reduce){ .navbtn-here .orb{ animation:none; } }
   .navbtn svg{width:22px; height:22px;}
 
   /* ---------- textarea / inputs ---------- */
@@ -450,6 +513,10 @@
     .navbtn:hover{ background:rgba(44,79,59,0.06); }
     .navbtn.active{ background:rgba(44,79,59,0.1); }
     .navbtn svg{ width:20px; height:20px; flex:none; }
+    .navbtn-here{ top:0; }
+    .navbtn-here .orb{ width:30px; height:30px; box-shadow:0 4px 12px rgba(138,106,38,0.35); animation:none; }
+    .navbtn-here .orb::before{ width:9px; height:9px; }
+    .navbtn-here span.lbl{ font-size:14.5px; color:var(--ink); font-weight:600; }
 
     /* ---- contenido: a todo el ancho, con espacio arriba para no chocar con el botón ---- */
     .screen{ min-height:100vh; padding-bottom:56px; padding-top:74px; }
@@ -623,8 +690,16 @@
   <!-- HOME -->
   <section class="screen" id="home">
     <div class="top-greeting" style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
-      <div class="hello serif" id="home-greeting">Hola.</div>
-      <div class="streak-pill" id="home-streak">🕯️ 1</div>
+      <div>
+        <div class="hello serif" id="home-greeting">Hola.</div>
+        <div class="sub" id="home-subline">Qué bueno que estás aquí.</div>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px; flex:none;">
+        <button class="profile-icon-btn" onclick="go('perfil')" aria-label="Tu camino">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4.5 5-6 8-6s6.5 1.5 8 6"/></svg>
+        </button>
+        <div class="streak-pill" id="home-streak">🕯️ 1</div>
+      </div>
     </div>
 
     <div class="week-streak" id="home-week-streak"></div>
@@ -851,19 +926,19 @@
     </button>
     <button class="navbtn" data-s="biblia" onclick="go('biblia')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 5c3-1.5 6-1.5 8 0v14c-2-1.5-5-1.5-8 0V5zM20 5c-3-1.5-6-1.5-8 0v14c2-1.5 5-1.5 8 0V5z"/></svg>
-      Biblia
+      La Palabra
     </button>
-    <button class="navbtn" data-s="diario" onclick="go('diario')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 4h11a1 1 0 011 1v15l-3-2-3 2-3-2-3 2V5a1 1 0 011-1z"/><path d="M9 9h6M9 13h4"/></svg>
-      Diario
+    <button class="navbtn navbtn-here" data-s="chat" onclick="go('chat')" aria-label="Habla con HERE">
+      <span class="orb"></span>
+      <span class="lbl">HERE</span>
     </button>
     <button class="navbtn" data-s="orar" onclick="go('orar')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-7-4.5-7-10a4 4 0 017-2.6A4 4 0 0119 11c0 5.5-7 10-7 10z"/></svg>
       Orar
     </button>
-    <button class="navbtn" data-s="perfil" onclick="go('perfil')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4.5 5-6 8-6s6.5 1.5 8 6"/></svg>
-      Perfil
+    <button class="navbtn" data-s="diario" onclick="go('diario')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 4h11a1 1 0 011 1v15l-3-2-3 2-3-2-3 2V5a1 1 0 011-1z"/><path d="M9 9h6M9 13h4"/></svg>
+      Reflexionar
     </button>
   </div>
 </div>
@@ -882,6 +957,17 @@ let prayers = load('here_prayers', []);
 let reflections = load('here_reflections', []);
 let prefs = load('here_prefs', {goals:[], remind:null});
 let visited = load('here_visited', []);
+
+/* ---------------- theme (light / dark) ---------------- */
+function setTheme(mode){
+  document.documentElement.setAttribute('data-theme', mode);
+  save('here_theme', mode);
+  const toggle = document.getElementById('theme-toggle');
+  if(toggle) toggle.checked = (mode==='dark');
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if(meta) meta.setAttribute('content', mode==='dark' ? '#171512' : '#3C6B4C');
+}
+(function(){ setTheme(load('here_theme','light')); })();
 
 /* ---------------- content data ---------------- */
 // Texto de la Reina-Valera Antigua (1909), de dominio público.
@@ -1383,10 +1469,19 @@ function buildFeelGrid(containerId, list, onPick){
 buildFeelGrid('sentir-grid', SENTIR_CATS, (f)=>openSentirResult(f));
 buildFeelGrid('checkin-grid', FEELINGS, (f)=>{ openPalabra(f.tag); });
 
+const HOME_SUBLINES = [
+  'Qué bueno que estás aquí.',
+  'Puedes quedarte un momento.',
+  'Respira. No tienes que resolverlo todo hoy.',
+  'Este es un espacio seguro para ti.',
+  'No tienes que llegar con nada preparado.',
+];
 function renderHomeQuick(){
   const h = new Date().getHours();
   const greetEl = document.getElementById('home-greeting');
   greetEl.textContent = h<12 ? 'Buenos días.' : h<19 ? 'Buenas tardes.' : 'Buenas noches.';
+  const subEl = document.getElementById('home-subline');
+  if(subEl) subEl.textContent = HOME_SUBLINES[Math.floor(Math.random()*HOME_SUBLINES.length)];
   const today = pickTodayVerse();
   document.getElementById('home-hoy-verse').textContent = `"${today.text}"`;
   document.getElementById('home-hoy-ref').textContent = today.ref;
@@ -2229,6 +2324,13 @@ function renderPerfil(){
     <div class="list-card" style="margin-left:0; margin-right:0;" onclick="toggleSound()">
       <div><div class="t">🔔 Sonido suave</div><div class="s">Un tono breve al recibir una palabra</div></div>
       <span>${soundOn?'Activado':'Desactivado'}</span>
+    </div>
+    <div class="list-card" style="margin-left:0; margin-right:0; cursor:default;">
+      <div><div class="t">🌙 Modo noche</div><div class="s">Para leer cómodo cuando está oscuro</div></div>
+      <label class="theme-switch" onclick="event.stopPropagation();">
+        <input type="checkbox" id="theme-toggle" ${document.documentElement.getAttribute('data-theme')==='dark'?'checked':''} onchange="setTheme(this.checked?'dark':'light')">
+        <span class="track"><span class="thumb"></span></span>
+      </label>
     </div>
     <button class="btn-text" style="padding-left:0; margin-top:16px;" onclick="clearData()">Borrar mis datos</button>
   `;
