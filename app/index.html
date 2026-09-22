@@ -320,7 +320,15 @@
   .chapter-verse .vnum{color:var(--sage-deep); font-weight:700; font-size:12px; vertical-align:super; margin-right:5px;}
   .chapter-verse span.vtext{cursor:pointer; border-radius:6px; padding:1px 2px;}
   .chapter-verse span.vtext.picked{background:var(--beige);}
+  .chapter-verse span.vtext.highlighted{background:linear-gradient(120deg, rgba(231,204,139,0.55), rgba(173,132,47,0.35)); box-shadow:inset 0 -2px 0 var(--gold);}
   .chapter-verse span.vtext.speaking{background:var(--sage); color:#fff; box-shadow:0 0 0 3px rgba(44,79,59,0.18);}
+  .chapter-picker{padding:8px 24px 24px; display:grid; grid-template-columns:repeat(5,1fr); gap:9px;}
+  .chapter-chip{padding:12px 0; text-align:center; border-radius:14px; background:var(--card); border:1px solid var(--line); font-size:14px; font-weight:600; cursor:pointer; box-shadow:var(--shadow-sm); transition:transform .12s ease;}
+  .chapter-chip:active{transform:scale(0.93);}
+  .mini-player{display:flex; align-items:center; gap:8px;}
+  .mini-player button{width:36px; height:36px; border-radius:50%; border:1px solid var(--line); background:var(--card); cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow-sm); flex:none;}
+  .mini-player button.play{width:42px; height:42px; background:linear-gradient(135deg,var(--sage-deep),var(--sage-deeper)); color:#fff; border:none; font-size:16px;}
+  .mini-player button:active{transform:scale(0.92);}
 
   /* sheet */
   .sheet-backdrop{position:fixed; inset:0; background:rgba(20,19,16,0.45); z-index:200; display:none; align-items:flex-end; justify-content:center; backdrop-filter:blur(2px);}
@@ -532,6 +540,14 @@
     <div class="book-grid" id="book-grid"></div>
   </section>
 
+  <!-- CHAPTER PICKER -->
+  <section class="screen noNav" id="chapterPicker">
+    <div class="topbar"><div class="backbtn" onclick="go('biblia')">←</div><h2 id="chapterPicker-title"></h2></div>
+    <p style="padding:0 24px; color:var(--ink-soft); font-size:13.5px;">Elige un capítulo</p>
+    <div class="chapter-picker" id="chapterPicker-grid"></div>
+    <div style="height:100px;"></div>
+  </section>
+
   <!-- PLAN DETAIL -->
   <section class="screen noNav" id="planDetail">
     <div class="topbar"><div class="backbtn" onclick="go('biblia')">←</div><h2 id="plan-title"></h2></div>
@@ -560,7 +576,11 @@
   <section class="screen noNav" id="reader">
     <div class="topbar" style="justify-content:space-between;">
       <div style="display:flex; align-items:center; gap:14px;"><div class="backbtn" onclick="stopListen(); go('biblia')">←</div><h2 id="reader-title"></h2></div>
-      <button class="action-pill" id="listen-btn" onclick="toggleListen()">🔊 Escuchar</button>
+      <div class="mini-player">
+        <button onclick="stepChapter(-1)" title="Capítulo anterior">⏮</button>
+        <button class="play" id="listen-btn" onclick="toggleListen()" title="Escuchar">🔊</button>
+        <button onclick="stepChapter(1)" title="Capítulo siguiente">⏭</button>
+      </div>
     </div>
     <div class="chapter-verse" id="reader-content"></div>
     <div style="height:100px;"></div>
@@ -688,36 +708,59 @@ let prefs = load('here_prefs', {goals:[], remind:null});
 let visited = load('here_visited', []);
 
 /* ---------------- content data ---------------- */
-// Public-domain-style Spanish phrasing used for this prototype.
-// A production build should pull licensed text (RVR1960 / NVI / NTV) from an authorized Bible API.
+// Texto de la Reina-Valera Antigua (1909), de dominio público.
 const VERSES = [
- {ref:"Isaías 41:10", text:"No temas, porque yo estoy contigo; no desmayes, porque yo soy tu Dios que te esfuerza; siempre te ayudaré.", tags:["miedo","ansiedad","fortaleza","dirección"]},
- {ref:"Salmos 34:18", text:"Cercano está el Señor a los quebrantados de corazón, y salva a los contritos de espíritu.", tags:["duelo","tristeza","herido","soledad"]},
- {ref:"Filipenses 4:6-7", text:"Por nada estéis afanosos; sino sean conocidas vuestras peticiones delante de Dios, y la paz de Dios guardará vuestros corazones.", tags:["ansiedad","paz","oración"]},
- {ref:"Salmos 23:1-4", text:"El Señor es mi pastor; nada me faltará. Aunque ande en valle de sombra de muerte, no temeré mal alguno, porque tú estarás conmigo.", tags:["miedo","paz","dirección","soledad"]},
- {ref:"Mateo 11:28", text:"Venid a mí todos los que estáis trabajados y cargados, y yo os haré descansar.", tags:["cansancio","ansiedad","descanso","no puedo dormir"]},
- {ref:"Salmos 147:3", text:"Él sana a los quebrantados de corazón, y venda sus heridas.", tags:["sanidad","herido","duelo","enfermedad"]},
- {ref:"Jeremías 29:11", text:"Porque yo sé los pensamientos que tengo acerca de vosotros, pensamientos de paz y no de mal, para daros el fin que esperáis.", tags:["propósito","esperanza","futuro","dirección"]},
- {ref:"Romanos 8:38-39", text:"Ni la muerte, ni la vida, ni ninguna otra cosa creada nos podrá separar del amor de Dios.", tags:["soledad","fe","agradecido"]},
- {ref:"Salmos 46:1", text:"Dios es nuestro amparo y fortaleza, nuestro pronto auxilio en las tribulaciones.", tags:["miedo","fortaleza","dirección"]},
- {ref:"Josué 1:9", text:"Mira que te mando que te esfuerces y seas valiente; no temas ni desmayes, porque el Señor tu Dios estará contigo.", tags:["miedo","dirección","fortaleza"]},
- {ref:"Salmos 30:5", text:"Por la noche durará el lloro, y a la mañana vendrá la alegría.", tags:["duelo","tristeza","esperanza"]},
- {ref:"Juan 14:27", text:"La paz os dejo, mi paz os doy; no como el mundo la da, yo os la doy. No se turbe vuestro corazón.", tags:["paz","ansiedad","no puedo dormir"]},
- {ref:"Salmos 121:1-2", text:"Alzaré mis ojos a los montes; ¿de dónde vendrá mi socorro? Mi socorro viene de Jehová.", tags:["dirección","fe","fortaleza"]},
- {ref:"1 Pedro 5:7", text:"Echad toda vuestra ansiedad sobre él, porque él tiene cuidado de vosotros.", tags:["ansiedad","familia","oración"]},
- {ref:"Salmos 139:13-14", text:"Tú formaste mis entrañas; te alabaré, porque formidables y maravillosas son tus obras.", tags:["propósito","identidad","agradecido"]},
- {ref:"Hebreos 13:5", text:"No te desampararé, ni te dejaré.", tags:["soledad","miedo","fe"]},
- {ref:"Santiago 5:14-15", text:"¿Está alguno enfermo entre vosotros? Llame a los ancianos, y la oración de fe salvará al enfermo.", tags:["enfermedad","sanidad","oración"]},
- {ref:"Marcos 5:34", text:"Hija, tu fe te ha salvado; ve en paz, y queda sana de tu azote.", tags:["sanidad","enfermedad","fe"]},
- {ref:"Salmos 103:2-3", text:"Bendice, alma mía, a Jehová, el que sana todas tus dolencias.", tags:["sanidad","enfermedad","agradecido"]},
- {ref:"Isaías 40:31", text:"Los que esperan a Jehová tendrán nuevas fuerzas; levantarán alas como las águilas.", tags:["cansancio","esperanza","fortaleza"]},
- {ref:"Salmos 25:16", text:"Mírame, y ten misericordia de mí, porque estoy solo y afligido.", tags:["soledad","tristeza"]},
- {ref:"Proverbios 3:5-6", text:"Fíate de Jehová de todo tu corazón, y no te apoyes en tu propia prudencia; él enderezará tus veredas.", tags:["dirección","propósito","fe"]},
- {ref:"1 Juan 4:18", text:"En el amor no hay temor, sino que el perfecto amor echa fuera el temor.", tags:["miedo","fe","relaciones"]},
- {ref:"Salmos 34:4", text:"Busqué a Jehová, y él me oyó, y me libró de todos mis temores.", tags:["miedo","ansiedad","oración"]},
- {ref:"Lamentaciones 3:22-23", text:"Por la misericordia de Jehová no hemos sido consumidos; nuevas son cada mañana.", tags:["esperanza","duelo","fe leve"]},
- {ref:"Salmos 133:1", text:"¡Mirad cuán bueno y cuán delicioso es habitar los hermanos juntos en armonía!", tags:["familia","relaciones"]},
- {ref:"Efesios 4:32", text:"Sed benignos unos con otros, misericordiosos, perdonándoos unos a otros.", tags:["relaciones","familia"]},
+ {ref:"Isaías 41:10", text:"No temas, que yo soy contigo: no desmayes, que yo soy tu Dios: que te esfuerzo: siempre te ayudaré, siempre te sustentaré con la diestra de mi justicia.", tags:["miedo","ansiedad","fortaleza","dirección"]},
+ {ref:"Salmos 34:18", text:"Cercano está Jehová a los quebrantados de corazón: y a los molidos de espíritu salvará.", tags:["duelo","tristeza","herido","soledad"]},
+ {ref:"Filipenses 4:6-7", text:"De nada estéis solícitos; sino que en todo dénse a conocer vuestras peticiones delante de Dios por la oración, y el ruego, con hacimiento de gracias. Y la paz de Dios, que sobrepuja todo entendimiento, guardará vuestros corazones y vuestros entendimientos en Cristo Jesús.", tags:["ansiedad","paz","oración"]},
+ {ref:"Salmos 23:1-4", text:"Jehová es mi pastor; no me faltará. En lugares de yerba me hará yacer: junto a aguas de reposo me pastoreará. Hará volver mi alma: guiarme ha por sendas de justicia por su nombre. Aunque ande en valle de sombra de muerte, no temeré algún mal, porque tú estarás conmigo: tu vara, y tu cayado ellos me confortarán.", tags:["miedo","paz","dirección","soledad"]},
+ {ref:"Mateo 11:28", text:"Veníd a mí, todos los que estáis trabajados, y cargados, que yo os haré descansar.", tags:["cansancio","ansiedad","descanso","no puedo dormir"]},
+ {ref:"Salmos 147:3", text:"El que sana a los quebrantados de corazón; y el que liga sus dolores.", tags:["sanidad","herido","duelo","enfermedad"]},
+ {ref:"Jeremías 29:11", text:"Porque yo sé los pensamientos que yo pienso de vosotros, dijo Jehová, pensamientos de paz, y no de mal, para daros el fin que esperáis.", tags:["propósito","esperanza","futuro","dirección"]},
+ {ref:"Romanos 8:38-39", text:"Por que estoy cierto que ni la muerte, ni la vida, ni ángeles, ni principados, ni potestades, ni lo presente, ni lo por venir, Ni lo alto, ni lo bajo, ni ninguna otra criatura nos podrá apartar del amor de Dios, que es en Cristo Jesús, Señor nuestro.", tags:["soledad","fe","agradecido"]},
+ {ref:"Salmos 46:1", text:"Dios es nuestro amparo y fortaleza: socorro en las angustias hallarémos en abundancia.", tags:["miedo","fortaleza","dirección"]},
+ {ref:"Josué 1:9", text:"Mira que te mando que te esfuerces, y seas valiente: no temas ni desmayes; porque yo Jehová tu Dios soy contigo en donde quiera que fueres.", tags:["miedo","dirección","fortaleza"]},
+ {ref:"Salmos 30:5", text:"Porque un momento hay en su furor, mas vida en su voluntad: a la tarde reposará el lloro, y a la mañana vendrá la alegría.", tags:["duelo","tristeza","esperanza"]},
+ {ref:"Juan 14:27", text:"La paz os dejo: mi paz os doy: no como el mundo la da, yo os la doy: no se turbe vuestro corazón, ni tenga miedo.", tags:["paz","ansiedad","no puedo dormir"]},
+ {ref:"Salmos 121:1-2", text:"Alzaré mis ojos a los montes de donde vendrá mi socorro. Mi socorro es de parte de Jehová; que hizo los cielos y la tierra.", tags:["dirección","fe","fortaleza"]},
+ {ref:"1 Pedro 5:7", text:"Echando toda vuestra solicitud en él; porque él tiene cuidado de vosotros.", tags:["ansiedad","familia","oración"]},
+ {ref:"Salmos 139:13-14", text:"Porque tú poseiste mis riñones; cubrísteme en el vientre de mi madre. Confesarte he, porque terribles y maravillosas son tus obras: estoy maravillado, y mi alma lo conoce en gran manera.", tags:["propósito","identidad","agradecido"]},
+ {ref:"Hebreos 13:5", text:"Sean las costumbres vuestras sin avaricia, contentos de lo presente; porque él mismo ha dicho: No te dejaré, ni tampoco te desampararé:", tags:["soledad","miedo","fe"]},
+ {ref:"Santiago 5:14-15", text:"¿Está alguno enfermo entre vosotros? llame a los ancianos de la iglesia, y oren sobre él, ungiéndole con aceite en el nombre del Señor; Y la oración de fe hará salvo al enfermo, y el Señor le aliviará; y si estuviere en pecados, le serán perdonados.", tags:["enfermedad","sanidad","oración"]},
+ {ref:"Marcos 5:34", text:"Y él le dijo: Hija, tu fe te ha hecho sana; vé en paz, y queda sana de tu azote.", tags:["sanidad","enfermedad","fe"]},
+ {ref:"Salmos 103:2-3", text:"Bendice, alma mía, a Jehová, y no te olvides de todos sus beneficios. El que perdona todas tus iniquidades, el que sana todas tus enfermedades.", tags:["sanidad","enfermedad","agradecido"]},
+ {ref:"Isaías 40:31", text:"Mas los que esperan a Jehová tendrán nuevas fuerzas, levantarán las alas como águilas, correrán y no se cansarán, caminarán y no se fatigarán.", tags:["cansancio","esperanza","fortaleza"]},
+ {ref:"Salmos 25:16", text:"Mírame, y ten misericordia de mí: porque yo soy solo, y pobre.", tags:["soledad","tristeza"]},
+ {ref:"Proverbios 3:5-6", text:"Fíate de Jehová de todo tu corazón; y no estribes en tu prudencia. Reconócele en todos tus caminos; y él enderezará tus veredas.", tags:["dirección","propósito","fe"]},
+ {ref:"1 Juan 4:18", text:"En el amor no hay temor; mas el perfecto amor echa fuera el temor; porque el temor tiene castigo. De donde el que teme, no es perfecto en el amor.", tags:["miedo","fe","relaciones"]},
+ {ref:"Salmos 34:4", text:"Busqué a Jehová, y él me oyó; y de todos mis miedos me libró.", tags:["miedo","ansiedad","oración"]},
+ {ref:"Lamentaciones 3:22-23", text:"Misericordias de Jehová son, que no somos consumidos; porque sus misericordias nunca desfallecieron. Nuevas cada mañana: grande es tu fe.", tags:["esperanza","duelo","fe leve"]},
+ {ref:"Salmos 133:1", text:"¡Mirád, cuán bueno, y cuán suave es habitar los hermanos también en uno!", tags:["familia","relaciones"]},
+ {ref:"Efesios 4:32", text:"Mas sed los unos con los otros benignos, compasivos, perdonándoos los unos a los otros, como también Dios os perdonó en Cristo.", tags:["relaciones","familia"]},
+];
+
+// Versículos motivadores (alegría, gratitud, ánimo, esperanza) — solo estos alimentan el "versículo del día".
+const DAILY_VERSES = [
+ {ref:"Salmos 118:24", text:"Este es el día que hizo Jehová: gozarnos hemos y alegrarnos hemos en él.", tags:["alegría","gratitud"]},
+ {ref:"Filipenses 4:4", text:"Regocijáos en el Señor siempre: otra vez digo, que os regocijéis.", tags:["alegría","ánimo"]},
+ {ref:"1 Tesalonicenses 5:16-18", text:"Estád siempre gozosos. Orád sin cesar. En todo dad gracias; porque esta es la voluntad de Dios en Cristo Jesús acerca de vosotros.", tags:["gratitud","alegría"]},
+ {ref:"Salmos 100:1-2", text:"Cantád con júbilo a Dios los de toda la tierra. Servíd a Jehová con alegría: entrád delante de él con regocijo.", tags:["alegría","adoración"]},
+ {ref:"Salmos 136:1", text:"Alabád a Jehová, porque es bueno; porque para siempre es su misericordia.", tags:["gratitud"]},
+ {ref:"Nehemías 8:10", text:"Y díjoles: Id, coméd grosuras, y bebéd dulzaras, y enviád partes a los que no tienen aparejado, porque santo día es a nuestro Señor: y no os entristezcáis; porque el gozo de Jehová es vuestra fortaleza.", tags:["alegría","fortaleza"]},
+ {ref:"Proverbios 17:22", text:"El corazón alegre hará buena disposición: mas el espíritu triste seca los huesos.", tags:["alegría","ánimo"]},
+ {ref:"Santiago 1:17", text:"Toda buena dádiva, y todo don perfecto es de lo alto, que desciende del Padre de las lumbres, en el cual no hay mudanza, ni sombra de variación.", tags:["gratitud","esperanza"]},
+ {ref:"Salmos 92:1-2", text:"Bueno es alabar a Jehová; y cantar salmos a tu nombre o! Altísimo: Anunciar por la mañana tu misericordia: y tu verdad en las noches:", tags:["gratitud","adoración"]},
+ {ref:"Salmos 30:11-12", text:"Tú tornaste mi endecha en baile: desataste mi saco, y ceñísteme de alegría. Por tanto a ti canté gloria, y no callé: Jehová Dios mío, para siempre te alabaré.", tags:["alegría","gratitud"]},
+ {ref:"Salmos 16:11", text:"Hacerme has saber la senda de la vida, hartura de alegrías hay con tu rostro: deleites en tu diestra para siempre.", tags:["alegría","esperanza"]},
+ {ref:"Romanos 15:13", text:"Y el Dios de esperanza os hincha de todo gozo y paz en el creer, para que abundéis en esperanza por la virtud del Espíritu Santo.", tags:["esperanza","alegría"]},
+ {ref:"Salmos 95:1-2", text:"Veníd, alegrémosnos en Jehová: cantemos con júbilo a la Roca de nuestra salud. Anticipemos su rostro con alabanza: cantémosle alegres con salmos.", tags:["alegría","adoración"]},
+ {ref:"Salmos 145:8-9", text:"Clemente y misericordioso es Jehová: luengo de iras, y grande en misericordia. Bueno es Jehová para con todos; y sus misericordias, sobre todas sus obras.", tags:["gratitud","esperanza"]},
+ {ref:"Colosenses 3:15", text:"Y la paz de Dios reine en vuestros corazones: a la cual asimismo sois llamados en un mismo cuerpo; y sed agradecidos.", tags:["paz","gratitud"]},
+ {ref:"Filipenses 4:8", text:"En fin, hermanos, que todo lo que es verdadero, todo lo honesto, todo lo justo, todo lo santo, todo lo amable, todo lo que es de buen nombre: si hay alguna virtud, y si hay alguna alabanza, pensád en las tales cosas.", tags:["ánimo","esperanza"]},
+ {ref:"Salmos 126:3", text:"Grandes cosas ha hecho Jehová con nosotros: seremos alegres.", tags:["alegría","gratitud"]},
+ {ref:"1 Crónicas 16:34", text:"Confesád a Jehová, porque es bueno; porque su misericordia es eterna.", tags:["gratitud"]},
+ {ref:"Salmos 9:1-2", text:"Alabaré a Jehová con todo mi corazón: contaré todas tus maravillas. Alegrarme he, y gozarme he en ti: cantaré a tu nombre, o! Altísimo.", tags:["alegría","gratitud"]},
+ {ref:"2 Corintios 9:15", text:"Gracias a Dios por su inenarrable don.", tags:["gratitud"]},
 ];
 
 const FEELINGS = [
@@ -750,15 +793,21 @@ const SENTIR_CATS = [
 
 const BOOKS = {
   "Antiguo Testamento":{
-    "Pentateuco":["Génesis"],
-    "Poesía y sabiduría":["Salmos","Proverbios"],
-    "Profetas":["Isaías","Jeremías","Lamentaciones"]
+    "Pentateuco":["Génesis","Éxodo","Levítico","Números","Deuteronomio"],
+    "Históricos":["Josué","Jueces","Rut","1 Samuel","2 Samuel","1 Reyes","2 Reyes","1 Crónicas","2 Crónicas","Esdras","Nehemías","Ester"],
+    "Poesía y sabiduría":["Job","Salmos","Proverbios","Eclesiastés","Cantar de los Cantares"],
+    "Profetas mayores":["Isaías","Jeremías","Lamentaciones","Ezequiel","Daniel"],
+    "Profetas menores":["Oseas","Joel","Amós","Abdías","Jonás","Miqueas","Nahúm","Habacuc","Sofonías","Hageo","Zacarías","Malaquías"]
   },
   "Nuevo Testamento":{
-    "Evangelios":["Mateo","Marcos","Juan"],
-    "Cartas":["Romanos","Filipenses","Efesios","Hebreos","Santiago","1 Pedro","1 Juan"]
+    "Evangelios":["Mateo","Marcos","Lucas","Juan"],
+    "Historia":["Hechos"],
+    "Cartas de Pablo":["Romanos","1 Corintios","2 Corintios","Gálatas","Efesios","Filipenses","Colosenses","1 Tesalonicenses","2 Tesalonicenses","1 Timoteo","2 Timoteo","Tito","Filemón"],
+    "Cartas generales":["Hebreos","Santiago","1 Pedro","2 Pedro","1 Juan","2 Juan","3 Juan","Judas"],
+    "Profecía":["Apocalipsis"]
   }
 };
+const BOOK_ORDER = Object.values(BOOKS).flatMap(t=>Object.values(t)).flat();
 
 const PLANS = [
   { id:'paz', emoji:'🌿', title:'7 días de paz', subtitle:'Para cuando la ansiedad no te deja quieto.',
@@ -774,28 +823,20 @@ function getPlanProgress(id){ return load('here_plan_'+id, {done:[]}); }
 function savePlanProgress(id, p){ save('here_plan_'+id, p); }
 function findPlan(id){ return PLANS.find(p=>p.id===id); }
 
-// Small sample chapters (public-domain-style phrasing) for the reading experience.
-const CHAPTERS = {
- "Salmos 23":[
-  "El Señor es mi pastor; nada me faltará.",
-  "En lugares de delicados pastos me hará descansar; junto a aguas de reposo me pastoreará.",
-  "Confortará mi alma; me guiará por sendas de justicia por amor de su nombre.",
-  "Aunque ande en valle de sombra de muerte, no temeré mal alguno, porque tú estarás conmigo; tu vara y tu cayado me infundirán aliento.",
-  "Aderezas mesa delante de mí, en presencia de mis angustiadores; unges mi cabeza con aceite; mi copa está rebosando.",
-  "Ciertamente el bien y la misericordia me seguirán todos los días de mi vida, y en la casa del Señor moraré por largos días."
- ],
- "Juan 14":[
-  "No se turbe vuestro corazón; creéis en Dios, creed también en mí.",
-  "En la casa de mi Padre muchas moradas hay; si así no fuera, yo os lo hubiera dicho.",
-  "Y si me fuere y os preparare lugar, vendré otra vez, y os tomaré a mí mismo.",
-  "La paz os dejo, mi paz os doy; yo os la doy. No se turbe vuestro corazón, ni tenga miedo."
- ],
- "Isaías 41":[
-  "No temas, porque yo estoy contigo; no desmayes, porque yo soy tu Dios que te esfuerza.",
-  "Siempre te ayudaré, siempre te sustentaré con la diestra de mi justicia.",
-  "He aquí que todos los que se enojan contra ti serán avergonzados y confundidos."
- ]
-};
+// Biblia completa (RVA 1909, dominio público) — cargada de forma asíncrona desde data/bible-rva.json
+// para no inflar el arranque de la app. BIBLE_DATA: { "Génesis": [ [v1,v2,...], [cap2...], ... ], ... }
+let BIBLE_DATA = {};
+let bibleLoaded = false;
+let bibleLoadingPromise = null;
+function loadBible(){
+  if(bibleLoadingPromise) return bibleLoadingPromise;
+  bibleLoadingPromise = fetch('data/bible-rva.json').then(r=>r.json()).then(d=>{
+    d.books.forEach(b=>{ BIBLE_DATA[b[0]] = b[2]; });
+    bibleLoaded = true;
+  }).catch(e=>{ console.error('No se pudo cargar la Biblia completa', e); });
+  return bibleLoadingPromise;
+}
+loadBible();
 
 // Scenes stand in for photographic backdrops (published pages can't load external photos),
 // as soft moving gradients evoking amanecer/agua/cielo/lluvia/naturaleza/montañas/noche/luz de vela.
@@ -816,6 +857,40 @@ function sceneForNow(){
 }
 function applyScene(stageEl, sceneClass){
   stageEl.className = 'verse-stage scened ' + sceneClass;
+  stageEl.dataset.scene = sceneClass;
+}
+function addSceneOverlay(stageEl){
+  if(!stageEl) return;
+  const old = stageEl.querySelector('.scene-svg'); if(old) old.remove();
+  stageEl.insertAdjacentHTML('afterbegin', sceneOverlaySVG(stageEl.dataset.scene));
+}
+// Formas decorativas simples (sol, montañas, estrellas, olas) dibujadas en SVG para sugerir un paisaje,
+// sin depender de fotografías con derechos de autor.
+function sceneOverlaySVG(sceneClass){
+  const shapes = {
+    'scene-sunrise': `<circle cx="50%" cy="30%" r="46" fill="#fff" opacity="0.22"/><path d="M0,230 L60,170 L120,220 L190,150 L260,215 L340,160 L420,225 L480,190 L480,320 L0,320 Z" fill="#000" opacity="0.10"/>`,
+    'scene-water': `<path d="M0,250 Q60,230 120,250 T240,250 T360,250 T480,250 L480,320 L0,320 Z" fill="#fff" opacity="0.14"/><path d="M0,275 Q60,258 120,275 T240,275 T360,275 T480,275 L480,320 L0,320 Z" fill="#fff" opacity="0.1"/>`,
+    'scene-sky': `<circle cx="18%" cy="18%" r="20" fill="#fff" opacity="0.35"/><ellipse cx="70%" cy="22%" rx="46" ry="16" fill="#fff" opacity="0.22"/><ellipse cx="30%" cy="34%" rx="34" ry="12" fill="#fff" opacity="0.16"/>`,
+    'scene-rain': `<line x1="20%" y1="10%" x2="14%" y2="24%" stroke="#fff" stroke-width="2" opacity="0.25"/><line x1="45%" y1="6%" x2="39%" y2="20%" stroke="#fff" stroke-width="2" opacity="0.2"/><line x1="70%" y1="14%" x2="64%" y2="28%" stroke="#fff" stroke-width="2" opacity="0.22"/><line x1="88%" y1="4%" x2="82%" y2="18%" stroke="#fff" stroke-width="2" opacity="0.18"/>`,
+    'scene-nature': `<path d="M60,320 L60,200 M60,200 Q30,190 40,165 Q55,175 60,190 Q65,160 90,155 Q80,180 60,200" stroke="#fff" stroke-width="2" fill="none" opacity="0.28"/><path d="M400,320 L400,220 M400,220 Q375,210 385,190 Q398,198 400,210 Q404,185 425,180 Q416,202 400,220" stroke="#fff" stroke-width="2" fill="none" opacity="0.22"/>`,
+    'scene-clouds': `<ellipse cx="25%" cy="20%" rx="50" ry="17" fill="#fff" opacity="0.3"/><ellipse cx="60%" cy="30%" rx="38" ry="13" fill="#fff" opacity="0.2"/><ellipse cx="80%" cy="16%" rx="30" ry="11" fill="#fff" opacity="0.24"/>`,
+    'scene-mountains': `<path d="M0,260 L90,150 L150,210 L230,120 L320,240 L400,180 L480,260 L480,320 L0,320 Z" fill="#000" opacity="0.16"/><path d="M0,290 L120,220 L220,270 L340,200 L480,280 L480,320 L0,320 Z" fill="#000" opacity="0.1"/>`,
+    'scene-night': `<circle cx="80%" cy="14%" r="4" fill="#fff" opacity="0.7"/><circle cx="65%" cy="24%" r="2.5" fill="#fff" opacity="0.55"/><circle cx="30%" cy="10%" r="3" fill="#fff" opacity="0.6"/><circle cx="18%" cy="26%" r="2" fill="#fff" opacity="0.45"/><circle cx="50%" cy="17%" r="2.5" fill="#fff" opacity="0.5"/><circle cx="90%" cy="34%" r="2" fill="#fff" opacity="0.4"/>`,
+    'scene-candle': `<ellipse cx="50%" cy="30%" rx="40" ry="60" fill="#FFE1A6" opacity="0.28"/>`
+  };
+  const s = shapes[sceneClass] || '';
+  return `<svg class="scene-svg" viewBox="0 0 480 320" preserveAspectRatio="xMidYMax slice" style="position:absolute; inset:0; width:100%; height:100%; z-index:1; pointer-events:none;">${s}</svg>`;
+}
+
+/* ---------------- versículos resaltados (persistente, distinto del "picked" al tocar) ---------------- */
+let highlightedVerses = load('here_highlights', []);
+function isHighlighted(ref){ return highlightedVerses.some(h=>h.ref===ref); }
+function toggleHighlight(ref, text){
+  haptic(14);
+  if(isHighlighted(ref)){ highlightedVerses = highlightedVerses.filter(h=>h.ref!==ref); }
+  else { highlightedVerses.push({ref, text, date:Date.now()}); }
+  save('here_highlights', highlightedVerses);
+  document.querySelectorAll(`.vtext[data-ref="${CSS.escape(ref)}"]`).forEach(el=>el.classList.toggle('highlighted', isHighlighted(ref)));
 }
 
 /* ---------------- streak (gentle, no shaming language) ---------------- */
@@ -974,7 +1049,7 @@ function verseForTag(tag){
 function pickTodayVerse(){
   const d = new Date();
   const seed = d.getFullYear()*372 + d.getMonth()*31 + d.getDate();
-  return VERSES[seed % VERSES.length];
+  return DAILY_VERSES[seed % DAILY_VERSES.length];
 }
 
 /* ---------------- "necesito una palabra" ---------------- */
@@ -1004,11 +1079,13 @@ function renderPalabra(){
     </div>
     <div style="margin-top:30px;"><button class="btn-text" onclick="openQuedarme()">Quiero quedarme aquí.</button></div>
   `;
+  addSceneOverlay(stage);
 }
 function openQuedarme(){
   document.getElementById('quedarme-verse').textContent = '"'+currentPalabraVerse.text+'" — '+currentPalabraVerse.ref;
   const stage = document.querySelector('#quedarme .verse-stage');
   applyScene(stage, sceneForTag(currentPalabraVerse.tags[0]));
+  addSceneOverlay(stage);
   haptic(20);
   playChime();
   go('quedarme');
@@ -1034,11 +1111,14 @@ function openSentirResult(cat){
       <div class="action-pill" onclick="prefillOrar('${v.ref}')">Orar sobre esto</div>
     </div>
   `;
+  addSceneOverlay(stage);
   go('sentir-result');
 }
 
 /* ---------------- save / share ---------------- */
-function findVerse(ref){ return VERSES.find(v=>v.ref===ref); }
+function findVerse(ref){
+  return VERSES.find(v=>v.ref===ref) || DAILY_VERSES.find(v=>v.ref===ref) || savedWords.find(w=>w.ref===ref) || (highlightedVerses||[]).find(h=>h.ref===ref);
+}
 function isSaved(ref){ return savedWords.some(w=>w.ref===ref); }
 function toggleSave(ref){
   const v = findVerse(ref);
@@ -1154,6 +1234,7 @@ function openPlanDay(i){
     <p class="verse serif">"${v ? v.text : ''}"</p>
     <p class="ref">${ref}</p>
   `;
+  addSceneOverlay(stage);
   const prog = getPlanProgress(p.id);
   const done = prog.done.includes(i);
   const btn = document.getElementById('plan-day-btn');
@@ -1197,8 +1278,7 @@ function renderBooks(){
     for(const group in BOOKS[testament]){
       html += `<div style="margin-bottom:10px;"><div style="font-size:12px;color:var(--ink-soft);margin-bottom:6px;">${group}</div><div class="book-row">`;
       BOOKS[testament][group].forEach(b=>{
-        const hasChapter = Object.keys(CHAPTERS).some(k=>k.startsWith(b));
-        html += `<div class="book-chip" ${hasChapter?`onclick="openChapterFor('${b}')"`:'style="opacity:.45;"'}>${b}</div>`;
+        html += `<div class="book-chip" onclick="openChapterPicker('${b.replace(/'/g,"\\'")}')">${b}</div>`;
       });
       html += `</div></div>`;
     }
@@ -1206,21 +1286,57 @@ function renderBooks(){
   }
   c.innerHTML = html;
 }
-function openChapterFor(book){
-  const key = Object.keys(CHAPTERS).find(k=>k.startsWith(book));
-  openChapter(key);
-}
-function openChapter(key){
-  document.getElementById('reader-title').textContent = key;
-  const verses = CHAPTERS[key];
-  document.getElementById('reader-content').innerHTML = verses.map((t,i)=>
-    `<div><span class="vnum">${i+1}</span><span class="vtext" data-ref="${key.split(' ').slice(0,-1).join(' ')} ${key.split(' ').pop()}:${i+1}" onclick="verseTap(this)">${t}</span></div>`
+async function openChapterPicker(book){
+  await loadBible();
+  const chapters = BIBLE_DATA[book];
+  if(!chapters){ alert('No se pudo cargar ese libro. Revisa tu conexión e intenta de nuevo.'); return; }
+  document.getElementById('chapterPicker-title').textContent = book;
+  document.getElementById('chapterPicker-grid').innerHTML = chapters.map((_,i)=>
+    `<div class="chapter-chip" onclick="openChapter('${book.replace(/'/g,"\\'")}', ${i+1})">${i+1}</div>`
   ).join('');
-  currentReaderKey = key;
+  history_stack.push('biblia');
+  go('chapterPicker');
+}
+// Compatibilidad: abre directamente el primer capítulo de un libro (usado por accesos rápidos).
+async function openChapterFor(book){
+  await loadBible();
+  openChapter(book, 1);
+}
+let currentReaderBook = null;
+let currentReaderChapter = null;
+async function openChapter(book, chapterNum){
+  await loadBible();
+  const chapters = BIBLE_DATA[book];
+  if(!chapters || !chapters[chapterNum-1]){ alert('No se pudo cargar ese capítulo.'); return; }
+  currentReaderBook = book;
+  currentReaderChapter = chapterNum;
+  document.getElementById('reader-title').textContent = `${book} ${chapterNum}`;
+  const verses = chapters[chapterNum-1];
+  document.getElementById('reader-content').innerHTML = verses.map((t,i)=>{
+    const ref = `${book} ${chapterNum}:${i+1}`;
+    const hl = isHighlighted(ref) ? ' highlighted' : '';
+    return `<div><span class="vnum">${i+1}</span><span class="vtext${hl}" data-ref="${ref}" onclick="verseTap(this)">${t}</span></div>`;
+  }).join('');
   stopListen();
   go('reader');
 }
-let currentReaderKey = null;
+function stepChapter(dir){
+  if(!currentReaderBook) return;
+  const chapters = BIBLE_DATA[currentReaderBook];
+  let next = currentReaderChapter + dir;
+  if(next >= 1 && next <= chapters.length){
+    openChapter(currentReaderBook, next);
+    return;
+  }
+  // pasar al libro anterior/siguiente
+  const idx = BOOK_ORDER.indexOf(currentReaderBook);
+  const nextBookIdx = idx + dir;
+  if(nextBookIdx < 0 || nextBookIdx >= BOOK_ORDER.length) return;
+  const nextBook = BOOK_ORDER[nextBookIdx];
+  const nextChapters = BIBLE_DATA[nextBook];
+  if(!nextChapters) return;
+  openChapter(nextBook, dir>0 ? 1 : nextChapters.length);
+}
 let isListening = false;
 let listenUtterances = [];
 let listenIndex = 0;
@@ -1234,10 +1350,11 @@ function toggleListen(){
     alert('Tu dispositivo no soporta lectura en voz alta.');
     return;
   }
-  const verses = CHAPTERS[currentReaderKey];
+  const chapters = BIBLE_DATA[currentReaderBook];
+  const verses = chapters && chapters[currentReaderChapter-1];
   if(!verses || !verses.length) return;
   window.speechSynthesis.cancel();
-  listenUtterances = verses.map((t,i)=>{
+  listenUtterances = verses.map((t)=>{
     const u = new SpeechSynthesisUtterance(t);
     u.lang = 'es-ES';
     u.rate = 0.92;
@@ -1246,10 +1363,12 @@ function toggleListen(){
   });
   listenIndex = 0;
   isListening = true;
-  setListenBtn('⏸ Escuchando…');
+  setListenBtn('⏸');
   const highlightAndSpeak = (i)=>{
     if(!isListening || i >= listenUtterances.length){
       stopListen();
+      // al terminar el capítulo, pasa automáticamente al siguiente
+      if(i >= (listenUtterances.length||0) && listenUtterances.length){ stepChapter(1); }
       return;
     }
     document.querySelectorAll('#reader-content .vtext').forEach(v=>v.classList.remove('speaking'));
@@ -1270,7 +1389,7 @@ function stopListen(){
   listenIndex = 0;
   if('speechSynthesis' in window) window.speechSynthesis.cancel();
   document.querySelectorAll('#reader-content .vtext').forEach(v=>v.classList.remove('speaking'));
-  setListenBtn('🔊 Escuchar');
+  setListenBtn('🔊');
 }
 let tappedVerseEl = null;
 function verseTap(el){
@@ -1279,10 +1398,12 @@ function verseTap(el){
   el.classList.add('picked');
   const ref = el.dataset.ref;
   const text = el.textContent;
+  const hlNow = isHighlighted(ref);
   openSheet(`
     <div class="handle"></div>
     <p class="serif" style="font-style:italic; font-size:16px; margin-bottom:18px;">"${text}"</p>
     <div class="stack">
+      <button class="btn btn-ghost" onclick="toggleHighlight('${ref.replace(/'/g,"\\'")}','${text.replace(/'/g,"\\'")}'); closeSheet();">${hlNow?'✓ Resaltado (quitar)':'🖍 Resaltar'}</button>
       <button class="btn btn-ghost" onclick="quickSave('${ref.replace(/'/g,"\\'")}','${text.replace(/'/g,"\\'")}')">♡ Guardar</button>
       <button class="btn btn-ghost" onclick="closeSheet(); goReflect('${ref.replace(/'/g,"\\'")}','${text.replace(/'/g,"\\'")}')">Reflexionar</button>
       <button class="btn btn-ghost" onclick="closeSheet(); shareText('${text.replace(/'/g,"\\'")} — ${ref.replace(/'/g,"\\'")}')">Compartir</button>
@@ -1505,6 +1626,7 @@ function exitGuidedPrayer(){ go('orar'); }
 function renderGuiadaStep(){
   const stage = document.getElementById('guiada-stage');
   applyScene(stage, sceneForNow());
+  addSceneOverlay(stage);
   const step = GUIADA_STEPS[guiadaIdx];
   const dots = document.getElementById('guiada-dots');
   dots.innerHTML = GUIADA_STEPS.map((s,i)=>`<span class="${i<=guiadaIdx?'on':''}"></span>`).join('');
@@ -1623,17 +1745,30 @@ function renderHoy(){
       <div class="action-pill" onclick="prefillOrar('${v.ref}')">Orar</div>
     </div>
   `;
+  addSceneOverlay(stage);
 }
 
 /* ---------------- mis palabras ---------------- */
 function renderMisPalabras(){
   const c = document.getElementById('misPalabras-list');
-  if(!savedWords.length){ c.innerHTML = '<div class="empty"><div class="light-dot"></div>Las palabras que guardes aparecerán aquí.</div>'; return; }
-  c.innerHTML = savedWords.slice().reverse().map(w=>`
-    <div class="list-card" style="flex-direction:column; align-items:flex-start; gap:6px;" onclick="openPalabraFromRef('${w.ref}')">
-      <div class="t serif" style="font-style:italic;">"${w.text}"</div>
-      <div class="s">${w.ref}</div>
-    </div>`).join('');
+  let html = '';
+  if(savedWords.length){
+    html += savedWords.slice().reverse().map(w=>`
+      <div class="list-card" style="flex-direction:column; align-items:flex-start; gap:6px;" onclick="openPalabraFromRef('${w.ref.replace(/'/g,"\\'")}')">
+        <div class="t serif" style="font-style:italic;">"${w.text}"</div>
+        <div class="s">${w.ref}</div>
+      </div>`).join('');
+  }
+  if(highlightedVerses.length){
+    html += `<div class="section-title" style="margin-top:18px;">🖍 Resaltados</div>`;
+    html += highlightedVerses.slice().reverse().map(w=>`
+      <div class="list-card" style="flex-direction:column; align-items:flex-start; gap:6px;" onclick="openPalabraFromRef('${w.ref.replace(/'/g,"\\'")}')">
+        <div class="t serif" style="font-style:italic;">"${w.text}"</div>
+        <div class="s">${w.ref}</div>
+      </div>`).join('');
+  }
+  if(!html){ html = '<div class="empty"><div class="light-dot"></div>Las palabras que guardes o resaltes aparecerán aquí.</div>'; }
+  c.innerHTML = html;
 }
 
 /* ---------------- perfil ---------------- */
