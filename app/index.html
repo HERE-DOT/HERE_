@@ -51,20 +51,6 @@
     background:var(--bg);
     display:flex; flex-direction:column;
   }
-  /* ---------- desktop / pantallas anchas: se ve como una tarjeta tipo teléfono flotando
-     sobre un fondo con textura, en vez de una franja angosta en un vacío color crema plano ---------- */
-  @media (min-width:760px){
-    body{
-      background:
-        radial-gradient(circle at 16% 12%, rgba(231,204,139,0.30), transparent 46%),
-        radial-gradient(circle at 86% 90%, rgba(126,169,133,0.30), transparent 50%),
-        linear-gradient(155deg, var(--sage-deeper) 0%, var(--sage-deep) 42%, var(--bg-warm) 100%);
-      background-attachment:fixed;
-    }
-    #app{
-      box-shadow:0 40px 90px rgba(15,26,19,0.4), 0 0 0 10px rgba(255,255,255,0.55), 0 0 0 11px rgba(33,31,26,0.08);
-    }
-  }
   .screen{
     display:none; flex-direction:column; flex:1; min-height:100vh;
     animation: fadeIn .55s ease both;
@@ -361,6 +347,99 @@
   .loading-dot{display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--gold); animation:pulse 1.1s ease-in-out infinite;}
   @keyframes pulse{0%,100%{opacity:.3;} 50%{opacity:1;}}
   ::selection{background:var(--beige);}
+
+  /* =========================================================================
+     ESCRITORIO / PANTALLAS ANCHAS
+     En vez de mostrar la app como una franja de teléfono flotando en un
+     computador, aquí se reacomoda como una app de escritorio de verdad:
+     menú lateral fijo a la izquierda + contenido a pantalla completa,
+     usando todo el ancho disponible con columnas más generosas.
+     ========================================================================= */
+  @media (min-width:900px){
+    html, body{height:100%;}
+    body{ display:block; background:var(--bg); }
+    #app{
+      max-width:none; width:100%; min-height:100vh;
+      display:grid; grid-template-columns:250px minmax(0,1fr); align-items:stretch;
+    }
+    #splash{ max-width:none; }
+
+    /* ---- menú lateral (reemplaza la barra inferior de teléfono) ---- */
+    .navbar{
+      display:flex !important; position:sticky; top:0; left:auto; transform:none;
+      width:100%; max-width:none; height:100vh; grid-column:1; grid-row:1/-1;
+      flex-direction:column; align-items:stretch; justify-content:flex-start; gap:5px;
+      padding:34px 16px; border-radius:0; border-top:none; border-right:1px solid var(--line);
+      box-shadow:none; background:var(--card); overflow-y:auto;
+    }
+    .navbar::before{
+      content:'HERE'; font-family:'Fraunces'; font-weight:500; font-size:21px; color:var(--sage-deep);
+      padding:4px 14px 26px; letter-spacing:.5px;
+    }
+    .navbtn{
+      flex-direction:row; justify-content:flex-start; align-items:center; gap:13px;
+      width:100%; padding:13px 14px; border-radius:14px; font-size:14.5px; font-weight:600;
+      transition:background .15s ease, color .15s ease;
+    }
+    .navbtn:hover{ background:rgba(44,79,59,0.06); }
+    .navbtn.active{ background:rgba(44,79,59,0.1); }
+    .navbtn svg{ width:20px; height:20px; flex:none; }
+
+    /* ---- columna de contenido: usa todo el alto, dos anchos de lectura ---- */
+    .screen{ grid-column:2; min-height:100vh; padding-bottom:56px; }
+    .screen.noNav{ padding-bottom:0; }
+
+    /* franjas de texto/listas: cómodas de leer, centradas con aire a los lados */
+    .container, .book-grid, .feel-grid, .quick-row, .plan-row, .chapter-verse,
+    .chapter-picker, .diario-entry, .top-greeting, .section-title, .hero-card,
+    .feature-card, .tag-tabs, #search-results, .list-card, .chat-body, .chat-inputbar,
+    .empty{
+      max-width:760px; margin-left:auto; margin-right:auto; width:100%;
+    }
+    .diario-entry, .list-card, .feature-card{ margin-left:auto; margin-right:auto; }
+
+    /* pantallas de "versículo en escena" (una palabra, sentir, quedarme, guiada, plan del día):
+       más aire, tipografía más grande, para que se sientan a pantalla completa y no recortadas */
+    .verse-stage{ padding:80px 60px; }
+    .verse-stage .verse{ font-size:30px; max-width:640px; margin:0 auto; }
+    .verse-stage .eyebrow{ font-size:15px; }
+    .close-x{ top:32px; left:32px; }
+    .stage-streak{ top:32px; right:32px; }
+
+    /* cuadrícula de "¿cómo te sientes?" y libros: aprovechan el ancho extra */
+    .feel-grid{ grid-template-columns:repeat(3, 1fr); max-width:680px; }
+    .chapter-picker{ grid-template-columns:repeat(8, 1fr); max-width:680px; }
+    .book-row{ max-width:none; }
+
+    /* pantalla de inicio: la tarjeta de "hoy" y las de función, un poco más grandes */
+    .hero-card{ padding:40px 34px; }
+    .hero-card h2{ font-size:24px; }
+    .feature-card{ padding:26px 24px; }
+
+    /* topbars y encabezados con un poco más de aire lateral que en el teléfono */
+    .topbar{ padding:30px 0 10px; max-width:760px; margin:0 auto; }
+    .topbar h2{ font-size:21px; }
+
+    /* el lector de capítulos: columna de lectura cómoda, con más interlineado */
+    .chapter-verse{ font-size:18px; line-height:2.05; padding-top:14px; }
+
+    /* la ficha flotante (guardar/resaltar/etc) se ve como un modal centrado, no una hoja pegada abajo */
+    .sheet-backdrop{ align-items:center; }
+    .sheet{ max-width:420px; border-radius:24px; box-shadow:0 30px 70px rgba(0,0,0,0.25); }
+
+    .fab{ bottom:32px; }
+  }
+  @media (min-width:1180px){
+    .navbar{ width:270px; }
+    #app{ grid-template-columns:270px minmax(0,1fr); }
+    .container, .book-grid, .feel-grid, .quick-row, .plan-row, .chapter-verse,
+    .chapter-picker, .diario-entry, .top-greeting, .section-title, .hero-card,
+    .feature-card, .tag-tabs, #search-results, .list-card, .chat-body, .chat-inputbar,
+    .empty{
+      max-width:860px;
+    }
+    .feel-grid, .chapter-picker{ max-width:760px; }
+  }
 </style>
 </head>
 <body>
