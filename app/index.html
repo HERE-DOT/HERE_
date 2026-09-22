@@ -51,6 +51,20 @@
     background:var(--bg);
     display:flex; flex-direction:column;
   }
+  /* ---------- desktop / pantallas anchas: se ve como una tarjeta tipo teléfono flotando
+     sobre un fondo con textura, en vez de una franja angosta en un vacío color crema plano ---------- */
+  @media (min-width:760px){
+    body{
+      background:
+        radial-gradient(circle at 16% 12%, rgba(231,204,139,0.30), transparent 46%),
+        radial-gradient(circle at 86% 90%, rgba(126,169,133,0.30), transparent 50%),
+        linear-gradient(155deg, var(--sage-deeper) 0%, var(--sage-deep) 42%, var(--bg-warm) 100%);
+      background-attachment:fixed;
+    }
+    #app{
+      box-shadow:0 40px 90px rgba(15,26,19,0.4), 0 0 0 10px rgba(255,255,255,0.55), 0 0 0 11px rgba(33,31,26,0.08);
+    }
+  }
   .screen{
     display:none; flex-direction:column; flex:1; min-height:100vh;
     animation: fadeIn .55s ease both;
