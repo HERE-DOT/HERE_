@@ -229,6 +229,16 @@
   .week-day.on .dot{ background:var(--gold-grad); border-color:transparent; box-shadow:0 5px 12px rgba(138,106,38,0.3); }
   .week-day.today .dot{ box-shadow:0 0 0 2.5px var(--sage-deep); }
 
+  /* ---------- "tu camino" (perfil) ---------- */
+  .camino-intro{font-size:13.5px; color:var(--ink-soft); line-height:1.6; margin-bottom:16px;}
+  .camino-grid{display:grid; grid-template-columns:repeat(10, 1fr); gap:6px; margin-bottom:22px;}
+  .camino-grid .cell{width:100%; aspect-ratio:1; border-radius:5px; background:var(--line);}
+  .camino-grid .cell.on{background:var(--gold-grad);}
+  .camino-stats{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:24px;}
+  .camino-stat{padding:16px 16px; border-radius:18px; background:var(--card); border:1px solid var(--line); box-shadow:var(--shadow-sm);}
+  .camino-stat .num{font-family:'Fraunces'; font-size:24px; font-weight:500; color:var(--sage-deep);}
+  .camino-stat .lbl{font-size:12px; color:var(--ink-soft); margin-top:4px;}
+
   /* ---------- verse-of-day home card with scene photo ---------- */
   .hoy-scene{
     position:relative; overflow:hidden; color:#fff !important;
@@ -488,7 +498,9 @@
   .empty{padding:60px 30px; text-align:center; color:var(--ink-soft);}
   .empty .light-dot{width:8px; height:8px; border-radius:50%; background:var(--gold); margin:0 auto 16px;}
 
-  .tag-tabs{display:flex; gap:8px; padding:0 24px 14px;}
+  .tag-tabs{display:flex; gap:8px; padding:0 24px 14px; overflow-x:auto; scrollbar-width:none;}
+  .tag-tabs::-webkit-scrollbar{display:none;}
+  .tag-tabs .tag-tab{flex:none;}
   .tag-tab{padding:9px 15px; border-radius:100px; font-size:13px; border:1px solid var(--line); background:var(--card); cursor:pointer; box-shadow:var(--shadow-sm); transition:transform .12s ease;}
   .tag-tab.active{background:linear-gradient(135deg,var(--sage-deep),var(--sage-deeper)); color:#fff; border-color:var(--sage-deep);}
   .ent-question{font-size:12.5px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.4px; font-weight:700; margin-bottom:10px;}
@@ -668,6 +680,7 @@
 
   <section class="screen noNav" id="ob-2">
     <div class="container">
+      <div class="progress-dots"><span class="on"></span><span></span><span></span><span></span></div>
       <h2 class="serif" style="font-size:22px;">¿Qué buscas hoy?</h2>
       <p style="color:var(--ink-soft); margin-top:8px; font-size:14px;">Puedes elegir varias.</p>
     </div>
@@ -679,6 +692,7 @@
 
   <section class="screen noNav" id="ob-3">
     <div class="container">
+      <div class="progress-dots"><span class="on"></span><span class="on"></span><span></span><span></span></div>
       <h2 class="serif" style="font-size:22px;">¿Cuándo crees que más necesitarás HERE?</h2>
     </div>
     <div class="stack container" id="ob3-options"></div>
@@ -689,6 +703,7 @@
 
   <section class="screen noNav" id="ob-4">
     <div class="container">
+      <div class="progress-dots"><span class="on"></span><span class="on"></span><span class="on"></span><span></span></div>
       <h2 class="serif" style="font-size:22px;">Elige cómo quieres leer</h2>
       <p style="color:var(--ink-soft); margin-top:8px; font-size:14px;">No afirmamos que una traducción sea superior a otra.</p>
     </div>
@@ -700,6 +715,7 @@
 
   <section class="screen noNav" id="ob-5">
     <div class="container">
+      <div class="progress-dots"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span></div>
       <h2 class="serif" style="font-size:22px;">¿Quieres que HERE te recuerde volver?</h2>
     </div>
     <div class="stack container">
@@ -976,11 +992,17 @@
     </div>
   </section>
 
-  <!-- DIARIO -->
+  <!-- DIARIO / REFLEXIONAR -->
   <section class="screen" id="diario">
-    <div class="topbar"><h2>Mis reflexiones</h2></div>
-    <div id="diario-list" style="padding-top:6px;"></div>
-    <button class="fab" onclick="openReflectionEditor('General','')">+</button>
+    <div class="topbar"><h2>Reflexionar</h2></div>
+    <div class="tag-tabs" id="diario-tabs">
+      <div class="tag-tab active" data-t="reflexiones" onclick="diarioSetTab('reflexiones')">Reflexiones</div>
+      <div class="tag-tab" data-t="oraciones" onclick="diarioSetTab('oraciones')">Oraciones</div>
+      <div class="tag-tab" data-t="palabras" onclick="diarioSetTab('palabras')">Palabras</div>
+      <div class="tag-tab" data-t="favoritos" onclick="diarioSetTab('favoritos')">Favoritos</div>
+    </div>
+    <div id="diario-list" class="ent-fade" style="padding-top:6px;"></div>
+    <button class="fab" id="diario-fab" onclick="openReflectionEditor('General','')">+</button>
   </section>
 
   <!-- PERFIL -->
@@ -2064,6 +2086,8 @@ async function openChapter(book, chapterNum){
     return `<div><span class="vnum">${i+1}</span><span class="vtext${hl}" data-ref="${ref}" onclick="verseTap(this)">${t}</span></div>`;
   }).join('') + credit;
   applyReaderFontSize();
+  const chKey = `${book} ${chapterNum}`;
+  if(!visited.includes(chKey)){ visited.push(chKey); save('here_visited', visited); }
 }
 function applyReaderFontSize(){
   const el = document.getElementById('reader-content');
@@ -2192,7 +2216,7 @@ function openReflectionEditor(ref, text){
     ${hasVerse? `<p style="font-size:13px; color:var(--ink-soft); margin-bottom:6px;">${ref}</p>
     <p class="serif" style="font-style:italic; margin-bottom:16px;">"${text}"</p>
     <p style="margin-bottom:8px; font-size:14.5px;">¿Qué significa para ti hoy?</p>` : `<p style="margin-bottom:8px; font-size:15.5px;">Nueva reflexión</p>`}
-    <textarea id="reflect-text" rows="4" placeholder="Escribe con libertad…"></textarea>
+    <textarea id="reflect-text" rows="4" placeholder="${hasVerse?'Escribe con libertad…':'¿Qué quieres guardar de este momento?'}"></textarea>
     <button class="btn btn-primary" style="margin-top:12px;" onclick="saveReflection('${ref.replace(/'/g,"\\'")}','${text.replace(/'/g,"\\'")}')">Guardar reflexión</button>
   `);
 }
@@ -2207,17 +2231,60 @@ function saveReflection(ref, text){
 }
 
 /* ---------------- diario (journal) ---------------- */
+let diarioTab = 'reflexiones';
+function diarioSetTab(tab){
+  diarioTab = tab;
+  document.querySelectorAll('#diario-tabs .tag-tab').forEach(t=>t.classList.toggle('active', t.dataset.t===tab));
+  const fab = document.getElementById('diario-fab');
+  if(fab) fab.style.display = tab==='reflexiones' ? 'flex' : 'none';
+  renderDiario();
+}
+function fmtDiarioDate(ts){ return new Date(ts).toLocaleDateString('es-ES',{day:'numeric',month:'long'}); }
 function renderDiario(){
   const c = document.getElementById('diario-list');
-  if(!reflections.length){ c.innerHTML = '<div class="empty"><div class="light-dot"></div>Tus reflexiones aparecerán aquí. Toca + para escribir la primera.</div>'; return; }
-  c.innerHTML = reflections.slice().reverse().map((r,i)=>{
-    const realIdx = reflections.length-1-i;
-    return `<div class="diario-entry" onclick="openDiarioEntry(${realIdx})">
-      ${r.text? `<div class="ref">${r.ref}</div>` : ''}
-      <div class="note">${r.note}</div>
-      <div class="date">${new Date(r.date).toLocaleDateString('es-ES',{day:'numeric',month:'long'})}</div>
-    </div>`;
-  }).join('');
+  c.classList.remove('ent-fade'); void c.offsetWidth; c.classList.add('ent-fade');
+
+  if(diarioTab==='reflexiones'){
+    if(!reflections.length){ c.innerHTML = '<div class="empty"><div class="light-dot"></div>Tus reflexiones aparecerán aquí. Toca + para escribir la primera.</div>'; return; }
+    c.innerHTML = reflections.slice().reverse().map((r,i)=>{
+      const realIdx = reflections.length-1-i;
+      return `<div class="diario-entry" onclick="openDiarioEntry(${realIdx})">
+        ${r.text? `<div class="ref">${r.ref}</div>` : ''}
+        <div class="note">${r.note}</div>
+        <div class="date">${fmtDiarioDate(r.date)}</div>
+      </div>`;
+    }).join('');
+    return;
+  }
+  if(diarioTab==='oraciones'){
+    if(!prayers.length){ c.innerHTML = '<div class="empty"><div class="light-dot"></div>Las oraciones que guardes aparecerán aquí.</div>'; return; }
+    c.innerHTML = prayers.map((p,idx)=>`
+      <div class="diario-entry" onclick="openDiarioPrayer(${idx})">
+        <div class="ref">Oración</div>
+        <div class="note">${p.text.length>140? p.text.slice(0,140)+'…' : p.text}</div>
+        <div class="date">${fmtDiarioDate(p.date)}</div>
+      </div>`).join('');
+    return;
+  }
+  if(diarioTab==='palabras'){
+    if(!savedWords.length){ c.innerHTML = '<div class="empty"><div class="light-dot"></div>Las palabras que guardes aparecerán aquí.</div>'; return; }
+    c.innerHTML = savedWords.slice().reverse().map(w=>`
+      <div class="diario-entry" onclick="openPalabraFromRef('${w.ref.replace(/'/g,"\\'")}')">
+        <div class="ref">${w.ref}</div>
+        <div class="note" style="font-style:italic;">"${w.text}"</div>
+        <div class="date">${fmtDiarioDate(w.date)}</div>
+      </div>`).join('');
+    return;
+  }
+  if(diarioTab==='favoritos'){
+    if(!highlightedVerses.length){ c.innerHTML = '<div class="empty"><div class="light-dot"></div>Los versículos que resaltes aparecerán aquí.</div>'; return; }
+    c.innerHTML = highlightedVerses.slice().reverse().map(w=>`
+      <div class="diario-entry" onclick="openPalabraFromRef('${w.ref.replace(/'/g,"\\'")}')">
+        <div class="ref">🖍 ${w.ref}</div>
+        <div class="note" style="font-style:italic;">"${w.text}"</div>
+        <div class="date">${fmtDiarioDate(w.date)}</div>
+      </div>`).join('');
+  }
 }
 function openDiarioEntry(idx){
   const r = reflections[idx];
@@ -2233,6 +2300,22 @@ function deleteReflection(idx){
   save('here_reflections', reflections);
   closeSheet();
   renderDiario();
+}
+function openDiarioPrayer(idx){
+  const p = prayers[idx];
+  openSheet(`
+    <div class="handle"></div>
+    <p style="font-size:13px; color:var(--ink-soft); margin-bottom:10px;">${fmtDiarioDate(p.date)}</p>
+    <p style="font-size:14.5px; line-height:1.65; white-space:pre-line; margin-bottom:18px;">${p.text}</p>
+    <button class="btn btn-ghost" onclick="deletePrayer(${idx})">Eliminar oración</button>
+  `);
+}
+function deletePrayer(idx){
+  prayers.splice(idx,1);
+  save('here_prayers', prayers);
+  closeSheet();
+  renderDiario();
+  if(currentScreen==='orar') renderOraciones();
 }
 
 /* ---------------- chat con HERE (usa la capacidad "sample") ---------------- */
@@ -2574,13 +2657,38 @@ function renderMisPalabras(){
 }
 
 /* ---------------- perfil ---------------- */
+function computeExploredTopics(){
+  const tags = new Set();
+  [...savedWords, ...highlightedVerses].forEach(w=>{ const v = findVerse(w.ref); if(v && v.tags) v.tags.forEach(t=>tags.add(t)); });
+  return tags.size;
+}
+function renderCaminoGrid(){
+  const log = load('here_visit_log', []);
+  const days = [];
+  const today = new Date();
+  for(let i=29; i>=0; i--){
+    const d = new Date(today); d.setDate(d.getDate()-i);
+    days.push(log.includes(d.toDateString()));
+  }
+  return days.map(on=>`<div class="cell ${on?'on':''}"></div>`).join('');
+}
 function renderPerfil(){
   const c = document.getElementById('perfil-body');
+  const visitDays = load('here_visit_log', []).length;
   c.innerHTML = `
+    <p class="camino-intro">Este es tu camino con HERE — no una lista de logros, solo un registro tranquilo de los momentos en que volviste.</p>
+    <div class="camino-grid">${renderCaminoGrid()}</div>
+    <div class="camino-stats">
+      <div class="camino-stat"><div class="num">${visitDays}</div><div class="lbl">días que volviste</div></div>
+      <div class="camino-stat"><div class="num">${visited.length}</div><div class="lbl">capítulos leídos</div></div>
+      <div class="camino-stat"><div class="num">${prayers.length}</div><div class="lbl">oraciones</div></div>
+      <div class="camino-stat"><div class="num">${reflections.length}</div><div class="lbl">reflexiones</div></div>
+      <div class="camino-stat"><div class="num">${savedWords.length}</div><div class="lbl">palabras guardadas</div></div>
+      <div class="camino-stat"><div class="num">${computeExploredTopics()}</div><div class="lbl">temas explorados</div></div>
+    </div>
     <div class="stack">
-      <div class="list-card" onclick="go('misPalabras')"><div><div class="t">${savedWords.length} palabras guardadas</div></div><span>→</span></div>
-      <div class="list-card" onclick="go('diario')"><div><div class="t">${reflections.length} reflexiones</div></div><span>→</span></div>
-      <div class="list-card" onclick="go('orar')"><div><div class="t">${prayers.length} oraciones</div></div><span>→</span></div>
+      <div class="list-card" onclick="go('misPalabras')"><div><div class="t">Ver palabras guardadas</div></div><span>→</span></div>
+      <div class="list-card" onclick="go('diario')"><div><div class="t">Ver reflexiones y oraciones</div></div><span>→</span></div>
     </div>
     <div class="section-title" style="padding-left:0; margin-top:26px;">Preferencias</div>
     <p style="font-size:13.5px; color:var(--ink-soft); margin-top:6px; line-height:1.6;">
