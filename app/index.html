@@ -468,6 +468,11 @@
   .chapter-picker{padding:8px 24px 24px; display:grid; grid-template-columns:repeat(5,1fr); gap:9px;}
   .chapter-chip{padding:12px 0; text-align:center; border-radius:14px; background:var(--card); border:1px solid var(--line); font-size:14px; font-weight:600; cursor:pointer; box-shadow:var(--shadow-sm); transition:transform .12s ease;}
   .chapter-chip:active{transform:scale(0.93);}
+  .fontsize-ctrl{display:flex; align-items:center; gap:6px;}
+  .fontsize-ctrl button{
+    width:32px; height:32px; border-radius:50%; border:1px solid var(--line); background:var(--card);
+    cursor:pointer; font-size:11.5px; font-weight:700; color:var(--ink-soft); box-shadow:var(--shadow-sm);
+  }
   .mini-player{display:flex; align-items:center; gap:8px;}
   .mini-player button{width:36px; height:36px; border-radius:50%; border:1px solid var(--line); background:var(--card); cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow-sm); flex:none;}
   .mini-player button.play{width:42px; height:42px; background:linear-gradient(135deg,var(--sage-deep),var(--sage-deeper)); color:#fff; border:none; font-size:16px;}
@@ -486,6 +491,10 @@
   .tag-tabs{display:flex; gap:8px; padding:0 24px 14px;}
   .tag-tab{padding:9px 15px; border-radius:100px; font-size:13px; border:1px solid var(--line); background:var(--card); cursor:pointer; box-shadow:var(--shadow-sm); transition:transform .12s ease;}
   .tag-tab.active{background:linear-gradient(135deg,var(--sage-deep),var(--sage-deeper)); color:#fff; border-color:var(--sage-deep);}
+  .ent-question{font-size:12.5px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.4px; font-weight:700; margin-bottom:10px;}
+  .ent-fade{animation:entFade .45s ease both;}
+  @keyframes entFade{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+  @media (prefers-reduced-motion: reduce){ .ent-fade{ animation:none; } }
 
   .loading-dot{display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--gold); animation:pulse 1.1s ease-in-out infinite;}
   @keyframes pulse{0%,100%{opacity:.3;} 50%{opacity:1;}}
@@ -874,12 +883,18 @@
 
   <!-- CHAPTER READER -->
   <section class="screen noNav" id="reader">
-    <div class="topbar" style="justify-content:space-between;">
+    <div class="topbar" style="justify-content:space-between; flex-wrap:wrap; row-gap:8px;">
       <div style="display:flex; align-items:center; gap:14px;"><div class="backbtn" onclick="stopListen(); go('biblia')">←</div><h2 id="reader-title"></h2></div>
-      <div class="mini-player">
-        <button onclick="stepChapter(-1)" title="Capítulo anterior">⏮</button>
-        <button class="play" id="listen-btn" onclick="toggleListen()" title="Escuchar">🔊</button>
-        <button onclick="stepChapter(1)" title="Capítulo siguiente">⏭</button>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <div class="fontsize-ctrl">
+          <button onclick="changeReaderFontSize(-1)" aria-label="Reducir texto">A-</button>
+          <button onclick="changeReaderFontSize(1)" aria-label="Aumentar texto">A+</button>
+        </div>
+        <div class="mini-player">
+          <button onclick="stepChapter(-1)" title="Capítulo anterior">⏮</button>
+          <button class="play" id="listen-btn" onclick="toggleListen()" title="Escuchar">🔊</button>
+          <button onclick="stepChapter(1)" title="Capítulo siguiente">⏭</button>
+        </div>
       </div>
     </div>
     <div class="chapter-verse" id="reader-content"></div>
@@ -906,12 +921,12 @@
     <div class="container" style="padding-top:0;">
       <div class="feature-card" style="background:linear-gradient(160deg, var(--sage) 0%, var(--sage-deep) 100%); color:#fff; margin-bottom:18px; cursor:pointer;" onclick="startGuidedPrayer()">
         <div style="flex:1;">
-          <div class="t" style="color:#fff;">Oración guiada</div>
+          <div class="t" style="color:#fff;">Guíame</div>
           <div class="s" style="color:rgba(255,255,255,0.85);">Un momento paso a paso, contigo.</div>
         </div>
         <div class="arrow-circle" style="background:rgba(255,255,255,0.25); color:#fff;">→</div>
       </div>
-      <p style="color:var(--ink-soft); font-size:14.5px; line-height:1.5;">O escribe con tus propias palabras.</p>
+      <p style="color:var(--ink-soft); font-size:14.5px; line-height:1.5;">O quiero escribir mis propias palabras.</p>
       <p style="margin-top:22px; font-size:15.5px;">¿Qué quieres poner en manos de Dios?</p>
       <textarea id="orar-input" rows="4" placeholder="Escribe aquí…" style="margin-top:10px;"></textarea>
       <div class="stack" style="margin-top:14px;">
@@ -1012,6 +1027,7 @@ let prayers = load('here_prayers', []);
 let reflections = load('here_reflections', []);
 let prefs = load('here_prefs', {goals:[], remind:null});
 let visited = load('here_visited', []);
+let readerFontSize = load('here_reader_fontsize', 17);
 
 /* ---------------- theme (light / dark) ---------------- */
 function setTheme(mode){
@@ -1857,10 +1873,16 @@ function entTab(tab){
   document.querySelectorAll('.tag-tab').forEach(t=>t.classList.toggle('active', t.dataset.t===tab));
   loadEntTab(tab);
 }
+const ENT_QUESTIONS = {
+  contexto: '¿Qué estaba pasando cuando se escribió?',
+  significado: '¿Qué comunica este pasaje?',
+  aplicacion: '¿Cómo podría ayudarte a reflexionar sobre tu situación?',
+};
 async function loadEntTab(tab){
   const body = document.getElementById('entender-body');
-  if(entContext.data[tab]){ body.innerHTML = entContext.data[tab]; return; }
-  body.innerHTML = '<p style="color:var(--ink-soft);">Preparando <span class="loading-dot"></span></p>';
+  const question = `<p class="ent-question">${ENT_QUESTIONS[tab]}</p>`;
+  if(entContext.data[tab]){ body.innerHTML = question + entContext.data[tab]; body.classList.remove('ent-fade'); void body.offsetWidth; body.classList.add('ent-fade'); return; }
+  body.innerHTML = question + '<p style="color:var(--ink-soft);">Preparando <span class="loading-dot"></span></p>';
   const prompts = {
     contexto: `Da un breve contexto histórico (3-4 frases, en español, tono cálido y sobrio) sobre el pasaje bíblico "${entContext.ref}": "${entContext.text}". Explica qué ocurría cuando se escribió, sin inventar datos que no sean ampliamente conocidos. No cites otros versículos.`,
     significado: `Explica de forma clara y neutral (3-4 frases, en español) el significado del pasaje bíblico "${entContext.ref}": "${entContext.text}". No presentes tu explicación como si fuera texto bíblico literal; dilo como una interpretación.`,
@@ -1876,7 +1898,10 @@ async function loadEntTab(tab){
   }catch(e){
     entContext.data[tab] = '<p style="color:var(--ink-soft);">No pudimos preparar esta parte ahora mismo. Intenta de nuevo en un momento.</p>';
   }
-  if(document.querySelector(`.tag-tab.active`).dataset.t===tab) body.innerHTML = entContext.data[tab];
+  if(document.querySelector(`.tag-tab.active`).dataset.t===tab){
+    body.innerHTML = question + entContext.data[tab];
+    body.classList.remove('ent-fade'); void body.offsetWidth; body.classList.add('ent-fade');
+  }
 }
 
 /* ---------------- biblia: books & reading ---------------- */
@@ -2038,6 +2063,16 @@ async function openChapter(book, chapterNum){
     const hl = isHighlighted(ref) ? ' highlighted' : '';
     return `<div><span class="vnum">${i+1}</span><span class="vtext${hl}" data-ref="${ref}" onclick="verseTap(this)">${t}</span></div>`;
   }).join('') + credit;
+  applyReaderFontSize();
+}
+function applyReaderFontSize(){
+  const el = document.getElementById('reader-content');
+  if(el) el.style.fontSize = readerFontSize + 'px';
+}
+function changeReaderFontSize(delta){
+  readerFontSize = Math.max(14, Math.min(24, readerFontSize + delta*2));
+  save('here_reader_fontsize', readerFontSize);
+  applyReaderFontSize();
 }
 function stepChapter(dir){
   if(!currentReaderBook) return;
@@ -2372,10 +2407,10 @@ function savePrayerText(text){
 }
 /* ---------------- guided prayer ---------------- */
 const GUIADA_STEPS = [
-  {key:'quiet', title:'Quédate un momento', kind:'breathe', line:'Cierra los ojos si quieres.<br>Respira.<br>Estás en la presencia de Dios.'},
-  {key:'gracias', title:'Gracias', kind:'input', line:'¿Por qué le das gracias a Dios hoy?', ph:'Hoy le doy gracias por…'},
-  {key:'entrega', title:'Entrega', kind:'input', line:'¿Qué quieres poner en sus manos?', ph:'Quiero entregarte…'},
-  {key:'pide', title:'Pide', kind:'input', line:'¿Qué necesitas pedirle hoy?', ph:'Te pido…'},
+  {key:'respira', title:'Respira', kind:'breathe', line:'Cierra los ojos si quieres.<br>Respira.<br>Estás en la presencia de Dios.'},
+  {key:'dile', title:'Dile a Dios cómo estás', kind:'input', line:'No hace falta que sea ordenado. Dile a Dios cómo estás hoy.', ph:'Hoy me siento…'},
+  {key:'entrega', title:'Ponlo en sus manos', kind:'input', line:'¿Qué quieres poner en sus manos?', ph:'Quiero entregarte…'},
+  {key:'quedate', title:'Quédate un momento', kind:'breathe', line:'No tienes que decir nada más.<br>Solo quédate aquí, en su presencia.'},
   {key:'cierre', title:'Amén', kind:'closing', line:''},
 ];
 let guiadaIdx = 0;
@@ -2448,19 +2483,18 @@ function guiadaBack(){
 }
 async function buildGuiadaClosing(){
   const parts = [];
-  if(guiadaAnswers.gracias) parts.push(`Gracias por: ${guiadaAnswers.gracias}`);
+  if(guiadaAnswers.dile) parts.push(`Cómo estoy: ${guiadaAnswers.dile}`);
   if(guiadaAnswers.entrega) parts.push(`Entrego: ${guiadaAnswers.entrega}`);
-  if(guiadaAnswers.pide) parts.push(`Pido: ${guiadaAnswers.pide}`);
   let text = null;
   if(claudeSample && parts.length){
     try{
-      const prompt = `Una persona cristiana acaba de completar un momento de oración guiada con estos tres puntos en español:\n${parts.join('\n')}\nRedacta una oración breve y cálida (7-10 líneas), en primera persona, dirigida a Dios, que una naturalmente estos tres puntos. No hables en nombre de Dios ni afirmes revelar su voluntad. Termina con "Amén."`;
+      const prompt = `Una persona cristiana acaba de completar un momento de oración guiada con estos puntos en español:\n${parts.join('\n')}\nRedacta una oración breve y cálida (7-10 líneas), en primera persona, dirigida a Dios, que una naturalmente estos puntos. No hables en nombre de Dios ni afirmes revelar su voluntad. Termina con "Amén."`;
       const res = await claudeSample(prompt, {modelTier:'default'});
       text = res.text;
     }catch(e){ text = null; }
   }
   if(!text){
-    text = `Señor, hoy vengo ante ti.\n${guiadaAnswers.gracias?`Te doy gracias por ${guiadaAnswers.gracias}.\n`:''}${guiadaAnswers.entrega?`Pongo en tus manos ${guiadaAnswers.entrega}.\n`:''}${guiadaAnswers.pide?`Te pido ${guiadaAnswers.pide}.\n`:''}Ayúdame a confiar en ti hoy.\nAmén.`;
+    text = `Señor, hoy vengo ante ti.\n${guiadaAnswers.dile?`Así es como estoy: ${guiadaAnswers.dile}.\n`:''}${guiadaAnswers.entrega?`Pongo en tus manos ${guiadaAnswers.entrega}.\n`:''}Ayúdame a confiar en ti hoy.\nAmén.`;
   }
   guiadaAnswers.final = text;
   const el = document.getElementById('guiada-final-text');
