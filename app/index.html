@@ -5,9 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>HERE</title>
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#3C6B4C">
-<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#3C6B4C" id="meta-theme-color">
+<meta name="color-scheme" content="light dark">
 <meta name="description" content="Un lugar para volver a Dios: Biblia, oracion y acompanamiento espiritual, cuando lo necesites.">
+<link rel="icon" href="/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="HERE">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400;1,9..144,500&family=Manrope:wght@400;500;600;700&family=Petit+Formal+Script&display=swap" rel="stylesheet">
@@ -443,6 +449,14 @@
     box-shadow:var(--shadow-sm); transition:border-color .15s ease, box-shadow .15s ease;
   }
   textarea:focus, input:focus{outline:none; border-color:var(--sage-deep); box-shadow:0 0 0 3px rgba(44,79,59,0.12);}
+
+  /* ---------- accesibilidad: foco visible para navegación por teclado ---------- */
+  button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]:focus-visible{
+    outline:2.5px solid var(--sage-deep); outline-offset:2px; border-radius:10px;
+  }
+  .verse-stage.scened [role="button"]:focus-visible, .verse-stage.scened button:focus-visible{
+    outline-color:#fff;
+  }
 
   /* ---------- reading plans ---------- */
   .plan-row{display:flex; flex-shrink:0; align-items:flex-start; gap:14px; height:174px; overflow-x:auto; overflow-y:visible; padding:6px 24px 18px; scrollbar-width:none;}
@@ -2719,6 +2733,36 @@ function clearData(){
 /* ---------------- sheet ---------------- */
 function openSheet(html){ document.getElementById('sheet-content').innerHTML = html; document.getElementById('sheet-backdrop').classList.add('show'); }
 function closeSheet(){ document.getElementById('sheet-backdrop').classList.remove('show'); }
+
+/* ---------------- accesibilidad: hace foco-able por teclado cualquier elemento
+   "clicable" que no lo sea de forma nativa (muchas tarjetas y pastillas de la
+   interfaz son divs con onclick por razones de estilo; esto no cambia su
+   apariencia, solo asegura que reciban foco, anuncien su rol y respondan a
+   Enter/Espacio para quien navega con teclado o lector de pantalla). ---------------- */
+function enhanceClickableAccessibility(root){
+  (root||document).querySelectorAll('[onclick]').forEach(el=>{
+    const tag = el.tagName;
+    if(tag==='BUTTON' || tag==='A' || tag==='INPUT' || tag==='TEXTAREA' || tag==='SELECT' || tag==='LABEL') return;
+    if(el.dataset.a11yEnhanced) return;
+    el.dataset.a11yEnhanced = '1';
+    if(!el.hasAttribute('tabindex')) el.setAttribute('tabindex','0');
+    if(!el.hasAttribute('role')) el.setAttribute('role','button');
+    el.addEventListener('keydown', function(e){
+      if(e.key==='Enter' || e.key===' '){ e.preventDefault(); el.click(); }
+    });
+  });
+}
+enhanceClickableAccessibility(document);
+const a11yObserver = new MutationObserver(()=>{ enhanceClickableAccessibility(document.getElementById('app')); });
+const a11yRoot = document.getElementById('app');
+if(a11yRoot) a11yObserver.observe(a11yRoot, {childList:true, subtree:true});
+
+/* ---------------- PWA: service worker (soporte offline básico + instalación) ---------------- */
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('./service-worker.js').catch(()=>{});
+  });
+}
 
 /* ---------------- boot ---------------- */
 window.addEventListener('load', ()=>{
