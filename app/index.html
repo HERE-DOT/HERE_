@@ -308,6 +308,12 @@
   .breathe-circle::before{content:''; position:absolute; inset:10px; border-radius:50%; background:rgba(255,255,255,0.22); animation:breathe 8s ease-in-out infinite;}
   .breathe-label{font-size:12.5px; color:rgba(255,255,255,0.75); letter-spacing:.5px;}
   @keyframes breathe{ 0%,100%{transform:scale(0.5); opacity:.45;} 50%{transform:scale(1); opacity:.95;} }
+  .breathe-text{
+    color:#fff; font-size:34px; font-weight:400; letter-spacing:.3px; position:relative; z-index:2;
+    animation:breatheText 3.6s ease-in-out infinite;
+  }
+  @keyframes breatheText{ 0%,100%{opacity:.6; transform:scale(0.97);} 50%{opacity:1; transform:scale(1.02);} }
+  @media (prefers-reduced-motion: reduce){ .breathe-text{ animation:none; } .breathe-circle::before{ animation:none; } }
 
   .guiada-dots{position:relative; z-index:3; display:flex; gap:6px; justify-content:center; margin-top:6px;}
   .guiada-dots span{width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,0.3);}
@@ -339,6 +345,18 @@
   .verse-stage.scened .action-pill{background:rgba(255,255,255,0.16); border-color:rgba(255,255,255,0.35); color:#fff; backdrop-filter:blur(8px);}
   .verse-stage.scened .close-x{background:rgba(255,255,255,0.18); border-color:rgba(255,255,255,0.35); color:#fff;}
   .verse-stage.scened .btn-text{color:rgba(255,255,255,0.85);}
+  .palabra-why{
+    font-size:12.5px; color:var(--ink-soft); margin-top:10px; position:relative; z-index:2;
+    animation:stageIn .6s .3s ease both; font-style:italic;
+  }
+  .verse-stage.scened .palabra-why{color:rgba(255,255,255,0.75);}
+  .palabra-reflect{
+    margin-top:26px; padding:18px 20px; border-radius:18px; background:rgba(255,255,255,0.55);
+    max-width:340px; position:relative; z-index:2; animation:stageIn .6s .42s ease both;
+  }
+  .palabra-reflect p{font-size:13.5px; line-height:1.55; color:var(--ink-soft);}
+  .verse-stage.scened .palabra-reflect{background:rgba(255,255,255,0.14); backdrop-filter:blur(8px);}
+  .verse-stage.scened .palabra-reflect p{color:rgba(255,255,255,0.88);}
 
   /* ---------- streak on stage ---------- */
   .stage-streak{position:absolute; top:22px; right:22px; z-index:5;}
@@ -348,6 +366,17 @@
   .bubble{max-width:82%; padding:13px 16px; border-radius:18px; font-size:14.5px; line-height:1.5; box-shadow:var(--shadow-sm);}
   .bubble.me{align-self:flex-end; background:linear-gradient(135deg,var(--sage-deep),var(--sage-deeper)); color:#fff; border-bottom-right-radius:6px;}
   .bubble.here{align-self:flex-start; background:var(--card); border:1px solid var(--line); border-bottom-left-radius:6px;}
+  .bubble-actions{display:flex; gap:6px; margin-top:8px; flex-wrap:wrap;}
+  .bubble-actions button{
+    border:none; background:var(--bg-warm); color:var(--sage-deep); font-size:11.5px; font-weight:600;
+    padding:6px 11px; border-radius:100px; cursor:pointer;
+  }
+  .chat-suggestions{display:flex; flex-wrap:wrap; gap:8px; padding:2px 4px 4px; align-self:stretch; max-width:100%;}
+  .chat-suggestions button{
+    border:1px solid var(--line); background:var(--card); color:var(--ink); font-size:12.5px;
+    padding:9px 14px; border-radius:100px; cursor:pointer; text-align:left; box-shadow:var(--shadow-sm);
+  }
+  .chat-suggestions button:active{transform:scale(0.96);}
   .chat-inputbar{display:flex; gap:10px; padding:12px 20px calc(14px + env(safe-area-inset-bottom)); border-top:1px solid var(--line); background:var(--bg);}
   .chat-inputbar input{flex:1; border-radius:100px; padding:13px 18px;}
   .chat-send{width:46px; height:46px; border-radius:50%; background:linear-gradient(135deg,var(--sage-deep),var(--sage-deeper)); color:#fff; border:none; flex:none; cursor:pointer; font-size:16px; box-shadow:0 6px 16px rgba(44,79,59,0.3);}
@@ -704,7 +733,7 @@
 
     <div class="week-streak" id="home-week-streak"></div>
 
-    <div class="hero-card" onclick="openPalabra()">
+    <div class="hero-card" onclick="startNecesitoPalabra()">
       <div class="light"></div>
       <div class="light two"></div>
       <h2>Necesito una palabra</h2>
@@ -757,6 +786,26 @@
   <!-- SENTIR RESULT -->
   <section class="screen noNav" id="sentir-result">
     <div class="verse-stage" id="sentir-stage"></div>
+  </section>
+
+  <!-- PALABRA INTRO: respira -->
+  <section class="screen noNav" id="palabraIntro">
+    <div class="verse-stage scened scene-clouds" style="justify-content:center; align-items:center;">
+      <div class="close-x" onclick="go('home')">✕</div>
+      <p class="serif breathe-text">Respira.</p>
+    </div>
+  </section>
+
+  <!-- PALABRA ASK: ¿qué necesitas escuchar hoy? -->
+  <section class="screen noNav" id="palabraAsk" style="position:relative;">
+    <div class="backbtn" style="position:absolute; top:20px; left:20px; z-index:5;" onclick="go('home')">✕</div>
+    <div class="container" style="padding-top:60px;">
+      <h2 class="serif" style="font-size:23px;">¿Qué necesitas escuchar hoy?</h2>
+    </div>
+    <div class="feel-grid" id="palabraAsk-grid"></div>
+    <div class="container" style="padding-top:4px;">
+      <button class="btn btn-ghost" onclick="openPalabraFreeText()">✍️ Escribir lo que estoy viviendo</button>
+    </div>
   </section>
 
   <!-- PALABRA (necesito una palabra) -->
@@ -898,7 +947,13 @@
 
   <!-- CHAT CON HERE -->
   <section class="screen noNav" id="chat" style="padding-bottom:0;">
-    <div class="topbar"><div class="backbtn" onclick="go('home')">←</div><h2>Habla con HERE</h2></div>
+    <div class="topbar" style="flex-direction:column; align-items:flex-start; gap:2px;">
+      <div style="display:flex; align-items:center; gap:14px; width:100%;">
+        <div class="backbtn" onclick="go('home')">←</div>
+        <h2>Estoy aquí contigo.</h2>
+      </div>
+      <p style="color:var(--ink-soft); font-size:13px; margin:2px 0 0 52px;">Cuéntame qué estás viviendo.</p>
+    </div>
     <div class="chat-body" id="chat-body"></div>
     <div class="chat-inputbar">
       <input type="text" id="chat-input" placeholder="Escribe lo que tienes en el corazón…" onkeydown="if(event.key==='Enter') sendChatMessage();">
@@ -1118,6 +1173,88 @@ const SENTIR_CATS = [
  {id:'esperanza', label:'Esperanza', emoji:'🌅', tag:'esperanza', line:'Puedes quedarte aquí un momento.'},
  {id:'nose', label:'No sé qué siento', emoji:'✨', tag:'paz', line:'No tienes que explicarlo perfectamente.'},
 ];
+
+/* categorías para "Necesito una palabra" (hero de Inicio) */
+const NECESITO_CATS = [
+ {id:'cansado', label:'Estoy cansado', emoji:'🌙', tag:'cansancio'},
+ {id:'miedo2', label:'Tengo miedo', emoji:'🌊', tag:'miedo'},
+ {id:'triste2', label:'Estoy triste', emoji:'🌧️', tag:'tristeza'},
+ {id:'esperanza2', label:'Necesito esperanza', emoji:'🌅', tag:'esperanza'},
+ {id:'agradecido2', label:'Estoy agradecido', emoji:'🤍', tag:'agradecido'},
+ {id:'direccion2', label:'Necesito dirección', emoji:'🧭', tag:'dirección'},
+ {id:'solo2', label:'Me siento solo', emoji:'🫂', tag:'soledad'},
+ {id:'volver', label:'Quiero volver a Dios', emoji:'✨', tag:'fe'},
+ {id:'perdonar', label:'Necesito perdonar', emoji:'🕊️', tag:'perdón'},
+ {id:'nose2', label:'No sé qué siento', emoji:'💭', tag:'aleatorio'},
+];
+
+/* ---------------- reflexión breve (capa mock — lista para conectarse a un modelo/IA real) ---------------- */
+const REFLEXION_MOCK = {
+  cansancio:{ contexto:'Muchos de estos pasajes nacieron en medio del cansancio de personas que seguían caminando sin fuerzas visibles.', reflexion:'No tienes que producir descanso por tu cuenta; se te ofrece, no se te exige.' },
+  miedo:{ contexto:'La Biblia no le pide a nadie que finja no sentir miedo, sino que no camine solo con él.', reflexion:'Puedes nombrar tu miedo hoy sin que eso signifique que la fe te falló.' },
+  tristeza:{ contexto:'La tristeza aparece una y otra vez en las Escrituras, siempre acompañada, nunca ignorada.', reflexion:'Está bien que hoy no tengas ánimo. Este es un lugar para quedarte así un momento.' },
+  esperanza:{ contexto:'Estas palabras se escribieron para personas que todavía no veían el final de lo que estaban viviendo.', reflexion:'Esperar no es no hacer nada; es confiar en que hay algo más adelante que aún no ves.' },
+  agradecido:{ contexto:'La gratitud, en la Biblia, no depende de que todo esté bien — es una forma de mirar.', reflexion:'Puedes traer hoy lo bueno que estás viviendo, por pequeño que parezca.' },
+  'dirección':{ contexto:'Muchas personas en la Biblia tomaron decisiones importantes sin ver el camino completo por adelantado.', reflexion:'No necesitas ver todo el trayecto para dar el siguiente paso.' },
+  soledad:{ contexto:'La soledad es una de las experiencias humanas más nombradas en las Escrituras.', reflexion:'Sentirte solo hoy no significa que lo estés de la forma en que más importa.' },
+  fe:{ contexto:'Volver no siempre es un gran momento; muchas veces es una decisión pequeña y silenciosa.', reflexion:'No necesitas tener todo resuelto para acercarte de nuevo.' },
+  'perdón':{ contexto:'Perdonar en la Biblia rara vez se describe como algo instantáneo — es un camino, no un instante.', reflexion:'Puedes empezar hoy sin sentir que ya terminaste el proceso.' },
+  _default:{ contexto:'Este versículo ha acompañado a muchas personas en momentos parecidos al tuyo.', reflexion:'A veces no hace falta una respuesta completa, solo una palabra que sostenga el día de hoy.' },
+};
+function reflectionFor(tag){ return REFLEXION_MOCK[tag] || REFLEXION_MOCK._default; }
+
+/* ---------------- búsqueda semántica (capa mock — reemplazable por un servicio real de embeddings) ---------------- */
+const SEMANTIC_KEYWORDS = {
+  ansiedad:['ansiedad','ansioso','ansiosa','nervios','preocup','estrés','estres','agobiad'],
+  miedo:['miedo','temor','asustad','pánico','panico'],
+  tristeza:['triste','tristeza','llorar','deprimid'],
+  soledad:['solo','sola','soledad','nadie','abandonad'],
+  duelo:['perdí','perdi','murió','murio','muerte','luto','duelo'],
+  cansancio:['cansad','agotad','sin fuerzas','exhaust'],
+  'dirección':['decisión','decision','qué hacer','que hacer','dirección','direccion','guía','guia','camino'],
+  'perdón':['perdon','perdón','perdonar','ofendi','rencor'],
+  esperanza:['esperanza','futuro','desanimad','empezar de nuevo','nuevo comienzo'],
+  fe:['fe','lejos de dios','volver a dios','duda','dudas'],
+  agradecido:['gracias','agradecid','bendición','bendicion'],
+  familia:['familia','hijo','hija','papá','papa','mamá','mama','matrimonio','esposo','esposa'],
+  paz:['paz','calma','tranquilidad'],
+  enfermedad:['enferm','sanidad','salud','dolor físico','dolor fisico'],
+};
+function allVersesPool(){
+  const seen = new Set(); const out = [];
+  [...VERSES, ...DAILY_VERSES].forEach(v=>{ if(!seen.has(v.ref)){ seen.add(v.ref); out.push(v); } });
+  return out;
+}
+function semanticSearch(query, limit){
+  limit = limit || 4;
+  const q = (query||'').toLowerCase();
+  const matchedTags = Object.keys(SEMANTIC_KEYWORDS).filter(tag => SEMANTIC_KEYWORDS[tag].some(kw => q.includes(kw)));
+  const pool = allVersesPool();
+  let scored = pool.map(v=>{
+    let score = 0;
+    matchedTags.forEach(t=>{ if(v.tags.includes(t)) score += 2; });
+    return {v, score};
+  });
+  scored = scored.filter(x=>x.score>0);
+  if(!scored.length){
+    scored = pool.filter(v=>v.tags.includes('paz')||v.tags.includes('esperanza')).map(v=>({v,score:1}));
+  }
+  scored.sort((a,b)=>b.score-a.score);
+  const out = [];
+  for(const {v} of scored){ if(!out.includes(v)) out.push(v); if(out.length>=limit) break; }
+  return { verses: out, matchedTags };
+}
+function whyRelevant(matchedTags){
+  const label = {
+    ansiedad:'la ansiedad', miedo:'el miedo', tristeza:'la tristeza', soledad:'la soledad',
+    duelo:'el duelo', cansancio:'el cansancio', 'dirección':'buscar dirección', 'perdón':'el perdón',
+    esperanza:'la esperanza', fe:'la fe', agradecido:'la gratitud', familia:'la familia',
+    paz:'la paz', enfermedad:'la sanidad',
+  };
+  if(!matchedTags || !matchedTags.length) return 'Puede acompañarte en lo que estás viviendo hoy.';
+  const words = matchedTags.slice(0,2).map(t=>label[t]||t);
+  return `Lo relacionamos con ${words.join(' y ')}, algo cercano a lo que escribiste.`;
+}
 
 const BOOKS = {
   "Antiguo Testamento":{
@@ -1468,6 +1605,7 @@ function buildFeelGrid(containerId, list, onPick){
 }
 buildFeelGrid('sentir-grid', SENTIR_CATS, (f)=>openSentirResult(f));
 buildFeelGrid('checkin-grid', FEELINGS, (f)=>{ openPalabra(f.tag); });
+buildFeelGrid('palabraAsk-grid', NECESITO_CATS, (f)=>{ openPalabra(f.tag); });
 
 const HOME_SUBLINES = [
   'Qué bueno que estás aquí.',
@@ -1558,8 +1696,52 @@ function pickTodayVerse(){
 }
 
 /* ---------------- "necesito una palabra" ---------------- */
+function startNecesitoPalabra(){
+  go('palabraIntro');
+  setTimeout(()=>{ if(currentScreen==='palabraIntro') go('palabraAsk'); }, 1700);
+}
+function openPalabraFreeText(){
+  openSheet(`
+    <div class="handle"></div>
+    <p style="margin-bottom:8px; font-size:15.5px;">¿Qué estás viviendo?</p>
+    <textarea id="palabra-free-text" rows="4" placeholder="Escribe con libertad, sin buscar la palabra perfecta…"></textarea>
+    <button class="btn btn-primary" style="margin-top:12px;" onclick="submitPalabraFreeText()">Recibir una palabra</button>
+  `);
+}
+async function submitPalabraFreeText(){
+  const val = document.getElementById('palabra-free-text').value.trim();
+  if(!val) return;
+  closeSheet();
+  await palabraFromText(val);
+}
+async function palabraFromText(text){
+  let chosenVerse = null, matchedTags = [];
+  if(claudeSample){
+    try{
+      const pool = allVersesPool();
+      const list = pool.map((v,i)=>`${i}: ${v.ref} — temas: ${v.tags.join(', ')}`).join('\n');
+      const prompt = `Alguien escribió sobre lo que está viviendo: "${text}". Aquí hay una lista numerada de versículos disponibles (NO inventes otros, elige solo de esta lista):\n${list}\n\nResponde solo JSON: {"main": <indice del más relevante>, "tags": [<hasta 2 temas de esa entrada que expliquen la elección>]}`;
+      const res = await claudeSample.json(prompt, {modelTier:'quick'});
+      if(res && typeof res.main === 'number' && pool[res.main]){ chosenVerse = pool[res.main]; matchedTags = res.tags||[]; }
+    }catch(e){ chosenVerse = null; }
+  }
+  if(!chosenVerse){
+    const r = semanticSearch(text, 1);
+    chosenVerse = r.verses[0] || VERSES[0];
+    matchedTags = r.matchedTags;
+  }
+  currentPalabraVerse = chosenVerse;
+  currentPalabraWhy = whyRelevant(matchedTags);
+  haptic(16);
+  renderPalabra();
+  go('palabra');
+  setTimeout(playChime, 200);
+  resolveVerseText(chosenVerse).then(()=>{ if(currentScreen==='palabra' && currentPalabraVerse===chosenVerse) renderPalabra(); });
+}
+let currentPalabraWhy = null;
 function openPalabra(tag){
   currentPalabraVerse = verseForTag(tag || 'paz');
+  currentPalabraWhy = null;
   haptic(16);
   renderPalabra();
   go('palabra');
@@ -1569,6 +1751,7 @@ function openPalabra(tag){
 }
 function renderPalabra(){
   const v = currentPalabraVerse;
+  const rx = reflectionFor(v.tags && v.tags[0]);
   const stage = document.getElementById('palabra-stage');
   applyScene(stage, sceneForTag(v.tags[0]));
   stage.innerHTML = `
@@ -1577,11 +1760,16 @@ function renderPalabra(){
     <div class="eyebrow">Una palabra para ti</div>
     <p class="verse serif">"${v.text}"</p>
     <p class="ref">${v.ref}</p>
+    ${currentPalabraWhy ? `<p class="palabra-why">${currentPalabraWhy}</p>` : ''}
+    <div class="palabra-reflect">
+      <p>${rx.contexto}</p>
+      <p style="margin-top:10px;">${rx.reflexion}</p>
+    </div>
     <div class="verse-actions">
       <div class="action-pill" onclick="toggleSave('${v.ref}')">${isSaved(v.ref)?'♥':'♡'} Guardar</div>
       <div class="action-pill" onclick="shareVerse('${v.ref}')">↗ Compartir</div>
       <div class="action-pill" onclick="openPalabra()">🔄 Otra palabra</div>
-      <div class="action-pill" onclick="openEntender('${v.ref}')">Leer contexto</div>
+      <div class="action-pill" onclick="openEntender('${v.ref}')">Si quieres profundizar →</div>
       <div class="action-pill" onclick="prefillOrar('${v.ref}')">Orar sobre esto</div>
     </div>
     <div style="margin-top:30px;"><button class="btn-text" onclick="openQuedarme()">Quiero quedarme aquí.</button></div>
@@ -2014,6 +2202,14 @@ function deleteReflection(idx){
 
 /* ---------------- chat con HERE (usa la capacidad "sample") ---------------- */
 const CHAT_PERSONA = "Eres el acompañante espiritual de la app cristiana HERE. Respondes en español, en 2-5 frases, con un tono cálido, cercano y sereno, nunca sermoneador. Puedes hablar de fe, la Biblia, oración y vida espiritual. No inventes citas bíblicas literales ni referencias exactas; si mencionas un pasaje, hazlo de forma general. No diagnostiques condiciones de salud mental ni reemplaces a un profesional o a un pastor: si la persona describe una crisis seria, anímala con cariño a buscar apoyo humano además de seguir hablando contigo.";
+const CHAT_SUGGESTIONS = [
+  'Me siento lejos de Dios',
+  'Estoy pasando por un momento difícil',
+  'No sé qué decisión tomar',
+  'Quiero volver a tener fe',
+  'Necesito agradecer',
+  'Quiero entender este versículo',
+];
 function startChat(){
   chatStarted = true;
   chatHistory = [];
@@ -2022,8 +2218,38 @@ function startChat(){
 }
 function renderChat(){
   const body = document.getElementById('chat-body');
-  body.innerHTML = chatHistory.map(m=>`<div class="bubble ${m.role==='user'?'me':'here'}">${m.text.replace(/\n/g,'<br>')}</div>`).join('');
+  const msgs = chatHistory.map((m,i)=>{
+    if(m.role==='user') return `<div class="bubble me">${m.text.replace(/\n/g,'<br>')}</div>`;
+    const actions = m.text==='…' ? '' : `
+      <div class="bubble-actions">
+        <button onclick="saveChatMessage(${i})">♡ Guardar</button>
+        <button onclick="openReflectionEditor('Conversación con HERE', chatHistory[${i}].text)">Reflexionar</button>
+        <button onclick="prefillOrarFromText(chatHistory[${i}].text)">Orar</button>
+      </div>`;
+    return `<div class="bubble here">${m.text.replace(/\n/g,'<br>')}${actions}</div>`;
+  }).join('');
+  const showSuggestions = chatHistory.length<=1;
+  body.innerHTML = msgs + (showSuggestions ? `
+    <div class="chat-suggestions">
+      ${CHAT_SUGGESTIONS.map((s,si)=>`<button onclick="sendChatSuggestion(CHAT_SUGGESTIONS[${si}])">${s}</button>`).join('')}
+    </div>` : '');
   body.scrollTop = body.scrollHeight;
+}
+function saveChatMessage(i){
+  const m = chatHistory[i];
+  if(!m) return;
+  reflections.push({ref:'Conversación con HERE', text:'', note:m.text, date:Date.now()});
+  save('here_reflections', reflections);
+  haptic(12);
+}
+function prefillOrarFromText(text){
+  go('orar');
+  const short = text.length>90 ? text.slice(0,90)+'…' : text;
+  document.getElementById('orar-input').value = `Sobre esto: ${short} `;
+}
+function sendChatSuggestion(text){
+  document.getElementById('chat-input').value = text;
+  sendChatMessage();
 }
 function addChatBubble(role, text){
   chatHistory.push({role, text});
@@ -2057,39 +2283,45 @@ async function runSearch(){
   const results = document.getElementById('search-results');
   if(!q) return;
   results.innerHTML = '<div class="container" style="padding-top:0;"><p style="color:var(--ink-soft);">Buscando <span class="loading-dot"></span></p></div>';
-  let chosen = null;
+  const pool = allVersesPool();
+  let main = null, others = [], matchedTags = [];
   if(claudeSample){
     try{
-      const list = VERSES.map((v,i)=>`${i}: ${v.ref} — temas: ${v.tags.join(', ')}`).join('\n');
-      const prompt = `Un usuario escribió: "${q}". Aquí hay una lista numerada de versículos disponibles (NO inventes otros, elige solo de esta lista):\n${list}\n\nResponde solo JSON con este formato: {"main": <indice del más relevante>, "others": [<hasta 3 índices más relevantes>]}`;
+      const list = pool.map((v,i)=>`${i}: ${v.ref} — temas: ${v.tags.join(', ')}`).join('\n');
+      const prompt = `Un usuario escribió: "${q}". Aquí hay una lista numerada de versículos disponibles (NO inventes otros, elige solo de esta lista):\n${list}\n\nResponde solo JSON con este formato: {"main": <indice del más relevante>, "others": [<hasta 3 índices más relevantes>], "tags": [<hasta 2 temas que expliquen por qué es relevante>]}`;
       const res = await claudeSample.json(prompt, {modelTier:'quick'});
-      if(res && typeof res.main === 'number' && VERSES[res.main]) chosen = res;
-    }catch(e){ chosen = null; }
+      if(res && typeof res.main === 'number' && pool[res.main]){
+        main = pool[res.main];
+        others = (res.others||[]).map(i=>pool[i]).filter(Boolean);
+        matchedTags = res.tags||[];
+      }
+    }catch(e){ main = null; }
   }
-  if(!chosen){
-    // fallback: simple keyword overlap
-    const words = q.toLowerCase().split(/\s+/);
-    let scored = VERSES.map((v,i)=>({i, score: v.tags.filter(t=>words.some(w=>t.includes(w)||w.includes(t))).length}));
-    scored.sort((a,b)=>b.score-a.score);
-    chosen = {main: scored[0].i, others: scored.slice(1,4).map(s=>s.i)};
+  if(!main){
+    const r = semanticSearch(q, 4);
+    main = r.verses[0];
+    others = r.verses.slice(1);
+    matchedTags = r.matchedTags;
   }
-  const main = VERSES[chosen.main];
-  const others = (chosen.others||[]).map(i=>VERSES[i]).filter(Boolean);
+  if(!main){ results.innerHTML = ''; return; }
   await Promise.all([main, ...others].map(v=>resolveVerseText(v)));
+  const why = whyRelevant(matchedTags);
   results.innerHTML = `
     <div class="container" style="padding-top:0;">
-      <p style="font-size:13px; color:var(--ink-soft); margin-bottom:10px;">Encontré esto para ti</p>
-      <div class="list-card" style="margin:0 0 14px; flex-direction:column; align-items:flex-start; gap:6px;" onclick="openPalabraFromRef('${main.ref}')">
+      <p style="font-size:13px; color:var(--ink-soft); margin-bottom:10px;">Encontramos esto para ti</p>
+      <div class="list-card" style="margin:0 0 8px; flex-direction:column; align-items:flex-start; gap:6px;" onclick="openPalabraFromRef('${main.ref.replace(/'/g,"\\'")}')">
         <div class="t serif" style="font-style:italic;">"${main.text}"</div>
         <div class="s">${main.ref}</div>
       </div>
+      <p style="font-size:12.5px; color:var(--ink-soft); margin:0 0 16px; font-style:italic;">${why}</p>
       ${others.length?'<p style="font-size:13px; color:var(--ink-soft); margin-bottom:8px;">También relacionados</p>':''}
-      ${others.map(o=>`<div class="list-card" style="margin:0 0 8px;" onclick="openPalabraFromRef('${o.ref}')"><div><div class="t">${o.ref}</div></div><span>→</span></div>`).join('')}
+      ${others.map(o=>`<div class="list-card" style="margin:0 0 8px;" onclick="openPalabraFromRef('${o.ref.replace(/'/g,"\\'")}')"><div><div class="t">${o.ref}</div></div><span>→</span></div>`).join('')}
     </div>
   `;
 }
 function openPalabraFromRef(ref){
   currentPalabraVerse = findVerse(ref);
+  currentPalabraWhy = null;
   renderPalabra();
   go('palabra');
   const v = currentPalabraVerse;
