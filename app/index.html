@@ -227,15 +227,18 @@
   .guiada-btn:active{transform:scale(0.97);}
 
   /* scenes: dynamic gradients standing in for photographic backdrops */
-  .scene-sunrise{background: linear-gradient(160deg, #F6D9A4, #E3906B 48%, #6C4A6C 100%);}
-  .scene-water{background: linear-gradient(160deg, #C9E7E3, #4E93A3 55%, #1F4E5C 100%);}
-  .scene-sky{background: linear-gradient(160deg, #CFE1F5, #7BA6D1 58%, #3B5D82 100%);}
-  .scene-rain{background: linear-gradient(160deg, #A9B7C2, #66798A 55%, #303C46 100%);}
-  .scene-nature{background: linear-gradient(160deg, #C6E0B8, #74A97D 55%, #2E4D33 100%);}
-  .scene-clouds{background: linear-gradient(160deg, #EEF2F4, #B4C2CE 55%, #64798A 100%);}
-  .scene-mountains{background: linear-gradient(160deg, #8AA0B0, #45596C 55%, #1E2933 100%);}
-  .scene-night{background: linear-gradient(160deg, #2B3654, #151B2C 60%, #05070C 100%);}
-  .scene-candle{background: radial-gradient(circle at 50% 28%, #F7D488, #C97A3C 46%, #34210F 100%);}
+  /* Cada escena es una foto real de paisaje (con licencia libre, vía Unsplash) con un velo de color
+     encima — el velo mantiene el texto blanco legible y conserva el tono emocional de cada momento.
+     Si el teléfono no tiene internet la foto no carga, pero el degradado de color se ve igual. */
+  .scene-sunrise{background: linear-gradient(160deg, rgba(246,217,164,0.5), rgba(227,144,107,0.55) 48%, rgba(108,74,108,0.78) 100%), url('https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?auto=format&fit=crop&w=1400&q=65') center/cover no-repeat, linear-gradient(160deg, #F6D9A4, #E3906B 48%, #6C4A6C 100%);}
+  .scene-water{background: linear-gradient(160deg, rgba(201,231,227,0.45), rgba(78,147,163,0.55) 55%, rgba(31,78,92,0.8) 100%), url('https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=1400&q=65') center/cover no-repeat, linear-gradient(160deg, #C9E7E3, #4E93A3 55%, #1F4E5C 100%);}
+  .scene-sky{background: linear-gradient(160deg, rgba(207,225,245,0.4), rgba(123,166,209,0.5) 55%, rgba(59,93,130,0.75) 100%), url('https://images.unsplash.com/photo-1603437873662-dc1f44901825?auto=format&fit=crop&w=1400&q=65') center/cover no-repeat, linear-gradient(160deg, #CFE1F5, #7BA6D1 58%, #3B5D82 100%);}
+  .scene-rain{background: linear-gradient(160deg, rgba(169,183,194,0.5), rgba(102,121,138,0.6) 55%, rgba(48,60,70,0.82) 100%), url('https://images.unsplash.com/photo-1470432581262-e7880e8fe79a?auto=format&fit=crop&w=1400&q=65') center/cover no-repeat, linear-gradient(160deg, #A9B7C2, #66798A 55%, #303C46 100%);}
+  .scene-nature{background: linear-gradient(160deg, rgba(198,224,184,0.45), rgba(116,169,125,0.55) 55%, rgba(46,77,51,0.8) 100%), url('https://images.unsplash.com/photo-1595104615356-cbe9c4364513?auto=format&fit=crop&w=1400&q=65') center/cover no-repeat, linear-gradient(160deg, #C6E0B8, #74A97D 55%, #2E4D33 100%);}
+  .scene-clouds{background: linear-gradient(160deg, rgba(238,242,244,0.4), rgba(180,194,206,0.5) 55%, rgba(100,121,138,0.75) 100%), url('https://images.unsplash.com/photo-1595661671412-e20c4a3e65cc?auto=format&fit=crop&w=1400&q=65') center/cover no-repeat, linear-gradient(160deg, #EEF2F4, #B4C2CE 55%, #64798A 100%);}
+  .scene-mountains{background: linear-gradient(160deg, rgba(138,160,176,0.45), rgba(69,89,108,0.55) 55%, rgba(30,41,51,0.8) 100%), url('https://images.unsplash.com/photo-1500964757637-c85e8a162699?auto=format&fit=crop&w=1400&q=65') center/cover no-repeat, linear-gradient(160deg, #8AA0B0, #45596C 55%, #1E2933 100%);}
+  .scene-night{background: linear-gradient(160deg, rgba(43,54,84,0.55), rgba(21,27,44,0.7) 55%, rgba(5,7,12,0.88) 100%), url('https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?auto=format&fit=crop&w=1400&q=65') center/cover no-repeat, linear-gradient(160deg, #2B3654, #151B2C 60%, #05070C 100%);}
+  .scene-candle{background: radial-gradient(circle at 50% 28%, rgba(247,212,136,0.55), rgba(201,122,60,0.6) 46%, rgba(52,33,15,0.85) 100%), url('https://images.unsplash.com/photo-1561212856-44e9bae482aa?auto=format&fit=crop&w=1400&q=65') center/cover no-repeat, radial-gradient(circle at 50% 28%, #F7D488, #C97A3C 46%, #34210F 100%);}
   .verse-stage.scened{color:#fff;}
   .verse-stage.scened .eyebrow{color:rgba(255,255,255,0.78);}
   .verse-stage.scened .ref{color:rgba(255,255,255,0.92);}
@@ -1131,19 +1134,10 @@ function addSceneOverlay(stageEl){
 // Formas decorativas simples (sol, montañas, estrellas, olas) dibujadas en SVG para sugerir un paisaje,
 // sin depender de fotografías con derechos de autor.
 function sceneOverlaySVG(sceneClass){
-  const shapes = {
-    'scene-sunrise': `<circle cx="50%" cy="30%" r="46" fill="#fff" opacity="0.22"/><path d="M0,230 L60,170 L120,220 L190,150 L260,215 L340,160 L420,225 L480,190 L480,320 L0,320 Z" fill="#000" opacity="0.10"/>`,
-    'scene-water': `<path d="M0,250 Q60,230 120,250 T240,250 T360,250 T480,250 L480,320 L0,320 Z" fill="#fff" opacity="0.14"/><path d="M0,275 Q60,258 120,275 T240,275 T360,275 T480,275 L480,320 L0,320 Z" fill="#fff" opacity="0.1"/>`,
-    'scene-sky': `<circle cx="18%" cy="18%" r="20" fill="#fff" opacity="0.35"/><ellipse cx="70%" cy="22%" rx="46" ry="16" fill="#fff" opacity="0.22"/><ellipse cx="30%" cy="34%" rx="34" ry="12" fill="#fff" opacity="0.16"/>`,
-    'scene-rain': `<line x1="20%" y1="10%" x2="14%" y2="24%" stroke="#fff" stroke-width="2" opacity="0.25"/><line x1="45%" y1="6%" x2="39%" y2="20%" stroke="#fff" stroke-width="2" opacity="0.2"/><line x1="70%" y1="14%" x2="64%" y2="28%" stroke="#fff" stroke-width="2" opacity="0.22"/><line x1="88%" y1="4%" x2="82%" y2="18%" stroke="#fff" stroke-width="2" opacity="0.18"/>`,
-    'scene-nature': `<path d="M60,320 L60,200 M60,200 Q30,190 40,165 Q55,175 60,190 Q65,160 90,155 Q80,180 60,200" stroke="#fff" stroke-width="2" fill="none" opacity="0.28"/><path d="M400,320 L400,220 M400,220 Q375,210 385,190 Q398,198 400,210 Q404,185 425,180 Q416,202 400,220" stroke="#fff" stroke-width="2" fill="none" opacity="0.22"/>`,
-    'scene-clouds': `<ellipse cx="25%" cy="20%" rx="50" ry="17" fill="#fff" opacity="0.3"/><ellipse cx="60%" cy="30%" rx="38" ry="13" fill="#fff" opacity="0.2"/><ellipse cx="80%" cy="16%" rx="30" ry="11" fill="#fff" opacity="0.24"/>`,
-    'scene-mountains': `<path d="M0,260 L90,150 L150,210 L230,120 L320,240 L400,180 L480,260 L480,320 L0,320 Z" fill="#000" opacity="0.16"/><path d="M0,290 L120,220 L220,270 L340,200 L480,280 L480,320 L0,320 Z" fill="#000" opacity="0.1"/>`,
-    'scene-night': `<circle cx="80%" cy="14%" r="4" fill="#fff" opacity="0.7"/><circle cx="65%" cy="24%" r="2.5" fill="#fff" opacity="0.55"/><circle cx="30%" cy="10%" r="3" fill="#fff" opacity="0.6"/><circle cx="18%" cy="26%" r="2" fill="#fff" opacity="0.45"/><circle cx="50%" cy="17%" r="2.5" fill="#fff" opacity="0.5"/><circle cx="90%" cy="34%" r="2" fill="#fff" opacity="0.4"/>`,
-    'scene-candle': `<ellipse cx="50%" cy="30%" rx="40" ry="60" fill="#FFE1A6" opacity="0.28"/>`
-  };
-  const s = shapes[sceneClass] || '';
-  return `<svg class="scene-svg" viewBox="0 0 480 320" preserveAspectRatio="xMidYMax slice" style="position:absolute; inset:0; width:100%; height:100%; z-index:1; pointer-events:none;">${s}</svg>`;
+  // Antes se dibujaban formas decorativas (sol, montañas, estrellas...) en SVG para simular un paisaje.
+  // Ahora cada escena ya es una foto real (ver los .scene-* en el CSS), así que aquí ya no se dibuja nada
+  // — se deja la función para no tener que tocar cada lugar donde se llama.
+  return '';
 }
 
 /* ---------------- versículos resaltados (persistente, distinto del "picked" al tocar) ---------------- */
