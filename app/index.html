@@ -347,6 +347,7 @@
   .loading-dot{display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--gold); animation:pulse 1.1s ease-in-out infinite;}
   @keyframes pulse{0%,100%{opacity:.3;} 50%{opacity:1;}}
   ::selection{background:var(--beige);}
+  .menu-toggle, .sidebar-backdrop{ display:none; }
 
   /* =========================================================================
      ESCRITORIO / PANTALLAS ANCHAS
@@ -358,20 +359,34 @@
   @media (min-width:900px){
     html, body{height:100%;}
     body{ display:block; background:var(--bg); }
-    #app{
-      max-width:none; width:100%; min-height:100vh;
-      display:grid; grid-template-columns:250px minmax(0,1fr); align-items:stretch;
-    }
+    #app{ max-width:none; width:100%; min-height:100vh; display:block; }
     #splash{ max-width:none; }
 
-    /* ---- menú lateral (reemplaza la barra inferior de teléfono) ---- */
-    .navbar{
-      display:flex !important; position:sticky; top:0; left:auto; transform:none;
-      width:100%; max-width:none; height:100vh; grid-column:1; grid-row:1/-1;
-      flex-direction:column; align-items:stretch; justify-content:flex-start; gap:5px;
-      padding:34px 16px; border-radius:0; border-top:none; border-right:1px solid var(--line);
-      box-shadow:none; background:var(--card); overflow-y:auto;
+    /* ---- botón hamburguesa, siempre visible en escritorio ---- */
+    .menu-toggle{
+      display:flex; align-items:center; justify-content:center;
+      position:fixed; top:24px; left:24px; z-index:260;
+      width:48px; height:48px; border-radius:50%; border:1px solid var(--line);
+      background:var(--card); box-shadow:var(--shadow-md); cursor:pointer; font-size:19px;
+      transition:transform .12s ease;
     }
+    .menu-toggle:active{ transform:scale(0.93); }
+    .sidebar-backdrop{
+      display:block; position:fixed; inset:0; background:rgba(20,19,16,0.42); z-index:250;
+      opacity:0; pointer-events:none; transition:opacity .2s ease;
+    }
+    .sidebar-backdrop.show{ opacity:1; pointer-events:auto; }
+
+    /* ---- menú lateral: cajón que se desliza sobre el contenido, no lo empuja ---- */
+    .navbar{
+      display:flex !important; position:fixed; top:0; left:0; bottom:auto; transform:translateX(-104%);
+      width:280px; max-width:80vw; height:100vh;
+      flex-direction:column; align-items:stretch; justify-content:flex-start; gap:5px;
+      padding:34px 16px; border-radius:0 24px 24px 0; border-top:none; border-right:1px solid var(--line);
+      box-shadow:0 0 50px rgba(0,0,0,0.22); background:var(--card); overflow-y:auto;
+      z-index:270; transition:transform .28s cubic-bezier(.22,.7,.25,1);
+    }
+    .navbar.open{ transform:translateX(0); }
     .navbar::before{
       content:'HERE'; font-family:'Fraunces'; font-weight:500; font-size:21px; color:var(--sage-deep);
       padding:4px 14px 26px; letter-spacing:.5px;
@@ -385,9 +400,10 @@
     .navbtn.active{ background:rgba(44,79,59,0.1); }
     .navbtn svg{ width:20px; height:20px; flex:none; }
 
-    /* ---- columna de contenido: usa todo el alto, dos anchos de lectura ---- */
-    .screen{ grid-column:2; min-height:100vh; padding-bottom:56px; }
+    /* ---- contenido: a todo el ancho, con espacio arriba para no chocar con el botón ---- */
+    .screen{ min-height:100vh; padding-bottom:56px; padding-top:74px; }
     .screen.noNav{ padding-bottom:0; }
+    #splash{ padding-top:0; }
 
     /* franjas de texto/listas: cómodas de leer, centradas con aire a los lados */
     .container, .book-grid, .feel-grid, .quick-row, .plan-row, .chapter-verse,
@@ -430,8 +446,6 @@
     .fab{ bottom:32px; }
   }
   @media (min-width:1180px){
-    .navbar{ width:270px; }
-    #app{ grid-template-columns:270px minmax(0,1fr); }
     .container, .book-grid, .feel-grid, .quick-row, .plan-row, .chapter-verse,
     .chapter-picker, .diario-entry, .top-greeting, .section-title, .hero-card,
     .feature-card, .tag-tabs, #search-results, .list-card, .chat-body, .chat-inputbar,
@@ -482,6 +496,9 @@
 </div>
 
 <div id="app">
+  <!-- Solo se ven/activan en pantallas anchas (CSS); en el teléfono no aparecen. -->
+  <button class="menu-toggle" id="menuToggle" onclick="toggleSidebar()" aria-label="Menú">☰</button>
+  <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
 
   <!-- ONBOARDING -->
   <section class="screen noNav" id="ob-1" style="justify-content:center; text-align:center;">
@@ -1197,6 +1214,21 @@ let chatStarted = false;
 let chatHistory = [];
 const WASHES = ['wash-sage','wash-slate','wash-gold','wash-terra'];
 
+/* ---------------- menú hamburguesa (solo escritorio, ver CSS) ---------------- */
+function toggleSidebar(){
+  const nav = document.getElementById('navbar');
+  const backdrop = document.getElementById('sidebarBackdrop');
+  const opening = !nav.classList.contains('open');
+  nav.classList.toggle('open', opening);
+  if(backdrop) backdrop.classList.toggle('show', opening);
+}
+function closeSidebar(){
+  const nav = document.getElementById('navbar');
+  const backdrop = document.getElementById('sidebarBackdrop');
+  if(nav) nav.classList.remove('open');
+  if(backdrop) backdrop.classList.remove('show');
+}
+
 function go(id, opts){
   opts = opts || {};
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
@@ -1215,6 +1247,7 @@ function go(id, opts){
   if(id==='biblia') { renderBooks(); renderPlanRow(); document.getElementById('search-results').innerHTML=''; }
   if(id==='orar') renderOraciones();
   if(id!=='reader') stopListen();
+  closeSidebar();
   window.scrollTo(0,0);
 }
 
