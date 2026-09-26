@@ -1596,8 +1596,13 @@ function closeSidebar(){
   if(backdrop) backdrop.classList.remove('show');
 }
 
+// Pantallas "de nivel superior": seguras para retomar tal cual al recargar la
+// página o al volver a abrir la app (no dependen de datos de un flujo a medias).
+const RESUMABLE_SCREENS = ['home','biblia','diario','orar','perfil','misPalabras','checkin'];
+
 function go(id, opts){
   opts = opts || {};
+  const changingScreen = id !== currentScreen;
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   const el = document.getElementById(id);
   el.classList.add('active');
@@ -1616,7 +1621,22 @@ function go(id, opts){
   if(id!=='reader') stopListen();
   closeSidebar();
   window.scrollTo(0,0);
+
+  // Historial del navegador: así el botón "atrás" del celular navega DENTRO
+  // de la app (regresa a la pantalla anterior) en vez de cerrarla de una vez.
+  if(changingScreen && !opts.fromPopstate){
+    try{ history.pushState({hereScreen:id}, '', location.href); }catch(e){}
+  }
+  // Recuerda la última pantalla "segura" para retomarla al recargar o volver
+  // a abrir la app, en vez de empezar siempre desde cero.
+  if(RESUMABLE_SCREENS.includes(id)){
+    try{ save('here_last_screen', id); }catch(e){}
+  }
 }
+window.addEventListener('popstate', (e)=>{
+  const target = (e.state && e.state.hereScreen) || 'home';
+  go(target, {fromPopstate:true});
+});
 
 /* ---------------- onboarding ---------------- */
 const OB2 = ["Acercarme a Dios","Leer la Biblia","Encontrar paz","Fortalecer mi fe","Entender la Biblia","Crear un hábito","Encontrar esperanza"];
@@ -2797,15 +2817,25 @@ if('serviceWorker' in navigator){
 
 /* ---------------- boot ---------------- */
 window.addEventListener('load', ()=>{
+  const onboardedEarly = load('here_onboarded', false);
+  // la bienvenida larga y cinematográfica solo tiene sentido la primera vez;
+  // si la persona ya usa HERE, no tiene que volver a esperarla cada vez que
+  // abre o recarga la app.
+  const splashDelay = onboardedEarly ? 700 : 4400;
+  const fadeMs = onboardedEarly ? 350 : 700;
   setTimeout(()=>{
-    document.getElementById('splash').style.transition = 'opacity .7s ease';
+    document.getElementById('splash').style.transition = `opacity ${fadeMs}ms ease`;
     document.getElementById('splash').style.opacity = '0';
     setTimeout(()=>{
       document.getElementById('splash').style.display='none';
       const onboarded = load('here_onboarded', false);
-      go(onboarded ? 'checkin' : 'ob-1');
-    }, 700);
-  }, 4400);
+      if(!onboarded){ go('ob-1'); return; }
+      // retoma la última pantalla "de nivel superior" en la que estaba la
+      // persona, en vez de mandarla siempre al check-in de "¿cómo te sientes?".
+      const lastScreen = load('here_last_screen', null);
+      go(RESUMABLE_SCREENS.includes(lastScreen) ? lastScreen : 'checkin', {fromPopstate:true});
+    }, fadeMs);
+  }, splashDelay);
 });
 </script>
 </body>
