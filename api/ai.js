@@ -46,13 +46,18 @@ module.exports = async function handler(req, res) {
   }
   // límite simple para evitar prompts descontrolados
   const safePrompt = prompt.slice(0, 6000);
-  const maxOutputTokens = modelTier === 'quick' ? 400 : 700;
+  const maxOutputTokens = modelTier === 'quick' ? 700 : 1200;
 
   const payload = {
     contents: [{ parts: [{ text: safePrompt }] }],
     generationConfig: {
       maxOutputTokens,
       temperature: 0.7,
+      // este modelo "piensa" antes de responder por defecto; para respuestas
+      // cortas como estas no lo necesitamos, y si no lo apagamos se puede
+      // gastar todo el espacio de la respuesta pensando y cortar el texto
+      // final a la mitad.
+      thinkingConfig: { thinkingBudget: 0 },
       ...(wantJson ? { responseMimeType: 'application/json' } : {}),
     },
   };
@@ -73,7 +78,10 @@ module.exports = async function handler(req, res) {
 
     const data = await geminiRes.json();
     const candidate = data.candidates && data.candidates[0];
-    const text = (candidate && candidate.content && candidate.content.parts && candidate.content.parts[0] && candidate.content.parts[0].text) || '';
+    const parts = (candidate && candidate.content && candidate.content.parts) || [];
+    // por si acaso el modelo manda alguna parte de "pensamiento" (thought:true)
+    // aunque la hayamos apagado arriba, la ignoramos y solo usamos la respuesta real.
+    const text = parts.filter((p) => p && p.text && !p.thought).map((p) => p.text).join('') || '';
 
     if (!text) {
       // la IA pudo haber bloqueado la respuesta (filtros de seguridad, etc.)
