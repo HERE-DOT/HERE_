@@ -38,6 +38,10 @@
     --shadow-sm: 0 3px 14px rgba(33,31,26,0.05);
     --shadow-md: 0 14px 34px rgba(33,31,26,0.09);
     --shadow-lg: 0 24px 52px rgba(33,31,26,0.15);
+    /* escala de espaciado y tipografía: para que pantallas nuevas (y las que
+       se vayan retocando) usen los mismos pasos en vez de números sueltos. */
+    --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px; --sp-5: 24px; --sp-6: 32px; --sp-7: 48px;
+    --fs-xs: 12px; --fs-sm: 13.5px; --fs-base: 15px; --fs-md: 16px; --fs-lg: 19px; --fs-xl: 23px; --fs-display: 28px;
   }
   :root{ color-scheme: light; }
   /* Modo noche: se activa con data-theme="dark" en <html>, controlado por
@@ -127,8 +131,8 @@
     transition:transform .15s ease, opacity .2s ease, box-shadow .2s ease;
   }
   .btn:active{transform:scale(0.97);}
-  .btn-primary{background:linear-gradient(135deg, var(--sage-deep), var(--sage-deeper)); color:#fff; box-shadow:0 10px 24px rgba(44,79,59,0.32);}
-  .btn-primary:active{box-shadow:0 4px 12px rgba(44,79,59,0.28);}
+  .btn-primary{background:var(--sage-deep); color:#fff; box-shadow:0 6px 16px rgba(44,79,59,0.22);}
+  .btn-primary:active{box-shadow:0 3px 10px rgba(44,79,59,0.2);}
   .btn-ghost{background:var(--card); color:var(--ink); border:1px solid var(--line); box-shadow:var(--shadow-sm);}
   .btn-text{background:none; border:none; color:var(--ink-soft); font-family:'Manrope'; font-size:14px; cursor:pointer;}
   .stack{display:flex; flex-direction:column; gap:12px;}
@@ -754,7 +758,7 @@
 
   <!-- MOOD CHECK-IN (every app open) -->
   <section class="screen noNav" id="checkin" style="position:relative;">
-    <div class="backbtn" style="position:absolute; top:20px; left:20px; z-index:5;" onclick="go('home')">✕</div>
+    <div class="close-x" onclick="go('home')">✕</div>
     <div class="container" style="padding-top:60px;">
       <h2 class="serif" style="font-size:23px;">¿Cómo te sientes hoy?</h2>
     </div>
@@ -843,7 +847,7 @@
 
   <!-- PALABRA ASK: ¿qué necesitas escuchar hoy? -->
   <section class="screen noNav" id="palabraAsk" style="position:relative;">
-    <div class="backbtn" style="position:absolute; top:20px; left:20px; z-index:5;" onclick="go('home')">✕</div>
+    <div class="close-x" onclick="go('home')">✕</div>
     <div class="container" style="padding-top:60px;">
       <h2 class="serif" style="font-size:23px;">¿Qué necesitas escuchar hoy?</h2>
     </div>
