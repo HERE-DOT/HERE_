@@ -559,7 +559,8 @@
   .empty{padding:60px 30px; text-align:center; color:var(--ink-soft);}
   .empty .light-dot{width:8px; height:8px; border-radius:50%; background:var(--gold); margin:0 auto 16px;}
 
-  .tag-tabs{display:flex; gap:8px; padding:0 24px 14px; overflow-x:auto; scrollbar-width:none;}
+  .tag-tabs{display:flex; gap:8px; padding:0 24px 14px; overflow-x:auto; scrollbar-width:none; position:relative;}
+  .tag-tabs::after{content:''; position:absolute; top:0; right:0; bottom:14px; width:30px; background:linear-gradient(to right, transparent, var(--bg) 75%); pointer-events:none;}
   .tag-tabs::-webkit-scrollbar{display:none;}
   .tag-tabs .tag-tab{flex:none;}
   .tag-tab{padding:9px 15px; border-radius:100px; font-size:13px; border:1px solid var(--line); background:var(--card); cursor:pointer; box-shadow:var(--shadow-sm); transition:transform .12s ease;}
