@@ -1898,9 +1898,34 @@ function shareVerse(ref){
   else { navigator.clipboard && navigator.clipboard.writeText(text).catch(()=>{}); alert('Copiado: '+text); }
 }
 
-/* ---------------- entender (uses "sample" AI capability when available) ---------------- */
-let claudeSample = null;
-(async ()=>{ try{ claudeSample = await claude.use('sample'); }catch(e){ claudeSample = null; } })();
+/* ---------------- IA de HERE ----------------
+   Todas las partes de la app que "piensan" (Entender, el chat, la búsqueda
+   inteligente, las oraciones generadas) llaman a esta función. Por dentro,
+   le pide el texto a una función que vive en el propio servidor de Vercel
+   (api/ai.js), para que la clave de la IA nunca quede expuesta en el
+   navegador. Si esa función no está conectada todavía (o falla por
+   cualquier motivo), cada pantalla ya sabe caer de vuelta a su contenido
+   de respaldo — por eso mantenemos la misma forma que tenía antes
+   (claudeSample(prompt) y claudeSample.json(prompt)). */
+async function claudeSample(prompt, opts){
+  const r = await fetch('/api/ai', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ prompt, modelTier: (opts && opts.modelTier) || 'default' })
+  });
+  if(!r.ok) throw new Error('IA no disponible ('+r.status+')');
+  const data = await r.json();
+  return { text: data.text || '' };
+}
+claudeSample.json = async function(prompt, opts){
+  const r = await fetch('/api/ai', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ prompt, modelTier: (opts && opts.modelTier) || 'default', json: true })
+  });
+  if(!r.ok) throw new Error('IA no disponible ('+r.status+')');
+  return await r.json();
+};
 
 async function openEntender(ref){
   const v = findVerse(ref);
