@@ -504,25 +504,36 @@
   .chapter-picker{padding:8px 24px 24px; display:grid; grid-template-columns:repeat(5,1fr); gap:9px;}
   .chapter-chip{padding:12px 0; text-align:center; border-radius:14px; background:var(--card); border:1px solid var(--line); font-size:14px; font-weight:600; cursor:pointer; box-shadow:var(--shadow-sm); transition:transform .12s ease;}
   .chapter-chip:active{transform:scale(0.93);}
-  .fontsize-ctrl{display:flex; align-items:center; gap:6px;}
+  .fontsize-ctrl{display:flex; align-items:center; gap:10px; justify-content:center;}
   .fontsize-ctrl button{
-    width:32px; height:32px; border-radius:50%; border:1px solid var(--line); background:var(--bg);
-    cursor:pointer; font-size:11.5px; font-weight:700; color:var(--ink-soft); box-shadow:var(--shadow-sm);
+    width:44px; height:44px; border-radius:50%; border:1px solid var(--line); background:var(--bg);
+    cursor:pointer; font-size:13px; font-weight:700; color:var(--ink-soft); box-shadow:var(--shadow-sm);
   }
-  .mini-player{display:flex; align-items:center; gap:8px;}
-  .mini-player button{width:36px; height:36px; border-radius:50%; border:1px solid var(--line); background:var(--bg); cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow-sm); flex:none;}
-  .mini-player button.play{width:42px; height:42px; background:linear-gradient(135deg,var(--sage-deep),var(--sage-deeper)); color:#fff; border:none; font-size:16px;}
-  .mini-player button:active{transform:scale(0.92);}
-  .reader-more-btn{width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:18px; line-height:1; color:var(--ink-soft); cursor:pointer; letter-spacing:1px; flex:none;}
-  .reader-more-btn:active{background:var(--beige);}
-  .reader-toolbar{
-    position:fixed; left:50%; bottom:calc(22px + env(safe-area-inset-bottom));
-    transform:translate(-50%, 14px); display:flex; align-items:center; gap:14px;
-    background:var(--card); border:1px solid var(--line); border-radius:100px;
-    padding:9px 14px; box-shadow:0 10px 30px rgba(20,19,16,0.16);
-    opacity:0; pointer-events:none; transition:opacity .22s ease, transform .22s ease; z-index:60;
+  .reader-icon-btn{width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; color:var(--ink-soft); cursor:pointer; flex:none; background:var(--card); border:1px solid var(--line); box-shadow:var(--shadow-sm);}
+  .reader-icon-btn:active{background:var(--beige);}
+  .reader-navpill{
+    position:fixed; left:50%; bottom:calc(18px + env(safe-area-inset-bottom));
+    transform:translateX(-50%); display:flex; align-items:center; gap:10px; z-index:60;
   }
-  .reader-toolbar.show{opacity:1; pointer-events:auto; transform:translate(-50%, 0);}
+  .reader-navpill .play{
+    width:46px; height:46px; border-radius:50%; border:none; flex:none; cursor:pointer;
+    background:linear-gradient(135deg,var(--sage-deep),var(--sage-deeper)); color:#fff; font-size:17px;
+    display:flex; align-items:center; justify-content:center; box-shadow:0 8px 22px rgba(44,79,59,0.35);
+  }
+  .reader-navpill .play:active{transform:scale(0.93);}
+  .reader-navpill .navgroup{
+    display:flex; align-items:center; gap:2px; background:var(--card); border:1px solid var(--line);
+    border-radius:100px; padding:6px 6px; box-shadow:0 10px 26px rgba(20,19,16,0.14);
+  }
+  .reader-navpill .navgroup button{
+    width:30px; height:30px; border-radius:50%; border:none; background:transparent; color:var(--ink-soft);
+    font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex:none;
+  }
+  .reader-navpill .navgroup button:active{background:var(--beige);}
+  .reader-navpill .navlabel{
+    padding:0 10px; font-size:11.5px; font-weight:700; letter-spacing:.03em; color:var(--ink); white-space:nowrap;
+    text-transform:uppercase;
+  }
 
   /* sheet */
   .sheet-backdrop{position:fixed; inset:0; background:rgba(20,19,16,0.45); z-index:200; display:none; align-items:flex-end; justify-content:center; backdrop-filter:blur(2px);}
@@ -953,21 +964,19 @@
   <!-- CHAPTER READER -->
   <section class="screen noNav" id="reader">
     <div class="topbar" style="justify-content:space-between;">
-      <div style="display:flex; align-items:center; gap:14px;"><div class="backbtn" onclick="stopListen(); go('biblia')">←</div><h2 id="reader-title"></h2></div>
-      <div class="reader-more-btn" onclick="toggleReaderToolbar()" aria-label="Más opciones de lectura">···</div>
-    </div>
-    <div class="chapter-verse" id="reader-content" onclick="readerBackgroundTap(event)"></div>
-    <div style="height:100px;"></div>
-    <div class="reader-toolbar" id="reader-toolbar">
-      <div class="fontsize-ctrl">
-        <button onclick="changeReaderFontSize(-1)" aria-label="Reducir texto">A-</button>
-        <button onclick="changeReaderFontSize(1)" aria-label="Aumentar texto">A+</button>
+      <div class="backbtn" onclick="stopListen(); go('biblia')">←</div>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <div class="reader-icon-btn" onclick="openFontSizeSheet()" aria-label="Tamaño de texto">Aa</div>
       </div>
-      <div style="width:1px; height:22px; background:var(--line); flex:none;"></div>
-      <div class="mini-player">
-        <button onclick="stepChapter(-1)" title="Capítulo anterior">⏮</button>
-        <button class="play" id="listen-btn" onclick="toggleListen()" title="Escuchar">🔊</button>
-        <button onclick="stepChapter(1)" title="Capítulo siguiente">⏭</button>
+    </div>
+    <div class="chapter-verse" id="reader-content"></div>
+    <div style="height:110px;"></div>
+    <div class="reader-navpill">
+      <button class="play" id="listen-btn" onclick="toggleListen()" title="Escuchar">🔊</button>
+      <div class="navgroup">
+        <button onclick="stepChapter(-1)" title="Capítulo anterior">‹</button>
+        <span class="navlabel" id="reader-title"></span>
+        <button onclick="stepChapter(1)" title="Capítulo siguiente">›</button>
       </div>
     </div>
   </section>
@@ -1673,10 +1682,6 @@ function go(id, opts){
     try{ save('here_last_screen', id); }catch(e){}
   }
 }
-window.addEventListener('scroll', ()=>{
-  if(currentScreen !== 'reader') return;
-  hideReaderToolbar();
-}, {passive:true});
 window.addEventListener('popstate', (e)=>{
   const target = (e.state && e.state.hereScreen) || 'home';
   go(target, {fromPopstate:true});
@@ -2197,32 +2202,22 @@ async function openChapter(book, chapterNum){
   applyReaderFontSize();
   const chKey = `${book} ${chapterNum}`;
   if(!visited.includes(chKey)){ visited.push(chKey); save('here_visited', visited); }
-  showReaderToolbar(true);
 }
-let readerToolbarTimer = null;
-function showReaderToolbar(autoHide){
-  const bar = document.getElementById('reader-toolbar');
-  if(!bar) return;
-  bar.classList.add('show');
-  clearTimeout(readerToolbarTimer);
-  if(autoHide !== false){
-    readerToolbarTimer = setTimeout(()=>{ bar.classList.remove('show'); }, 2800);
-  }
+function openFontSizeSheet(){
+  openSheet(`
+    <div class="handle"></div>
+    <p style="font-size:13px; color:var(--ink-soft); margin-bottom:16px; text-align:center;">Tamaño del texto</p>
+    <div class="fontsize-ctrl" style="margin-bottom:6px;">
+      <button onclick="changeReaderFontSize(-1)" aria-label="Reducir texto">A-</button>
+      <p class="serif" id="fontsize-preview" style="flex:1; text-align:center; font-style:italic; margin:0 6px;">Aa</p>
+      <button onclick="changeReaderFontSize(1)" aria-label="Aumentar texto">A+</button>
+    </div>
+  `);
+  updateFontSizePreview();
 }
-function hideReaderToolbar(){
-  const bar = document.getElementById('reader-toolbar');
-  if(bar) bar.classList.remove('show');
-  clearTimeout(readerToolbarTimer);
-}
-function toggleReaderToolbar(){
-  const bar = document.getElementById('reader-toolbar');
-  if(!bar) return;
-  if(bar.classList.contains('show')) hideReaderToolbar();
-  else showReaderToolbar(true);
-}
-function readerBackgroundTap(e){
-  if(e.target.closest && e.target.closest('.vtext')) return;
-  toggleReaderToolbar();
+function updateFontSizePreview(){
+  const p = document.getElementById('fontsize-preview');
+  if(p) p.style.fontSize = readerFontSize + 'px';
 }
 function applyReaderFontSize(){
   const el = document.getElementById('reader-content');
@@ -2232,6 +2227,7 @@ function changeReaderFontSize(delta){
   readerFontSize = Math.max(14, Math.min(24, readerFontSize + delta*2));
   save('here_reader_fontsize', readerFontSize);
   applyReaderFontSize();
+  updateFontSizePreview();
 }
 function stepChapter(dir){
   if(!currentReaderBook) return;
