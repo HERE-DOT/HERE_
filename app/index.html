@@ -97,30 +97,66 @@
   .serif{font-family:'Fraunces', serif;}
   .script{font-family:'Petit Formal Script', 'Brush Script MT', cursive;}
 
-  /* ---------- Splash ---------- */
+  /* ---------- Splash: "la puerta de luz" ----------
+     Oscuridad -> una línea fina de luz -> se abre como una puerta ->
+     detrás no hay una foto nueva, es la pantalla real de HERE (la que
+     iría a continuación) ya renderizada debajo -> HERE + tagline sobre
+     ella un instante -> se disuelve y queda la app real, interactiva. */
   #splash{
-    background:#000; display:flex; flex-direction:column; align-items:center; justify-content:center;
-    height:100vh; width:100%;
-    position:fixed; inset:0; z-index:999; max-width:480px; margin:0 auto; text-align:center; overflow:hidden;
+    /* Ojo: SIN fondo propio — el negro lo aportan solo las dos hojas de la
+       puerta (.door-leaf). Si este contenedor tuviera su propio background,
+       seguiría tapando la vista aunque las hojas ya se hubieran apartado. */
+    position:fixed; inset:0; z-index:999;
+    max-width:480px; margin:0 auto; overflow:hidden;
   }
-  .splash-stage{position:relative; width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center;}
-  .cross-svg{
-    position:absolute; left:50%; bottom:50%; margin-bottom:10px;
-    width:198px; height:257px;
-    transform:translateX(-50%) scale(0.45); transform-origin:bottom center;
-    opacity:0; z-index:1; overflow:visible;
-    animation: crossReveal 1.6s cubic-bezier(.22,.7,.25,1) forwards; animation-delay:.1s;
+  .door-leaf{
+    position:absolute; top:0; bottom:0; width:50%; background:#000; z-index:2;
   }
-  @keyframes crossReveal{ from{opacity:0; transform:translateX(-50%) scale(0.45);} to{opacity:1; transform:translateX(-50%) scale(1);} }
-  #splash .mark{
-    position:relative; z-index:2; font-family:'Manrope'; font-weight:700; font-size:46px; letter-spacing:2px;
-    color:#fff; opacity:0; animation: rise 1.1s ease forwards; animation-delay:.85s;
+  .door-leaf.l{
+    left:0;
+    background:
+      linear-gradient(to right, transparent 0%, transparent calc(100% - 3px), var(--gold-light) calc(100% - 2px), rgba(233,205,142,0.3) 100%),
+      #000;
+    animation: doorOpenL 3000ms cubic-bezier(.6,.02,.18,1) forwards;
   }
-  #splash .tag{
-    position:relative; z-index:2; font-family:'Petit Formal Script', 'Brush Script MT', cursive; font-size:27px; color:#F1EEE6;
-    margin-top:30px; opacity:0; animation: rise 1.3s ease forwards; animation-delay:2s;
+  .door-leaf.r{
+    right:0;
+    background:
+      linear-gradient(to left, transparent 0%, transparent calc(100% - 3px), var(--gold-light) calc(100% - 2px), rgba(233,205,142,0.3) 100%),
+      #000;
+    animation: doorOpenR 3000ms cubic-bezier(.6,.02,.18,1) forwards;
   }
-  @keyframes rise{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+  @keyframes doorOpenL{ 0%,13.3%{transform:translateX(0);} 46.6%,100%{transform:translateX(-100%);} }
+  @keyframes doorOpenR{ 0%,13.3%{transform:translateX(0);} 46.6%,100%{transform:translateX(100%);} }
+  .door-seam{
+    position:absolute; top:0; bottom:0; left:50%; width:2px; margin-left:-1px; z-index:3;
+    background:linear-gradient(180deg, transparent 0%, rgba(255,244,222,0.9) 20%, #fff 50%, rgba(255,244,222,0.9) 80%, transparent 100%);
+    box-shadow:0 0 20px 5px rgba(233,205,142,0.6);
+    opacity:0; animation: seamGlow 3000ms ease forwards;
+  }
+  @keyframes seamGlow{ 0%{opacity:0;} 6.6%{opacity:1;} 15%{opacity:1;} 32%{opacity:0;} 100%{opacity:0;} }
+  .splash-scrim{
+    position:absolute; inset:0; z-index:4; pointer-events:none;
+    background:radial-gradient(ellipse at 50% 42%, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.14) 45%, rgba(0,0,0,0) 72%);
+    opacity:0; animation: scrimFade 3000ms ease forwards;
+  }
+  @keyframes scrimFade{ 0%,46.6%{opacity:0;} 60%{opacity:1;} 76.6%{opacity:1;} 100%{opacity:0;} }
+  .splash-content{
+    position:absolute; inset:0; z-index:5; display:flex; flex-direction:column; align-items:center;
+    justify-content:center; text-align:center; opacity:0; pointer-events:none;
+    animation: contentFade 3000ms ease forwards;
+  }
+  @keyframes contentFade{
+    0%,43.3%{opacity:0; transform:translateY(8px);}
+    53.3%,76.6%{opacity:1; transform:translateY(0);}
+    96.6%,100%{opacity:0; transform:translateY(0);}
+  }
+  #splash .mark{ font-family:'Manrope'; font-weight:700; font-size:40px; letter-spacing:3px; color:#fff; }
+  #splash .tag{ font-family:'Fraunces'; font-style:italic; font-size:17px; color:rgba(255,255,255,0.85); margin-top:14px; }
+  #splash.reduced .door-leaf, #splash.reduced .door-seam, #splash.reduced .splash-scrim, #splash.reduced .splash-content{ animation:none; }
+  @media (prefers-reduced-motion: reduce){
+    .door-leaf, .door-seam, .splash-scrim, .splash-content{ animation:none !important; }
+  }
 
   /* ---------- shared ---------- */
   .container{padding:28px 24px 12px;}
@@ -687,41 +723,14 @@
 </style>
 </head>
 <body>
-<div id="splash">
-  <div class="splash-stage">
-    <svg class="cross-svg" viewBox="0 0 200 260" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <filter id="rayBlur" x="-150%" y="-150%" width="400%" height="400%">
-          <feGaussianBlur stdDeviation="6"/>
-        </filter>
-        <filter id="coreBlur" x="-150%" y="-150%" width="400%" height="400%">
-          <feGaussianBlur stdDeviation="12"/>
-        </filter>
-        <filter id="beamBlur" x="-150%" y="-150%" width="400%" height="400%">
-          <feGaussianBlur stdDeviation="2"/>
-        </filter>
-        <linearGradient id="vFade" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#fff" stop-opacity="0"/>
-          <stop offset="12%" stop-color="#fff" stop-opacity="0.4"/>
-          <stop offset="28%" stop-color="#fff" stop-opacity="1"/>
-          <stop offset="55%" stop-color="#fff" stop-opacity="0.7"/>
-          <stop offset="85%" stop-color="#fff" stop-opacity="0.15"/>
-          <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
-        </linearGradient>
-      </defs>
-      <circle cx="100" cy="80" r="52" fill="#ffffff" opacity="0.4" filter="url(#coreBlur)"/>
-      <circle cx="100" cy="80" r="26" fill="#ffffff" opacity="0.7" filter="url(#coreBlur)"/>
-      <g stroke="#ffffff" stroke-width="4" stroke-linecap="round" opacity="0.5" filter="url(#rayBlur)">
-        <line x1="100" y1="80" x2="58" y2="38"/>
-        <line x1="100" y1="80" x2="142" y2="38"/>
-        <line x1="100" y1="80" x2="58" y2="122"/>
-        <line x1="100" y1="80" x2="142" y2="122"/>
-      </g>
-      <rect x="93" y="15" width="14" height="235" rx="6" fill="url(#vFade)" filter="url(#beamBlur)"/>
-      <rect x="45" y="73" width="110" height="14" rx="6" fill="#ffffff" opacity="0.95" filter="url(#beamBlur)"/>
-    </svg>
+<div id="splash" aria-hidden="true">
+  <div class="door-leaf l"></div>
+  <div class="door-leaf r"></div>
+  <div class="door-seam"></div>
+  <div class="splash-scrim"></div>
+  <div class="splash-content">
     <div class="mark">HERE</div>
-    <div class="tag">cuando lo necesites.</div>
+    <div class="tag">Un lugar para volver a Dios.</div>
   </div>
 </div>
 
@@ -2921,25 +2930,34 @@ if('serviceWorker' in navigator){
 
 /* ---------------- boot ---------------- */
 window.addEventListener('load', ()=>{
-  const onboardedEarly = load('here_onboarded', false);
-  // la bienvenida larga y cinematográfica solo tiene sentido la primera vez;
-  // si la persona ya usa HERE, no tiene que volver a esperarla cada vez que
-  // abre o recarga la app.
-  const splashDelay = onboardedEarly ? 700 : 4400;
-  const fadeMs = onboardedEarly ? 350 : 700;
-  setTimeout(()=>{
-    document.getElementById('splash').style.transition = `opacity ${fadeMs}ms ease`;
-    document.getElementById('splash').style.opacity = '0';
-    setTimeout(()=>{
-      document.getElementById('splash').style.display='none';
-      const onboarded = load('here_onboarded', false);
-      if(!onboarded){ go('ob-1'); return; }
-      // retoma la última pantalla "de nivel superior" en la que estaba la
-      // persona, en vez de mandarla siempre al check-in de "¿cómo te sientes?".
-      const lastScreen = load('here_last_screen', null);
-      go(RESUMABLE_SCREENS.includes(lastScreen) ? lastScreen : 'checkin', {fromPopstate:true});
-    }, fadeMs);
-  }, splashDelay);
+  const splash = document.getElementById('splash');
+  // La pantalla real (Home, check-in u onboarding) se decide y se renderiza
+  // YA, detrás del splash — así la "puerta" revela contenido real de HERE,
+  // no una imagen de mentira ni una carga tardía.
+  const onboarded = load('here_onboarded', false);
+  let target;
+  if(!onboarded){ target = 'ob-1'; }
+  else{
+    const lastScreen = load('here_last_screen', null);
+    target = RESUMABLE_SCREENS.includes(lastScreen) ? lastScreen : 'checkin';
+  }
+  go(target, {fromPopstate:true});
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduceMotion){
+    // Sin animación de puerta: solo un cruce muy breve y directo al contenido real.
+    splash.classList.add('reduced');
+    requestAnimationFrame(()=>{
+      splash.style.transition = 'opacity 260ms ease';
+      splash.style.opacity = '0';
+      setTimeout(()=>{ splash.style.display='none'; }, 280);
+    });
+    return;
+  }
+  // La animación (puerta + HERE + tagline) ya se dispara sola por CSS en
+  // cuanto el splash existe en el DOM; aquí solo lo retiramos del todo al
+  // terminar, para que quede 100% interactivo y sin capa alguna encima.
+  setTimeout(()=>{ splash.style.display = 'none'; }, 3050);
 });
 </script>
 </body>
