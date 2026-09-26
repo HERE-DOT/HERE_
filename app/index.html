@@ -1390,7 +1390,7 @@ const BOOK_EN = {
   "3 Juan":"3 John","Judas":"Jude","Apocalipsis":"Revelation"
 };
 async function fetchLiveChapter(book, chapterNum){
-  const cacheKey = 'here_rvr60_'+book+'_'+chapterNum;
+  const cacheKey = 'here_rvr60b_'+book+'_'+chapterNum; // "b": nombre nuevo para descartar caché vieja con el error del título
   const cached = load(cacheKey, null);
   if(cached && cached.length) return {verses:cached, live:true};
   try{
@@ -1403,10 +1403,14 @@ async function fetchLiveChapter(book, chapterNum){
     const text = await res.text();
     // Cada línea del cuerpo empieza con su número de versículo pegado al texto (ej: "16Porque...").
     // Cualquier línea que no empiece con un número (encabezado, pie, líneas vacías) se descarta.
+    // Ojo: en libros como "1 Pedro" o "2 Corintios", la línea de título que a veces
+    // manda el servicio ("1 Peter 1:8 (RVR60)") TAMBIÉN empieza con un número, así que
+    // se descarta aparte reconociendo la marca de versión entre paréntesis.
     const verses = text.split('\n').map(l=>l.trim()).filter(Boolean)
       .map(l=>l.match(/^(\d+)\s*(\S.*)$/))
       .filter(m=>m && m[2] && m[2].trim().length)
-      .map(m=>m[2].trim());
+      .map(m=>m[2].trim())
+      .filter(t=>!t.includes('('+BIBLIA_BIBLE_ID+')'));
     if(!verses.length) throw new Error('respuesta vacía o con formato inesperado');
     save(cacheKey, verses);
     return {verses, live:true};
@@ -1424,7 +1428,7 @@ async function fetchLiveChapter(book, chapterNum){
 // esta función lo actualiza en el sitio (y en caché) apenas llega la respuesta real.
 async function resolveVerseText(v){
   if(!v || v._rvr60) return v;
-  const cacheKey = 'here_rvr60_v_'+v.ref;
+  const cacheKey = 'here_rvr60b_v_'+v.ref; // "b": nombre nuevo para descartar caché vieja con el error del título
   const cached = load(cacheKey, null);
   if(cached){ v.text = cached; v._rvr60 = true; return v; }
   try{
@@ -1441,7 +1445,8 @@ async function resolveVerseText(v){
     const parts = text.split('\n').map(l=>l.trim()).filter(Boolean)
       .map(l=>l.match(/^(\d+)\s*(\S.*)$/))
       .filter(m2=>m2 && m2[2] && m2[2].trim().length)
-      .map(m2=>m2[2].trim());
+      .map(m2=>m2[2].trim())
+      .filter(t=>!t.includes('('+BIBLIA_BIBLE_ID+')'));
     if(!parts.length) throw new Error('respuesta vacía o con formato inesperado');
     const joined = parts.join(' ');
     v.text = joined;
