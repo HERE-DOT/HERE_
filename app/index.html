@@ -792,7 +792,7 @@
     <div class="section-title" id="home-plan-title" style="display:none;">Continúa tu plan</div>
     <div class="container" id="home-plan-continue" style="display:none; padding-top:0; padding-bottom:18px;"></div>
 
-    <div class="section-title">Hoy</div>
+    <div class="section-title" style="margin-top:var(--sp-6);">Hoy</div>
     <div class="feature-card hoy-scene" id="home-hoy-card" style="flex-direction:column; align-items:flex-start; cursor:pointer;" onclick="go('hoy')">
       <div class="s" id="home-hoy-eyebrow" style="margin-bottom:8px;">Tu palabra de hoy</div>
       <div class="t serif" id="home-hoy-verse" style="font-style:italic; font-size:16px; line-height:1.5;"></div>
@@ -803,23 +803,40 @@
       </div>
     </div>
 
-    <div class="section-title">Un momento de calma</div>
-    <div class="calm-row">
-      <div class="calm-btn" onclick="startGuidedPrayer()"><span class="ic">🙏</span><span class="lbl">Oración guiada</span></div>
-      <div class="calm-btn" onclick="startHomeQuedarme()"><span class="ic">🌬️</span><span class="lbl">Respirar y quedarme aquí</span></div>
+    <!-- "Para ti": antes eran 4 tarjetas grandes y saturadas (2 botones de calma +
+         2 cards con degradado) compitiendo por atención. Ahora es una sola lista
+         tranquila — mismo destino, mucho menos ruido visual. -->
+    <div class="section-title" style="margin-top:var(--sp-6);">Para ti</div>
+    <div class="list-card" onclick="go('chat')">
+      <div style="display:flex; align-items:center; gap:14px;">
+        <span style="font-size:19px; flex:none;" aria-hidden="true">💬</span>
+        <div><div class="t">Habla con HERE</div><div class="s">¿Qué tienes en el corazón?</div></div>
+      </div>
+      <span style="color:var(--ink-soft); flex:none;">→</span>
+    </div>
+    <div class="list-card" onclick="go('sentir')">
+      <div style="display:flex; align-items:center; gap:14px;">
+        <span style="font-size:19px; flex:none;" aria-hidden="true">🤍</span>
+        <div><div class="t">Estoy aquí contigo</div><div class="s">Cuéntame qué estás viviendo</div></div>
+      </div>
+      <span style="color:var(--ink-soft); flex:none;">→</span>
+    </div>
+    <div class="list-card" onclick="startGuidedPrayer()">
+      <div style="display:flex; align-items:center; gap:14px;">
+        <span style="font-size:19px; flex:none;" aria-hidden="true">🙏</span>
+        <div><div class="t">Oración guiada</div><div class="s">Un momento para orar, paso a paso</div></div>
+      </div>
+      <span style="color:var(--ink-soft); flex:none;">→</span>
+    </div>
+    <div class="list-card" onclick="startHomeQuedarme()">
+      <div style="display:flex; align-items:center; gap:14px;">
+        <span style="font-size:19px; flex:none;" aria-hidden="true">🌬️</span>
+        <div><div class="t">Respirar y quedarme aquí</div><div class="s">Un momento de calma, sin nada más que hacer</div></div>
+      </div>
+      <span style="color:var(--ink-soft); flex:none;">→</span>
     </div>
 
-    <div class="section-title">Para ti</div>
-    <div class="feature-card wash-gold" onclick="go('chat')">
-      <div><div class="t">¿Qué tienes en el corazón?</div><div class="s">Habla con HERE</div></div>
-      <div class="arrow-circle">💬</div>
-    </div>
-    <div class="feature-card wash-slate" onclick="go('sentir')">
-      <div><div class="t">Estoy aquí contigo</div><div class="s">Cuéntame qué estás viviendo</div></div>
-      <div class="arrow-circle">→</div>
-    </div>
-
-    <div class="section-title" id="home-saved-title" style="display:none;">Tus palabras recientes</div>
+    <div class="section-title" id="home-saved-title" style="display:none; margin-top:var(--sp-6);">Tus palabras recientes</div>
     <div id="home-saved-preview"></div>
   </section>
 
