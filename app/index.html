@@ -767,7 +767,7 @@
     <div class="container">
       <div class="progress-dots"><span class="on"></span><span class="on"></span><span class="on"></span><span></span></div>
       <h2 class="serif" style="font-size:22px;">Elige cómo quieres leer</h2>
-      <p style="color:var(--ink-soft); margin-top:8px; font-size:14px;">No afirmamos que una traducción sea superior a otra.</p>
+      <p style="color:var(--ink-soft); margin-top:8px; font-size:14px;">No afirmamos que una traducción sea superior a otra. Por ahora todo el contenido se muestra en Reina-Valera 1960; guardamos tu preferencia para cuando sumemos más traducciones.</p>
     </div>
     <div class="stack container" id="ob4-options"></div>
     <div class="container" style="margin-top:auto;">
@@ -2791,7 +2791,14 @@ function renderHoy(){
   `;
   addSceneOverlay(stage);
   if(!v._rvr60){
-    resolveVerseText(v).then(()=>{ if(currentScreen==='hoy') renderHoy(); });
+    // Actualiza solo el texto in-place cuando llegue el RVR1960 real — nunca vuelve a
+    // llamarse a sí misma, así que un fallo de red (o estar sin conexión) no deja esto
+    // reintentando para siempre ni reiniciando la animación de entrada sin parar.
+    resolveVerseText(v).then(()=>{
+      if(currentScreen!=='hoy') return;
+      const verseEl = stage.querySelector('.verse');
+      if(verseEl) verseEl.textContent = `"${v.text}"`;
+    });
   }
 }
 
