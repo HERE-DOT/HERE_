@@ -328,6 +328,20 @@
     font-size:13.5px; cursor:pointer; display:flex; align-items:center; gap:6px; box-shadow:var(--shadow-sm); transition:transform .12s ease;
   }
   .action-pill:active{transform:scale(0.95);}
+  .icon-actions{display:flex; gap:28px; margin-top:40px; justify-content:center; position:relative; z-index:2; animation:stageIn .6s .5s ease both;}
+  .icon-pill{display:flex; flex-direction:column; align-items:center; gap:7px; cursor:pointer; flex:none;}
+  .icon-pill .circ{
+    width:48px; height:48px; border-radius:50%; border:1px solid var(--line); background:var(--card);
+    display:flex; align-items:center; justify-content:center; font-size:17px; box-shadow:var(--shadow-sm);
+    transition:transform .12s ease;
+  }
+  .icon-pill:active .circ{transform:scale(0.9);}
+  .icon-pill small{font-size:11px; color:var(--ink-soft);}
+  .link-actions{margin-top:26px; display:flex; flex-direction:column; gap:14px; align-items:center; position:relative; z-index:2; animation:stageIn .6s .6s ease both;}
+  .link-pill{background:none; border:none; cursor:pointer; font-family:'Manrope'; font-size:14.5px; font-weight:600; color:var(--ink); padding:2px 0; border-bottom:1px solid var(--line);}
+  .verse-stage.scened .icon-pill .circ{background:rgba(255,255,255,0.16); border-color:rgba(255,255,255,0.35); color:#fff; backdrop-filter:blur(8px);}
+  .verse-stage.scened .icon-pill small{color:rgba(255,255,255,0.75);}
+  .verse-stage.scened .link-pill{color:#fff; border-color:rgba(255,255,255,0.4);}
   .close-x{position:absolute; top:22px; left:22px; width:36px; height:36px; border-radius:50%;
     background:var(--card); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:16px; z-index:5;}
 
@@ -1892,14 +1906,16 @@ function renderPalabra(){
       <p>${rx.contexto}</p>
       <p style="margin-top:10px;">${rx.reflexion}</p>
     </div>
-    <div class="verse-actions">
-      <div class="action-pill" onclick="toggleSave('${v.ref}')">${isSaved(v.ref)?'♥':'♡'} Guardar</div>
-      <div class="action-pill" onclick="shareVerse('${v.ref}')">↗ Compartir</div>
-      <div class="action-pill" onclick="openPalabra()">🔄 Otra palabra</div>
-      <div class="action-pill" onclick="openEntender('${v.ref}')">Si quieres profundizar →</div>
-      <div class="action-pill" onclick="prefillOrar('${v.ref}')">Orar sobre esto</div>
+    <div class="icon-actions">
+      <div class="icon-pill" onclick="toggleSave('${v.ref}'); renderPalabra();"><div class="circ">${isSaved(v.ref)?'♥':'♡'}</div><small>Guardar</small></div>
+      <div class="icon-pill" onclick="shareVerse('${v.ref}')"><div class="circ">↗</div><small>Compartir</small></div>
+      <div class="icon-pill" onclick="openPalabra()"><div class="circ">🔄</div><small>Otra</small></div>
     </div>
-    <div style="margin-top:30px;"><button class="btn-text" onclick="openQuedarme()">Quiero quedarme aquí.</button></div>
+    <div class="link-actions">
+      <button class="link-pill" onclick="openEntender('${v.ref}')">Profundizar en este versículo →</button>
+      <button class="link-pill" onclick="prefillOrar('${v.ref}')">🙏 Orar sobre esto</button>
+    </div>
+    <div style="margin-top:22px;"><button class="btn-text" onclick="openQuedarme()">Quiero quedarme aquí.</button></div>
   `;
   addSceneOverlay(stage);
 }
