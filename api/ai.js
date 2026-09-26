@@ -16,7 +16,7 @@
  * (al lado de "app", no dentro de ella) — así Vercel lo detecta solo, sin
  * configuración adicional, como /api/ai.
  */
-const GEMINI_MODEL = 'gemini-2.0-flash';
+const GEMINI_MODEL = 'gemini-3.8-flash';
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
