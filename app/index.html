@@ -797,6 +797,36 @@
   .music-track .t{font-size:14px; font-weight:600;}
   .music-track .s{font-size:11.5px; color:var(--ink-soft); margin-top:2px;}
 
+  /* ---------- reproductor (video / solo audio) ---------- */
+  .player-modes{display:flex; gap:8px; padding:4px 24px 16px;}
+  .player-mode-btn{
+    flex:1; padding:11px 10px; border-radius:100px; font-size:13px; font-weight:600;
+    border:1px solid var(--line); background:var(--card); cursor:pointer; box-shadow:var(--shadow-sm);
+    transition:transform .12s ease;
+  }
+  .player-mode-btn:active{transform:scale(0.97);}
+  .player-mode-btn.active{background:linear-gradient(135deg,var(--sage-deep),var(--sage-deeper)); color:#fff; border-color:var(--sage-deep);}
+  .player-video-wrap{position:relative; width:100%; aspect-ratio:16/9; background:#000; margin:0 0 10px;}
+  .player-video-wrap iframe{position:absolute; inset:0; width:100%; height:100%; border:0;}
+  .player-video-wrap.audio-hidden{position:absolute; width:2px; height:2px; overflow:hidden; opacity:0; pointer-events:none; top:0; left:0; margin:0;}
+  .player-audio-wrap{display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:48px 32px 24px; gap:8px;}
+  .player-audio-art{
+    width:170px; height:170px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-size:56px; background:linear-gradient(135deg,var(--sage-deep),var(--gold-deep)); box-shadow:var(--shadow-md);
+    animation:playerPulse 2.6s ease-in-out infinite;
+  }
+  @keyframes playerPulse{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.035); } }
+  .player-audio-name{font-family:'Fraunces'; font-size:19px; font-weight:500; margin-top:18px;}
+  .player-audio-role{font-size:13px; color:var(--ink-soft); margin-top:4px;}
+  .player-audio-toggle{
+    width:64px; height:64px; border-radius:50%; border:none; margin-top:26px; cursor:pointer;
+    background:linear-gradient(135deg,var(--sage-deep),var(--sage-deeper)); color:#fff; font-size:22px;
+    display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow-md);
+  }
+  .player-audio-toggle:active{transform:scale(0.94);}
+  .player-fallback{margin:0 24px; padding:16px; border-radius:16px; background:var(--card); border:1px solid var(--line); text-align:center; font-size:13px; color:var(--ink-soft); line-height:1.6;}
+  .player-fallback button{margin-top:10px;}
+
   /* ---------- bible ---------- */
   .book-grid{padding:8px 24px 24px; display:flex; flex-direction:column; gap:22px;}
   .book-group h3{font-size:12.5px; color:var(--ink-soft); margin-bottom:10px; font-weight:700; text-transform:uppercase; letter-spacing:.4px;}
@@ -1437,6 +1467,26 @@
     <div class="stack" id="musicaCategoria-list" style="padding:10px 24px 40px;"></div>
   </section>
 
+  <!-- REPRODUCTOR: video o solo audio, dentro de la app -->
+  <section class="screen noNav" id="reproductor" style="padding-bottom:0;">
+    <div class="topbar"><div class="backbtn" onclick="closePlayer()">←</div><h2 id="player-title"></h2></div>
+    <div class="player-modes">
+      <button class="player-mode-btn" data-m="video" onclick="setPlayerMode('video')">🎥 Ver video</button>
+      <button class="player-mode-btn" data-m="audio" onclick="setPlayerMode('audio')">🎧 Solo escuchar</button>
+    </div>
+    <div class="player-video-wrap" id="player-video-wrap"><div id="yt-player"></div></div>
+    <div class="player-audio-wrap" id="player-audio-wrap" style="display:none;">
+      <div class="player-audio-art">🎵</div>
+      <div class="player-audio-name" id="player-audio-name"></div>
+      <div class="player-audio-role" id="player-audio-role"></div>
+      <button class="player-audio-toggle" id="player-audio-toggle" onclick="togglePlayerPlayback()">⏸</button>
+    </div>
+    <div class="player-fallback" id="player-fallback" style="display:none;">
+      No pudimos cargar el reproductor aquí.
+      <div><button class="btn btn-ghost" id="player-fallback-btn" onclick="">Abrir en YouTube ↗</button></div>
+    </div>
+  </section>
+
   <!-- PERFIL -->
   <section class="screen" id="perfil">
     <div class="topbar"><h2>Tu camino</h2></div>
@@ -2042,6 +2092,7 @@ function go(id, opts){
   if(id==='biblia') { renderBooks(); renderPlanRow(); document.getElementById('search-results').innerHTML=''; }
   if(id==='orar') renderOraciones();
   if(id!=='reader') stopListen();
+  if(id!=='reproductor') pausePlayerIfPlaying();
   closeSidebar();
   window.scrollTo(0,0);
 
@@ -3201,8 +3252,10 @@ function renderDiario(){
    nuevas, más categorías de música para explorar libremente y listas de
    pastores y podcasts recomendados. No hay reproducción propia dentro de
    la app (no tenemos una fuente de audio/streaming propia): cada tarjeta
-   abre una búsqueda real en YouTube o Spotify para escuchar de inmediato,
-   así el contenido siempre es real y está disponible. */
+   abre una búsqueda real en YouTube para escuchar de inmediato (se eligió
+   YouTube sobre Spotify porque no exige cuenta ni la app instalada, y
+   tiene música, prédicas y podcasts completos de forma gratuita), así el
+   contenido siempre es real y está disponible. */
 
 // Fondos cinematográficos reutilizables (misma receta que .plan-card / .hoy-scene:
 // degradado + foto + degradado de respaldo), para que cada destacado de la
@@ -3227,35 +3280,41 @@ const MUSIC_CATEGORIES = [
 ];
 
 // Pastores / predicadores recomendados.
+// Pastores / predicadores recomendados — cada uno con un video real (yt) o,
+// cuando no hay un solo video representativo, una lista de reproducción (ytList).
 const MUSIC_PASTORES = [
-  { name:'Andrés Corson', s:'Enseñanza bíblica y vida cristiana', q:'andrés corson prédica', bg:'linear-gradient(135deg,#6B8F71,#3C6B4C)' },
-  { name:'Danilo Montero', s:'Adoración y palabra', q:'danilo montero prédica', bg:'linear-gradient(135deg,#C9A24E,#8A6A26)' },
-  { name:'Dante Gebel', s:'Mensajes para la nueva generación', q:'dante gebel prédica', bg:'linear-gradient(135deg,#B07A57,#7A4E32)' },
-  { name:'Rick Warren', s:'Propósito y vida con sentido', q:'rick warren sermon español', bg:'linear-gradient(135deg,#5A7FA6,#2F5074)' },
+  { id:'pastor-corson', name:'Andrés Corson', s:'Enseñanza bíblica y vida cristiana', role:'Pastor · Enseñanza bíblica', yt:'rfPmW0G4mOI', q:'andrés corson prédica', bg:'linear-gradient(135deg,#6B8F71,#3C6B4C)' },
+  { id:'pastor-danilo', name:'Danilo Montero', s:'Adoración y palabra', role:'Pastor · Adoración', yt:'B5myKc92POU', q:'danilo montero prédica', bg:'linear-gradient(135deg,#C9A24E,#8A6A26)' },
+  { id:'pastor-gebel', name:'Dante Gebel', s:'Mensajes para la nueva generación', role:'Pastor', ytList:'PL-DlPHw6jL_fi4-Q_wdzTIuVdBysgC7Ci', q:'dante gebel prédica', bg:'linear-gradient(135deg,#B07A57,#7A4E32)' },
+  { id:'pastor-warren', name:'Rick Warren', s:'Propósito y vida con sentido', role:'Pastor', yt:'SEFbK0G21NA', q:'rick warren sermon español', bg:'linear-gradient(135deg,#5A7FA6,#2F5074)' },
 ];
 
 // Podcasts recomendados.
 const MUSIC_PODCASTS = [
-  { name:'Un Café con Dios', s:'Un momento devocional breve, cada día', q:'un café con dios podcast', bg:'linear-gradient(135deg,#B98CC9,#6E3F82)' },
-  { name:'BibleProject en español', s:'La Biblia explicada, libro por libro', q:'bibleproject español podcast', bg:'linear-gradient(135deg,#5FA3A0,#2C6461)' },
-  { name:'Renovados', s:'Conversaciones sobre fe y vida diaria', q:'renovados podcast cristiano', bg:'linear-gradient(135deg,#D68A6B,#93472B)' },
+  { id:'podcast-cafedios', name:'Un Café con Dios', s:'Un momento devocional breve, cada día', role:'Podcast devocional', yt:'azRuIRgUMbw', q:'un café con dios podcast', bg:'linear-gradient(135deg,#B98CC9,#6E3F82)' },
+  { id:'podcast-bibleproject', name:'BibleProject en español', s:'La Biblia explicada, libro por libro', role:'Podcast bíblico', yt:'IgE2p95QqFw', q:'bibleproject español podcast', bg:'linear-gradient(135deg,#5FA3A0,#2C6461)' },
+  { id:'podcast-renovados', name:'Renovados', s:'Conversaciones sobre fe y vida diaria', role:'Podcast', ytList:'UUHgTe1nA66-eoklmhkrcJoA', q:'renovados podcast cristiano', bg:'linear-gradient(135deg,#D68A6B,#93472B)' },
 ];
 
-// Grupo del que rota el destacado de la semana — mezcla de artistas, pastores y podcasts.
+// Grupo del que rota el destacado de la semana — mezcla de artistas, pastores y
+// podcasts, cada uno con un video real de YouTube para reproducir dentro de la app.
 const MUSIC_WEEKLY_POOL = [
-  { type:'Artista de la semana', name:'Hillsong Worship', role:'Adoración', blurb:'La comunidad detrás de himnos de adoración cantados en todo el mundo.', q:'hillsong worship' },
-  { type:'Artista de la semana', name:'Christine D’Clario', role:'Adoración', blurb:'Voz puertorriqueña conocida por su intimidad en la adoración.', q:'christine dclario' },
-  { type:'Pastor de la semana', name:'Andrés Corson', role:'Pastor · Enseñanza bíblica', blurb:'Enseñanzas claras y prácticas para vivir la fe día a día.', q:'andrés corson prédica' },
-  { type:'Artista de la semana', name:'Redimi2', role:'Rap / hip-hop cristiano', blurb:'Uno de los referentes del rap cristiano en español.', q:'redimi2' },
-  { type:'Podcast de la semana', name:'Un Café con Dios', role:'Podcast devocional', blurb:'Un momento breve para detenerte y escuchar, cada día.', q:'un café con dios podcast' },
-  { type:'Artista de la semana', name:'Miel San Marcos', role:'Adoración', blurb:'Adoración guatemalteca con una energía que ha marcado a toda una generación.', q:'miel san marcos' },
-  { type:'Artista de la semana', name:'Lauren Daigle', role:'Cristiana en inglés', blurb:'Una de las voces más escuchadas del CCM contemporáneo.', q:'lauren daigle' },
-  { type:'Pastor de la semana', name:'Danilo Montero', role:'Pastor · Adoración', blurb:'Une la enseñanza con la adoración de una forma cercana.', q:'danilo montero prédica' },
-  { type:'Artista de la semana', name:'Funky', role:'Reggaetón cristiano', blurb:'Pionero del reggaetón cristiano, ritmo urbano con mensaje de esperanza.', q:'funky reggaeton cristiano' },
-  { type:'Podcast de la semana', name:'BibleProject en español', role:'Podcast bíblico', blurb:'La Biblia explicada libro por libro, de forma sencilla.', q:'bibleproject español podcast' },
-  { type:'Artista de la semana', name:'Marcos Witt', role:'Adoración', blurb:'Uno de los pioneros de la adoración contemporánea en español.', q:'marcos witt' },
-  { type:'Artista de la semana', name:'Tercer Cielo', role:'Pop cristiano', blurb:'Baladas y pop cristiano que han acompañado a generaciones.', q:'tercer cielo' },
+  { id:'hillsong', type:'Artista de la semana', name:'Hillsong Worship', role:'Adoración', blurb:'La comunidad detrás de himnos de adoración cantados en todo el mundo.', yt:'nQWFzMvCfLE', q:'hillsong worship' },
+  { id:'dclario', type:'Artista de la semana', name:'Christine D’Clario', role:'Adoración', blurb:'Voz puertorriqueña conocida por su intimidad en la adoración.', yt:'5i6pSmfmynY', q:'christine dclario' },
+  { id:'corson', type:'Pastor de la semana', name:'Andrés Corson', role:'Pastor · Enseñanza bíblica', blurb:'Enseñanzas claras y prácticas para vivir la fe día a día.', yt:'rfPmW0G4mOI', q:'andrés corson prédica' },
+  { id:'redimi2', type:'Artista de la semana', name:'Redimi2', role:'Rap / hip-hop cristiano', blurb:'Uno de los referentes del rap cristiano en español.', yt:'bQNikeLRJQw', q:'redimi2' },
+  { id:'cafedios', type:'Podcast de la semana', name:'Un Café con Dios', role:'Podcast devocional', blurb:'Un momento breve para detenerte y escuchar, cada día.', yt:'azRuIRgUMbw', q:'un café con dios podcast' },
+  { id:'miel', type:'Artista de la semana', name:'Miel San Marcos', role:'Adoración', blurb:'Adoración guatemalteca con una energía que ha marcado a toda una generación.', yt:'D-HHlMXfxbg', q:'miel san marcos' },
+  { id:'daigle', type:'Artista de la semana', name:'Lauren Daigle', role:'Cristiana en inglés', blurb:'Una de las voces más escuchadas del CCM contemporáneo.', yt:'sIaT8Jl2zpI', q:'lauren daigle' },
+  { id:'danilo', type:'Pastor de la semana', name:'Danilo Montero', role:'Pastor · Adoración', blurb:'Une la enseñanza con la adoración de una forma cercana.', yt:'B5myKc92POU', q:'danilo montero prédica' },
+  { id:'funky', type:'Artista de la semana', name:'Funky', role:'Reggaetón cristiano', blurb:'Pionero del reggaetón cristiano, ritmo urbano con mensaje de esperanza.', yt:'A0i9sO__QvI', q:'funky reggaeton cristiano' },
+  { id:'bibleproject', type:'Podcast de la semana', name:'BibleProject en español', role:'Podcast bíblico', blurb:'La Biblia explicada libro por libro, de forma sencilla.', yt:'IgE2p95QqFw', q:'bibleproject español podcast' },
+  { id:'witt', type:'Artista de la semana', name:'Marcos Witt', role:'Adoración', blurb:'Uno de los pioneros de la adoración contemporánea en español.', yt:'F5gMNbGfy1g', q:'marcos witt' },
+  { id:'tercercielo', type:'Artista de la semana', name:'Tercer Cielo', role:'Pop cristiano', blurb:'Baladas y pop cristiano que han acompañado a generaciones.', yt:'BDwEyfgClF4', q:'tercer cielo' },
 ];
+function findTrackById(id){
+  return MUSIC_WEEKLY_POOL.find(t=>t.id===id) || MUSIC_PASTORES.find(t=>t.id===id) || MUSIC_PODCASTS.find(t=>t.id===id);
+}
 
 // Semilla por semana del año — mismo espíritu que pickTodayVerse(), pero
 // a nivel de semana, para que el destacado cambie cada 7 días, no cada día.
@@ -3281,14 +3340,14 @@ function renderMusica(){
   const featured = pickWeeklyFeatured();
   const scene = MUSIC_SCENES[weekSeed() % MUSIC_SCENES.length];
   document.getElementById('musica-featured').innerHTML = `
-    <div class="week-scene" style="background:${scene};" onclick="openMusicSearch('youtube','${featured.q.replace(/'/g,"\\'")}')">
+    <div class="week-scene" style="background:${scene};" onclick="playTrackById('${featured.id}')">
       <div class="eyebrow"><span class="dot"></span>${featured.type}</div>
       <div class="name serif">${featured.name}</div>
       <div class="role">${featured.role}</div>
       <div class="blurb">${featured.blurb}</div>
       <div class="hoy-scene-actions" style="margin-top:18px;">
-        <button onclick="openMusicSearch('youtube','${featured.q.replace(/'/g,"\\'")}', event)">▶ Escuchar</button>
-        <button onclick="openMusicSearch('spotify','${featured.q.replace(/'/g,"\\'")}', event)">Spotify ↗</button>
+        <button onclick="playTrackById('${featured.id}','video', event)">🎥 Ver video</button>
+        <button onclick="playTrackById('${featured.id}','audio', event)">🎧 Solo escuchar</button>
       </div>
     </div>
   `;
@@ -3300,16 +3359,16 @@ function renderMusica(){
     </div>
   `).join('');
   document.getElementById('musica-pastores').innerHTML = MUSIC_PASTORES.map(p=>`
-    <div class="music-person">
+    <div class="music-person" onclick="playTrackById('${p.id}')">
       <div class="music-person-avatar" style="background:${p.bg};">🎙️</div>
       <div><div class="t">${p.name}</div><div class="s">${p.s}</div></div>
       <div class="music-person-links">
-        <button aria-label="Escuchar en YouTube" onclick="openMusicSearch('youtube','${p.q.replace(/'/g,"\\'")}', event)">▶</button>
+        <button aria-label="Reproducir" onclick="playTrackById('${p.id}', null, event)">▶</button>
       </div>
     </div>
   `).join('');
   document.getElementById('musica-podcasts').innerHTML = MUSIC_PODCASTS.map(p=>`
-    <div class="music-track" onclick="openMusicSearch('youtube','${p.q.replace(/'/g,"\\'")}')">
+    <div class="music-track" onclick="playTrackById('${p.id}')">
       <div class="music-track-icon" style="background:${p.bg};">🎧</div>
       <div><div class="t">${p.name}</div><div class="s">${p.s}</div></div>
     </div>
@@ -3332,17 +3391,132 @@ function openMusicCategory(id){
   const rest = MUSIC_WEEKLY_POOL.filter(it=>!related.includes(it));
   const list = related.concat(rest).slice(0,8);
   document.getElementById('musicaCategoria-list').innerHTML = list.map(it=>`
-    <div class="music-track" onclick="openMusicSearch('youtube','${it.q.replace(/'/g,"\\'")}')">
+    <div class="music-track" onclick="playTrackById('${it.id}')">
       <div class="music-track-icon" style="background:linear-gradient(135deg,var(--sage-deep),var(--sage-deeper));">🎵</div>
       <div><div class="t">${it.name}</div><div class="s">${it.role}</div></div>
     </div>
   `).join('') + `
-    <div class="list-card" style="margin-top:6px;" onclick="openMusicSearch('spotify','${cat.q.replace(/'/g,"\\'")}')">
-      <div><div class="t">Buscar más de "${cat.t}" en Spotify</div><div class="s">Se abre en una pestaña nueva</div></div>
+    <div class="list-card" style="margin-top:6px;" onclick="openMusicSearch('youtube','${cat.q.replace(/'/g,"\\'")}')">
+      <div><div class="t">Buscar más de "${cat.t}" en YouTube</div><div class="s">Se abre en una pestaña nueva</div></div>
       <span>↗</span>
     </div>
   `;
   go('musicaCategoria');
+}
+
+/* ---------------- reproductor: video o solo audio, dentro de la app ----------------
+   Usa el reproductor embebido de YouTube (IFrame API) para que la reproducción
+   quede realmente dentro de HERE, con dos modos:
+   - "Ver video": el reproductor se ve normal.
+   - "Solo escuchar": el video se encoge a un pixel invisible (sigue sonando)
+     y en su lugar se ve una portada sencilla con play/pausa, como un reproductor
+     de audio. No hay una fuente de audio "pura" propia — es el mismo video de
+     YouTube sonando de fondo —, pero visualmente y en el uso diario se siente
+     como escuchar, no ver. */
+let ytApiReady = false;
+let ytApiRequested = false;
+let ytPlayer = null;
+let playerMode = load('here_player_mode', 'video');
+let currentPlayItem = null;
+let playerLoadTimer = null;
+
+function ensureYouTubeApi(){
+  if(ytApiRequested) return;
+  ytApiRequested = true;
+  if(window.YT && window.YT.Player){ ytApiReady = true; return; }
+  const tag = document.createElement('script');
+  tag.src = 'https://www.youtube.com/iframe_api';
+  document.head.appendChild(tag);
+}
+// La API de YouTube llama a esta función global exacta en cuanto termina de cargar.
+window.onYouTubeIframeAPIReady = function(){
+  ytApiReady = true;
+  if(currentPlayItem) playTrackNow(currentPlayItem);
+};
+
+function setPlayerMode(mode){
+  playerMode = mode;
+  document.querySelectorAll('.player-mode-btn').forEach(b=>b.classList.toggle('active', b.dataset.m===mode));
+  const videoWrap = document.getElementById('player-video-wrap');
+  const audioWrap = document.getElementById('player-audio-wrap');
+  if(mode==='audio'){
+    videoWrap.classList.add('audio-hidden');
+    audioWrap.style.display = 'flex';
+  } else {
+    videoWrap.classList.remove('audio-hidden');
+    audioWrap.style.display = 'none';
+  }
+  try{ save('here_player_mode', mode); }catch(e){}
+}
+function playTrackById(id, mode, ev){
+  if(ev) ev.stopPropagation();
+  const item = findTrackById(id);
+  if(!item) return;
+  playTrack(item, mode);
+}
+function playTrack(item, mode){
+  haptic(10);
+  currentPlayItem = item;
+  document.getElementById('player-title').textContent = item.name;
+  document.getElementById('player-audio-name').textContent = item.name;
+  document.getElementById('player-audio-role').textContent = item.role || item.s || '';
+  document.getElementById('player-fallback').style.display = 'none';
+  go('reproductor');
+  setPlayerMode(mode || playerMode);
+  ensureYouTubeApi();
+  clearTimeout(playerLoadTimer);
+  playerLoadTimer = setTimeout(()=>showPlayerFallback(item), 6000);
+  if(ytApiReady) playTrackNow(item);
+}
+function playTrackNow(item){
+  clearTimeout(playerLoadTimer);
+  try{
+    if(ytPlayer && ytPlayer.loadVideoById){
+      if(item.ytList) ytPlayer.loadPlaylist({ list:item.ytList });
+      else ytPlayer.loadVideoById(item.yt);
+      ytPlayer.playVideo();
+      return;
+    }
+    ytPlayer = new YT.Player('yt-player', {
+      width:'100%', height:'100%',
+      videoId: item.ytList ? undefined : item.yt,
+      playerVars: item.ytList
+        ? { listType:'playlist', list:item.ytList, autoplay:1, playsinline:1, rel:0 }
+        : { autoplay:1, playsinline:1, rel:0 },
+      events:{
+        onReady: (e)=>{ e.target.playVideo(); },
+        onStateChange: onPlayerStateChange,
+        onError: ()=> showPlayerFallback(item),
+      }
+    });
+  }catch(e){ showPlayerFallback(item); }
+}
+function onPlayerStateChange(e){
+  const btn = document.getElementById('player-audio-toggle');
+  if(btn) btn.textContent = e.data===1 ? '⏸' : '▶';
+}
+function togglePlayerPlayback(){
+  if(!ytPlayer || !ytPlayer.getPlayerState) return;
+  try{
+    const state = ytPlayer.getPlayerState();
+    if(state===1) ytPlayer.pauseVideo(); else ytPlayer.playVideo();
+  }catch(e){}
+}
+function pausePlayerIfPlaying(){
+  if(!ytPlayer || !ytPlayer.pauseVideo) return;
+  try{ ytPlayer.pauseVideo(); }catch(e){}
+}
+function showPlayerFallback(item){
+  const el = document.getElementById('player-fallback');
+  if(!el || currentPlayItem !== item) return;
+  el.style.display = 'block';
+  const btn = document.getElementById('player-fallback-btn');
+  if(btn) btn.onclick = ()=> window.open(item.yt ? `https://www.youtube.com/watch?v=${item.yt}` : musicSearchUrl('youtube', item.q||item.name), '_blank', 'noopener');
+}
+function closePlayer(){
+  pausePlayerIfPlaying();
+  currentPlayItem = null;
+  go('musica');
 }
 
 function openDiarioEntry(idx){
