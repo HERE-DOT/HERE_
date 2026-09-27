@@ -1896,7 +1896,14 @@ let bibleLoaded = false;
 let bibleLoadingPromise = null;
 function loadBible(){
   if(bibleLoadingPromise) return bibleLoadingPromise;
-  bibleLoadingPromise = fetch('data/bible-rva.json').then(r=>r.json()).then(d=>{
+  bibleLoadingPromise = fetch('data/bible-rva.json').then(r=>{
+    // Si el archivo no se encuentra (404) o hay algún error del servidor, la
+    // respuesta suele ser una página de error en HTML, no el JSON esperado —
+    // sin este chequeo, r.json() intenta parsear ese HTML y avienta un error
+    // confuso ("Unexpected token '<'"). Así el mensaje dice claramente qué pasó.
+    if(!r.ok) throw new Error('data/bible-rva.json respondió '+r.status+' (¿el archivo no está en esa ruta?)');
+    return r.json();
+  }).then(d=>{
     d.books.forEach(b=>{ BIBLE_DATA[b[0]] = b[2]; });
     bibleLoaded = true;
   }).catch(e=>{ console.error('No se pudo cargar la Biblia completa', e); });
