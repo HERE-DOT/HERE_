@@ -820,16 +820,22 @@
   }
   .player-mode-btn:active{transform:scale(0.97);}
   .player-mode-btn.active{background:linear-gradient(135deg,var(--sage-deep),var(--sage-deeper)); color:#fff; border-color:var(--sage-deep);}
-  .player-video-wrap{position:relative; width:100%; aspect-ratio:16/9; background:#000; margin:0 0 10px;}
-  .player-video-wrap iframe{position:absolute; inset:0; width:100%; height:100%; border:0;}
-  .player-video-wrap.audio-hidden{position:absolute; width:2px; height:2px; overflow:hidden; opacity:0; pointer-events:none; top:0; left:0; margin:0;}
-  .player-audio-wrap{display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:48px 32px 24px; gap:8px;}
-  .player-audio-art{
-    width:170px; height:170px; border-radius:50%; display:flex; align-items:center; justify-content:center;
-    font-size:56px; background:linear-gradient(135deg,var(--sage-deep),var(--gold-deep)); box-shadow:var(--shadow-md);
-    animation:playerPulse 2.6s ease-in-out infinite;
+  /* el video queda dentro de una tarjeta redondeada con aire alrededor —
+     no pegado al borde ni justo debajo del topbar, para que se sienta parte
+     del diseño de la app y no un iframe de YouTube "pegado a la mala". */
+  .player-video-wrap{
+    position:relative; width:calc(100% - 40px); aspect-ratio:16/9; background:#000;
+    margin:4px 20px 16px; border-radius:22px; overflow:hidden; box-shadow:var(--shadow-md);
   }
-  @keyframes playerPulse{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.035); } }
+  .player-video-wrap iframe{position:absolute; inset:0; width:100%; height:100%; border:0;}
+  .player-video-wrap.audio-hidden{position:absolute; width:2px; height:2px; overflow:hidden; opacity:0; pointer-events:none; top:0; left:0; margin:0; border-radius:0;}
+  .player-audio-wrap{display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:24px 32px 24px; gap:8px;}
+  .player-audio-art{
+    width:220px; height:220px; border-radius:26px; display:flex; align-items:center; justify-content:center;
+    font-size:56px; background:linear-gradient(135deg,var(--sage-deep),var(--gold-deep)) center/cover no-repeat; box-shadow:var(--shadow-md);
+    animation:playerPulse 2.6s ease-in-out infinite; color:#fff;
+  }
+  @keyframes playerPulse{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.02); } }
   .player-audio-name{font-family:'Fraunces'; font-size:19px; font-weight:500; margin-top:18px;}
   .player-audio-role{font-size:13px; color:var(--ink-soft); margin-top:4px;}
   .player-audio-toggle{
@@ -840,6 +846,30 @@
   .player-audio-toggle:active{transform:scale(0.94);}
   .player-fallback{margin:0 24px; padding:16px; border-radius:16px; background:var(--card); border:1px solid var(--line); text-align:center; font-size:13px; color:var(--ink-soft); line-height:1.6;}
   .player-fallback button{margin-top:10px;}
+
+  /* mini reproductor: barra flotante que aparece cuando algo sigue sonando
+     y saliste del reproductor a explorar otra pantalla — como en Spotify. */
+  .mini-player{
+    display:none; align-items:center; gap:12px;
+    position:fixed; left:50%; transform:translateX(-50%); bottom:0; width:100%; max-width:480px;
+    background:var(--card); border-top:1px solid var(--line); padding:10px 14px;
+    padding-bottom:calc(10px + env(safe-area-inset-bottom));
+    z-index:49; cursor:pointer; box-shadow:0 -6px 20px rgba(33,31,26,0.07);
+  }
+  .mini-player.show{display:flex;}
+  .mini-player.above-nav{ bottom:78px; border-radius:16px 16px 0 0; padding-bottom:10px; box-shadow:0 -4px 16px rgba(33,31,26,0.08); }
+  .mini-player-thumb{
+    width:38px; height:38px; border-radius:10px; flex:none; background:linear-gradient(135deg,var(--sage-deep),var(--gold-deep)) center/cover no-repeat;
+    display:flex; align-items:center; justify-content:center; font-size:15px; color:#fff;
+  }
+  .mini-player-info{flex:1; min-width:0;}
+  .mini-player-info .t{font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .mini-player-info .s{font-size:11px; color:var(--ink-soft); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .mini-player-btn{
+    width:32px; height:32px; border-radius:50%; border:none; flex:none; cursor:pointer;
+    background:var(--bg); color:var(--ink); font-size:13px; display:flex; align-items:center; justify-content:center;
+  }
+  .mini-player-btn:active{transform:scale(0.92);}
 
   /* ---------- bible ---------- */
   .book-grid{padding:8px 24px 24px; display:flex; flex-direction:column; gap:22px;}
@@ -1061,6 +1091,11 @@
     .sheet{ max-width:420px; border-radius:24px; box-shadow:0 30px 70px rgba(0,0,0,0.25); }
 
     .fab{ bottom:32px; }
+    /* en escritorio no hay barra de navegación abajo (es un cajón lateral),
+       así que el mini reproductor flota como una tarjeta suelta, no pegado
+       a ningún borde de navegación inferior. */
+    .mini-player{ left:auto; right:24px; bottom:24px; transform:none; max-width:340px; border-radius:16px; border-top:none; box-shadow:var(--shadow-md); }
+    .mini-player.above-nav{ bottom:24px; }
   }
   @media (min-width:1180px){
     .container, .book-grid, .feel-grid, .quick-row, .plan-row, .chapter-verse,
@@ -1515,6 +1550,17 @@
     <div class="topbar"><h2>Tu camino</h2></div>
     <div class="container" style="padding-top:6px;" id="perfil-body"></div>
   </section>
+
+  <!-- MINI REPRODUCTOR: sigue sonando aunque salgas del reproductor a explorar otra pantalla -->
+  <div class="mini-player" id="mini-player" onclick="go('reproductor')">
+    <div class="mini-player-thumb" id="mini-player-thumb">🎵</div>
+    <div class="mini-player-info">
+      <div class="t" id="mini-player-title"></div>
+      <div class="s" id="mini-player-role"></div>
+    </div>
+    <button class="mini-player-btn" id="mini-player-toggle" aria-label="Pausar" onclick="event.stopPropagation(); togglePlayerPlayback();">⏸</button>
+    <button class="mini-player-btn" aria-label="Detener" onclick="event.stopPropagation(); stopPlayback();">✕</button>
+  </div>
 
   <div class="navbar" id="navbar">
     <button class="navbtn" data-s="home" onclick="go('home')">
@@ -2094,6 +2140,7 @@ function closeSidebar(){
 // Pantallas "de nivel superior": seguras para retomar tal cual al recargar la
 // página o al volver a abrir la app (no dependen de datos de un flujo a medias).
 const RESUMABLE_SCREENS = ['home','biblia','diario','orar','perfil','misPalabras','musica','checkin'];
+const NAV_SCREENS = ['home','biblia','diario','orar','perfil','sentir','misPalabras','musica'];
 
 function go(id, opts){
   opts = opts || {};
@@ -2103,7 +2150,7 @@ function go(id, opts){
   el.classList.add('active');
   currentScreen = id;
   document.querySelectorAll('.navbtn').forEach(b=>b.classList.toggle('active', b.dataset.s===id));
-  const showNav = ['home','biblia','diario','orar','perfil','sentir','misPalabras','musica'].includes(id);
+  const showNav = NAV_SCREENS.includes(id);
   document.getElementById('navbar').style.display = showNav ? 'flex' : 'none';
   if(id==='home') renderHomeQuick();
   if(id==='perfil') renderPerfil();
@@ -2115,7 +2162,9 @@ function go(id, opts){
   if(id==='biblia') { renderBooks(); renderPlanRow(); document.getElementById('search-results').innerHTML=''; }
   if(id==='orar') renderOraciones();
   if(id!=='reader') stopListen();
-  if(id!=='reproductor') pausePlayerIfPlaying();
+  // la música/predicación NO se pausa al salir del reproductor — sigue sonando
+  // de fondo mientras exploras otra pantalla, y el mini reproductor la controla.
+  updateMiniPlayer();
   closeSidebar();
   window.scrollTo(0,0);
 
@@ -3367,7 +3416,7 @@ function renderMusica(){
   const featured = pickWeeklyFeatured();
   const scene = MUSIC_SCENES[weekSeed() % MUSIC_SCENES.length];
   document.getElementById('musica-featured').innerHTML = `
-    <div class="week-scene" style="background:${scene};" onclick="playTrackById('${featured.id}')">
+    <div class="week-scene" style="background:${scene};" onclick="openMusicPersona('${featured.id}')">
       <div class="eyebrow"><span class="dot"></span>${featured.type}</div>
       <div class="name serif">${featured.name}</div>
       <div class="role">${featured.role}</div>
@@ -3385,8 +3434,11 @@ function renderMusica(){
       <div class="s">${cat.s}</div>
     </div>
   `).join('');
+  // Tocar la fila abre el catálogo completo de esa persona (muchos videos,
+  // no solo uno); el botón ▶ es un atajo para reproducir de una vez su video
+  // insignia, sin tener que entrar al catálogo primero.
   document.getElementById('musica-pastores').innerHTML = MUSIC_PASTORES.map(p=>`
-    <div class="music-person" onclick="playTrackById('${p.id}')">
+    <div class="music-person" onclick="openMusicPersona('${p.id}')">
       <div class="music-person-avatar" style="background:${p.bg};">🎙️</div>
       <div><div class="t">${p.name}</div><div class="s">${p.s}</div></div>
       <div class="music-person-links">
@@ -3395,7 +3447,7 @@ function renderMusica(){
     </div>
   `).join('');
   document.getElementById('musica-podcasts').innerHTML = MUSIC_PODCASTS.map(p=>`
-    <div class="music-track" onclick="playTrackById('${p.id}')">
+    <div class="music-track" onclick="openMusicPersona('${p.id}')">
       <div class="music-track-icon" style="background:${p.bg};">🎧</div>
       <div><div class="t">${p.name}</div><div class="s">${p.s}</div></div>
     </div>
@@ -3440,6 +3492,32 @@ async function openMusicCategory(id){
   listEl.innerHTML = list.map(renderCategoryTrackRow).join('') + `
     <div class="list-card" style="margin-top:6px;" onclick="openMusicSearch('youtube','${cat.q.replace(/'/g,"\\'")}')">
       <div><div class="t">Buscar más de "${cat.t}" en YouTube</div><div class="s">Se abre en una pestaña nueva</div></div>
+      <span>↗</span>
+    </div>
+  `;
+}
+
+// Catálogo de una persona (artista, pastor o podcast): trae muchos videos
+// reales de YouTube en vez de reproducir uno solo de una — reutiliza la
+// misma pantalla de categoría, con la búsqueda dirigida a esa persona.
+async function openMusicPersona(id){
+  const item = findTrackById(id);
+  if(!item) return;
+  document.getElementById('musicaCategoria-title').textContent = item.name;
+  document.getElementById('musicaCategoria-subtitle').textContent = (item.role || item.s || '') + '.';
+  const listEl = document.getElementById('musicaCategoria-list');
+  listEl.innerHTML = musicLoadingHTML();
+  go('musicaCategoria');
+
+  const results = await ytApiSearch(item.q || item.name, 14);
+  if(results && results.length){
+    listEl.innerHTML = results.map(v=>musicSearchResultRow(v)).join('');
+    return;
+  }
+  // sin búsqueda real disponible todavía: al menos lo que ya tenemos curado.
+  listEl.innerHTML = renderCategoryTrackRow(item) + `
+    <div class="list-card" style="margin-top:6px;" onclick="openMusicSearch('youtube','${(item.q||item.name).replace(/'/g,"\\'")}')">
+      <div><div class="t">Buscar más de "${item.name}" en YouTube</div><div class="s">Se abre en una pestaña nueva</div></div>
       <span>↗</span>
     </div>
   `;
@@ -3525,6 +3603,15 @@ window.onYouTubeIframeAPIReady = function(){
   if(currentPlayItem) playTrackNow(currentPlayItem);
 };
 
+// Portada del video: usamos la miniatura pública de YouTube (no hace falta
+// clave para esto) para que el modo "solo escuchar" se vea a una carátula
+// real del video, no un ícono genérico.
+function trackThumbUrl(item){
+  if(!item) return '';
+  if(item.thumb) return item.thumb;
+  if(item.yt) return `https://i.ytimg.com/vi/${item.yt}/hqdefault.jpg`;
+  return '';
+}
 function setPlayerMode(mode){
   playerMode = mode;
   document.querySelectorAll('.player-mode-btn').forEach(b=>b.classList.toggle('active', b.dataset.m===mode));
@@ -3547,17 +3634,24 @@ function playTrackById(id, mode, ev){
 }
 function playTrack(item, mode){
   haptic(10);
+  const isNewTrack = !currentPlayItem || currentPlayItem.yt !== item.yt || currentPlayItem.ytList !== item.ytList;
   currentPlayItem = item;
   document.getElementById('player-title').textContent = item.name;
   document.getElementById('player-audio-name').textContent = item.name;
   document.getElementById('player-audio-role').textContent = item.role || item.s || '';
+  const thumb = trackThumbUrl(item);
+  const art = document.querySelector('.player-audio-art');
+  if(art){ art.style.backgroundImage = thumb ? `url('${thumb}')` : ''; art.textContent = thumb ? '' : '🎵'; }
   document.getElementById('player-fallback').style.display = 'none';
   go('reproductor');
   setPlayerMode(mode || playerMode);
-  ensureYouTubeApi();
-  clearTimeout(playerLoadTimer);
-  playerLoadTimer = setTimeout(()=>showPlayerFallback(item), 6000);
-  if(ytApiReady) playTrackNow(item);
+  updateMiniPlayer();
+  if(isNewTrack){
+    ensureYouTubeApi();
+    clearTimeout(playerLoadTimer);
+    playerLoadTimer = setTimeout(()=>showPlayerFallback(item), 6000);
+    if(ytApiReady) playTrackNow(item);
+  }
 }
 function playTrackNow(item){
   clearTimeout(playerLoadTimer);
@@ -3571,9 +3665,12 @@ function playTrackNow(item){
     ytPlayer = new YT.Player('yt-player', {
       width:'100%', height:'100%',
       videoId: item.ytList ? undefined : item.yt,
+      // modestbranding/rel/iv_load_policy: la interfaz de YouTube queda lo
+      // más discreta posible (sin sugerencias ni logos grandes encima),
+      // para que se sienta integrado y no un reproductor ajeno "pegado".
       playerVars: item.ytList
-        ? { listType:'playlist', list:item.ytList, autoplay:1, playsinline:1, rel:0 }
-        : { autoplay:1, playsinline:1, rel:0 },
+        ? { listType:'playlist', list:item.ytList, autoplay:1, playsinline:1, rel:0, modestbranding:1, iv_load_policy:3 }
+        : { autoplay:1, playsinline:1, rel:0, modestbranding:1, iv_load_policy:3 },
       events:{
         onReady: (e)=>{ e.target.playVideo(); },
         onStateChange: onPlayerStateChange,
@@ -3583,8 +3680,12 @@ function playTrackNow(item){
   }catch(e){ showPlayerFallback(item); }
 }
 function onPlayerStateChange(e){
+  const playing = e.data===1;
+  const icon = playing ? '⏸' : '▶';
   const btn = document.getElementById('player-audio-toggle');
-  if(btn) btn.textContent = e.data===1 ? '⏸' : '▶';
+  if(btn) btn.textContent = icon;
+  const miniBtn = document.getElementById('mini-player-toggle');
+  if(miniBtn) miniBtn.textContent = icon;
 }
 function togglePlayerPlayback(){
   if(!ytPlayer || !ytPlayer.getPlayerState) return;
@@ -3604,10 +3705,37 @@ function showPlayerFallback(item){
   const btn = document.getElementById('player-fallback-btn');
   if(btn) btn.onclick = ()=> window.open(item.yt ? `https://www.youtube.com/watch?v=${item.yt}` : musicSearchUrl('youtube', item.q||item.name), '_blank', 'noopener');
 }
+// Volver a "Música y más" sin detener lo que está sonando — el mini
+// reproductor se encarga de mostrar que sigue activo.
 function closePlayer(){
+  go('musica');
+}
+// Detener del todo (el botón ✕ del mini reproductor).
+function stopPlayback(){
   pausePlayerIfPlaying();
   currentPlayItem = null;
-  go('musica');
+  updateMiniPlayer();
+}
+// Mini reproductor flotante: visible cuando hay algo sonando y no estás ya
+// en la pantalla del reproductor grande.
+function updateMiniPlayer(){
+  const bar = document.getElementById('mini-player');
+  if(!bar) return;
+  if(!currentPlayItem || currentScreen==='reproductor'){
+    bar.classList.remove('show');
+    return;
+  }
+  document.getElementById('mini-player-title').textContent = currentPlayItem.name;
+  document.getElementById('mini-player-role').textContent = currentPlayItem.role || currentPlayItem.s || '';
+  const thumb = trackThumbUrl(currentPlayItem);
+  const thumbEl = document.getElementById('mini-player-thumb');
+  if(thumbEl){ thumbEl.style.backgroundImage = thumb ? `url('${thumb}')` : ''; thumbEl.textContent = thumb ? '' : '🎵'; }
+  const btn = document.getElementById('mini-player-toggle');
+  if(btn && ytPlayer && ytPlayer.getPlayerState){
+    try{ btn.textContent = ytPlayer.getPlayerState()===1 ? '⏸' : '▶'; }catch(e){}
+  }
+  bar.classList.add('show');
+  bar.classList.toggle('above-nav', NAV_SCREENS.includes(currentScreen));
 }
 
 function openDiarioEntry(idx){
