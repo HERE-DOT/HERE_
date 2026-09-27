@@ -98,16 +98,74 @@
   .script{font-family:'Petit Formal Script', 'Brush Script MT', cursive;}
 
   /* ---------- Splash: "la puerta de luz" ----------
-     Oscuridad -> una línea fina de luz -> se abre como una puerta ->
-     detrás no hay una foto nueva, es la pantalla real de HERE (la que
-     iría a continuación) ya renderizada debajo -> HERE + tagline sobre
-     ella un instante -> se disuelve y queda la app real, interactiva. */
+     Oscuridad -> línea fina de luz -> se abre como una puerta -> detrás
+     aparece una escena cinematográfica (valle, montañas, amanecer —
+     construida en CSS/clip-path con la paleta de marca de HERE, sin
+     fotos externas) -> HERE + tagline sobre ella -> la escena se
+     disuelve con un ligero zoom y queda al descubierto la app real
+     (Home / check-in / onboarding), que ya está renderizada debajo
+     desde el primer instante. Todo en una sola animación de 3.2s. */
   #splash{
-    /* Ojo: SIN fondo propio — el negro lo aportan solo las dos hojas de la
-       puerta (.door-leaf). Si este contenedor tuviera su propio background,
-       seguiría tapando la vista aunque las hojas ya se hubieran apartado. */
+    /* SIN fondo propio — lo opaco lo aportan la escena (.intro-scene) y
+       las hojas de la puerta (.door-leaf). Si este contenedor tuviera su
+       propio background, taparía la app real incluso tras disolverse. */
     position:fixed; inset:0; z-index:999;
     max-width:480px; margin:0 auto; overflow:hidden;
+  }
+  .intro-scene{
+    position:absolute; inset:0; z-index:1; overflow:hidden;
+    transform:scale(1.08); opacity:1; filter:blur(0px);
+    animation: introSceneMove 3200ms cubic-bezier(.4,0,.2,1) forwards;
+  }
+  @keyframes introSceneMove{
+    0%{ transform:scale(1.08); filter:blur(0px); opacity:1; }
+    43.75%{ transform:scale(1.0); filter:blur(0px); opacity:1; }
+    71.875%{ transform:scale(1.02); filter:blur(0px); opacity:1; }
+    100%{ transform:scale(1.12); filter:blur(14px); opacity:0; }
+  }
+  .splash-sky{
+    position:absolute; inset:0;
+    background:linear-gradient(180deg, #17140F 0%, #2C2013 24%, #6B4A1F 45%, var(--gold-deep) 58%, var(--gold-light) 67%, var(--bg-warm) 73%);
+  }
+  .splash-sun{
+    position:absolute; left:50%; top:55%; width:34%; aspect-ratio:1/1; transform:translate(-50%,-50%);
+    border-radius:50%; filter:blur(1px);
+    background:radial-gradient(circle, rgba(247,232,194,0.95) 0%, rgba(233,205,142,0.55) 32%, rgba(233,205,142,0) 68%);
+  }
+  .splash-sun-halo{
+    position:absolute; left:50%; top:55%; width:75%; aspect-ratio:1/1; transform:translate(-50%,-50%);
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(233,205,142,0.30) 0%, rgba(233,205,142,0.08) 45%, rgba(233,205,142,0) 70%);
+  }
+  .splash-mtn{ position:absolute; left:0; right:0; }
+  .splash-mtn.back{
+    bottom:27%; height:26%;
+    background:linear-gradient(180deg, rgba(126,169,133,0.55), rgba(44,79,59,0.6));
+    clip-path:polygon(0% 62%,8% 40%,18% 55%,30% 26%,42% 48%,55% 20%,68% 42%,80% 16%,90% 38%,100% 24%,100% 100%,0% 100%);
+  }
+  .splash-mtn.mid{
+    bottom:19%; height:26%;
+    background:linear-gradient(180deg, var(--sage-deep), var(--sage-deeper));
+    clip-path:polygon(0% 70%,10% 45%,22% 62%,35% 30%,48% 55%,60% 22%,74% 50%,88% 18%,100% 40%,100% 100%,0% 100%);
+  }
+  .splash-mtn.front{
+    bottom:13%; height:22%;
+    background:var(--ink);
+    clip-path:polygon(0% 65%,12% 35%,26% 58%,40% 20%,52% 48%,66% 15%,78% 42%,92% 10%,100% 32%,100% 100%,0% 100%);
+  }
+  .splash-water{
+    position:absolute; left:0; right:0; bottom:0; height:13%;
+    background:linear-gradient(180deg, rgba(233,205,142,0.4), rgba(23,20,15,0.95));
+  }
+  .splash-water::after{
+    content:''; position:absolute; inset:0;
+    background:repeating-linear-gradient(180deg, rgba(255,244,222,0.12) 0px, rgba(255,244,222,0.12) 1px, transparent 1px, transparent 7px);
+    mix-blend-mode:overlay;
+  }
+  .splash-veg{
+    position:absolute; left:0; right:0; bottom:0; height:7%;
+    background:var(--ink);
+    clip-path:polygon(0% 100%,0% 35%,6% 62%,12% 22%,20% 56%,28% 12%,36% 46%,46% 16%,55% 52%,64% 8%,74% 42%,84% 14%,92% 50%,100% 22%,100% 100%);
   }
   .door-leaf{
     position:absolute; top:0; bottom:0; width:50%; background:#000; z-index:2;
@@ -117,45 +175,50 @@
     background:
       linear-gradient(to right, transparent 0%, transparent calc(100% - 3px), var(--gold-light) calc(100% - 2px), rgba(233,205,142,0.3) 100%),
       #000;
-    animation: doorOpenL 3000ms cubic-bezier(.6,.02,.18,1) forwards;
+    animation: doorOpenL 3200ms cubic-bezier(.6,.02,.18,1) forwards;
   }
   .door-leaf.r{
     right:0;
     background:
       linear-gradient(to left, transparent 0%, transparent calc(100% - 3px), var(--gold-light) calc(100% - 2px), rgba(233,205,142,0.3) 100%),
       #000;
-    animation: doorOpenR 3000ms cubic-bezier(.6,.02,.18,1) forwards;
+    animation: doorOpenR 3200ms cubic-bezier(.6,.02,.18,1) forwards;
   }
-  @keyframes doorOpenL{ 0%,13.3%{transform:translateX(0);} 46.6%,100%{transform:translateX(-100%);} }
-  @keyframes doorOpenR{ 0%,13.3%{transform:translateX(0);} 46.6%,100%{transform:translateX(100%);} }
+  @keyframes doorOpenL{ 0%,12.5%{transform:translateX(0);} 43.75%,100%{transform:translateX(-100%);} }
+  @keyframes doorOpenR{ 0%,12.5%{transform:translateX(0);} 43.75%,100%{transform:translateX(100%);} }
   .door-seam{
     position:absolute; top:0; bottom:0; left:50%; width:2px; margin-left:-1px; z-index:3;
     background:linear-gradient(180deg, transparent 0%, rgba(255,244,222,0.9) 20%, #fff 50%, rgba(255,244,222,0.9) 80%, transparent 100%);
     box-shadow:0 0 20px 5px rgba(233,205,142,0.6);
-    opacity:0; animation: seamGlow 3000ms ease forwards;
+    opacity:0; animation: seamGlow 3200ms ease forwards;
   }
-  @keyframes seamGlow{ 0%{opacity:0;} 6.6%{opacity:1;} 15%{opacity:1;} 32%{opacity:0;} 100%{opacity:0;} }
+  @keyframes seamGlow{ 0%{opacity:0;} 6.25%{opacity:1;} 14%{opacity:1;} 30%{opacity:0;} 100%{opacity:0;} }
   .splash-scrim{
     position:absolute; inset:0; z-index:4; pointer-events:none;
     background:radial-gradient(ellipse at 50% 42%, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.14) 45%, rgba(0,0,0,0) 72%);
-    opacity:0; animation: scrimFade 3000ms ease forwards;
+    opacity:0; animation: scrimFade 3200ms ease forwards;
   }
-  @keyframes scrimFade{ 0%,46.6%{opacity:0;} 60%{opacity:1;} 76.6%{opacity:1;} 100%{opacity:0;} }
+  @keyframes scrimFade{ 0%,43.75%{opacity:0;} 56.25%{opacity:1;} 71.875%{opacity:1;} 100%{opacity:0;} }
   .splash-content{
     position:absolute; inset:0; z-index:5; display:flex; flex-direction:column; align-items:center;
     justify-content:center; text-align:center; opacity:0; pointer-events:none;
-    animation: contentFade 3000ms ease forwards;
+    animation: contentFade 3200ms ease forwards;
   }
   @keyframes contentFade{
-    0%,43.3%{opacity:0; transform:translateY(8px);}
-    53.3%,76.6%{opacity:1; transform:translateY(0);}
-    96.6%,100%{opacity:0; transform:translateY(0);}
+    0%,40%{opacity:0; transform:translateY(8px);}
+    50%,71.875%{opacity:1; transform:translateY(0);}
+    92%,100%{opacity:0; transform:translateY(0);}
   }
-  #splash .mark{ font-family:'Manrope'; font-weight:700; font-size:40px; letter-spacing:3px; color:#fff; }
-  #splash .tag{ font-family:'Fraunces'; font-style:italic; font-size:17px; color:rgba(255,255,255,0.85); margin-top:14px; }
-  #splash.reduced .door-leaf, #splash.reduced .door-seam, #splash.reduced .splash-scrim, #splash.reduced .splash-content{ animation:none; }
+  #splash .mark{ font-family:'Manrope'; font-weight:700; font-size:40px; letter-spacing:3px; color:#fff; text-shadow:0 2px 18px rgba(0,0,0,0.35); }
+  #splash .tag{ font-family:'Fraunces'; font-style:italic; font-size:17px; color:rgba(255,255,255,0.9); margin-top:14px; text-shadow:0 2px 14px rgba(0,0,0,0.35); }
+  #splash.reduced .intro-scene, #splash.reduced .door-leaf, #splash.reduced .door-seam, #splash.reduced .splash-scrim, #splash.reduced .splash-content{ animation:none; }
+  #splash.reduced .intro-scene{ transform:none; filter:none; opacity:1; }
+  #splash.reduced .door-leaf.l{ transform:translateX(-100%); }
+  #splash.reduced .door-leaf.r{ transform:translateX(100%); }
+  #splash.reduced .door-seam, #splash.reduced .splash-scrim{ opacity:0; }
+  #splash.reduced .splash-content{ opacity:1; transform:none; }
   @media (prefers-reduced-motion: reduce){
-    .door-leaf, .door-seam, .splash-scrim, .splash-content{ animation:none !important; }
+    .intro-scene, .door-leaf, .door-seam, .splash-scrim, .splash-content{ animation:none !important; }
   }
 
   /* ---------- shared ---------- */
@@ -724,6 +787,16 @@
 </head>
 <body>
 <div id="splash" aria-hidden="true">
+  <div class="intro-scene">
+    <div class="splash-sky"></div>
+    <div class="splash-sun-halo"></div>
+    <div class="splash-sun"></div>
+    <div class="splash-mtn back"></div>
+    <div class="splash-mtn mid"></div>
+    <div class="splash-mtn front"></div>
+    <div class="splash-water"></div>
+    <div class="splash-veg"></div>
+  </div>
   <div class="door-leaf l"></div>
   <div class="door-leaf r"></div>
   <div class="door-seam"></div>
@@ -2945,19 +3018,21 @@ window.addEventListener('load', ()=>{
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if(reduceMotion){
-    // Sin animación de puerta: solo un cruce muy breve y directo al contenido real.
+    // Sin puerta ni escena animándose: se ve de una vez la escena ya
+    // abierta con "HERE" (mantiene la identidad visual un instante breve)
+    // y luego un cruce simple y rápido hacia la app real.
     splash.classList.add('reduced');
-    requestAnimationFrame(()=>{
-      splash.style.transition = 'opacity 260ms ease';
+    setTimeout(()=>{
+      splash.style.transition = 'opacity 240ms ease';
       splash.style.opacity = '0';
-      setTimeout(()=>{ splash.style.display='none'; }, 280);
-    });
+      setTimeout(()=>{ splash.style.display='none'; }, 260);
+    }, 380);
     return;
   }
-  // La animación (puerta + HERE + tagline) ya se dispara sola por CSS en
-  // cuanto el splash existe en el DOM; aquí solo lo retiramos del todo al
-  // terminar, para que quede 100% interactivo y sin capa alguna encima.
-  setTimeout(()=>{ splash.style.display = 'none'; }, 3050);
+  // La animación (escena + puerta + HERE + tagline) ya se dispara sola por
+  // CSS en cuanto el splash existe en el DOM; aquí solo lo retiramos del
+  // todo al terminar, para que quede 100% interactivo y sin capa encima.
+  setTimeout(()=>{ splash.style.display = 'none'; }, 3250);
 });
 </script>
 </body>
