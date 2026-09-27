@@ -774,6 +774,10 @@
     width:44px; height:44px; border-radius:50%; border:1px solid var(--line); background:var(--bg);
     cursor:pointer; font-size:13px; font-weight:700; color:var(--ink-soft); box-shadow:var(--shadow-sm);
   }
+  .rate-ctrl{display:flex; gap:8px;}
+  .rate-chip{flex:1; padding:11px 0; border-radius:100px; border:1px solid var(--line); background:var(--card); font-size:13px; font-weight:600; color:var(--ink-soft); cursor:pointer; transition:background .15s ease, color .15s ease, border-color .15s ease;}
+  .rate-chip.active{background:var(--sage-deep); color:#fff; border-color:var(--sage-deep);}
+  .voice-hint{font-size:12.5px; color:var(--ink-soft); line-height:1.5;}
   .reader-topbar{justify-content:space-between;}
   .reader-icon-btn{width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12.5px; font-weight:600; color:var(--ink-soft); cursor:pointer; flex:none; background:transparent; border:1px solid var(--line); transition:background .15s ease, transform .12s ease;}
   .reader-icon-btn:active{transform:scale(0.92); background:var(--beige);}
@@ -2582,16 +2586,23 @@ async function openChapter(book, chapterNum){
   if(!visited.includes(chKey)){ visited.push(chKey); save('here_visited', visited); }
 }
 function openFontSizeSheet(){
+  refreshSpanishVoices();
   openSheet(`
     <div class="handle"></div>
-    <p style="font-size:13px; color:var(--ink-soft); margin-bottom:16px; text-align:center;">Tamaño del texto</p>
-    <div class="fontsize-ctrl" style="margin-bottom:6px;">
+    <p style="font-size:13px; color:var(--ink-soft); margin-bottom:16px; text-align:center;">Ajustes de lectura</p>
+    <div class="fontsize-ctrl" style="margin-bottom:24px;">
       <button onclick="changeReaderFontSize(-1)" aria-label="Reducir texto">A-</button>
       <p class="serif" id="fontsize-preview" style="flex:1; text-align:center; font-style:italic; margin:0 6px;">Aa</p>
       <button onclick="changeReaderFontSize(1)" aria-label="Aumentar texto">A+</button>
     </div>
+    <p style="font-size:12px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.4px; font-weight:700; margin-bottom:10px;">Ritmo al escuchar</p>
+    <div class="rate-ctrl" id="rate-ctrl" style="margin-bottom:24px;"></div>
+    <p style="font-size:12px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.4px; font-weight:700; margin-bottom:10px;">Voz</p>
+    <div class="vmenu" id="voice-options"></div>
   `);
   updateFontSizePreview();
+  renderRateOptions();
+  renderVoiceOptions();
 }
 function updateFontSizePreview(){
   const p = document.getElementById('fontsize-preview');
@@ -2624,14 +2635,124 @@ function stepChapter(dir){
   if(!nextChapters) return;
   openChapter(nextBook, dir>0 ? 1 : nextChapters.length);
 }
+/* ---------------- voz: elegir entre las voces en español del dispositivo,
+   y trocear el texto en frases cortas con pausas propias, para que la
+   lectura respire en vez de sonar plana y corrida (más natural, menos
+   robótica) ---------------- */
 let isListening = false;
-let listenUtterances = [];
-let listenIndex = 0;
+let listenQueue = [];
+let listenPos = 0;
 const ICON_PLAY = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.6v12.8c0 .8.87 1.28 1.55.85l10-6.4a1 1 0 0 0 0-1.7l-10-6.4C8.87 4.32 8 4.8 8 5.6z"/></svg>';
 const ICON_PAUSE = '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6.5" y="5" width="4" height="14" rx="1.2"/><rect x="13.5" y="5" width="4" height="14" rx="1.2"/></svg>';
 function setListenBtn(state){
   const btn = document.getElementById('listen-btn');
   if(btn) btn.innerHTML = state==='pause' ? ICON_PAUSE : ICON_PLAY;
+}
+
+let spanishVoices = [];
+function refreshSpanishVoices(){
+  if(!('speechSynthesis' in window)) return;
+  const all = window.speechSynthesis.getVoices() || [];
+  spanishVoices = all.filter(v=>/^es/i.test(v.lang));
+  renderVoiceOptions();
+}
+if('speechSynthesis' in window){
+  refreshSpanishVoices();
+  // en muchos navegadores (sobre todo Chrome) la lista de voces llega async,
+  // después de la primera llamada a getVoices()
+  window.speechSynthesis.onvoiceschanged = refreshSpanishVoices;
+}
+function voiceQualityScore(v){
+  const name = (v.name||'').toLowerCase();
+  let score = 0;
+  if(!v.localService) score += 3; // las voces "de red" suelen ser de mejor calidad (p.ej. Google WaveNet)
+  if(/natural|neural|enhanced|premium|wavenet|plus/.test(name)) score += 4;
+  if(/google/.test(name)) score += 2;
+  if(/^es-es|^es-us|^es-mx/i.test(v.lang)) score += 1;
+  return score;
+}
+function bestAutoVoice(){
+  if(!spanishVoices.length) return null;
+  return [...spanishVoices].sort((a,b)=>voiceQualityScore(b)-voiceQualityScore(a))[0];
+}
+let readerVoiceURI = load('here_reader_voice_uri', null);
+function pickActiveVoice(){
+  if(readerVoiceURI){
+    const chosen = spanishVoices.find(v=>v.voiceURI===readerVoiceURI);
+    if(chosen) return chosen;
+  }
+  return bestAutoVoice();
+}
+function setReaderVoice(voiceURI){
+  readerVoiceURI = voiceURI || null;
+  save('here_reader_voice_uri', readerVoiceURI);
+  haptic(10);
+  renderVoiceOptions();
+}
+function friendlyVoiceName(v){
+  // simplifica nombres técnicos ("Google español", "Microsoft Helena - Spanish (Spain)")
+  // y añade la región cuando ayuda a distinguir voces parecidas
+  let n = (v.name||v.voiceURI).replace(/^Google\s*/i,'').replace(/^Microsoft\s*/i,'').trim();
+  if(/^es[-_]?es/i.test(v.lang)) n += ' · España';
+  else if(/^es[-_]?us/i.test(v.lang)) n += ' · Latam';
+  else if(/^es[-_]?mx/i.test(v.lang)) n += ' · México';
+  else if(/^es[-_]?ar/i.test(v.lang)) n += ' · Argentina';
+  return n;
+}
+function renderVoiceOptions(){
+  const c = document.getElementById('voice-options');
+  if(!c) return;
+  if(!('speechSynthesis' in window) || !spanishVoices.length){
+    c.innerHTML = `<p class="voice-hint">Tu dispositivo aún no tiene voces en español instaladas — revisa los ajustes de accesibilidad o "texto a voz" de tu teléfono para agregar más.</p>`;
+    return;
+  }
+  const active = pickActiveVoice();
+  c.innerHTML = spanishVoices.map(v=>{
+    const isOn = active && active.voiceURI===v.voiceURI;
+    return `<div class="vmenu-row" onclick="setReaderVoice('${v.voiceURI.replace(/'/g,"\\'")}')"><span>${friendlyVoiceName(v)}</span><span class="vmenu-icon">${isOn?'✓':''}</span></div>`;
+  }).join('');
+}
+
+const READER_RATES = [ {v:0.85, label:'Lenta'}, {v:0.97, label:'Natural'}, {v:1.1, label:'Ágil'} ];
+let readerVoiceRate = load('here_reader_rate', 0.97);
+function setReaderRate(rate){
+  readerVoiceRate = rate;
+  save('here_reader_rate', rate);
+  haptic(10);
+  renderRateOptions();
+}
+function renderRateOptions(){
+  const c = document.getElementById('rate-ctrl');
+  if(!c) return;
+  c.innerHTML = READER_RATES.map(r=>
+    `<button class="rate-chip ${Math.abs(r.v-readerVoiceRate)<0.01?'active':''}" onclick="setReaderRate(${r.v})">${r.label}</button>`
+  ).join('');
+}
+
+// trocea un versículo en frases cortas (por comas, punto y coma, dos puntos,
+// y puntuación de cierre) con una pausa distinta según la fuerza de cada
+// pausa — así la voz respira entre cláusulas en vez de leer todo de corrido.
+function splitIntoSpeechChunks(text){
+  const raw = text.split(/([,;:]|[.!?…]+)/);
+  const chunks = [];
+  for(let i=0;i<raw.length;i+=2){
+    const piece = (raw[i]||'').trim();
+    if(!piece) continue;
+    const delim = raw[i+1] || '';
+    const pause = /[.!?…]/.test(delim) ? 300 : (delim ? 130 : 0);
+    chunks.push({text:piece, pause});
+  }
+  return chunks.length ? chunks : [{text, pause:0}];
+}
+function buildListenQueue(verses){
+  const queue = [];
+  verses.forEach((t, vi)=>{
+    const chunks = splitIntoSpeechChunks(t);
+    chunks.forEach((c,ci)=>{
+      queue.push({ text:c.text, verseIndex:vi, pauseAfter: ci===chunks.length-1 ? Math.max(c.pause,380) : (c.pause||110) });
+    });
+  });
+  return queue;
 }
 function toggleListen(){
   if(isListening){ stopListen(); return; }
@@ -2642,39 +2763,47 @@ function toggleListen(){
   const verses = currentReaderVerses;
   if(!verses || !verses.length) return;
   window.speechSynthesis.cancel();
-  listenUtterances = verses.map((t)=>{
-    const u = new SpeechSynthesisUtterance(t);
-    u.lang = 'es-ES';
-    u.rate = 0.92;
-    u.pitch = 1;
-    return u;
-  });
-  listenIndex = 0;
+  listenQueue = buildListenQueue(verses);
+  listenPos = 0;
   isListening = true;
   setListenBtn('pause');
-  const highlightAndSpeak = (i)=>{
-    if(!isListening || i >= listenUtterances.length){
-      stopListen();
-      // al terminar el capítulo, pasa automáticamente al siguiente
-      if(i >= (listenUtterances.length||0) && listenUtterances.length){ stepChapter(1); }
-      return;
-    }
+  speakNext();
+}
+function speakNext(){
+  if(!isListening || listenPos >= listenQueue.length){
+    const finished = listenQueue.length>0 && listenPos>=listenQueue.length;
+    stopListen();
+    // al terminar el capítulo, pasa automáticamente al siguiente
+    if(finished) stepChapter(1);
+    return;
+  }
+  const item = listenQueue[listenPos];
+  const prevItem = listenQueue[listenPos-1];
+  if(!prevItem || prevItem.verseIndex !== item.verseIndex){
     document.querySelectorAll('#reader-content .vtext').forEach(v=>v.classList.remove('speaking'));
     const els = document.querySelectorAll('#reader-content .vtext');
-    if(els[i]){
-      els[i].classList.add('speaking');
-      els[i].scrollIntoView({behavior:'smooth', block:'center'});
+    if(els[item.verseIndex]){
+      els[item.verseIndex].classList.add('speaking');
+      els[item.verseIndex].scrollIntoView({behavior:'smooth', block:'center'});
     }
-    const u = listenUtterances[i];
-    u.onend = ()=>{ listenIndex = i+1; highlightAndSpeak(listenIndex); };
-    u.onerror = ()=>{ stopListen(); };
-    window.speechSynthesis.speak(u);
+  }
+  const voice = pickActiveVoice();
+  const u = new SpeechSynthesisUtterance(item.text);
+  u.lang = voice ? voice.lang : 'es-ES';
+  if(voice){ try{ u.voice = voice; }catch(e){} }
+  u.rate = readerVoiceRate;
+  u.pitch = 1;
+  u.onend = ()=>{
+    listenPos++;
+    if(isListening) setTimeout(speakNext, item.pauseAfter||0);
   };
-  highlightAndSpeak(0);
+  u.onerror = ()=>{ stopListen(); };
+  window.speechSynthesis.speak(u);
 }
 function stopListen(){
   isListening = false;
-  listenIndex = 0;
+  listenPos = 0;
+  listenQueue = [];
   if('speechSynthesis' in window) window.speechSynthesis.cancel();
   document.querySelectorAll('#reader-content .vtext').forEach(v=>v.classList.remove('speaking'));
   setListenBtn('play');
