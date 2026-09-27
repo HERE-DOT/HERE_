@@ -820,19 +820,22 @@
   }
   .player-mode-btn:active{transform:scale(0.97);}
   .player-mode-btn.active{background:linear-gradient(135deg,var(--sage-deep),var(--sage-deeper)); color:#fff; border-color:var(--sage-deep);}
-  /* el video queda dentro de una tarjeta redondeada con aire alrededor —
-     no pegado al borde ni justo debajo del topbar, para que se sienta parte
-     del diseño de la app y no un iframe de YouTube "pegado a la mala". */
+  /* diseño tipo "reproductor + lista", como YouTube: el video queda como una
+     tarjeta compacta arriba (no a todo el ancho, con aire alrededor) y debajo
+     una lista de videos relacionados a la que se le da más protagonismo —
+     así se siente parte del diseño de la app, no un iframe "pegado a la mala". */
+  .player-body{display:block;}
+  .player-main{width:100%;}
   .player-video-wrap{
-    position:relative; width:calc(100% - 40px); aspect-ratio:16/9; background:#000;
-    margin:4px 20px 16px; border-radius:22px; overflow:hidden; box-shadow:var(--shadow-md);
+    position:relative; width:min(300px, 70%); aspect-ratio:16/9; background:#000;
+    margin:4px auto 16px; border-radius:20px; overflow:hidden; box-shadow:var(--shadow-md);
   }
   .player-video-wrap iframe{position:absolute; inset:0; width:100%; height:100%; border:0;}
   .player-video-wrap.audio-hidden{position:absolute; width:2px; height:2px; overflow:hidden; opacity:0; pointer-events:none; top:0; left:0; margin:0; border-radius:0;}
-  .player-audio-wrap{display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:24px 32px 24px; gap:8px;}
+  .player-audio-wrap{display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:10px 32px 20px; gap:8px;}
   .player-audio-art{
-    width:220px; height:220px; border-radius:26px; display:flex; align-items:center; justify-content:center;
-    font-size:56px; background:linear-gradient(135deg,var(--sage-deep),var(--gold-deep)) center/cover no-repeat; box-shadow:var(--shadow-md);
+    width:150px; height:150px; border-radius:24px; display:flex; align-items:center; justify-content:center;
+    font-size:44px; background:linear-gradient(135deg,var(--sage-deep),var(--gold-deep)) center/cover no-repeat; box-shadow:var(--shadow-md);
     animation:playerPulse 2.6s ease-in-out infinite; color:#fff;
   }
   @keyframes playerPulse{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.02); } }
@@ -1096,6 +1099,15 @@
        a ningún borde de navegación inferior. */
     .mini-player{ left:auto; right:24px; bottom:24px; transform:none; max-width:340px; border-radius:16px; border-top:none; box-shadow:var(--shadow-md); }
     .mini-player.above-nav{ bottom:24px; }
+
+    /* reproductor: en escritorio, video + controles a la izquierda y la
+       lista de relacionados a la derecha, igual que el diseño de YouTube. */
+    .player-body{ display:flex; align-items:flex-start; gap:32px; max-width:920px; margin:0 auto; padding:0 24px; }
+    .player-main{ flex:0 0 380px; }
+    .player-video-wrap{ width:100%; margin:4px 0 16px; }
+    .player-related-wrap{ flex:1; min-width:0; }
+    .player-related-wrap .section-title{ padding-left:0; }
+    #player-related{ padding:0 0 30px; }
   }
   @media (min-width:1180px){
     .container, .book-grid, .feel-grid, .quick-row, .plan-row, .chapter-verse,
@@ -1528,20 +1540,28 @@
   <!-- REPRODUCTOR: video o solo audio, dentro de la app -->
   <section class="screen noNav" id="reproductor" style="padding-bottom:0;">
     <div class="topbar"><div class="backbtn" onclick="closePlayer()">←</div><h2 id="player-title"></h2></div>
-    <div class="player-modes">
-      <button class="player-mode-btn" data-m="video" onclick="setPlayerMode('video')">🎥 Ver video</button>
-      <button class="player-mode-btn" data-m="audio" onclick="setPlayerMode('audio')">🎧 Solo escuchar</button>
-    </div>
-    <div class="player-video-wrap" id="player-video-wrap"><div id="yt-player"></div></div>
-    <div class="player-audio-wrap" id="player-audio-wrap" style="display:none;">
-      <div class="player-audio-art">🎵</div>
-      <div class="player-audio-name" id="player-audio-name"></div>
-      <div class="player-audio-role" id="player-audio-role"></div>
-      <button class="player-audio-toggle" id="player-audio-toggle" onclick="togglePlayerPlayback()">⏸</button>
-    </div>
-    <div class="player-fallback" id="player-fallback" style="display:none;">
-      No pudimos cargar el reproductor aquí.
-      <div><button class="btn btn-ghost" id="player-fallback-btn" onclick="">Abrir en YouTube ↗</button></div>
+    <div class="player-body">
+      <div class="player-main">
+        <div class="player-modes">
+          <button class="player-mode-btn" data-m="video" onclick="setPlayerMode('video')">🎥 Ver video</button>
+          <button class="player-mode-btn" data-m="audio" onclick="setPlayerMode('audio')">🎧 Solo escuchar</button>
+        </div>
+        <div class="player-video-wrap" id="player-video-wrap"><div id="yt-player"></div></div>
+        <div class="player-audio-wrap" id="player-audio-wrap" style="display:none;">
+          <div class="player-audio-art">🎵</div>
+          <div class="player-audio-name" id="player-audio-name"></div>
+          <div class="player-audio-role" id="player-audio-role"></div>
+          <button class="player-audio-toggle" id="player-audio-toggle" onclick="togglePlayerPlayback()">⏸</button>
+        </div>
+        <div class="player-fallback" id="player-fallback" style="display:none;">
+          No pudimos cargar el reproductor aquí.
+          <div><button class="btn btn-ghost" id="player-fallback-btn" onclick="">Abrir en YouTube ↗</button></div>
+        </div>
+      </div>
+      <div class="player-related-wrap">
+        <div class="section-title" style="margin-top:4px;">Videos relacionados</div>
+        <div class="stack" id="player-related" style="padding:0 24px 30px;"></div>
+      </div>
     </div>
   </section>
 
@@ -3658,7 +3678,23 @@ function playTrack(item, mode){
     clearTimeout(playerLoadTimer);
     playerLoadTimer = setTimeout(()=>showPlayerFallback(item), 6000);
     if(ytApiReady) playTrackNow(item);
+    loadRelatedVideos(item);
   }
+}
+// Lista de "videos relacionados" debajo/al lado del reproductor, como en
+// YouTube — para poder seguir de uno a otro sin volver al catálogo.
+async function loadRelatedVideos(item){
+  const wrap = document.getElementById('player-related');
+  if(!wrap) return;
+  wrap.innerHTML = musicLoadingHTML();
+  const results = await ytApiSearch(item.q || item.name, 12);
+  if(currentPlayItem !== item) return; // ya se cambió de video mientras cargaba
+  if(!results || !results.length){
+    wrap.innerHTML = `<div class="empty" style="padding:20px 0;"><div class="light-dot"></div>No hay más videos relacionados por ahora.</div>`;
+    return;
+  }
+  const filtered = results.filter(v=>v.id !== item.yt).slice(0,10);
+  wrap.innerHTML = filtered.length ? filtered.map(v=>musicSearchResultRow(v)).join('') : '';
 }
 function playTrackNow(item){
   clearTimeout(playerLoadTimer);
