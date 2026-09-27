@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>HERE</title>
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#3C6B4C" id="meta-theme-color">
+<meta name="theme-color" content="#17140F" id="meta-theme-color">
 <meta name="color-scheme" content="light dark">
 <meta name="description" content="Un lugar para volver a Dios: Biblia, oracion y acompanamiento espiritual, cuando lo necesites.">
 <link rel="icon" href="/icons/icon-192.png">
@@ -250,8 +250,8 @@
     transition:transform .15s ease, opacity .2s ease, box-shadow .2s ease;
   }
   .btn:active{transform:scale(0.97);}
-  .btn-primary{background:var(--sage-deep); color:#fff; box-shadow:0 6px 16px rgba(44,79,59,0.22);}
-  .btn-primary:active{box-shadow:0 3px 10px rgba(44,79,59,0.2);}
+  .btn-primary{background:linear-gradient(135deg,var(--sage-deep),var(--sage-deeper)); color:#fff; box-shadow:0 8px 20px rgba(44,79,59,0.28);}
+  .btn-primary:active{box-shadow:0 4px 12px rgba(44,79,59,0.24);}
   .btn-ghost{background:var(--card); color:var(--ink); border:1px solid var(--line); box-shadow:var(--shadow-sm);}
   .btn-text{background:none; border:none; color:var(--ink-soft); font-family:'Manrope'; font-size:14px; cursor:pointer;}
   .stack{display:flex; flex-direction:column; gap:12px;}
@@ -712,12 +712,30 @@
   /* ---------- reading plans ---------- */
   .plan-row{display:flex; flex-shrink:0; align-items:flex-start; gap:14px; height:174px; overflow-x:auto; overflow-y:visible; padding:6px 24px 18px; scrollbar-width:none;}
   .plan-row::-webkit-scrollbar{display:none;}
-  .plan-card{flex:0 0 auto; width:180px; min-height:150px; border-radius:20px; padding:18px 16px; background:linear-gradient(160deg, var(--sage) 0%, var(--sage-deep) 100%); color:#fff; box-shadow:var(--shadow-md); cursor:pointer; transition:transform .12s ease;}
+  .plan-card{flex:0 0 auto; width:180px; min-height:150px; border-radius:20px; padding:18px 16px; background:var(--sage-deep) center/cover no-repeat; color:#fff; box-shadow:var(--shadow-md); cursor:pointer; transition:transform .12s ease;}
   .plan-card:active{transform:scale(0.97);}
-  .plan-card .emoji{font-size:26px;}
-  .plan-card .t{font-family:'Fraunces'; font-size:15.5px; margin-top:10px; line-height:1.3;}
-  .plan-card .s{font-size:11.5px; opacity:.85; margin-top:8px;}
-  .plan-card .bar{margin-top:12px; height:5px; border-radius:4px; background:rgba(255,255,255,0.28); overflow:hidden;}
+  .plan-card .emoji{font-size:26px; filter:drop-shadow(0 1px 5px rgba(0,0,0,0.4));}
+  .plan-card .t{font-family:'Fraunces'; font-size:15.5px; margin-top:10px; line-height:1.3; text-shadow:0 1px 8px rgba(0,0,0,0.4);}
+  .plan-card .s{font-size:11.5px; opacity:.92; margin-top:8px; text-shadow:0 1px 6px rgba(0,0,0,0.35);}
+  .plan-card .bar{margin-top:12px; height:5px; border-radius:4px; background:rgba(255,255,255,0.32); overflow:hidden;}
+  /* cada plan tiene su propia imagen cinematográfica en vez del bloque verde plano —
+     misma receta que las escenas de .verse-stage (degradado + foto + degradado de respaldo) */
+  .plan-card.pc-paz{background:
+    linear-gradient(180deg, rgba(20,35,38,0.15), rgba(10,22,26,0.78) 100%),
+    url('https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=700&q=65') center/cover no-repeat,
+    linear-gradient(160deg, #C9E7E3, #4E93A3 55%, #1F4E5C 100%);}
+  .plan-card.pc-jesus{background:
+    linear-gradient(180deg, rgba(52,33,15,0.1), rgba(30,18,8,0.8) 100%),
+    url('https://images.unsplash.com/photo-1561212856-44e9bae482aa?auto=format&fit=crop&w=700&q=65') center/cover no-repeat,
+    radial-gradient(circle at 50% 28%, #F7D488, #C97A3C 46%, #34210F 100%);}
+  .plan-card.pc-salmos{background:
+    linear-gradient(180deg, rgba(54,35,42,0.12), rgba(30,18,26,0.78) 100%),
+    url('https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?auto=format&fit=crop&w=700&q=65') center/cover no-repeat,
+    linear-gradient(160deg, #F6D9A4, #E3906B 48%, #6C4A6C 100%);}
+  .plan-card.pc-lejos{background:
+    linear-gradient(180deg, rgba(10,12,22,0.2), rgba(5,7,12,0.82) 100%),
+    url('https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?auto=format&fit=crop&w=700&q=65') center/cover no-repeat,
+    linear-gradient(160deg, #2B3654, #151B2C 60%, #05070C 100%);}
   .plan-card .bar-fill{height:100%; background:#fff; border-radius:4px;}
   .plan-progress-track{flex:1; height:8px; border-radius:6px; background:var(--line); overflow:hidden;}
   .plan-progress-fill{height:100%; background:var(--sage); border-radius:6px; transition:width .3s ease;}
@@ -1390,7 +1408,7 @@ function setTheme(mode){
   const toggle = document.getElementById('theme-toggle');
   if(toggle) toggle.checked = (mode==='dark');
   const meta = document.querySelector('meta[name="theme-color"]');
-  if(meta) meta.setAttribute('content', mode==='dark' ? '#171512' : '#3C6B4C');
+  if(meta) meta.setAttribute('content', '#17140F');
 }
 (function(){ setTheme(load('here_theme','light')); })();
 
@@ -2386,7 +2404,7 @@ function renderPlanRow(){
   c.innerHTML = PLANS.map(p=>{
     const prog = getPlanProgress(p.id);
     const pct = Math.round((prog.done.length / p.days.length) * 100);
-    return `<div class="plan-card" onclick="openPlan('${p.id}')">
+    return `<div class="plan-card pc-${p.id}" onclick="openPlan('${p.id}')">
       <div class="emoji">${p.emoji}</div>
       <div class="t">${p.title}</div>
       <div class="s">${prog.done.length}/${p.days.length} días</div>
