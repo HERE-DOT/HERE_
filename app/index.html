@@ -748,6 +748,55 @@
   .plan-day-ref{font-size:14.5px; color:var(--ink); font-weight:600;}
   .plan-day-check{margin-left:auto; font-size:18px; color:var(--sage-deep);}
 
+  /* ---------- música, podcasts y predicaciones ---------- */
+  /* Tarjeta "de la semana": misma receta cinematográfica que .hoy-scene
+     (degradado + foto + degradado de respaldo, texto blanco encima), pero
+     su propio nombre porque el contenido que destaca cambia cada semana. */
+  .week-scene{
+    position:relative; overflow:hidden; color:#fff; margin:6px 24px 18px; border-radius:24px;
+    background-size:cover; background-position:center; cursor:pointer;
+    display:flex; flex-direction:column; align-items:flex-start; justify-content:flex-end;
+    min-height:220px; padding:24px 22px 22px; box-shadow:var(--shadow-md);
+    transition:transform .15s ease;
+  }
+  .week-scene:active{transform:scale(0.985);}
+  .week-scene::after{content:''; position:absolute; inset:0;
+    background:linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.18) 40%, rgba(0,0,0,0.62) 100%);
+    pointer-events:none;}
+  .week-scene > *{position:relative; z-index:1;}
+  .week-scene .eyebrow{display:flex; align-items:center; gap:8px; font-size:11.5px; letter-spacing:.5px; text-transform:uppercase; font-weight:700; opacity:.92; text-shadow:0 1px 4px rgba(0,0,0,0.4);}
+  .week-scene .eyebrow .dot{width:6px; height:6px; border-radius:50%; background:var(--gold);}
+  .week-scene .name{font-family:'Fraunces'; font-size:22px; font-weight:500; margin-top:10px; text-shadow:0 2px 10px rgba(0,0,0,0.45);}
+  .week-scene .role{font-size:13px; opacity:.9; margin-top:4px; text-shadow:0 1px 6px rgba(0,0,0,0.4);}
+  .week-scene .blurb{font-size:12.5px; opacity:.85; margin-top:10px; line-height:1.5; text-shadow:0 1px 6px rgba(0,0,0,0.4); max-width:440px;}
+
+  .music-cat-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px; padding:8px 24px 20px;}
+  .music-cat-item{
+    padding:18px 16px; border-radius:20px; border:1px solid rgba(255,255,255,0.5);
+    cursor:pointer; display:flex; flex-direction:column; gap:8px; box-shadow:var(--shadow-sm);
+    transition:transform .15s ease, box-shadow .15s ease; color:var(--ink);
+  }
+  .music-cat-item:active{transform:scale(0.96);}
+  .music-cat-item .emoji{font-size:24px; filter:drop-shadow(0 2px 3px rgba(0,0,0,0.08));}
+  .music-cat-item .t{font-size:14.5px; font-weight:700;}
+  .music-cat-item .s{font-size:11.5px; color:rgba(30,30,25,0.65); line-height:1.4;}
+
+  .music-person{display:flex; align-items:center; gap:13px; padding:12px 14px; border-radius:18px; background:var(--card); border:1px solid var(--line); box-shadow:var(--shadow-sm); margin-bottom:10px;}
+  .music-person-avatar{width:44px; height:44px; border-radius:50%; flex:none; display:flex; align-items:center; justify-content:center; font-size:18px; color:#fff;}
+  .music-person .t{font-size:14.5px; font-weight:600;}
+  .music-person .s{font-size:12px; color:var(--ink-soft); margin-top:2px;}
+  .music-person-links{margin-left:auto; display:flex; gap:6px; flex:none;}
+  .music-person-links button{
+    width:32px; height:32px; border-radius:50%; border:1px solid var(--line); background:var(--bg);
+    font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--ink);
+  }
+  .music-person-links button:active{transform:scale(0.92);}
+  .music-track{display:flex; align-items:center; gap:13px; padding:12px 14px; border-radius:18px; background:var(--card); border:1px solid var(--line); box-shadow:var(--shadow-sm); margin-bottom:10px; cursor:pointer;}
+  .music-track:active{transform:scale(0.98);}
+  .music-track-icon{width:40px; height:40px; border-radius:12px; flex:none; display:flex; align-items:center; justify-content:center; font-size:17px; color:#fff;}
+  .music-track .t{font-size:14px; font-weight:600;}
+  .music-track .s{font-size:11.5px; color:var(--ink-soft); margin-top:2px;}
+
   /* ---------- bible ---------- */
   .book-grid{padding:8px 24px 24px; display:flex; flex-direction:column; gap:22px;}
   .book-group h3{font-size:12.5px; color:var(--ink-soft); margin-bottom:10px; font-weight:700; text-transform:uppercase; letter-spacing:.4px;}
@@ -925,6 +974,7 @@
     .container, .book-grid, .feel-grid, .quick-row, .plan-row, .chapter-verse,
     .chapter-picker, .diario-entry, .top-greeting, .section-title, .hero-card,
     .feature-card, .tag-tabs, #search-results, .list-card, .chat-body, .chat-inputbar,
+    .music-cat-grid, .week-scene, .music-person, .music-track,
     .empty{
       max-width:760px; margin-left:auto; margin-right:auto; width:100%;
     }
@@ -972,6 +1022,7 @@
     .container, .book-grid, .feel-grid, .quick-row, .plan-row, .chapter-verse,
     .chapter-picker, .diario-entry, .top-greeting, .section-title, .hero-card,
     .feature-card, .tag-tabs, #search-results, .list-card, .chat-body, .chat-inputbar,
+    .music-cat-grid, .week-scene, .music-person, .music-track,
     .empty{
       max-width:860px;
     }
@@ -1367,6 +1418,25 @@
     <button class="fab" id="diario-fab" onclick="openReflectionEditor('General','')">+</button>
   </section>
 
+  <!-- MÚSICA, PODCASTS Y PREDICACIONES -->
+  <section class="screen" id="musica">
+    <div class="topbar"><h2>Música y más</h2></div>
+    <div id="musica-featured"></div>
+    <div class="section-title" style="margin-top:10px;">Explora por estilo</div>
+    <div class="music-cat-grid" id="musica-categorias"></div>
+    <div class="section-title">Pastores y predicaciones</div>
+    <div class="stack" id="musica-pastores" style="padding:0 24px 6px;"></div>
+    <div class="section-title">Podcasts</div>
+    <div class="stack" id="musica-podcasts" style="padding:0 24px 24px;"></div>
+  </section>
+
+  <!-- CATEGORÍA DE MÚSICA -->
+  <section class="screen noNav" id="musicaCategoria">
+    <div class="topbar"><div class="backbtn" onclick="go('musica')">←</div><h2 id="musicaCategoria-title"></h2></div>
+    <p id="musicaCategoria-subtitle" style="padding:0 24px; margin-top:-4px; color:var(--ink-soft); font-size:13.5px; line-height:1.5;"></p>
+    <div class="stack" id="musicaCategoria-list" style="padding:10px 24px 40px;"></div>
+  </section>
+
   <!-- PERFIL -->
   <section class="screen" id="perfil">
     <div class="topbar"><h2>Tu camino</h2></div>
@@ -1390,9 +1460,9 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-7-4.5-7-10a4 4 0 017-2.6A4 4 0 0119 11c0 5.5-7 10-7 10z"/></svg>
       Orar
     </button>
-    <button class="navbtn" data-s="diario" onclick="go('diario')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 4h11a1 1 0 011 1v15l-3-2-3 2-3-2-3 2V5a1 1 0 011-1z"/><path d="M9 9h6M9 13h4"/></svg>
-      Reflexionar
+    <button class="navbtn" data-s="musica" onclick="go('musica')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+      Música
     </button>
   </div>
 </div>
@@ -1950,7 +2020,7 @@ function closeSidebar(){
 
 // Pantallas "de nivel superior": seguras para retomar tal cual al recargar la
 // página o al volver a abrir la app (no dependen de datos de un flujo a medias).
-const RESUMABLE_SCREENS = ['home','biblia','diario','orar','perfil','misPalabras','checkin'];
+const RESUMABLE_SCREENS = ['home','biblia','diario','orar','perfil','misPalabras','musica','checkin'];
 
 function go(id, opts){
   opts = opts || {};
@@ -1960,13 +2030,14 @@ function go(id, opts){
   el.classList.add('active');
   currentScreen = id;
   document.querySelectorAll('.navbtn').forEach(b=>b.classList.toggle('active', b.dataset.s===id));
-  const showNav = ['home','biblia','diario','orar','perfil','sentir','misPalabras'].includes(id);
+  const showNav = ['home','biblia','diario','orar','perfil','sentir','misPalabras','musica'].includes(id);
   document.getElementById('navbar').style.display = showNav ? 'flex' : 'none';
   if(id==='home') renderHomeQuick();
   if(id==='perfil') renderPerfil();
   if(id==='misPalabras') renderMisPalabras();
   if(id==='hoy') renderHoy();
   if(id==='diario') renderDiario();
+  if(id==='musica') renderMusica();
   if(id==='chat' && !chatStarted) startChat();
   if(id==='biblia') { renderBooks(); renderPlanRow(); document.getElementById('search-results').innerHTML=''; }
   if(id==='orar') renderOraciones();
@@ -3123,6 +3194,157 @@ function renderDiario(){
     }).join('');
   }
 }
+
+/* ---------------- música, podcasts y predicaciones ----------------
+   Sección "muy dinámica": una tarjeta destacada que rota cada semana
+   (artista / pastor / podcast) para que la gente vaya conociendo cosas
+   nuevas, más categorías de música para explorar libremente y listas de
+   pastores y podcasts recomendados. No hay reproducción propia dentro de
+   la app (no tenemos una fuente de audio/streaming propia): cada tarjeta
+   abre una búsqueda real en YouTube o Spotify para escuchar de inmediato,
+   así el contenido siempre es real y está disponible. */
+
+// Fondos cinematográficos reutilizables (misma receta que .plan-card / .hoy-scene:
+// degradado + foto + degradado de respaldo), para que cada destacado de la
+// semana se sienta con su propia atmósfera sin tener que crear una clase por persona.
+const MUSIC_SCENES = [
+  `linear-gradient(180deg, rgba(20,25,15,0.1), rgba(10,14,8,0.8) 100%), url('https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=800&q=65') center/cover no-repeat, linear-gradient(160deg, #E7D9A8, #A97C3C 55%, #2B1D0F 100%)`,
+  `linear-gradient(180deg, rgba(15,20,30,0.12), rgba(6,10,18,0.82) 100%), url('https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=800&q=65') center/cover no-repeat, linear-gradient(160deg, #C9D8E7, #4E6E93 55%, #101A2E 100%)`,
+  `linear-gradient(180deg, rgba(30,15,25,0.1), rgba(18,8,15,0.82) 100%), url('https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=800&q=65') center/cover no-repeat, linear-gradient(160deg, #F0C9D8, #A34E77 55%, #2E1020 100%)`,
+  `linear-gradient(180deg, rgba(15,25,22,0.1), rgba(8,16,14,0.82) 100%), url('https://images.unsplash.com/photo-1465847899084-d164df4dedc6?auto=format&fit=crop&w=800&q=65') center/cover no-repeat, linear-gradient(160deg, #C9E7D8, #3C8A6B 55%, #0F2E22 100%)`,
+];
+
+// Categorías de música para explorar — cada una abre una búsqueda real.
+const MUSIC_CATEGORIES = [
+  { id:'adoracion', emoji:'🙌', t:'Adoración', s:'Para entrar en su presencia', q:'música cristiana de adoración', wash:'wash-sage' },
+  { id:'alabanza', emoji:'🎉', t:'Alabanza', s:'Para celebrar con todo el corazón', q:'alabanza cristiana', wash:'wash-gold' },
+  { id:'reggeton', emoji:'🎤', t:'Reggaetón cristiano', s:'Ritmo urbano, letra con propósito', q:'reggaeton cristiano', wash:'wash-terra' },
+  { id:'ingles', emoji:'🇺🇸', t:'Cristiana en inglés', s:'Worship y CCM internacional', q:'christian worship music english', wash:'wash-slate' },
+  { id:'urbana', emoji:'🎧', t:'Hip-hop / urbana', s:'Rap y trap con mensaje', q:'rap cristiano hip hop cristiano', wash:'wash-lavender' },
+  { id:'baladas', emoji:'🎶', t:'Baladas y pop', s:'Para los momentos tranquilos', q:'baladas cristianas pop cristiano', wash:'wash-rose' },
+  { id:'instrumental', emoji:'🎹', t:'Instrumental', s:'Piano y ambiente para orar', q:'música instrumental cristiana para orar', wash:'wash-sage' },
+  { id:'infantil', emoji:'🧸', t:'Para los más pequeños', s:'Música cristiana infantil', q:'música cristiana infantil', wash:'wash-gold' },
+];
+
+// Pastores / predicadores recomendados.
+const MUSIC_PASTORES = [
+  { name:'Andrés Corson', s:'Enseñanza bíblica y vida cristiana', q:'andrés corson prédica', bg:'linear-gradient(135deg,#6B8F71,#3C6B4C)' },
+  { name:'Danilo Montero', s:'Adoración y palabra', q:'danilo montero prédica', bg:'linear-gradient(135deg,#C9A24E,#8A6A26)' },
+  { name:'Dante Gebel', s:'Mensajes para la nueva generación', q:'dante gebel prédica', bg:'linear-gradient(135deg,#B07A57,#7A4E32)' },
+  { name:'Rick Warren', s:'Propósito y vida con sentido', q:'rick warren sermon español', bg:'linear-gradient(135deg,#5A7FA6,#2F5074)' },
+];
+
+// Podcasts recomendados.
+const MUSIC_PODCASTS = [
+  { name:'Un Café con Dios', s:'Un momento devocional breve, cada día', q:'un café con dios podcast', bg:'linear-gradient(135deg,#B98CC9,#6E3F82)' },
+  { name:'BibleProject en español', s:'La Biblia explicada, libro por libro', q:'bibleproject español podcast', bg:'linear-gradient(135deg,#5FA3A0,#2C6461)' },
+  { name:'Renovados', s:'Conversaciones sobre fe y vida diaria', q:'renovados podcast cristiano', bg:'linear-gradient(135deg,#D68A6B,#93472B)' },
+];
+
+// Grupo del que rota el destacado de la semana — mezcla de artistas, pastores y podcasts.
+const MUSIC_WEEKLY_POOL = [
+  { type:'Artista de la semana', name:'Hillsong Worship', role:'Adoración', blurb:'La comunidad detrás de himnos de adoración cantados en todo el mundo.', q:'hillsong worship' },
+  { type:'Artista de la semana', name:'Christine D’Clario', role:'Adoración', blurb:'Voz puertorriqueña conocida por su intimidad en la adoración.', q:'christine dclario' },
+  { type:'Pastor de la semana', name:'Andrés Corson', role:'Pastor · Enseñanza bíblica', blurb:'Enseñanzas claras y prácticas para vivir la fe día a día.', q:'andrés corson prédica' },
+  { type:'Artista de la semana', name:'Redimi2', role:'Rap / hip-hop cristiano', blurb:'Uno de los referentes del rap cristiano en español.', q:'redimi2' },
+  { type:'Podcast de la semana', name:'Un Café con Dios', role:'Podcast devocional', blurb:'Un momento breve para detenerte y escuchar, cada día.', q:'un café con dios podcast' },
+  { type:'Artista de la semana', name:'Miel San Marcos', role:'Adoración', blurb:'Adoración guatemalteca con una energía que ha marcado a toda una generación.', q:'miel san marcos' },
+  { type:'Artista de la semana', name:'Lauren Daigle', role:'Cristiana en inglés', blurb:'Una de las voces más escuchadas del CCM contemporáneo.', q:'lauren daigle' },
+  { type:'Pastor de la semana', name:'Danilo Montero', role:'Pastor · Adoración', blurb:'Une la enseñanza con la adoración de una forma cercana.', q:'danilo montero prédica' },
+  { type:'Artista de la semana', name:'Funky', role:'Reggaetón cristiano', blurb:'Pionero del reggaetón cristiano, ritmo urbano con mensaje de esperanza.', q:'funky reggaeton cristiano' },
+  { type:'Podcast de la semana', name:'BibleProject en español', role:'Podcast bíblico', blurb:'La Biblia explicada libro por libro, de forma sencilla.', q:'bibleproject español podcast' },
+  { type:'Artista de la semana', name:'Marcos Witt', role:'Adoración', blurb:'Uno de los pioneros de la adoración contemporánea en español.', q:'marcos witt' },
+  { type:'Artista de la semana', name:'Tercer Cielo', role:'Pop cristiano', blurb:'Baladas y pop cristiano que han acompañado a generaciones.', q:'tercer cielo' },
+];
+
+// Semilla por semana del año — mismo espíritu que pickTodayVerse(), pero
+// a nivel de semana, para que el destacado cambie cada 7 días, no cada día.
+function weekSeed(){
+  const d = new Date();
+  const start = new Date(d.getFullYear(), 0, 1);
+  const weekNum = Math.ceil((((d - start) / 86400000) + start.getDay() + 1) / 7);
+  return d.getFullYear() * 53 + weekNum;
+}
+function pickWeeklyFeatured(){
+  return MUSIC_WEEKLY_POOL[weekSeed() % MUSIC_WEEKLY_POOL.length];
+}
+function musicSearchUrl(platform, q){
+  const enc = encodeURIComponent(q);
+  return platform==='spotify' ? `https://open.spotify.com/search/${enc}` : `https://www.youtube.com/results?search_query=${enc}`;
+}
+function openMusicSearch(platform, q, ev){
+  if(ev) ev.stopPropagation();
+  haptic(8);
+  window.open(musicSearchUrl(platform, q), '_blank', 'noopener');
+}
+function renderMusica(){
+  const featured = pickWeeklyFeatured();
+  const scene = MUSIC_SCENES[weekSeed() % MUSIC_SCENES.length];
+  document.getElementById('musica-featured').innerHTML = `
+    <div class="week-scene" style="background:${scene};" onclick="openMusicSearch('youtube','${featured.q.replace(/'/g,"\\'")}')">
+      <div class="eyebrow"><span class="dot"></span>${featured.type}</div>
+      <div class="name serif">${featured.name}</div>
+      <div class="role">${featured.role}</div>
+      <div class="blurb">${featured.blurb}</div>
+      <div class="hoy-scene-actions" style="margin-top:18px;">
+        <button onclick="openMusicSearch('youtube','${featured.q.replace(/'/g,"\\'")}', event)">▶ Escuchar</button>
+        <button onclick="openMusicSearch('spotify','${featured.q.replace(/'/g,"\\'")}', event)">Spotify ↗</button>
+      </div>
+    </div>
+  `;
+  document.getElementById('musica-categorias').innerHTML = MUSIC_CATEGORIES.map(cat=>`
+    <div class="music-cat-item ${cat.wash}" onclick="openMusicCategory('${cat.id}')">
+      <span class="emoji">${cat.emoji}</span>
+      <div class="t">${cat.t}</div>
+      <div class="s">${cat.s}</div>
+    </div>
+  `).join('');
+  document.getElementById('musica-pastores').innerHTML = MUSIC_PASTORES.map(p=>`
+    <div class="music-person">
+      <div class="music-person-avatar" style="background:${p.bg};">🎙️</div>
+      <div><div class="t">${p.name}</div><div class="s">${p.s}</div></div>
+      <div class="music-person-links">
+        <button aria-label="Escuchar en YouTube" onclick="openMusicSearch('youtube','${p.q.replace(/'/g,"\\'")}', event)">▶</button>
+      </div>
+    </div>
+  `).join('');
+  document.getElementById('musica-podcasts').innerHTML = MUSIC_PODCASTS.map(p=>`
+    <div class="music-track" onclick="openMusicSearch('youtube','${p.q.replace(/'/g,"\\'")}')">
+      <div class="music-track-icon" style="background:${p.bg};">🎧</div>
+      <div><div class="t">${p.name}</div><div class="s">${p.s}</div></div>
+    </div>
+  `).join('');
+}
+function openMusicCategory(id){
+  const cat = MUSIC_CATEGORIES.find(c=>c.id===id);
+  if(!cat) return;
+  document.getElementById('musicaCategoria-title').textContent = cat.t;
+  document.getElementById('musicaCategoria-subtitle').textContent = cat.s + '.';
+  // Del pool semanal, resalta primero lo que encaje temáticamente con la categoría,
+  // y completa con el resto — así cada categoría se siente curada, no una lista vacía.
+  const related = MUSIC_WEEKLY_POOL.filter(it=>{
+    const hay = (it.role+' '+it.name).toLowerCase();
+    if(id==='reggeton'||id==='urbana') return /reggaet|rap|hip.?hop|urbana/.test(hay);
+    if(id==='ingles') return /inglés|ccm|contemporary/i.test(it.role) || /lauren|hillsong/i.test(it.name);
+    if(id==='adoracion'||id==='alabanza') return /adoración/.test(hay);
+    return false;
+  });
+  const rest = MUSIC_WEEKLY_POOL.filter(it=>!related.includes(it));
+  const list = related.concat(rest).slice(0,8);
+  document.getElementById('musicaCategoria-list').innerHTML = list.map(it=>`
+    <div class="music-track" onclick="openMusicSearch('youtube','${it.q.replace(/'/g,"\\'")}')">
+      <div class="music-track-icon" style="background:linear-gradient(135deg,var(--sage-deep),var(--sage-deeper));">🎵</div>
+      <div><div class="t">${it.name}</div><div class="s">${it.role}</div></div>
+    </div>
+  `).join('') + `
+    <div class="list-card" style="margin-top:6px;" onclick="openMusicSearch('spotify','${cat.q.replace(/'/g,"\\'")}')">
+      <div><div class="t">Buscar más de "${cat.t}" en Spotify</div><div class="s">Se abre en una pestaña nueva</div></div>
+      <span>↗</span>
+    </div>
+  `;
+  go('musicaCategoria');
+}
+
 function openDiarioEntry(idx){
   const r = reflections[idx];
   openSheet(`
