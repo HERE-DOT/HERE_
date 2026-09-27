@@ -771,6 +771,16 @@
   .week-scene .blurb{font-size:12.5px; opacity:.85; margin-top:10px; line-height:1.5; text-shadow:0 1px 6px rgba(0,0,0,0.4); max-width:440px;}
 
   .music-search-bar{display:flex; gap:8px; padding:4px 24px 14px; align-items:center;}
+  /* segmented control centrado arriba: Música / Podcast / Predicaciones */
+  .escuchar-tabs{
+    display:flex; gap:3px; margin:4px 24px 18px; padding:4px; border-radius:100px;
+    background:var(--beige); max-width:420px; margin-left:auto; margin-right:auto;
+  }
+  .escuchar-tab{
+    flex:1; padding:9px 6px; border-radius:100px; border:none; background:none; cursor:pointer;
+    font-size:12.5px; font-weight:600; color:var(--ink-soft); white-space:nowrap; transition:background .15s ease, color .15s ease;
+  }
+  .escuchar-tab.active{background:var(--card); color:var(--sage-deep); box-shadow:var(--shadow-sm);}
   .music-search-bar input{
     flex:1; padding:12px 16px; border-radius:100px; border:1px solid var(--line); background:var(--card);
     font-size:14px; color:var(--ink); font-family:inherit;
@@ -812,7 +822,12 @@
   .music-track .s{font-size:11.5px; color:var(--ink-soft); margin-top:2px;}
 
   /* ---------- reproductor (video / solo audio) ---------- */
-  .player-modes{display:flex; gap:8px; padding:4px 24px 16px;}
+  .player-modes{display:flex; gap:8px; padding:4px 24px 10px;}
+  .player-pip-hint{
+    display:flex; align-items:center; justify-content:center; gap:6px; text-align:center;
+    font-size:12px; color:var(--sage-deep); font-weight:600; cursor:pointer; padding:0 24px 14px;
+  }
+  .player-pip-hint span{font-size:14px;}
   .player-mode-btn{
     flex:1; padding:11px 10px; border-radius:100px; font-size:13px; font-weight:600;
     border:1px solid var(--line); background:var(--card); cursor:pointer; box-shadow:var(--shadow-sm);
@@ -1511,7 +1526,7 @@
 
   <!-- MÚSICA, PODCASTS Y PREDICACIONES -->
   <section class="screen" id="musica">
-    <div class="topbar"><h2>Música y más</h2></div>
+    <div class="topbar"><h2>Escuchar</h2></div>
     <div class="music-search-bar">
       <input type="text" id="musica-search-input" placeholder="Busca un artista, pastor o tema…" onkeydown="if(event.key==='Enter') runMusicaSearch();">
       <button onclick="runMusicaSearch()" aria-label="Buscar">
@@ -1521,12 +1536,23 @@
     <div id="musica-search-results"></div>
     <div id="musica-default-sections">
     <div id="musica-featured"></div>
-    <div class="section-title" style="margin-top:10px;">Explora por estilo</div>
-    <div class="music-cat-grid" id="musica-categorias"></div>
-    <div class="section-title">Pastores y predicaciones</div>
-    <div class="stack" id="musica-pastores" style="padding:0 24px 6px;"></div>
-    <div class="section-title">Podcasts</div>
-    <div class="stack" id="musica-podcasts" style="padding:0 24px 24px;"></div>
+    <div class="escuchar-tabs">
+      <button class="escuchar-tab" data-t="musica" onclick="setEscucharTab('musica')">🎵 Música</button>
+      <button class="escuchar-tab" data-t="podcast" onclick="setEscucharTab('podcast')">🎧 Podcast</button>
+      <button class="escuchar-tab" data-t="predicaciones" onclick="setEscucharTab('predicaciones')">🎙️ Predicaciones</button>
+    </div>
+    <div id="escuchar-panel-musica">
+      <div class="section-title" style="margin-top:6px;">Explora por estilo</div>
+      <div class="music-cat-grid" id="musica-categorias"></div>
+    </div>
+    <div id="escuchar-panel-podcast">
+      <div class="section-title" style="margin-top:6px;">Podcasts</div>
+      <div class="stack" id="musica-podcasts" style="padding:0 24px 24px;"></div>
+    </div>
+    <div id="escuchar-panel-predicaciones">
+      <div class="section-title" style="margin-top:6px;">Pastores y predicaciones</div>
+      <div class="stack" id="musica-pastores" style="padding:0 24px 24px;"></div>
+    </div>
     </div>
   </section>
 
@@ -1545,6 +1571,9 @@
         <div class="player-modes">
           <button class="player-mode-btn" data-m="video" onclick="setPlayerMode('video')">🎥 Ver video</button>
           <button class="player-mode-btn" data-m="audio" onclick="setPlayerMode('audio')">🎧 Solo escuchar</button>
+        </div>
+        <div class="player-pip-hint" onclick="showPipHelp()">
+          <span>🗗</span> Sacar en ventana flotante (sigue sonando fuera de HERE)
         </div>
         <div class="player-video-wrap" id="player-video-wrap"><div id="yt-player"></div></div>
         <div class="player-audio-wrap" id="player-audio-wrap" style="display:none;">
@@ -1601,7 +1630,7 @@
     </button>
     <button class="navbtn" data-s="musica" onclick="go('musica')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-      Música
+      Escuchar
     </button>
   </div>
 </div>
@@ -3479,6 +3508,20 @@ function renderMusica(){
       <div><div class="t">${p.name}</div><div class="s">${p.s}</div></div>
     </div>
   `).join('');
+  setEscucharTab(load('here_escuchar_tab','musica'));
+}
+// Segmentado Música / Podcast / Predicaciones en la parte de arriba de
+// "Escuchar": muestra solo el panel elegido y recuerda la última pestaña.
+function setEscucharTab(tab){
+  document.querySelectorAll('.escuchar-tab').forEach(btn=>{
+    btn.classList.toggle('active', btn.dataset.t === tab);
+  });
+  const panels = { musica:'escuchar-panel-musica', podcast:'escuchar-panel-podcast', predicaciones:'escuchar-panel-predicaciones' };
+  Object.keys(panels).forEach(key=>{
+    const el = document.getElementById(panels[key]);
+    if(el) el.style.display = (key===tab) ? '' : 'none';
+  });
+  save('here_escuchar_tab', tab);
 }
 // Lista de reproducción "de respaldo" para una categoría, usando el pool
 // semanal — se usa si la búsqueda real en YouTube no está disponible.
@@ -3630,6 +3673,44 @@ window.onYouTubeIframeAPIReady = function(){
   if(currentPlayItem) playTrackNow(currentPlayItem);
 };
 
+/* ---------------- ventana flotante (Picture-in-Picture) ----------------
+   Es lo más cercano a "reproducir en segundo plano" que se puede lograr con
+   un video incrustado de YouTube: en Chrome (Android y computador) la
+   ventana flotante SÍ sigue reproduciéndose mientras usas otra app o
+   pestaña. En iPhone (Safari), Apple no lo permite para video de otra
+   página incrustado en un iframe — solo funciona dentro de apps propias
+   como YouTube o Spotify, así que ahí esta opción simplemente no aparece.
+   No podemos activarla nosotros con un botón (el video vive dentro de un
+   iframe de YouTube, de otro dominio, y el navegador no deja que la página
+   de afuera lo controle por seguridad) — lo que sí podemos hacer es
+   asegurarnos de que el permiso esté habilitado y explicar cómo activarla
+   con el propio control de YouTube (mantener presionado el video, o clic
+   derecho en computador). */
+function enablePipOnIframe(player){
+  try{
+    const iframe = player.getIframe && player.getIframe();
+    if(!iframe) return;
+    const allow = iframe.getAttribute('allow') || '';
+    if(!allow.includes('picture-in-picture')){
+      iframe.setAttribute('allow', (allow ? allow+'; ' : '') + 'picture-in-picture');
+    }
+  }catch(e){}
+}
+function showPipHelp(){
+  openSheet(`
+    <div class="handle"></div>
+    <p style="font-family:'Fraunces'; font-size:17px; margin-bottom:14px;">🗗 Ventana flotante</p>
+    <p style="font-size:14px; line-height:1.6; color:var(--ink-soft); margin-bottom:14px;">
+      Es la forma de que el video siga sonando aunque salgas de HERE a usar otra app o pestaña —
+      YouTube no permite que las apps que lo incrustan (como HERE) sigan reproduciendo audio puro
+      con la pantalla apagada, pero la ventana flotante es lo más parecido que existe.
+    </p>
+    <p style="font-size:13.5px; line-height:1.6; margin-bottom:6px;"><b>En el celular (Android, Chrome):</b> mantén presionado el video y elige "Imagen en imagen" — o simplemente cambia a otra app mientras se reproduce, y debería flotar solo.</p>
+    <p style="font-size:13.5px; line-height:1.6; margin-bottom:6px;"><b>En computador:</b> clic derecho sobre el video → "Imagen en imagen" (Picture-in-Picture).</p>
+    <p style="font-size:13.5px; line-height:1.6; color:var(--ink-soft);"><b>En iPhone:</b> por ahora Apple no deja hacer esto con un video incrustado de otra página, solo dentro de la app oficial de YouTube.</p>
+    <button class="btn btn-primary" style="width:100%; margin-top:16px;" onclick="closeSheet()">Entendido</button>
+  `);
+}
 // Portada del video: usamos la miniatura pública de YouTube (no hace falta
 // clave para esto) para que el modo "solo escuchar" se vea a una carátula
 // real del video, no un ícono genérico.
@@ -3681,20 +3762,49 @@ function playTrack(item, mode){
     loadRelatedVideos(item);
   }
 }
+// Quita paréntesis/corchetes ("(Video Oficial)", "[Lyric Video]") y símbolos,
+// para poder comparar títulos y detectar cuando dos videos son la MISMA
+// canción re-subida con otro id (no queremos que "relacionados" repita lo
+// que ya está sonando).
+function normalizeTitle(s){
+  return (s||'').toLowerCase()
+    .replace(/\(.*?\)|\[.*?\]/g,'')
+    .replace(/[^a-z0-9áéíóúñü\s]/gi,'')
+    .replace(/\s+/g,' ')
+    .trim();
+}
 // Lista de "videos relacionados" debajo/al lado del reproductor, como en
 // YouTube — para poder seguir de uno a otro sin volver al catálogo.
 async function loadRelatedVideos(item){
   const wrap = document.getElementById('player-related');
   if(!wrap) return;
   wrap.innerHTML = musicLoadingHTML();
-  const results = await ytApiSearch(item.q || item.name, 12);
+  // Para una canción/video suelto (resultado de búsqueda o catálogo) buscamos
+  // por el CANAL (item.role trae el nombre del artista/canal), no por el
+  // título del video — así salen más canciones de esa persona, en vez de
+  // reediciones o versiones ("lyric video", "en vivo"...) de la misma canción
+  // que ya está sonando. Para las entradas curadas ya tenemos item.q.
+  const query = item.q || item.role || item.name;
+  const results = await ytApiSearch(query, 16);
   if(currentPlayItem !== item) return; // ya se cambió de video mientras cargaba
   if(!results || !results.length){
     wrap.innerHTML = `<div class="empty" style="padding:20px 0;"><div class="light-dot"></div>No hay más videos relacionados por ahora.</div>`;
     return;
   }
-  const filtered = results.filter(v=>v.id !== item.yt).slice(0,10);
-  wrap.innerHTML = filtered.length ? filtered.map(v=>musicSearchResultRow(v)).join('') : '';
+  const currentNorm = normalizeTitle(item.name);
+  const seenTitles = new Set();
+  const filtered = [];
+  for(const v of results){
+    if(v.id === item.yt) continue;
+    const vNorm = normalizeTitle(v.title);
+    if(vNorm === currentNorm) continue; // la misma canción, subida con otro id
+    if(seenTitles.has(vNorm)) continue; // ya la mostramos (versión oficial + lyric, etc.)
+    seenTitles.add(vNorm);
+    filtered.push(v);
+    if(filtered.length >= 10) break;
+  }
+  wrap.innerHTML = filtered.length ? filtered.map(v=>musicSearchResultRow(v)).join('')
+    : `<div class="empty" style="padding:20px 0;"><div class="light-dot"></div>No hay más videos relacionados por ahora.</div>`;
 }
 function playTrackNow(item){
   clearTimeout(playerLoadTimer);
@@ -3715,7 +3825,7 @@ function playTrackNow(item){
         ? { listType:'playlist', list:item.ytList, autoplay:1, playsinline:1, rel:0, modestbranding:1, iv_load_policy:3 }
         : { autoplay:1, playsinline:1, rel:0, modestbranding:1, iv_load_policy:3 },
       events:{
-        onReady: (e)=>{ e.target.playVideo(); },
+        onReady: (e)=>{ e.target.playVideo(); enablePipOnIframe(e.target); },
         onStateChange: onPlayerStateChange,
         onError: ()=> showPlayerFallback(item),
       }
