@@ -213,6 +213,9 @@
     box-shadow:var(--shadow-sm); transition:transform .15s ease, box-shadow .15s ease;
   }
   .list-card:active{transform:scale(0.985); box-shadow:var(--shadow-sm);}
+  /* Las tres puertas del Home: un poco más de aire entre ellas que el
+     list-card por defecto (usado también en otras pantallas más densas). */
+  .list-card.home-action{ margin:16px 24px; }
   .list-card .t{font-size:15.5px; font-weight:600;}
   .list-card .s{font-size:13px; color:var(--ink-soft); margin-top:3px;}
 
@@ -299,7 +302,7 @@
     background-size:cover; background-position:center;
     display:flex; flex-direction:column; align-items:flex-start; justify-content:flex-end;
     gap:0; min-height:280px; padding:30px 26px 26px;
-    margin:14px 24px var(--sp-7);
+    margin:14px 24px 60px;
   }
   .hoy-scene::after{content:''; position:absolute; inset:0;
     background:linear-gradient(180deg, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.14) 34%, rgba(0,0,0,0.48) 74%, rgba(0,0,0,0.7) 100%);
@@ -864,52 +867,35 @@
       </div>
     </div>
 
-    <!-- Las puertas de siempre, en una sola fila tranquila y al mismo nivel
-         — nada de tarjetas grandes ni fondos de color compitiendo entre sí. -->
-    <div class="list-card" onclick="startNecesitoPalabra()">
+    <!-- Solo tres puertas discretas, al mismo nivel — nada de tarjetas
+         grandes ni fondos de color compitiendo entre sí. -->
+    <div class="list-card home-action" onclick="startNecesitoPalabra()">
       <div style="display:flex; align-items:center; gap:14px;">
         <span style="font-size:19px; flex:none;" aria-hidden="true">✨</span>
         <div><div class="t">Necesito una palabra</div><div class="s">Recibe un versículo para este momento</div></div>
       </div>
       <span style="color:var(--ink-soft); flex:none;">→</span>
     </div>
-    <div class="list-card" onclick="go('chat')">
+    <div class="list-card home-action" onclick="go('chat')">
       <div style="display:flex; align-items:center; gap:14px;">
         <span style="font-size:19px; flex:none;" aria-hidden="true">💬</span>
         <div><div class="t">Habla con HERE</div><div class="s">¿Qué tienes en el corazón?</div></div>
       </div>
       <span style="color:var(--ink-soft); flex:none;">→</span>
     </div>
-    <div class="list-card" onclick="go('sentir')">
-      <div style="display:flex; align-items:center; gap:14px;">
-        <span style="font-size:19px; flex:none;" aria-hidden="true">🤍</span>
-        <div><div class="t">Estoy aquí contigo</div><div class="s">Cuéntame qué estás viviendo</div></div>
-      </div>
-      <span style="color:var(--ink-soft); flex:none;">→</span>
-    </div>
-    <div class="list-card" onclick="startGuidedPrayer()">
+    <div class="list-card home-action" onclick="startGuidedPrayer()">
       <div style="display:flex; align-items:center; gap:14px;">
         <span style="font-size:19px; flex:none;" aria-hidden="true">🙏</span>
         <div><div class="t">Oración guiada</div><div class="s">Un momento para orar, paso a paso</div></div>
       </div>
       <span style="color:var(--ink-soft); flex:none;">→</span>
     </div>
-    <div class="list-card" onclick="startHomeQuedarme()">
-      <div style="display:flex; align-items:center; gap:14px;">
-        <span style="font-size:19px; flex:none;" aria-hidden="true">🌬️</span>
-        <div><div class="t">Respirar y quedarme aquí</div><div class="s">Un momento de calma, sin nada más que hacer</div></div>
-      </div>
-      <span style="color:var(--ink-soft); flex:none;">→</span>
-    </div>
 
     <!-- Todo lo demás queda al final, deliberadamente secundario: si hay un
-         plan en curso o palabras guardadas, aquí — y el acceso a "Tu camino",
-         sin llamar la atención. -->
+         plan en curso, aquí — y el acceso a "Tu camino" (donde vive también
+         el detalle de palabras guardadas), sin llamar la atención. -->
     <div class="section-title" id="home-plan-title" style="display:none; margin-top:var(--sp-7);">Continúa tu plan</div>
     <div class="container" id="home-plan-continue" style="display:none; padding-top:0; padding-bottom:18px;"></div>
-
-    <div class="section-title" id="home-saved-title" style="display:none; margin-top:var(--sp-7);">Tus palabras recientes</div>
-    <div id="home-saved-preview"></div>
 
     <div style="text-align:center; padding:var(--sp-6) 24px var(--sp-5);">
       <span onclick="go('perfil')" style="font-size:13px; color:var(--ink-soft); opacity:.65; cursor:pointer;">Tu camino →</span>
@@ -1820,14 +1806,16 @@ function renderHomeQuick(){
   renderHomePlanContinue();
   const savedTitle = document.getElementById('home-saved-title');
   const savedPrev = document.getElementById('home-saved-preview');
-  if(savedWords.length){
-    savedTitle.style.display = 'block';
-    savedPrev.innerHTML = savedWords.slice(-2).reverse().map(w=>`
-      <div class="list-card" onclick="openPalabraFromRef('${w.ref.replace(/'/g,"\\'")}')">
-        <div><div class="t serif" style="font-style:italic;">"${w.text.length>70? w.text.slice(0,70)+'…' : w.text}"</div><div class="s">${w.ref}</div></div>
-        <span>→</span>
-      </div>`).join('');
-  } else { savedTitle.style.display='none'; savedPrev.innerHTML=''; }
+  if(savedTitle && savedPrev){
+    if(savedWords.length){
+      savedTitle.style.display = 'block';
+      savedPrev.innerHTML = savedWords.slice(-2).reverse().map(w=>`
+        <div class="list-card" onclick="openPalabraFromRef('${w.ref.replace(/'/g,"\\'")}')">
+          <div><div class="t serif" style="font-style:italic;">"${w.text.length>70? w.text.slice(0,70)+'…' : w.text}"</div><div class="s">${w.ref}</div></div>
+          <span>→</span>
+        </div>`).join('');
+    } else { savedTitle.style.display='none'; savedPrev.innerHTML=''; }
+  }
 }
 function renderHomePlanContinue(){
   const wrap = document.getElementById('home-plan-continue');
