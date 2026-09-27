@@ -714,6 +714,11 @@
     .hero-card{ padding:40px 34px; }
     .hero-card h2{ font-size:24px; }
     .feature-card{ padding:26px 24px; }
+    /* .feature-card.hoy-scene tiene su propio margin (para el aire extra
+       en el teléfono) con más especificidad que el centrado de arriba —
+       sin esto, en escritorio ganaba esa regla y la tarjeta quedaba pegada
+       a la izquierda en vez de centrada. */
+    .feature-card.hoy-scene{ margin-left:auto; margin-right:auto; }
 
     /* topbars y encabezados con un poco más de aire lateral que en el teléfono */
     .topbar{ padding:30px 0 10px; max-width:760px; margin:0 auto; }
