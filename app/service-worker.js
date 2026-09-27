@@ -18,7 +18,7 @@
  * siguen sirviéndose desde caché primero, porque cambian poco y así la app
  * carga más rápido.
  */
-const CACHE_VERSION = 'here-v2';
+const CACHE_VERSION = 'here-v4';
 const APP_SHELL = [
   './',
   './index.html',

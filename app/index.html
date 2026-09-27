@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>HERE</title>
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#17140F" id="meta-theme-color">
+<meta name="theme-color" content="#FAF7F0" id="meta-theme-color">
 <meta name="color-scheme" content="light dark">
 <meta name="description" content="Un lugar para volver a Dios: Biblia, oracion y acompanamiento espiritual, cuando lo necesites.">
 <link rel="icon" href="/icons/icon-192.png">
@@ -592,8 +592,10 @@
   }
   .ask-input-row textarea{
     flex:1; background:none; border:none; box-shadow:none; padding:0; color:#fff; font-size:15px;
-    font-family:'Manrope'; line-height:1.5; max-height:120px; min-height:22px;
+    font-family:'Manrope'; line-height:1.5; max-height:120px; min-height:46px;
+    overflow:hidden; resize:none; appearance:none; -webkit-appearance:none; -moz-appearance:none;
   }
+  .ask-input-row textarea::-webkit-scrollbar{display:none;}
   .ask-input-row textarea::placeholder{color:rgba(255,255,255,0.5);}
   .ask-input-row textarea:focus{outline:none; box-shadow:none;}
   .ask-send{
@@ -908,6 +910,12 @@
     .screen{ min-height:100vh; padding-bottom:56px; padding-top:74px; }
     .screen.noNav{ padding-bottom:0; }
     #splash{ padding-top:0; }
+    /* pantallas de "escena completa" (fondo oscuro/foto a bordes, sin topbar propio):
+       el aire de 74px de arriba es para que el contenido normal no choque con
+       el botón ☰ flotante, pero aquí rompe el efecto de inmersión de punta a
+       punta — el botón ✕ de estas pantallas ya se movió a la esquina opuesta
+       (ver .close-x arriba), así que no hay choque si quitamos el padding. */
+    #sentir-result, #palabraIntro, #palabraAsk, #palabra, #quedarme, #orarGuiada{ padding-top:0; }
 
     /* franjas de texto/listas: cómodas de leer, centradas con aire a los lados */
     .container, .book-grid, .feel-grid, .quick-row, .plan-row, .chapter-verse,
@@ -1162,7 +1170,7 @@
         <p class="ask-sub">¿Qué estás viviendo?</p>
 
         <div class="ask-input-row">
-          <textarea id="ask-free-text" rows="1" placeholder="Escribe con tus palabras lo que estás sintiendo o viviendo…" oninput="this.style.height='auto'; this.style.height=this.scrollHeight+'px'; document.getElementById('ask-send-btn').disabled = !this.value.trim();" onkeydown="if(event.key==='Enter' && !event.shiftKey){ event.preventDefault(); submitPalabraAsk(); }"></textarea>
+          <textarea id="ask-free-text" rows="2" placeholder="Escribe con tus palabras lo que estás sintiendo o viviendo…" oninput="this.style.height='auto'; this.style.height=this.scrollHeight+'px'; document.getElementById('ask-send-btn').disabled = !this.value.trim();" onkeydown="if(event.key==='Enter' && !event.shiftKey){ event.preventDefault(); submitPalabraAsk(); }"></textarea>
           <button class="ask-send" id="ask-send-btn" aria-label="Enviar" onclick="submitPalabraAsk()" disabled>↗</button>
         </div>
 
@@ -1401,16 +1409,28 @@ let prefs = load('here_prefs', {goals:[], remind:null});
 let visited = load('here_visited', []);
 let readerFontSize = load('here_reader_fontsize', 17);
 
-/* ---------------- theme (light / dark) ---------------- */
+/* ---------------- theme (light / dark) ----------------
+   Sigue el tema del sistema operativo del dispositivo (prefers-color-scheme)
+   en vez de una preferencia manual guardada: si cambias el tema de tu
+   celular, la app cambia sola, sin ningún interruptor dentro de la app. */
 function setTheme(mode){
   document.documentElement.setAttribute('data-theme', mode);
-  save('here_theme', mode);
-  const toggle = document.getElementById('theme-toggle');
-  if(toggle) toggle.checked = (mode==='dark');
   const meta = document.querySelector('meta[name="theme-color"]');
-  if(meta) meta.setAttribute('content', '#17140F');
+  // mismo color que el fondo de la app en cada tema (--bg): blanco crema en
+  // claro, ink oscuro en oscuro — así la barra de estado nunca "corta" contra
+  // el contenido, sea cual sea el tema del celular.
+  if(meta) meta.setAttribute('content', mode==='dark' ? '#17140F' : '#FAF7F0');
 }
-(function(){ setTheme(load('here_theme','light')); })();
+function applySystemTheme(){
+  setTheme((window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light');
+}
+applySystemTheme();
+if(window.matchMedia){
+  const darkQuery = matchMedia('(prefers-color-scheme: dark)');
+  const onSystemThemeChange = ()=>applySystemTheme();
+  if(darkQuery.addEventListener) darkQuery.addEventListener('change', onSystemThemeChange);
+  else if(darkQuery.addListener) darkQuery.addListener(onSystemThemeChange);
+}
 
 /* ---------------- content data ---------------- */
 // Texto de la Reina-Valera Antigua (1909), de dominio público.
@@ -3397,11 +3417,8 @@ function renderPerfil(){
       <span>${soundOn?'Activado':'Desactivado'}</span>
     </div>
     <div class="list-card" style="margin-left:0; margin-right:0; cursor:default;">
-      <div><div class="t">🌙 Modo noche</div><div class="s">Para leer cómodo cuando está oscuro</div></div>
-      <label class="theme-switch" onclick="event.stopPropagation();">
-        <input type="checkbox" id="theme-toggle" ${document.documentElement.getAttribute('data-theme')==='dark'?'checked':''} onchange="setTheme(this.checked?'dark':'light')">
-        <span class="track"><span class="thumb"></span></span>
-      </label>
+      <div><div class="t">🌙 Modo noche</div><div class="s">Sigue el tema de tu celular, en automático</div></div>
+      <span style="font-size:12.5px; color:var(--ink-soft); font-weight:600;">${document.documentElement.getAttribute('data-theme')==='dark'?'Oscuro':'Claro'}</span>
     </div>
     <button class="btn-text" style="padding-left:0; margin-top:16px;" onclick="clearData()">Borrar mis datos</button>
   `;
