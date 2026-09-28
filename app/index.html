@@ -780,38 +780,57 @@
   }
   .week-scene:active{transform:scale(0.985);}
   .week-scene::after{content:''; position:absolute; inset:0;
-    background:linear-gradient(180deg, rgba(0,0,0,0.04) 0%, rgba(0,0,0,0.14) 40%, rgba(0,0,0,0.54) 100%);
+    background:linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.10) 45%, rgba(0,0,0,0.38) 100%);
     pointer-events:none;}
   .week-scene > *{position:relative; z-index:1;}
   .week-scene .eyebrow{display:flex; align-items:center; gap:8px; font-size:11.5px; letter-spacing:.5px; text-transform:uppercase; font-weight:700; opacity:.92; text-shadow:0 1px 4px rgba(0,0,0,0.4);}
   .week-scene .eyebrow .dot{width:6px; height:6px; border-radius:50%; background:var(--gold);}
   .week-scene .name{font-family:'Fraunces'; font-size:22px; font-weight:500; margin-top:10px; text-shadow:0 2px 10px rgba(0,0,0,0.45);}
   .week-scene .role{font-size:13px; opacity:.9; margin-top:4px; text-shadow:0 1px 6px rgba(0,0,0,0.4);}
-  .week-scene .blurb{font-size:12.5px; opacity:.85; margin-top:10px; line-height:1.5; text-shadow:0 1px 6px rgba(0,0,0,0.4); max-width:440px;}
+  .week-scene .blurb{font-size:13px; opacity:.92; margin-top:10px; line-height:1.55; font-style:italic; font-family:'Fraunces'; text-shadow:0 1px 6px rgba(0,0,0,0.4); max-width:440px;}
+  .week-scene-btn{
+    border:none; background:rgba(255,255,255,0.94); color:var(--sage-deeper); font-weight:600;
+    font-size:12.5px; padding:10px 18px; border-radius:100px; cursor:pointer; display:inline-flex; align-items:center; gap:6px;
+    transition:opacity .15s ease, transform .15s ease; box-shadow:0 2px 10px rgba(0,0,0,0.18);
+  }
+  .week-scene-btn:active{ transform:scale(0.95); opacity:.85; }
 
   .music-search-bar{display:flex; gap:8px; padding:4px 24px 14px; align-items:center;}
   /* ---------- "Para este momento": capa contextual, la que diferencia a
-     Escuchar de una biblioteca de contenido genérica — recomienda según lo
-     que la persona está viviendo, no una lista más para explorar. ---------- */
+     Escuchar de una biblioteca de contenido genérica — un acompañamiento
+     emocional breve (3 caminos suaves) en vez de una lista más para
+     explorar. Cada fila abre un catálogo curado para ese momento. ---------- */
   .listen-moment{
-    margin:8px 24px 28px; padding:26px 24px 20px; border-radius:26px;
+    position:relative; overflow:hidden;
+    margin:8px 24px 28px; padding:26px 24px 10px; border-radius:26px;
     background:linear-gradient(165deg, var(--bg-warm), var(--card));
     border:1px solid var(--line); box-shadow:var(--shadow-sm);
   }
-  .listen-moment-head{margin-bottom:16px;}
+  .listen-moment::after{
+    content:''; position:absolute; right:-36px; bottom:-36px; width:170px; height:170px;
+    background:radial-gradient(circle, rgba(198,168,110,0.22) 0%, rgba(198,168,110,0) 72%);
+    pointer-events:none;
+  }
+  .listen-moment-head{display:flex; align-items:flex-start; gap:12px; margin-bottom:18px; position:relative; z-index:1;}
+  .listen-moment-icon{font-size:19px; line-height:1; margin-top:1px; opacity:.85; flex:none;}
   .listen-moment-title{font-size:19px; font-weight:500; color:var(--ink);}
   .listen-moment-sub{font-size:12.5px; color:var(--ink-soft); margin-top:4px; line-height:1.5;}
-  .listen-mood-row{display:flex; gap:7px; overflow-x:auto; scrollbar-width:none; padding-bottom:2px; margin-bottom:16px;}
-  .listen-mood-row::-webkit-scrollbar{display:none;}
-  .listen-mood-pill{
-    flex:none; padding:8px 14px; border-radius:100px; font-size:12.5px; font-weight:600;
-    border:1px solid var(--line); background:var(--card); color:var(--ink-soft); cursor:pointer;
-    transition:transform .12s ease, background .15s ease, color .15s ease;
+  .listen-moment-list{position:relative; z-index:1;}
+  .listen-moment-row{
+    display:flex; align-items:center; gap:13px;
+    padding:14px 2px; border-bottom:1px solid rgba(60,50,30,0.08);
+    cursor:pointer; transition:opacity .15s ease;
   }
-  .listen-mood-pill:active{transform:scale(0.96);}
-  .listen-mood-pill.active{background:linear-gradient(135deg,var(--sage-deep),var(--sage-deeper)); color:#fff; border-color:var(--sage-deep);}
-  .listen-moment-line{font-size:13.5px; font-style:italic; color:var(--ink-soft); line-height:1.6; margin-bottom:14px; font-family:'Fraunces';}
-  .listen-moment-body .music-track:last-child{margin-bottom:0;}
+  .listen-moment-row:last-child{border-bottom:none;}
+  .listen-moment-row:active{opacity:.55;}
+  .listen-moment-row-icon{
+    width:32px; height:32px; border-radius:50%; flex:none;
+    display:flex; align-items:center; justify-content:center;
+    background:rgba(255,255,255,0.75); font-size:13.5px;
+    box-shadow:0 1px 3px rgba(0,0,0,0.06);
+  }
+  .listen-moment-row-label{flex:1; font-size:14.5px; color:var(--ink); font-weight:500; letter-spacing:.1px;}
+  .listen-moment-row-arrow{color:var(--ink-soft); font-size:14px; opacity:.45;}
   .listen-explore-label{padding:0 24px 10px; font-size:12px; color:var(--ink-soft); letter-spacing:.6px; text-transform:uppercase; font-weight:700; opacity:.7;}
   /* segmented control centrado arriba: Música / Podcast / Predicaciones */
   .escuchar-tabs{
@@ -1594,23 +1613,26 @@
     <div id="musica-default-sections">
 
     <!-- CAPA A — "Para este momento": lo primero que se ve, con más peso
-         visual y emocional que la biblioteca de abajo. -->
+         visual y emocional que la biblioteca de abajo. Exactamente 3 caminos
+         simples y suaves, sin selector de humor. -->
     <div class="listen-moment" id="listen-moment">
       <div class="listen-moment-head">
-        <div class="listen-moment-title serif">Para este momento</div>
-        <div class="listen-moment-sub">Contenido elegido según lo que estás viviendo</div>
+        <span class="listen-moment-icon" aria-hidden="true">🌿</span>
+        <div>
+          <div class="listen-moment-title serif">Para este momento</div>
+          <div class="listen-moment-sub">Contenido elegido según lo que estás viviendo</div>
+        </div>
       </div>
-      <div class="listen-mood-row" id="listen-mood-row"></div>
-      <div class="listen-moment-body" id="listen-moment-body"></div>
+      <div class="listen-moment-list" id="listen-moment-list"></div>
     </div>
 
     <!-- CAPA B — "Explorar": la biblioteca, ahora secundaria a propósito. -->
     <div class="listen-explore-label">Explorar</div>
     <div id="musica-featured"></div>
     <div class="escuchar-tabs">
-      <button class="escuchar-tab" data-t="musica" onclick="setEscucharTab('musica')">🎵 Música</button>
-      <button class="escuchar-tab" data-t="podcast" onclick="setEscucharTab('podcast')">🎧 Podcast</button>
-      <button class="escuchar-tab" data-t="predicaciones" onclick="setEscucharTab('predicaciones')">🎙️ Predicaciones</button>
+      <button class="escuchar-tab" data-t="musica" onclick="setEscucharTab('musica')">Música</button>
+      <button class="escuchar-tab" data-t="podcast" onclick="setEscucharTab('podcast')">Podcast</button>
+      <button class="escuchar-tab" data-t="predicaciones" onclick="setEscucharTab('predicaciones')">Predicaciones</button>
     </div>
     <div id="escuchar-panel-musica">
       <div class="section-title" style="margin-top:6px;">Explora por estilo</div>
@@ -3522,6 +3544,16 @@ const MUSIC_WEEKLY_POOL = [
 function findTrackById(id){
   return MUSIC_WEEKLY_POOL.find(t=>t.id===id) || MUSIC_PASTORES.find(t=>t.id===id) || MUSIC_PODCASTS.find(t=>t.id===id);
 }
+// Frase cálida y calmada para la tarjeta de "Artista de la semana" — más
+// serena y humana que la bio corta usada en otras partes de Escuchar.
+function warmFeaturedLine(item){
+  const byType = {
+    'Artista de la semana': 'Canciones que acercan el corazón a Dios.',
+    'Pastor de la semana': 'Una palabra clara y cercana para esta semana.',
+    'Podcast de la semana': 'Un momento breve para detenerte y escuchar.',
+  };
+  return byType[item.type] || item.blurb;
+}
 
 // Semilla por semana del año — mismo espíritu que pickTodayVerse(), pero
 // a nivel de semana, para que el destacado cambie cada 7 días, no cada día.
@@ -3544,42 +3576,51 @@ function pickWeeklyFeatured(){
    búsqueda falla, un par de respaldo ya curado (findTrackById) para que
    nunca se sienta vacío. */
 const LISTEN_MOODS = [
-  { id:'cansado', emoji:'😮‍💨', label:'Cansado', tags:['cansancio','no puedo dormir'],
+  { id:'cansado', emoji:'🌙', label:'Cansado', promptLabel:'Cuando estás cansado', tags:['cansancio','no puedo dormir'],
     line:'Un momento para soltar el peso y descansar en Él.',
     musicQ:'música cristiana instrumental para descansar y encontrar calma',
     wordQ:'predicación cristiana corta sobre el descanso y el cansancio',
     fallbackSong:'daigle', fallbackWord:'cafedios' },
-  { id:'miedo', emoji:'🌊', label:'Con miedo', tags:['miedo'],
+  { id:'miedo', emoji:'🕊️', label:'Con miedo', promptLabel:'Cuando sientes miedo', tags:['miedo'],
     line:'No tienes que enfrentar esto solo.',
     musicQ:'música cristiana de fe y confianza para el miedo',
     wordQ:'predicación cristiana corta sobre el miedo y la confianza en Dios',
     fallbackSong:'hillsong', fallbackWord:'danilo' },
-  { id:'ansiedad', emoji:'🌫️', label:'Ansioso', tags:['ansiedad'],
+  { id:'ansiedad', emoji:'🌫️', label:'Ansioso', promptLabel:'Cuando la ansiedad no te deja quieto', tags:['ansiedad'],
     line:'Respira. Su paz sobrepasa todo entendimiento.',
     musicQ:'música cristiana de paz para la ansiedad',
     wordQ:'predicación cristiana corta sobre la ansiedad y la paz de Dios',
     fallbackSong:'tercercielo', fallbackWord:'cafedios' },
-  { id:'triste', emoji:'💙', label:'Triste o solo', tags:['tristeza','herido','soledad'],
+  { id:'triste', emoji:'💙', label:'Triste o solo', promptLabel:'Cuando te sientes solo', tags:['tristeza','herido','soledad'],
     line:'Dios está cerca de los que tienen el corazón quebrantado.',
     musicQ:'música cristiana de consuelo para el corazón herido',
     wordQ:'predicación cristiana corta de consuelo para la tristeza',
     fallbackSong:'dclario', fallbackWord:'corson' },
-  { id:'esperanza', emoji:'🌅', label:'Necesito esperanza', tags:['esperanza','dirección','perdón','fe'],
+  { id:'esperanza', emoji:'🌅', label:'Necesito esperanza', promptLabel:'Cuando necesitas esperanza', tags:['esperanza','dirección','perdón','fe'],
     line:'Hay un camino, aunque ahora no lo veas del todo.',
     musicQ:'música cristiana de esperanza y aliento',
     wordQ:'predicación cristiana corta sobre la esperanza',
     fallbackSong:'witt', fallbackWord:'bibleproject' },
-  { id:'agradecido', emoji:'🤍', label:'Agradecido', tags:['agradecido'],
+  { id:'agradecido', emoji:'🤍', label:'Agradecido', promptLabel:'Cuando quieres agradecer', tags:['agradecido'],
     line:'Un momento para celebrar lo que Él ha hecho.',
     musicQ:'música cristiana de adoración y gratitud',
     wordQ:'predicación cristiana corta sobre la gratitud',
     fallbackSong:'miel', fallbackWord:'cafedios' },
-  { id:'paz', emoji:'✨', label:'En paz', tags:['paz','aleatorio'],
+  { id:'paz', emoji:'✨', label:'En paz', promptLabel:'Cuando necesitas paz', tags:['paz','aleatorio'],
     line:'A veces basta con quedarse quieto un momento.',
     musicQ:'música cristiana de adoración tranquila',
     wordQ:'predicación cristiana corta de aliento para hoy',
     fallbackSong:'daigle', fallbackWord:'corson' },
+  { id:'oracion', emoji:'🙏', label:'Orar con calma', promptLabel:'Para orar con calma', tags:['oración'],
+    line:'Un espacio tranquilo para poner todo en sus manos.',
+    musicQ:'música instrumental cristiana para orar en calma',
+    wordQ:'predicación cristiana corta sobre la oración',
+    fallbackSong:'daigle', fallbackWord:'cafedios' },
 ];
+// Las 3 filas que se muestran siempre en "Para este momento", salvo que haya
+// un humor reciente (de "Necesito una palabra") que no esté ya entre ellas —
+// en ese caso, ese humor reciente toma el primer lugar.
+const LISTEN_MOMENT_DEFAULT_IDS = ['paz','triste','oracion'];
 function moodForTag(tag){ return LISTEN_MOODS.find(m=>m.tags.includes(tag)) || null; }
 // Se llama cada vez que "Necesito una palabra" resuelve un sentimiento, para
 // que Escuchar pueda ofrecer algo relacionado sin tener que volver a preguntar.
@@ -3603,36 +3644,52 @@ function curatedMomentRow(item, icon){
     <div><div class="t">${item.name}</div><div class="s">${item.role||item.s||''}</div></div>
   </div>`;
 }
-function renderListenMoment(){
-  const row = document.getElementById('listen-mood-row');
-  if(!row) return;
-  if(!listenMoodActive){
-    listenMoodActive = lastMoodInfo() || LISTEN_MOODS[LISTEN_MOODS.length-1];
+// Exactamente 3 filas, siempre — el humor reciente detectado en "Necesito
+// una palabra" reemplaza la primera fila cuando no es ya uno de los 3
+// caminos por defecto, para que se sienta contextual sin dejar de ser simple.
+function listenMomentEntries(){
+  const defaults = LISTEN_MOMENT_DEFAULT_IDS.map(id=>LISTEN_MOODS.find(m=>m.id===id)).filter(Boolean);
+  const recent = lastMoodInfo();
+  if(recent && !LISTEN_MOMENT_DEFAULT_IDS.includes(recent.id)){
+    return [recent, defaults[1], defaults[2]];
   }
-  row.innerHTML = LISTEN_MOODS.map(m=>`
-    <button class="listen-mood-pill ${m.id===listenMoodActive.id?'active':''}" onclick="setListenMood('${m.id}')">${m.emoji} ${m.label}</button>
+  return defaults;
+}
+function renderListenMoment(){
+  const listEl = document.getElementById('listen-moment-list');
+  if(!listEl) return;
+  const entries = listenMomentEntries();
+  listEl.innerHTML = entries.map(m=>`
+    <div class="listen-moment-row" onclick="openListenMoment('${m.id}')">
+      <span class="listen-moment-row-icon" aria-hidden="true">${m.emoji}</span>
+      <span class="listen-moment-row-label">${m.promptLabel || m.label}</span>
+      <span class="listen-moment-row-arrow">→</span>
+    </div>
   `).join('');
-  loadListenMomentContent(listenMoodActive);
 }
-function setListenMood(id){
-  const m = LISTEN_MOODS.find(x=>x.id===id);
-  if(!m || m===listenMoodActive) return;
-  haptic(8);
-  listenMoodActive = m;
-  renderListenMoment();
-}
-async function loadListenMomentContent(mood){
-  const wrap = document.getElementById('listen-moment-body');
-  if(!wrap) return;
-  wrap.innerHTML = `<p class="listen-moment-line">${mood.line}</p>` + musicLoadingHTML();
+// Toca una de las 3 filas de "Para este momento": abre un catálogo curado
+// (canción + predicación/podcast) para ese momento, reutilizando la misma
+// pantalla de categoría que usa el resto de Escuchar.
+async function openListenMoment(id){
+  const mood = LISTEN_MOODS.find(m=>m.id===id);
+  if(!mood) return;
+  listenMoodActive = mood;
+  document.getElementById('musicaCategoria-title').textContent = mood.promptLabel || mood.label;
+  document.getElementById('musicaCategoria-subtitle').textContent = mood.line;
+  const listEl = document.getElementById('musicaCategoria-list');
+  listEl.innerHTML = musicLoadingHTML();
+  go('musicaCategoria');
+
   const [songResults, wordResults] = await Promise.all([
-    ytApiSearch(mood.musicQ, 3),
-    ytApiSearch(mood.wordQ, 3),
+    ytApiSearch(mood.musicQ, 6),
+    ytApiSearch(mood.wordQ, 6),
   ]);
-  if(listenMoodActive !== mood) return; // cambió de humor mientras cargaba
-  const songRow = (songResults && songResults[0]) ? musicSearchResultRow(songResults[0]) : curatedMomentRow(findTrackById(mood.fallbackSong), '🎵');
-  const wordRow = (wordResults && wordResults[0]) ? musicSearchResultRow(wordResults[0]) : curatedMomentRow(findTrackById(mood.fallbackWord), '🎙️');
-  wrap.innerHTML = `<p class="listen-moment-line">${mood.line}</p>${songRow}${wordRow}`;
+  const rows = [];
+  if(songResults && songResults.length) rows.push(...songResults.map(v=>musicSearchResultRow(v)));
+  else rows.push(curatedMomentRow(findTrackById(mood.fallbackSong), '🎵'));
+  if(wordResults && wordResults.length) rows.push(...wordResults.map(v=>musicSearchResultRow(v)));
+  else rows.push(curatedMomentRow(findTrackById(mood.fallbackWord), '🎙️'));
+  listEl.innerHTML = rows.filter(Boolean).join('');
 }
 function musicSearchUrl(platform, q){
   const enc = encodeURIComponent(q);
@@ -3656,11 +3713,8 @@ function renderMusica(){
       <div class="eyebrow"><span class="dot"></span>${featured.type}</div>
       <div class="name serif">${featured.name}</div>
       <div class="role">${featured.role}</div>
-      <div class="blurb">${featured.blurb}</div>
-      <div class="hoy-scene-actions" style="margin-top:18px;">
-        <button onclick="playTrackById('${featured.id}','video', event)">🎥 Ver video</button>
-        <button onclick="playTrackById('${featured.id}','audio', event)">🎧 Solo escuchar</button>
-      </div>
+      <div class="blurb">${warmFeaturedLine(featured)}</div>
+      <button class="week-scene-btn" style="margin-top:16px;" onclick="playTrackById('${featured.id}', null, event)">▶ Escuchar ahora</button>
     </div>
   `;
   document.getElementById('musica-categorias').innerHTML = MUSIC_CATEGORIES.map(cat=>`
