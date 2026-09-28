@@ -4615,12 +4615,22 @@ if('serviceWorker' in navigator){
 /* ---------------- boot ---------------- */
 window.addEventListener('load', ()=>{
   const splash = document.getElementById('splash');
+  // Atajo para revisores/herramientas externas (ej. compartir el link con
+  // una IA para que analice la app): ?skip_onboarding=1 en la URL salta
+  // directo al onboarding ya completado, sin tener que hacer clic paso a
+  // paso por una experiencia pensada para una persona, no para un bot.
+  const bootParams = new URLSearchParams(location.search);
+  const skipOnboarding = bootParams.get('skip_onboarding') === '1';
+  if(skipOnboarding){
+    try{ save('here_onboarded', true); }catch(e){}
+  }
   // La pantalla real (Home, check-in u onboarding) se decide y se renderiza
   // YA, detrás del splash — así la "puerta" revela contenido real de HERE,
   // no una imagen de mentira ni una carga tardía.
-  const onboarded = load('here_onboarded', false);
+  const onboarded = skipOnboarding || load('here_onboarded', false);
   let target;
   if(!onboarded){ target = 'ob-1'; }
+  else if(skipOnboarding){ target = 'home'; } // directo al Home, sin pasar por el check-in diario
   else{
     const lastScreen = load('here_last_screen', null);
     target = RESUMABLE_SCREENS.includes(lastScreen) ? lastScreen : 'checkin';
