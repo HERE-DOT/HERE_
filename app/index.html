@@ -703,6 +703,25 @@
   }
   textarea:focus, input:focus{outline:none; border-color:var(--sage-deep); box-shadow:0 0 0 3px rgba(44,79,59,0.12);}
 
+  /* ---------- Orar: "Guíame" como la puerta principal — más presencia que
+     un list-card cualquiera, sin llegar a ser un CTA que grite. Un tinte
+     cálido, un ícono con algo de color, y aire generoso alrededor. ---------- */
+  .orar-primary{
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
+    padding:22px; border-radius:24px; cursor:pointer;
+    background:linear-gradient(160deg, var(--bg-warm), var(--card));
+    border:1px solid var(--line); box-shadow:var(--shadow-md);
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .orar-primary:active{ transform:scale(0.985); }
+  .orar-primary-icon{
+    width:44px; height:44px; border-radius:50%; flex:none; display:flex; align-items:center; justify-content:center;
+    font-size:19px; background:linear-gradient(135deg,var(--sage-deep),var(--sage-deeper)); color:#fff; box-shadow:0 6px 14px rgba(44,79,59,0.25);
+  }
+  .orar-primary .t{font-size:16.5px; font-weight:500; font-family:'Fraunces'; color:var(--ink);}
+  .orar-primary .s{font-size:12.5px; color:var(--ink-soft); margin-top:3px;}
+  .orar-primary-arrow{color:var(--ink-soft); opacity:.6; flex:none;}
+
   /* ---------- accesibilidad: foco visible para navegación por teclado ---------- */
   button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [tabindex]:focus-visible{
     outline:2.5px solid var(--sage-deep); outline-offset:2px; border-radius:10px;
@@ -1481,31 +1500,35 @@
 
   <!-- ORAR -->
   <section class="screen" id="orar">
-    <div class="topbar"><h2>Quiero orar</h2></div>
-    <div class="container" style="padding-top:4px;">
-      <!-- "Guíame" como una invitación suave, al mismo nivel que las puertas
-           del Home — no un CTA grande que empuje a tomarlo. -->
-      <div class="list-card" style="margin:0 0 26px;" onclick="startGuidedPrayer()">
-        <div style="display:flex; align-items:center; gap:14px;">
-          <span style="font-size:19px; flex:none;" aria-hidden="true">🙏</span>
+    <div class="topbar" style="flex-direction:column; align-items:flex-start; gap:3px;">
+      <h2>Quiero orar</h2>
+      <p style="color:var(--ink-soft); font-size:13px; margin:0;">Un momento para detenerte. No hay prisa.</p>
+    </div>
+    <div class="container" style="padding-top:10px;">
+      <!-- "Guíame" — la puerta principal de este espacio: la que más se
+           cuida, sin dejar de sentirse serena. -->
+      <div class="orar-primary" onclick="startGuidedPrayer()">
+        <div style="display:flex; align-items:center; gap:15px;">
+          <span class="orar-primary-icon" aria-hidden="true">🙏</span>
           <div><div class="t">Guíame</div><div class="s">Un momento paso a paso, contigo</div></div>
         </div>
-        <span style="color:var(--ink-soft); flex:none;">→</span>
+        <span class="orar-primary-arrow">→</span>
       </div>
 
-      <p style="color:var(--ink-soft); font-size:13px; text-align:center; letter-spacing:.2px;">o, si prefieres, con tus propias palabras</p>
-      <p class="serif" style="margin-top:20px; font-size:17px; line-height:1.5; text-align:center; color:var(--ink);">¿Qué quieres poner en manos de Dios?</p>
-      <textarea id="orar-input" rows="5" placeholder="Escribe aquí, con calma…" style="margin-top:20px; padding:20px; line-height:1.6;"></textarea>
-      <div class="stack" style="margin-top:16px;">
-        <button class="btn btn-primary" onclick="orarConMisPalabras()">Orar con mis palabras</button>
+      <p style="color:var(--ink-soft); font-size:13px; text-align:center; letter-spacing:.2px; margin-top:34px;">o, si prefieres, con tus propias palabras</p>
+      <p class="serif" style="margin-top:22px; font-size:17px; line-height:1.5; text-align:center; color:var(--ink);">¿Qué quieres poner en manos de Dios?</p>
+      <textarea id="orar-input" rows="5" placeholder="Escribe aquí, con calma…" style="margin-top:22px; padding:22px; line-height:1.7; box-shadow:none;"></textarea>
+      <div class="stack" style="margin-top:18px;">
+        <button class="btn btn-ghost" style="color:var(--sage-deep); font-weight:600;" onclick="orarConMisPalabras()">Orar con mis palabras</button>
       </div>
-      <div style="text-align:center; margin-top:14px;">
-        <button class="btn-text" onclick="ayudaOracion()">¿No sabes por dónde empezar? Te acompaño a encontrarlas</button>
+      <div style="text-align:center; margin-top:16px;">
+        <button class="btn-text" onclick="ayudaOracion()">¿No sabes por dónde empezar? Te acompaño a encontrar las palabras</button>
       </div>
       <div id="orar-output" style="margin-top:22px;"></div>
     </div>
-    <div class="section-title" style="margin-top:var(--sp-6); opacity:.8;">Mis oraciones</div>
-    <div id="mis-oraciones"></div>
+    <div class="section-title" style="margin-top:var(--sp-7); opacity:.55;">Mis oraciones</div>
+    <div id="mis-oraciones" style="opacity:.85;"></div>
+    <div style="height:16px;"></div>
   </section>
 
   <!-- GUIDED PRAYER -->
@@ -4454,8 +4477,8 @@ function renderOraciones(){
   const c = document.getElementById('mis-oraciones');
   if(!prayers.length){ c.innerHTML = '<div class="empty"><div class="light-dot"></div>Aún no has guardado oraciones.</div>'; return; }
   c.innerHTML = prayers.slice(0,10).map(p=>`
-    <div class="list-card" style="flex-direction:column; align-items:flex-start; gap:4px;">
-      <div class="t" style="font-size:14px; line-height:1.5;">${p.text.length>140? p.text.slice(0,140)+'…' : p.text}</div>
+    <div class="list-card" style="flex-direction:column; align-items:flex-start; gap:4px; box-shadow:none; border-color:var(--line);">
+      <div class="t" style="font-size:13.5px; font-weight:500; line-height:1.5; color:var(--ink-soft);">${p.text.length>140? p.text.slice(0,140)+'…' : p.text}</div>
       <div class="s">${new Date(p.date).toLocaleDateString('es-ES',{day:'numeric',month:'short'})}</div>
     </div>`).join('');
 }
