@@ -350,16 +350,16 @@
      ni sombra — un detalle casi invisible, no un badge que compita con
      el saludo. */
   .streak-mini{
-    display:inline-flex; align-items:center; gap:4px; font-size:11.5px;
-    color:var(--ink-soft); font-weight:600; opacity:.7; white-space:nowrap;
+    display:inline-flex; align-items:center; gap:3px; font-size:10.5px;
+    color:var(--ink-soft); font-weight:600; opacity:.55; white-space:nowrap;
   }
   .profile-icon-btn{
-    width:30px; height:30px; border-radius:50%; background:none; border:none;
+    width:25px; height:25px; border-radius:50%; background:none; border:none;
     display:flex; align-items:center; justify-content:center; cursor:pointer; flex:none;
-    color:var(--ink-soft); opacity:.55; transition:transform .15s ease, opacity .15s ease;
+    color:var(--ink-soft); opacity:.45; transition:transform .15s ease, opacity .15s ease;
   }
-  .profile-icon-btn svg{width:15px; height:15px;}
-  .profile-icon-btn:active{transform:scale(0.92); opacity:.85;}
+  .profile-icon-btn svg{width:13px; height:13px;}
+  .profile-icon-btn:active{transform:scale(0.92); opacity:.75;}
 
   /* ---------- weekly streak row (home) ---------- */
   .week-streak{display:flex; justify-content:space-between; gap:6px; padding:2px 24px 18px;}
@@ -756,12 +756,12 @@
     position:relative; overflow:hidden; color:#fff; margin:6px 24px 18px; border-radius:24px;
     background-size:cover; background-position:center; cursor:pointer;
     display:flex; flex-direction:column; align-items:flex-start; justify-content:flex-end;
-    min-height:220px; padding:24px 22px 22px; box-shadow:var(--shadow-md);
+    min-height:182px; padding:22px 22px 20px; box-shadow:var(--shadow-sm);
     transition:transform .15s ease;
   }
   .week-scene:active{transform:scale(0.985);}
   .week-scene::after{content:''; position:absolute; inset:0;
-    background:linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.18) 40%, rgba(0,0,0,0.62) 100%);
+    background:linear-gradient(180deg, rgba(0,0,0,0.04) 0%, rgba(0,0,0,0.14) 40%, rgba(0,0,0,0.54) 100%);
     pointer-events:none;}
   .week-scene > *{position:relative; z-index:1;}
   .week-scene .eyebrow{display:flex; align-items:center; gap:8px; font-size:11.5px; letter-spacing:.5px; text-transform:uppercase; font-weight:700; opacity:.92; text-shadow:0 1px 4px rgba(0,0,0,0.4);}
@@ -771,6 +771,29 @@
   .week-scene .blurb{font-size:12.5px; opacity:.85; margin-top:10px; line-height:1.5; text-shadow:0 1px 6px rgba(0,0,0,0.4); max-width:440px;}
 
   .music-search-bar{display:flex; gap:8px; padding:4px 24px 14px; align-items:center;}
+  /* ---------- "Para este momento": capa contextual, la que diferencia a
+     Escuchar de una biblioteca de contenido genérica — recomienda según lo
+     que la persona está viviendo, no una lista más para explorar. ---------- */
+  .listen-moment{
+    margin:8px 24px 28px; padding:26px 24px 20px; border-radius:26px;
+    background:linear-gradient(165deg, var(--bg-warm), var(--card));
+    border:1px solid var(--line); box-shadow:var(--shadow-sm);
+  }
+  .listen-moment-head{margin-bottom:16px;}
+  .listen-moment-title{font-size:19px; font-weight:500; color:var(--ink);}
+  .listen-moment-sub{font-size:12.5px; color:var(--ink-soft); margin-top:4px; line-height:1.5;}
+  .listen-mood-row{display:flex; gap:7px; overflow-x:auto; scrollbar-width:none; padding-bottom:2px; margin-bottom:16px;}
+  .listen-mood-row::-webkit-scrollbar{display:none;}
+  .listen-mood-pill{
+    flex:none; padding:8px 14px; border-radius:100px; font-size:12.5px; font-weight:600;
+    border:1px solid var(--line); background:var(--card); color:var(--ink-soft); cursor:pointer;
+    transition:transform .12s ease, background .15s ease, color .15s ease;
+  }
+  .listen-mood-pill:active{transform:scale(0.96);}
+  .listen-mood-pill.active{background:linear-gradient(135deg,var(--sage-deep),var(--sage-deeper)); color:#fff; border-color:var(--sage-deep);}
+  .listen-moment-line{font-size:13.5px; font-style:italic; color:var(--ink-soft); line-height:1.6; margin-bottom:14px; font-family:'Fraunces';}
+  .listen-moment-body .music-track:last-child{margin-bottom:0;}
+  .listen-explore-label{padding:0 24px 10px; font-size:12px; color:var(--ink-soft); letter-spacing:.6px; text-transform:uppercase; font-weight:700; opacity:.7;}
   /* segmented control centrado arriba: Música / Podcast / Predicaciones */
   .escuchar-tabs{
     display:flex; gap:3px; margin:4px 24px 18px; padding:4px; border-radius:100px;
@@ -823,11 +846,17 @@
 
   /* ---------- reproductor (video / solo audio) ---------- */
   .player-modes{display:flex; gap:8px; padding:4px 24px 10px;}
-  .player-pip-hint{
-    display:flex; align-items:center; justify-content:center; gap:6px; text-align:center;
-    font-size:12px; color:var(--sage-deep); font-weight:600; cursor:pointer; padding:0 24px 14px;
+  .player-float-btn{
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    width:min(280px, 72%); margin:0 auto 16px; padding:11px 16px; border-radius:100px; border:none;
+    background:linear-gradient(135deg,var(--gold-deep),var(--gold)); color:#fff;
+    font-size:13px; font-weight:700; cursor:pointer; box-shadow:var(--shadow-sm);
+    transition:transform .12s ease, opacity .15s ease;
   }
-  .player-pip-hint span{font-size:14px;}
+  .player-float-btn:active{transform:scale(0.96);}
+  .player-float-btn .player-float-btn-icon{font-size:15px;}
+  .player-float-btn.floating{background:linear-gradient(135deg,var(--sage-deep),var(--sage-deeper));}
+  .player-float-btn.unsupported{background:var(--beige); color:var(--ink-soft); box-shadow:none;}
   .player-mode-btn{
     flex:1; padding:11px 10px; border-radius:100px; font-size:13px; font-weight:600;
     border:1px solid var(--line); background:var(--card); cursor:pointer; box-shadow:var(--shadow-sm);
@@ -1242,7 +1271,7 @@
         <div class="hello serif" id="home-greeting">Hola.</div>
         <div class="sub" id="home-subline">Qué bueno que estás aquí.</div>
       </div>
-      <div style="display:flex; align-items:center; gap:10px; flex:none; margin-top:4px;">
+      <div style="display:flex; align-items:center; gap:8px; flex:none; margin-top:5px;">
         <div class="streak-mini" id="home-streak">🕯️ 1</div>
         <button class="profile-icon-btn" onclick="go('perfil')" aria-label="Tu camino">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4.5 5-6 8-6s6.5 1.5 8 6"/></svg>
@@ -1453,24 +1482,29 @@
   <!-- ORAR -->
   <section class="screen" id="orar">
     <div class="topbar"><h2>Quiero orar</h2></div>
-    <div class="container" style="padding-top:0;">
-      <div class="feature-card" style="background:linear-gradient(160deg, var(--sage) 0%, var(--sage-deep) 100%); color:#fff; margin-bottom:18px; cursor:pointer;" onclick="startGuidedPrayer()">
-        <div style="flex:1;">
-          <div class="t" style="color:#fff;">Guíame</div>
-          <div class="s" style="color:rgba(255,255,255,0.85);">Un momento paso a paso, contigo.</div>
+    <div class="container" style="padding-top:4px;">
+      <!-- "Guíame" como una invitación suave, al mismo nivel que las puertas
+           del Home — no un CTA grande que empuje a tomarlo. -->
+      <div class="list-card" style="margin:0 0 26px;" onclick="startGuidedPrayer()">
+        <div style="display:flex; align-items:center; gap:14px;">
+          <span style="font-size:19px; flex:none;" aria-hidden="true">🙏</span>
+          <div><div class="t">Guíame</div><div class="s">Un momento paso a paso, contigo</div></div>
         </div>
-        <div class="arrow-circle" style="background:rgba(255,255,255,0.25); color:#fff;">→</div>
+        <span style="color:var(--ink-soft); flex:none;">→</span>
       </div>
-      <p style="color:var(--ink-soft); font-size:14.5px; line-height:1.5;">O quiero escribir mis propias palabras.</p>
-      <p style="margin-top:22px; font-size:15.5px;">¿Qué quieres poner en manos de Dios?</p>
-      <textarea id="orar-input" rows="4" placeholder="Escribe aquí…" style="margin-top:10px;"></textarea>
-      <div class="stack" style="margin-top:14px;">
-        <button class="btn btn-ghost" onclick="orarConMisPalabras()">Orar con mis palabras</button>
-        <button class="btn btn-primary" onclick="ayudaOracion()">Ayúdame a encontrar palabras</button>
+
+      <p style="color:var(--ink-soft); font-size:13px; text-align:center; letter-spacing:.2px;">o, si prefieres, con tus propias palabras</p>
+      <p class="serif" style="margin-top:20px; font-size:17px; line-height:1.5; text-align:center; color:var(--ink);">¿Qué quieres poner en manos de Dios?</p>
+      <textarea id="orar-input" rows="5" placeholder="Escribe aquí, con calma…" style="margin-top:20px; padding:20px; line-height:1.6;"></textarea>
+      <div class="stack" style="margin-top:16px;">
+        <button class="btn btn-primary" onclick="orarConMisPalabras()">Orar con mis palabras</button>
+      </div>
+      <div style="text-align:center; margin-top:14px;">
+        <button class="btn-text" onclick="ayudaOracion()">¿No sabes por dónde empezar? Te acompaño a encontrarlas</button>
       </div>
       <div id="orar-output" style="margin-top:22px;"></div>
     </div>
-    <div class="section-title">Mis oraciones</div>
+    <div class="section-title" style="margin-top:var(--sp-6); opacity:.8;">Mis oraciones</div>
     <div id="mis-oraciones"></div>
   </section>
 
@@ -1535,6 +1569,20 @@
     </div>
     <div id="musica-search-results"></div>
     <div id="musica-default-sections">
+
+    <!-- CAPA A — "Para este momento": lo primero que se ve, con más peso
+         visual y emocional que la biblioteca de abajo. -->
+    <div class="listen-moment" id="listen-moment">
+      <div class="listen-moment-head">
+        <div class="listen-moment-title serif">Para este momento</div>
+        <div class="listen-moment-sub">Contenido elegido según lo que estás viviendo</div>
+      </div>
+      <div class="listen-mood-row" id="listen-mood-row"></div>
+      <div class="listen-moment-body" id="listen-moment-body"></div>
+    </div>
+
+    <!-- CAPA B — "Explorar": la biblioteca, ahora secundaria a propósito. -->
+    <div class="listen-explore-label">Explorar</div>
     <div id="musica-featured"></div>
     <div class="escuchar-tabs">
       <button class="escuchar-tab" data-t="musica" onclick="setEscucharTab('musica')">🎵 Música</button>
@@ -1572,9 +1620,10 @@
           <button class="player-mode-btn" data-m="video" onclick="setPlayerMode('video')">🎥 Ver video</button>
           <button class="player-mode-btn" data-m="audio" onclick="setPlayerMode('audio')">🎧 Solo escuchar</button>
         </div>
-        <div class="player-pip-hint" onclick="showPipHelp()">
-          <span>🗗</span> Sacar en ventana flotante (sigue sonando fuera de HERE)
-        </div>
+        <button class="player-float-btn" id="player-float-btn" onclick="openFloatingPlayer()">
+          <span class="player-float-btn-icon">🗗</span>
+          <span id="player-float-btn-label">Ventana flotante</span>
+        </button>
         <div class="player-video-wrap" id="player-video-wrap"><div id="yt-player"></div></div>
         <div class="player-audio-wrap" id="player-audio-wrap" style="display:none;">
           <div class="player-audio-art">🎵</div>
@@ -2415,6 +2464,7 @@ function startNecesitoPalabra(){ go('palabraAsk'); }
 
 // Elige (hasta) 2 versículos para un sentimiento/tag.
 function pickVerseFromTag(tag, excludeRefs){
+  saveLastMoodTag(tag);
   const [main, alt] = versesForTag(tag || 'paz', 2, excludeRefs);
   return { main: main || verseForTag(tag || 'paz'), alt: alt || null, why: null };
 }
@@ -2433,13 +2483,16 @@ async function pickVerseFromText(text, excludeRefs){
       main = pool[res.main];
       if(typeof res.alt === 'number' && res.alt !== res.main && pool[res.alt]) alt = pool[res.alt];
       why = whyRelevant(res.tags||[]);
+      saveLastMoodTag((res.tags && res.tags[0]) || (main.tags && main.tags[0]));
     }
   }catch(e){ main = null; }
   if(!main){
+    const matched = semanticSearch(text, 1).matchedTags;
     const r = semanticSearch(text, 3).verses.filter(v=>!excludeRefs.includes(v.ref));
     main = r[0] || VERSES[0];
     alt = r[1] || null;
-    why = whyRelevant(semanticSearch(text, 1).matchedTags);
+    why = whyRelevant(matched);
+    saveLastMoodTag((matched && matched[0]) || (main.tags && main.tags[0]));
   }
   return { main, alt, why };
 }
@@ -3455,6 +3508,106 @@ function weekSeed(){
 function pickWeeklyFeatured(){
   return MUSIC_WEEKLY_POOL[weekSeed() % MUSIC_WEEKLY_POOL.length];
 }
+
+/* ---------------- "Para este momento" ----------------
+   La capa contextual de Escuchar: en vez de otra lista para explorar, ofrece
+   1 canción y 1 predicación/podcast elegidos según lo que la persona está
+   viviendo — tomado de lo último que compartió en "Necesito una palabra", o
+   de un selector simple aquí mismo si no hay nada reciente. Cada humor tiene
+   una consulta real a YouTube (misma API que el resto de Escuchar) y, si esa
+   búsqueda falla, un par de respaldo ya curado (findTrackById) para que
+   nunca se sienta vacío. */
+const LISTEN_MOODS = [
+  { id:'cansado', emoji:'😮‍💨', label:'Cansado', tags:['cansancio','no puedo dormir'],
+    line:'Un momento para soltar el peso y descansar en Él.',
+    musicQ:'música cristiana instrumental para descansar y encontrar calma',
+    wordQ:'predicación cristiana corta sobre el descanso y el cansancio',
+    fallbackSong:'daigle', fallbackWord:'cafedios' },
+  { id:'miedo', emoji:'🌊', label:'Con miedo', tags:['miedo'],
+    line:'No tienes que enfrentar esto solo.',
+    musicQ:'música cristiana de fe y confianza para el miedo',
+    wordQ:'predicación cristiana corta sobre el miedo y la confianza en Dios',
+    fallbackSong:'hillsong', fallbackWord:'danilo' },
+  { id:'ansiedad', emoji:'🌫️', label:'Ansioso', tags:['ansiedad'],
+    line:'Respira. Su paz sobrepasa todo entendimiento.',
+    musicQ:'música cristiana de paz para la ansiedad',
+    wordQ:'predicación cristiana corta sobre la ansiedad y la paz de Dios',
+    fallbackSong:'tercercielo', fallbackWord:'cafedios' },
+  { id:'triste', emoji:'💙', label:'Triste o solo', tags:['tristeza','herido','soledad'],
+    line:'Dios está cerca de los que tienen el corazón quebrantado.',
+    musicQ:'música cristiana de consuelo para el corazón herido',
+    wordQ:'predicación cristiana corta de consuelo para la tristeza',
+    fallbackSong:'dclario', fallbackWord:'corson' },
+  { id:'esperanza', emoji:'🌅', label:'Necesito esperanza', tags:['esperanza','dirección','perdón','fe'],
+    line:'Hay un camino, aunque ahora no lo veas del todo.',
+    musicQ:'música cristiana de esperanza y aliento',
+    wordQ:'predicación cristiana corta sobre la esperanza',
+    fallbackSong:'witt', fallbackWord:'bibleproject' },
+  { id:'agradecido', emoji:'🤍', label:'Agradecido', tags:['agradecido'],
+    line:'Un momento para celebrar lo que Él ha hecho.',
+    musicQ:'música cristiana de adoración y gratitud',
+    wordQ:'predicación cristiana corta sobre la gratitud',
+    fallbackSong:'miel', fallbackWord:'cafedios' },
+  { id:'paz', emoji:'✨', label:'En paz', tags:['paz','aleatorio'],
+    line:'A veces basta con quedarse quieto un momento.',
+    musicQ:'música cristiana de adoración tranquila',
+    wordQ:'predicación cristiana corta de aliento para hoy',
+    fallbackSong:'daigle', fallbackWord:'corson' },
+];
+function moodForTag(tag){ return LISTEN_MOODS.find(m=>m.tags.includes(tag)) || null; }
+// Se llama cada vez que "Necesito una palabra" resuelve un sentimiento, para
+// que Escuchar pueda ofrecer algo relacionado sin tener que volver a preguntar.
+function saveLastMoodTag(tag){
+  if(!tag) return;
+  try{ save('here_last_mood_tag', tag); save('here_last_mood_at', Date.now()); }catch(e){}
+}
+function lastMoodInfo(){
+  const tag = load('here_last_mood_tag', null);
+  const at = load('here_last_mood_at', 0);
+  if(!tag || !at) return null;
+  if((Date.now() - at) / 36e5 > 12) return null; // ya pasaron varias horas: no lo asumimos
+  return moodForTag(tag);
+}
+let listenMoodActive = null;
+function curatedMomentRow(item, icon){
+  if(!item) return '';
+  const thumb = trackThumbUrl(item);
+  return `<div class="music-track" onclick="playTrackById('${item.id}')">
+    ${thumb ? `<img class="music-track-thumb" src="${thumb}" alt="" loading="lazy">` : `<div class="music-track-icon" style="background:linear-gradient(135deg,var(--sage-deep),var(--sage-deeper));">${icon}</div>`}
+    <div><div class="t">${item.name}</div><div class="s">${item.role||item.s||''}</div></div>
+  </div>`;
+}
+function renderListenMoment(){
+  const row = document.getElementById('listen-mood-row');
+  if(!row) return;
+  if(!listenMoodActive){
+    listenMoodActive = lastMoodInfo() || LISTEN_MOODS[LISTEN_MOODS.length-1];
+  }
+  row.innerHTML = LISTEN_MOODS.map(m=>`
+    <button class="listen-mood-pill ${m.id===listenMoodActive.id?'active':''}" onclick="setListenMood('${m.id}')">${m.emoji} ${m.label}</button>
+  `).join('');
+  loadListenMomentContent(listenMoodActive);
+}
+function setListenMood(id){
+  const m = LISTEN_MOODS.find(x=>x.id===id);
+  if(!m || m===listenMoodActive) return;
+  haptic(8);
+  listenMoodActive = m;
+  renderListenMoment();
+}
+async function loadListenMomentContent(mood){
+  const wrap = document.getElementById('listen-moment-body');
+  if(!wrap) return;
+  wrap.innerHTML = `<p class="listen-moment-line">${mood.line}</p>` + musicLoadingHTML();
+  const [songResults, wordResults] = await Promise.all([
+    ytApiSearch(mood.musicQ, 3),
+    ytApiSearch(mood.wordQ, 3),
+  ]);
+  if(listenMoodActive !== mood) return; // cambió de humor mientras cargaba
+  const songRow = (songResults && songResults[0]) ? musicSearchResultRow(songResults[0]) : curatedMomentRow(findTrackById(mood.fallbackSong), '🎵');
+  const wordRow = (wordResults && wordResults[0]) ? musicSearchResultRow(wordResults[0]) : curatedMomentRow(findTrackById(mood.fallbackWord), '🎙️');
+  wrap.innerHTML = `<p class="listen-moment-line">${mood.line}</p>${songRow}${wordRow}`;
+}
 function musicSearchUrl(platform, q){
   const enc = encodeURIComponent(q);
   return platform==='spotify' ? `https://open.spotify.com/search/${enc}` : `https://www.youtube.com/results?search_query=${enc}`;
@@ -3469,6 +3622,7 @@ function renderMusica(){
   if(searchInput) searchInput.value = '';
   document.getElementById('musica-search-results').innerHTML = '';
   document.getElementById('musica-default-sections').style.display = '';
+  renderListenMoment();
   const featured = pickWeeklyFeatured();
   const scene = MUSIC_SCENES[weekSeed() % MUSIC_SCENES.length];
   document.getElementById('musica-featured').innerHTML = `
@@ -3673,40 +3827,113 @@ window.onYouTubeIframeAPIReady = function(){
   if(currentPlayItem) playTrackNow(currentPlayItem);
 };
 
-/* ---------------- ventana flotante (Picture-in-Picture) ----------------
-   Es lo más cercano a "reproducir en segundo plano" que se puede lograr con
-   un video incrustado de YouTube: en Chrome (Android y computador) la
-   ventana flotante SÍ sigue reproduciéndose mientras usas otra app o
-   pestaña. En iPhone (Safari), Apple no lo permite para video de otra
-   página incrustado en un iframe — solo funciona dentro de apps propias
-   como YouTube o Spotify, así que ahí esta opción simplemente no aparece.
-   No podemos activarla nosotros con un botón (el video vive dentro de un
-   iframe de YouTube, de otro dominio, y el navegador no deja que la página
-   de afuera lo controle por seguridad) — lo que sí podemos hacer es
-   asegurarnos de que el permiso esté habilitado y explicar cómo activarla
-   con el propio control de YouTube (mantener presionado el video, o clic
-   derecho en computador). */
-function enablePipOnIframe(player){
+/* ---------------- ventana flotante (Document Picture-in-Picture) ----------------
+   Antes solo podíamos habilitar el permiso "picture-in-picture" del iframe y
+   explicar cómo activarla a mano (clic derecho, mantener presionado) —
+   porque el video vive en un iframe de YouTube, de otro dominio, y una
+   página no puede llamar a requestPictureInPicture() sobre un iframe ajeno.
+   Ese gesto manual casi nunca se descubre solo, así que en vez de depender
+   de él usamos la Document Picture-in-Picture API: abre una ventana de
+   verdad, siempre-encima, con un clic — solo que en vez de "robar" el video
+   que ya está sonando (eso lo recargaría desde cero), abrimos un iframe
+   nuevo apuntando al mismo video y seguimos desde donde iba. Al cerrarla,
+   retomamos en el reproductor principal en el punto donde se quedó.
+   Solo funciona en Chrome/Edge de escritorio por ahora — en los demás
+   navegadores (celular, Safari) el botón cae al mismo instructivo de
+   siempre como respaldo. */
+let floatWindow = null;
+let floatOpenedAt = 0;
+let floatBaseTime = 0;
+let floatWasPlaying = false;
+
+function floatingPipSupported(){
+  return typeof window !== 'undefined' && typeof window.documentPictureInPicture !== 'undefined';
+}
+function updateFloatBtnUI(){
+  const btn = document.getElementById('player-float-btn');
+  const label = document.getElementById('player-float-btn-label');
+  if(!btn || !label) return;
+  if(!floatingPipSupported()){
+    btn.classList.remove('floating');
+    btn.classList.add('unsupported');
+    label.textContent = 'Ventana flotante (ver cómo)';
+    return;
+  }
+  btn.classList.remove('unsupported');
+  if(floatWindow){
+    btn.classList.add('floating');
+    label.textContent = 'Volver a HERE';
+  } else {
+    btn.classList.remove('floating');
+    label.textContent = 'Ventana flotante';
+  }
+}
+async function openFloatingPlayer(){
+  haptic(10);
+  // si ya está flotando, este mismo botón la cierra y retoma aquí.
+  if(floatWindow){
+    try{ floatWindow.close(); }catch(e){}
+    return;
+  }
+  if(!currentPlayItem || !currentPlayItem.yt){ showPipHelp(); return; }
+  if(!floatingPipSupported()){ showPipHelp(); return; }
   try{
-    const iframe = player.getIframe && player.getIframe();
-    if(!iframe) return;
-    const allow = iframe.getAttribute('allow') || '';
-    if(!allow.includes('picture-in-picture')){
-      iframe.setAttribute('allow', (allow ? allow+'; ' : '') + 'picture-in-picture');
-    }
-  }catch(e){}
+    const item = currentPlayItem;
+    floatBaseTime = (ytPlayer && ytPlayer.getCurrentTime) ? (ytPlayer.getCurrentTime() || 0) : 0;
+    floatWasPlaying = !ytPlayer || !ytPlayer.getPlayerState || ytPlayer.getPlayerState() === 1;
+    pausePlayerIfPlaying();
+
+    const win = await documentPictureInPicture.requestWindow({ width: 360, height: 224 });
+    floatWindow = win;
+    floatOpenedAt = Date.now();
+
+    const style = win.document.createElement('style');
+    style.textContent = `html,body{margin:0; padding:0; background:#000; height:100%; overflow:hidden;}
+      #float-wrap{position:absolute; inset:0;} #float-wrap iframe{position:absolute; inset:0; width:100%; height:100%; border:0;}`;
+    win.document.head.appendChild(style);
+    const wrap = win.document.createElement('div');
+    wrap.id = 'float-wrap';
+    win.document.body.appendChild(wrap);
+
+    const iframe = win.document.createElement('iframe');
+    const startAt = Math.max(0, Math.floor(floatBaseTime));
+    iframe.src = item.ytList
+      ? `https://www.youtube.com/embed/videoseries?list=${item.ytList}&autoplay=1&playsinline=1&rel=0&modestbranding=1`
+      : `https://www.youtube.com/embed/${item.yt}?autoplay=1&start=${startAt}&playsinline=1&rel=0&modestbranding=1`;
+    iframe.allow = 'autoplay; encrypted-media; picture-in-picture';
+    wrap.appendChild(iframe);
+
+    win.addEventListener('pagehide', ()=>{
+      const elapsed = floatWasPlaying ? (Date.now()-floatOpenedAt)/1000 : 0;
+      floatWindow = null;
+      updateFloatBtnUI();
+      try{
+        if(ytPlayer && ytPlayer.seekTo){
+          ytPlayer.seekTo(floatBaseTime + elapsed, true);
+          if(floatWasPlaying && ytPlayer.playVideo) ytPlayer.playVideo();
+        }
+      }catch(e){}
+    }, { once:true });
+
+    updateFloatBtnUI();
+  }catch(e){
+    console.error('No se pudo abrir la ventana flotante', e);
+    floatWindow = null;
+    updateFloatBtnUI();
+    showPipHelp();
+  }
 }
 function showPipHelp(){
   openSheet(`
     <div class="handle"></div>
     <p style="font-family:'Fraunces'; font-size:17px; margin-bottom:14px;">🗗 Ventana flotante</p>
     <p style="font-size:14px; line-height:1.6; color:var(--ink-soft); margin-bottom:14px;">
-      Es la forma de que el video siga sonando aunque salgas de HERE a usar otra app o pestaña —
-      YouTube no permite que las apps que lo incrustan (como HERE) sigan reproduciendo audio puro
-      con la pantalla apagada, pero la ventana flotante es lo más parecido que existe.
+      Es la forma de que el video siga sonando aunque salgas de HERE a usar otra app o pestaña.
+      En este navegador no podemos abrirla nosotros con un clic — pero tu propio YouTube trae
+      la opción, solo hay que encontrarla:
     </p>
-    <p style="font-size:13.5px; line-height:1.6; margin-bottom:6px;"><b>En el celular (Android, Chrome):</b> mantén presionado el video y elige "Imagen en imagen" — o simplemente cambia a otra app mientras se reproduce, y debería flotar solo.</p>
-    <p style="font-size:13.5px; line-height:1.6; margin-bottom:6px;"><b>En computador:</b> clic derecho sobre el video → "Imagen en imagen" (Picture-in-Picture).</p>
+    <p style="font-size:13.5px; line-height:1.6; margin-bottom:6px;"><b>En el celular (Android, Chrome):</b> mantén presionado el video y elige "Imagen en imagen" — o cambia a otra app mientras se reproduce, y debería flotar solo.</p>
+    <p style="font-size:13.5px; line-height:1.6; margin-bottom:6px;"><b>En computador (Chrome o Edge):</b> clic derecho sobre el video → "Imagen en imagen" (Picture-in-Picture).</p>
     <p style="font-size:13.5px; line-height:1.6; color:var(--ink-soft);"><b>En iPhone:</b> por ahora Apple no deja hacer esto con un video incrustado de otra página, solo dentro de la app oficial de YouTube.</p>
     <button class="btn btn-primary" style="width:100%; margin-top:16px;" onclick="closeSheet()">Entendido</button>
   `);
@@ -3755,12 +3982,16 @@ function playTrack(item, mode){
   setPlayerMode(mode || playerMode);
   updateMiniPlayer();
   if(isNewTrack){
+    // si venía flotando un video distinto, esa ventana ya no corresponde
+    // a lo que se va a reproducir ahora — la cerramos.
+    if(floatWindow){ try{ floatWindow.close(); }catch(e){} floatWindow = null; }
     ensureYouTubeApi();
     clearTimeout(playerLoadTimer);
     playerLoadTimer = setTimeout(()=>showPlayerFallback(item), 6000);
     if(ytApiReady) playTrackNow(item);
     loadRelatedVideos(item);
   }
+  updateFloatBtnUI();
 }
 // Quita paréntesis/corchetes ("(Video Oficial)", "[Lyric Video]") y símbolos,
 // para poder comparar títulos y detectar cuando dos videos son la MISMA
@@ -3825,7 +4056,20 @@ function playTrackNow(item){
         ? { listType:'playlist', list:item.ytList, autoplay:1, playsinline:1, rel:0, modestbranding:1, iv_load_policy:3 }
         : { autoplay:1, playsinline:1, rel:0, modestbranding:1, iv_load_policy:3 },
       events:{
-        onReady: (e)=>{ e.target.playVideo(); enablePipOnIframe(e.target); },
+        onReady: (e)=>{
+          e.target.playVideo();
+          // deja habilitado el picture-in-picture nativo del navegador por si
+          // el usuario lo activa a mano (clic derecho / mantener presionado) —
+          // es el respaldo que explica showPipHelp() cuando openFloatingPlayer()
+          // no está disponible en su navegador.
+          try{
+            const iframe = e.target.getIframe && e.target.getIframe();
+            if(iframe){
+              const allow = iframe.getAttribute('allow') || '';
+              if(!allow.includes('picture-in-picture')) iframe.setAttribute('allow', (allow ? allow+'; ' : '') + 'picture-in-picture');
+            }
+          }catch(err){}
+        },
         onStateChange: onPlayerStateChange,
         onError: ()=> showPlayerFallback(item),
       }
@@ -3865,6 +4109,7 @@ function closePlayer(){
 }
 // Detener del todo (el botón ✕ del mini reproductor).
 function stopPlayback(){
+  if(floatWindow){ try{ floatWindow.close(); }catch(e){} floatWindow = null; }
   pausePlayerIfPlaying();
   currentPlayItem = null;
   updateMiniPlayer();
@@ -3943,7 +4188,10 @@ function renderChat(){
   const body = document.getElementById('chat-body');
   const msgs = chatHistory.map((m,i)=>{
     if(m.role==='user') return `<div class="bubble me">${m.text.replace(/\n/g,'<br>')}</div>`;
-    const actions = m.text==='…' ? '' : `
+    // mientras "piensa", tres puntos respirando — no un "…" estático, para
+    // que se sienta a alguien tomándose un momento, no una app cargando.
+    if(m.text==='…') return `<div class="bubble here"><span class="loading-dot"></span> <span class="loading-dot" style="animation-delay:.15s;"></span> <span class="loading-dot" style="animation-delay:.3s;"></span></div>`;
+    const actions = `
       <div class="bubble-actions">
         <button onclick="saveChatMessage(${i})">♡ Guardar</button>
         <button onclick="openReflectionEditor('Conversación con HERE', chatHistory[${i}].text)">Reflexionar</button>
@@ -3995,7 +4243,7 @@ async function sendChatMessage(){
       reply = res.text;
     }catch(e){ reply = null; }
   }
-  if(!reply) reply = 'Estoy aquí contigo, aunque en este momento no puedo responder con calma. ¿Quieres intentar de nuevo en un momento?';
+  if(!reply) reply = 'Estoy aquí contigo, aunque justo ahora no logro responder. ¿Lo intentamos de nuevo en un momento?';
   chatHistory[thinkingIdx] = {role:'here', text:reply};
   renderChat();
 }
