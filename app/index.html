@@ -771,29 +771,34 @@
   /* Tarjeta "de la semana": misma receta cinematográfica que .hoy-scene
      (degradado + foto + degradado de respaldo, texto blanco encima), pero
      su propio nombre porque el contenido que destaca cambia cada semana. */
+  /* "Artista de la semana": tarjeta clara y horizontal — foto pequeña a la
+     izquierda, texto a la derecha, un solo botón suave. Nada de imagen de
+     fondo a página completa ni look de póster de concierto. */
   .week-scene{
-    position:relative; overflow:hidden; color:#fff; margin:6px 24px 18px; border-radius:24px;
-    background-size:cover; background-position:center; cursor:pointer;
-    display:flex; flex-direction:column; align-items:flex-start; justify-content:flex-end;
-    min-height:182px; padding:22px 22px 20px; box-shadow:var(--shadow-sm);
+    display:flex; align-items:center; gap:15px; cursor:pointer;
+    margin:6px 24px 18px; padding:16px; border-radius:22px;
+    background:linear-gradient(165deg, var(--bg-warm), var(--card));
+    border:1px solid var(--line); box-shadow:var(--shadow-sm);
     transition:transform .15s ease;
   }
   .week-scene:active{transform:scale(0.985);}
-  .week-scene::after{content:''; position:absolute; inset:0;
-    background:linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.10) 45%, rgba(0,0,0,0.38) 100%);
-    pointer-events:none;}
-  .week-scene > *{position:relative; z-index:1;}
-  .week-scene .eyebrow{display:flex; align-items:center; gap:8px; font-size:11.5px; letter-spacing:.5px; text-transform:uppercase; font-weight:700; opacity:.92; text-shadow:0 1px 4px rgba(0,0,0,0.4);}
-  .week-scene .eyebrow .dot{width:6px; height:6px; border-radius:50%; background:var(--gold);}
-  .week-scene .name{font-family:'Fraunces'; font-size:22px; font-weight:500; margin-top:10px; text-shadow:0 2px 10px rgba(0,0,0,0.45);}
-  .week-scene .role{font-size:13px; opacity:.9; margin-top:4px; text-shadow:0 1px 6px rgba(0,0,0,0.4);}
-  .week-scene .blurb{font-size:13px; opacity:.92; margin-top:10px; line-height:1.55; font-style:italic; font-family:'Fraunces'; text-shadow:0 1px 6px rgba(0,0,0,0.4); max-width:440px;}
+  .week-scene-photo{
+    width:82px; height:82px; border-radius:16px; flex:none; object-fit:cover;
+    background:var(--beige) center/cover no-repeat; box-shadow:var(--shadow-sm);
+  }
+  .week-scene-body{flex:1; min-width:0;}
+  .week-scene .eyebrow{display:flex; align-items:center; gap:7px; font-size:10.5px; letter-spacing:.5px; text-transform:uppercase; font-weight:700; color:var(--gold-deep); opacity:.9;}
+  .week-scene .eyebrow .dot{width:5px; height:5px; border-radius:50%; background:var(--gold);}
+  .week-scene .name{font-family:'Fraunces'; font-size:19px; font-weight:500; color:var(--ink); margin-top:4px;}
+  .week-scene .role{font-size:12.5px; color:var(--ink-soft); margin-top:2px;}
+  .week-scene .blurb{font-size:12.5px; color:var(--ink-soft); margin-top:6px; line-height:1.45; font-style:italic; font-family:'Fraunces';}
   .week-scene-btn{
-    border:none; background:rgba(255,255,255,0.94); color:var(--sage-deeper); font-weight:600;
-    font-size:12.5px; padding:10px 18px; border-radius:100px; cursor:pointer; display:inline-flex; align-items:center; gap:6px;
-    transition:opacity .15s ease, transform .15s ease; box-shadow:0 2px 10px rgba(0,0,0,0.18);
+    margin-top:10px; border:none; background:var(--sage-deep); color:#fff; font-weight:600;
+    font-size:12px; padding:8px 16px; border-radius:100px; cursor:pointer; display:inline-flex; align-items:center; gap:5px;
+    transition:opacity .15s ease, transform .15s ease;
   }
   .week-scene-btn:active{ transform:scale(0.95); opacity:.85; }
+  @media (max-width:359px){ .week-scene{ flex-wrap:wrap; } }
 
   .music-search-bar{display:flex; gap:8px; padding:4px 24px 14px; align-items:center;}
   /* ---------- "Para este momento": capa contextual, la que diferencia a
@@ -832,16 +837,21 @@
   .listen-moment-row-label{flex:1; font-size:14.5px; color:var(--ink); font-weight:500; letter-spacing:.1px;}
   .listen-moment-row-arrow{color:var(--ink-soft); font-size:14px; opacity:.45;}
   .listen-explore-label{padding:0 24px 10px; font-size:12px; color:var(--ink-soft); letter-spacing:.6px; text-transform:uppercase; font-weight:700; opacity:.7;}
-  /* segmented control centrado arriba: Música / Podcast / Predicaciones */
-  .escuchar-tabs{
-    display:flex; gap:3px; margin:4px 24px 18px; padding:4px; border-radius:100px;
-    background:var(--beige); max-width:420px; margin-left:auto; margin-right:auto;
+  /* "Explorar" y las tabs en una misma línea, como en el diseño aprobado:
+     texto simple con subrayado dorado discreto en la tab activa — nada de
+     segmented control ni fondo de pastilla. */
+  .listen-explore-row{
+    display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap;
+    gap:8px 14px; margin:4px 24px 16px;
   }
+  .listen-explore-row .listen-explore-label{padding:0; margin:0; font-size:12.5px;}
+  .escuchar-tabs{display:flex; align-items:center; gap:8px;}
   .escuchar-tab{
-    flex:1; padding:9px 6px; border-radius:100px; border:none; background:none; cursor:pointer;
-    font-size:12.5px; font-weight:600; color:var(--ink-soft); white-space:nowrap; transition:background .15s ease, color .15s ease;
+    padding:2px 0 5px; border:none; border-bottom:2px solid transparent; background:none; cursor:pointer;
+    font-size:13px; font-weight:600; color:var(--ink-soft); white-space:nowrap; transition:color .15s ease, border-color .15s ease;
   }
-  .escuchar-tab.active{background:var(--card); color:var(--sage-deep); box-shadow:var(--shadow-sm);}
+  .escuchar-tab.active{color:var(--ink); border-bottom-color:var(--gold);}
+  .escuchar-tab-dot{color:var(--ink-soft); opacity:.4; font-size:12px;}
   .music-search-bar input{
     flex:1; padding:12px 16px; border-radius:100px; border:1px solid var(--line); background:var(--card);
     font-size:14px; color:var(--ink); font-family:inherit;
@@ -1612,12 +1622,9 @@
     <div id="musica-search-results"></div>
     <div id="musica-default-sections">
 
-    <!-- Destacado de la semana: va primero, arriba de "Para este momento". -->
-    <div id="musica-featured"></div>
-
-    <!-- CAPA A — "Para este momento": con más peso visual y emocional que la
-         biblioteca de abajo. Exactamente 3 caminos simples y suaves, sin
-         selector de humor. -->
+    <!-- CAPA A — "Para este momento": lo primero que se ve, con más peso
+         visual y emocional que la biblioteca de abajo. Exactamente 3 caminos
+         simples y suaves, sin selector de humor. -->
     <div class="listen-moment" id="listen-moment">
       <div class="listen-moment-head">
         <span class="listen-moment-icon" aria-hidden="true">🌿</span>
@@ -1629,13 +1636,19 @@
       <div class="listen-moment-list" id="listen-moment-list"></div>
     </div>
 
-    <!-- CAPA B — "Explorar": la biblioteca, ahora secundaria a propósito. -->
-    <div class="listen-explore-label">Explorar</div>
-    <div class="escuchar-tabs">
-      <button class="escuchar-tab" data-t="musica" onclick="setEscucharTab('musica')">Música</button>
-      <button class="escuchar-tab" data-t="podcast" onclick="setEscucharTab('podcast')">Podcast</button>
-      <button class="escuchar-tab" data-t="predicaciones" onclick="setEscucharTab('predicaciones')">Predicaciones</button>
+    <!-- CAPA B — "Explorar": la biblioteca, ahora secundaria a propósito.
+         Etiqueta y tabs en la misma línea, con subrayado discreto. -->
+    <div class="listen-explore-row">
+      <span class="listen-explore-label" style="padding:0;">Explorar</span>
+      <div class="escuchar-tabs">
+        <button class="escuchar-tab" data-t="musica" onclick="setEscucharTab('musica')">Música</button>
+        <span class="escuchar-tab-dot">·</span>
+        <button class="escuchar-tab" data-t="podcast" onclick="setEscucharTab('podcast')">Podcast</button>
+        <span class="escuchar-tab-dot">·</span>
+        <button class="escuchar-tab" data-t="predicaciones" onclick="setEscucharTab('predicaciones')">Predicaciones</button>
+      </div>
     </div>
+    <div id="musica-featured"></div>
     <div id="escuchar-panel-musica">
       <div class="section-title" style="margin-top:6px;">Explora por estilo</div>
       <div class="music-cat-grid" id="musica-categorias"></div>
@@ -3709,14 +3722,19 @@ function renderMusica(){
   document.getElementById('musica-default-sections').style.display = '';
   renderListenMoment();
   const featured = pickWeeklyFeatured();
-  const scene = MUSIC_SCENES[weekSeed() % MUSIC_SCENES.length];
+  const featuredThumb = trackThumbUrl(featured);
   document.getElementById('musica-featured').innerHTML = `
-    <div class="week-scene" style="background:${scene};" onclick="openMusicPersona('${featured.id}')">
-      <div class="eyebrow"><span class="dot"></span>${featured.type}</div>
-      <div class="name serif">${featured.name}</div>
-      <div class="role">${featured.role}</div>
-      <div class="blurb">${warmFeaturedLine(featured)}</div>
-      <button class="week-scene-btn" style="margin-top:16px;" onclick="playTrackById('${featured.id}', null, event)">▶ Escuchar ahora</button>
+    <div class="week-scene" onclick="openMusicPersona('${featured.id}')">
+      ${featuredThumb
+        ? `<img class="week-scene-photo" src="${featuredThumb}" alt="" loading="lazy">`
+        : `<div class="week-scene-photo" style="display:flex; align-items:center; justify-content:center; font-size:22px;">🎵</div>`}
+      <div class="week-scene-body">
+        <div class="eyebrow"><span class="dot"></span>${featured.type}</div>
+        <div class="name serif">${featured.name}</div>
+        <div class="role">${featured.role}</div>
+        <div class="blurb">${warmFeaturedLine(featured)}</div>
+        <button class="week-scene-btn" onclick="playTrackById('${featured.id}', null, event)">▶ Escuchar ahora</button>
+      </div>
     </div>
   `;
   document.getElementById('musica-categorias').innerHTML = MUSIC_CATEGORIES.map(cat=>`
