@@ -1280,48 +1280,50 @@
     text-transform:uppercase;
   }
 
+  /* título del capítulo, arriba de todo (antes solo vivía, chiquito, en el
+     pill de navegación al pie de página) */
+  .reader-chapter-title{
+    font-family:'Fraunces',serif; font-weight:500; font-size:21px; color:var(--ink);
+    text-align:center; margin:0; padding:2px 30px 4px;
+  }
+
   /* ---------- mini reproductor de audio de la lectura (sticky) ----------
      Acompaña la lectura desde arriba de la pantalla, sin tener que bajar
-     hasta el final del capítulo para reproducir o pausar. Usa la misma
-     familia visual que el mini player de música (vidrio esmerilado,
-     tipografía serif, acento dorado en la barra de progreso), pero como
-     una barra discreta y compacta en vez de un botón dominante. */
+     hasta el final del capítulo para reproducir o pausar. Deliberadamente
+     discreto: una línea delgada, sin tarjeta ni sombra, que se siente
+     parte de la propia pantalla de lectura en vez de una herramienta aparte. */
   .reader-audiobar-wrap{
-    position:sticky; top:0; z-index:45; padding:8px 16px 8px;
-    background:linear-gradient(to bottom, var(--bg) 68%, rgba(0,0,0,0));
+    position:sticky; top:0; z-index:45; padding:0 24px;
+    background:var(--bg);
   }
   .reader-audiobar{
     display:flex; flex-direction:column;
-    background:var(--glass-bg); -webkit-backdrop-filter:blur(20px) saturate(170%); backdrop-filter:blur(20px) saturate(170%);
-    border:1px solid var(--line-strong, var(--line)); border-radius:20px;
-    box-shadow:0 8px 22px rgba(20,19,16,0.12); overflow:hidden;
+    border-bottom:1px solid var(--line);
   }
-  @supports not ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){
-    .reader-audiobar{ background:var(--card-elevated, var(--card)); }
-  }
-  .reader-audiobar-row{ display:flex; align-items:center; gap:10px; padding:9px 10px 9px 9px; }
+  .reader-audiobar-row{ display:flex; align-items:center; gap:9px; padding:7px 0 9px; }
   .reader-audiobar .audiobar-play{
-    width:34px; height:34px; border-radius:50%; border:none; flex:none; cursor:pointer;
-    background:linear-gradient(135deg,var(--sage-deep),var(--sage-deeper)); color:#fff;
-    display:flex; align-items:center; justify-content:center; box-shadow:0 3px 10px rgba(44,79,59,0.3);
-    transition:transform .15s ease;
+    width:25px; height:25px; border-radius:50%; border:1.4px solid var(--sage-deep); flex:none; cursor:pointer;
+    background:transparent; color:var(--sage-deep);
+    display:flex; align-items:center; justify-content:center;
+    transition:transform .15s ease, background .15s ease, color .15s ease;
   }
-  .reader-audiobar .audiobar-play svg{width:14px; height:14px; stroke-width:1.6;}
-  .reader-audiobar .audiobar-play:active{transform:scale(0.9);}
+  .reader-audiobar.playing .audiobar-play{ background:var(--sage-deep); color:#fff; }
+  .reader-audiobar .audiobar-play svg{width:10px; height:10px; stroke-width:1.4;}
+  .reader-audiobar .audiobar-play:active{transform:scale(0.88);}
   .reader-audiobar-info{flex:1; min-width:0; display:flex; flex-direction:column; gap:5px; cursor:pointer;}
-  .reader-audiobar-label{font-family:'Fraunces',serif; font-size:13px; font-weight:500; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-  .reader-audiobar-progress-track{width:100%; height:2.5px; border-radius:2px; background:var(--line); overflow:hidden;}
+  .reader-audiobar-label{font-size:11px; font-weight:600; letter-spacing:.03em; color:var(--ink-soft); text-transform:uppercase; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .reader-audiobar-progress-track{width:100%; height:2px; border-radius:2px; background:var(--line); overflow:hidden;}
   .reader-audiobar-progress-fill{height:100%; width:0%; background:var(--gold-grad); transition:width .35s linear;}
   .reader-audiobar-expand-btn{
-    width:28px; height:28px; border-radius:50%; border:none; background:transparent; color:var(--ink-soft);
+    width:22px; height:22px; border-radius:50%; border:none; background:transparent; color:var(--ink-soft);
     cursor:pointer; display:flex; align-items:center; justify-content:center; flex:none; transition:background .15s ease, transform .15s ease;
   }
   .reader-audiobar-expand-btn:active{ background:var(--beige); }
-  .reader-audiobar-expand-btn svg{width:16px; height:16px; stroke-width:2; transition:transform .2s ease;}
+  .reader-audiobar-expand-btn svg{width:14px; height:14px; stroke-width:2; transition:transform .2s ease;}
   .reader-audiobar-expand-btn.open svg{ transform:rotate(180deg); }
   .reader-audiobar-speed{ max-height:0; overflow:hidden; opacity:0; transition:max-height .25s ease, opacity .2s ease; }
-  .reader-audiobar-speed.open{ max-height:60px; opacity:1; }
-  .reader-audiobar-speed .rate-ctrl{ padding:0 10px 10px; }
+  .reader-audiobar-speed.open{ max-height:56px; opacity:1; }
+  .reader-audiobar-speed .rate-ctrl{ padding:0 0 10px; }
 
   /* ---------- menú de versículo (verseTap) ---------- */
   .vmenu{display:flex; flex-direction:column;}
@@ -1809,6 +1811,7 @@
         <div class="reader-icon-btn" onclick="openFontSizeSheet()" aria-label="Tamaño de texto">Aa</div>
       </div>
     </div>
+    <h2 class="reader-chapter-title" id="reader-chapter-title"></h2>
     <div class="reader-audiobar-wrap">
       <div class="reader-audiobar" id="reader-audiobar">
         <div class="reader-audiobar-row">
@@ -3519,8 +3522,10 @@ async function openChapter(book, chapterNum){
   currentReaderBook = book;
   currentReaderChapter = chapterNum;
   document.getElementById('reader-title').textContent = `${book} ${chapterNum}`;
+  const chapterTitleEl = document.getElementById('reader-chapter-title');
+  if(chapterTitleEl) chapterTitleEl.textContent = `${book} ${chapterNum}`;
   const audiobarLabelEl = document.getElementById('audiobar-label');
-  if(audiobarLabelEl) audiobarLabelEl.textContent = `${book} ${chapterNum} · Audio`;
+  if(audiobarLabelEl) audiobarLabelEl.textContent = 'Escuchar capítulo';
   setAudiobarProgress(0);
   document.getElementById('reader-content').innerHTML = '<p style="padding:30px 0; text-align:center; color:var(--ink-soft);">Cargando <span class="loading-dot"></span></p>';
   go('reader');
@@ -3627,6 +3632,10 @@ const ICON_PAUSE = '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6.5" y
 function setListenBtn(state){
   const btn = document.getElementById('listen-btn');
   if(btn) btn.innerHTML = state==='pause' ? ICON_PAUSE : ICON_PLAY;
+  const bar = document.getElementById('reader-audiobar');
+  if(bar) bar.classList.toggle('playing', state==='pause');
+  const label = document.getElementById('audiobar-label');
+  if(label) label.textContent = state==='pause' ? 'Reproduciendo…' : 'Escuchar capítulo';
 }
 
 let spanishVoices = [];
