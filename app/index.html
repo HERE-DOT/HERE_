@@ -2448,6 +2448,120 @@ const BOOK_EN = {
   "Santiago":"James","1 Pedro":"1 Peter","2 Pedro":"2 Peter","1 Juan":"1 John","2 Juan":"2 John",
   "3 Juan":"3 John","Judas":"Jude","Apocalipsis":"Revelation"
 };
+// Códigos de libro USFM (estándar universal de 3 letras que usan API.Bible y
+// prácticamente todo software bíblico) — para pedirle capítulos a las
+// versiones nuevas (ver "Biblia en otras versiones" más abajo).
+const BOOK_USFM = {
+  "Génesis":"GEN","Éxodo":"EXO","Levítico":"LEV","Números":"NUM","Deuteronomio":"DEU",
+  "Josué":"JOS","Jueces":"JDG","Rut":"RUT","1 Samuel":"1SA","2 Samuel":"2SA",
+  "1 Reyes":"1KI","2 Reyes":"2KI","1 Crónicas":"1CH","2 Crónicas":"2CH",
+  "Esdras":"EZR","Nehemías":"NEH","Ester":"EST","Job":"JOB","Salmos":"PSA","Proverbios":"PRO",
+  "Eclesiastés":"ECC","Cantar de los Cantares":"SNG","Isaías":"ISA","Jeremías":"JER",
+  "Lamentaciones":"LAM","Ezequiel":"EZK","Daniel":"DAN","Oseas":"HOS","Joel":"JOL",
+  "Amós":"AMO","Abdías":"OBA","Jonás":"JON","Miqueas":"MIC","Nahúm":"NAM","Habacuc":"HAB",
+  "Sofonías":"ZEP","Hageo":"HAG","Zacarías":"ZEC","Malaquías":"MAL","Mateo":"MAT",
+  "Marcos":"MRK","Lucas":"LUK","Juan":"JHN","Hechos":"ACT","Romanos":"ROM","1 Corintios":"1CO",
+  "2 Corintios":"2CO","Gálatas":"GAL","Efesios":"EPH","Filipenses":"PHP",
+  "Colosenses":"COL","1 Tesalonicenses":"1TH","2 Tesalonicenses":"2TH",
+  "1 Timoteo":"1TI","2 Timoteo":"2TI","Tito":"TIT","Filemón":"PHM","Hebreos":"HEB",
+  "Santiago":"JAS","1 Pedro":"1PE","2 Pedro":"2PE","1 Juan":"1JN","2 Juan":"2JN",
+  "3 Juan":"3JN","Judas":"JUD","Apocalipsis":"REV"
+};
+/* ---------------- Biblia en otras versiones (API.Bible) ----------------
+   RVR1960 (arriba) tiene su propio camino con Biblia.com porque ya estaba
+   funcionando así. Para versiones adicionales (NVI, NTV, y una tercera según
+   lo que la clave tenga disponible) se usa API.Bible a través de nuestro
+   propio servidor (api/bible.js) — el navegador nunca ve esa clave. Como no
+   sabemos de antemano qué versiones exactas incluye la cuenta, HERE le
+   pregunta al API cuáles hay en español y elige, por nombre, las que ya se
+   le prometieron a la persona en el onboarding (NVI, NTV) más una tercera
+   conocida — todo esto se guarda en el celular por un tiempo para no volver
+   a preguntar en cada visita. Si esa clave todavía no está configurada en
+   Vercel, o el API no responde, estas versiones simplemente no aparecen y
+   la Biblia se sigue leyendo en RVR1960, sin romper nada. */
+const BIBLE_VERSIONS_CACHE_KEY = 'here_bible_versions_v2';
+const BIBLE_VERSIONS_TTL_MS = 30*24*60*60*1000; // 30 días: el catálogo de versiones casi no cambia
+// Orden de preferencia: primero las que ya aparecen nombradas en el
+// onboarding (OB4), después otras conocidas, hasta completar 3.
+const BIBLE_VERSION_WANTED = [
+  { key:'NVI', patterns:[/\bnvi\b/i, /nueva\s*versi[oó]n\s*internacional/i] },
+  { key:'NTV', patterns:[/\bntv\b/i, /nueva\s*traducci[oó]n\s*viviente/i] },
+  { key:'DHH', patterns:[/\bdhh\b/i, /dios\s*habla\s*hoy/i] },
+  { key:'PDT', patterns:[/\bpdt\b/i, /palabra\s*de\s*dios\s*para\s*todos/i] },
+  { key:'RVC', patterns:[/\brvc\b/i, /reina\s*valera\s*contempor[aá]nea/i] },
+  { key:'TLA', patterns:[/\btla\b/i, /traducci[oó]n\s*en\s*lenguaje\s*actual/i] },
+];
+let bibleVersionsPromise = null;
+function loadBibleVersionsCache(){
+  const raw = load(BIBLE_VERSIONS_CACHE_KEY, null);
+  if(!raw || !raw.ts || !raw.versions) return null;
+  if(Date.now() - raw.ts > BIBLE_VERSIONS_TTL_MS) return null;
+  return raw.versions;
+}
+function saveBibleVersionsCache(versions){
+  save(BIBLE_VERSIONS_CACHE_KEY, { ts: Date.now(), versions });
+}
+// Le pregunta a API.Bible (vía nuestro servidor) qué Biblias en español hay
+// disponibles, y de esa lista real elige hasta 3 por nombre/abreviatura
+// según BIBLE_VERSION_WANTED. Devuelve { NVI:{id,name,...}, NTV:{...}, ... }
+// (solo las que sí se encontraron) o null si el API no respondió.
+async function discoverBibleVersions(){
+  const cached = loadBibleVersionsCache();
+  if(cached) return cached;
+  if(bibleVersionsPromise) return bibleVersionsPromise;
+  bibleVersionsPromise = (async()=>{
+    try{
+      const r = await fetch('/api/bible', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ action:'list' })
+      });
+      if(!r.ok) return null;
+      const data = await r.json();
+      const items = data.items || [];
+      const found = {};
+      for(const want of BIBLE_VERSION_WANTED){
+        if(Object.keys(found).length >= 3) break;
+        const match = items.find(b=>{
+          const hay = [b.name, b.nameLocal, b.abbreviation, b.abbreviationLocal].join(' ');
+          return want.patterns.some(p=>p.test(hay));
+        });
+        if(match){
+          found[want.key] = { id: match.id, name: match.nameLocal || match.name, abbreviation: match.abbreviationLocal || match.abbreviation };
+        }
+      }
+      if(!Object.keys(found).length) return null;
+      saveBibleVersionsCache(found);
+      return found;
+    }catch(e){ return null; }
+  })();
+  const out = await bibleVersionsPromise;
+  bibleVersionsPromise = null;
+  return out;
+}
+// Trae (o recupera de caché en el celular) el texto de un capítulo en una de
+// estas versiones adicionales. Misma forma de respuesta que fetchLiveChapter
+// ({verses, live}) para que openChapter() pueda tratarlas igual.
+async function fetchApiBibleChapter(versionMeta, book, chapterNum){
+  const bookCode = BOOK_USFM[book];
+  if(!bookCode) return { verses:null, live:false };
+  const cacheKey = `here_biblev_${versionMeta.id}_${book}_${chapterNum}`;
+  const cached = load(cacheKey, null);
+  if(cached && cached.verses && cached.verses.length) return { verses: cached.verses, live:true, copyright: cached.copyright, versionName: versionMeta.name };
+  try{
+    const r = await fetch('/api/bible', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ action:'chapter', bibleId: versionMeta.id, bookId: bookCode, chapterNum })
+    });
+    if(!r.ok) throw new Error('http '+r.status);
+    const data = await r.json();
+    if(!data.verses || !data.verses.length) throw new Error('respuesta vacía');
+    save(cacheKey, { verses: data.verses, copyright: data.copyright||'' });
+    return { verses: data.verses, live:true, copyright: data.copyright||'', versionName: versionMeta.name };
+  }catch(e){
+    console.warn(versionMeta.name+' no disponible para '+book+' '+chapterNum, e);
+    return { verses:null, live:false };
+  }
+}
 async function fetchLiveChapter(book, chapterNum){
   const cacheKey = 'here_rvr60b_'+book+'_'+chapterNum; // "b": nombre nuevo para descartar caché vieja con el error del título
   const cached = load(cacheKey, null);
@@ -3347,12 +3461,32 @@ async function openChapter(book, chapterNum){
   document.getElementById('reader-title').textContent = `${book} ${chapterNum}`;
   document.getElementById('reader-content').innerHTML = '<p style="padding:30px 0; text-align:center; color:var(--ink-soft);">Cargando <span class="loading-dot"></span></p>';
   go('reader');
-  const {verses, live} = await fetchLiveChapter(book, chapterNum);
-  const list = verses || chapters[chapterNum-1];
+
+  // Si la persona eligió otra versión (NVI, NTV, etc.), se intenta esa
+  // primero; si no está disponible por cualquier motivo (clave no
+  // configurada aún, sin conexión, libro sin ese capítulo…), se cae de
+  // vuelta a RVR1960 sin que se note como un error.
+  const wantedTranslation = prefs.translation;
+  let list = null, credit = null;
+  if(wantedTranslation && wantedTranslation!=='RVR1960' && wantedTranslation!=='No estoy seguro'){
+    const versions = await discoverBibleVersions();
+    const meta = versions && versions[wantedTranslation];
+    if(meta){
+      const extra = await fetchApiBibleChapter(meta, book, chapterNum);
+      if(extra.verses && extra.verses.length){
+        list = extra.verses;
+        credit = `<p style="padding:18px 24px 4px; font-size:11.5px; color:var(--ink-soft);">Texto: ${meta.name || wantedTranslation}, vía <a href="https://scripture.api.bible" target="_blank" rel="noopener" style="color:var(--sage-deep);">API.Bible</a>${extra.copyright ? ' — '+extra.copyright : ''}</p>`;
+      }
+    }
+  }
+  if(!list){
+    const {verses, live} = await fetchLiveChapter(book, chapterNum);
+    list = verses || chapters[chapterNum-1];
+    credit = live
+      ? `<p style="padding:18px 24px 4px; font-size:11.5px; color:var(--ink-soft);">Texto: Reina-Valera 1960 © Sociedades Bíblicas Unidas, vía <a href="https://biblia.com" target="_blank" rel="noopener" style="color:var(--sage-deep);">Biblia.com</a></p>`
+      : `<p style="padding:18px 24px 4px; font-size:11.5px; color:var(--ink-soft);">Sin conexión: mostrando Reina-Valera Antigua (1909), de dominio público.</p>`;
+  }
   currentReaderVerses = list;
-  const credit = live
-    ? `<p style="padding:18px 24px 4px; font-size:11.5px; color:var(--ink-soft);">Texto: Reina-Valera 1960 © Sociedades Bíblicas Unidas, vía <a href="https://biblia.com" target="_blank" rel="noopener" style="color:var(--sage-deep);">Biblia.com</a></p>`
-    : `<p style="padding:18px 24px 4px; font-size:11.5px; color:var(--ink-soft);">Sin conexión: mostrando Reina-Valera Antigua (1909), de dominio público.</p>`;
   document.getElementById('reader-content').innerHTML = list.map((t,i)=>{
     const ref = `${book} ${chapterNum}:${i+1}`;
     const hlOn = isHighlighted(ref);
@@ -5799,10 +5933,13 @@ function renderPerfil(){
       <div class="list-card" onclick="goVersiculosResaltados()"><div><div class="t">🖍 Ver versículos resaltados</div></div><span>→</span></div>
     </div>
     <div class="section-title" style="padding-left:0; margin-top:26px;">Preferencias</div>
-    <p style="font-size:13.5px; color:var(--ink-soft); margin-top:6px; line-height:1.6;">
-      Buscas: ${(prefs.goals||[]).join(', ')||'—'}<br>
-      Traducción: ${prefs.translation||'—'}${prefs.translation && prefs.translation!=='RVR1960' ? ' <span style="color:var(--ink-soft); font-style:italic;">(guardada para más adelante — hoy la Biblia se muestra en RVR1960)</span>' : ''}
+    <p style="font-size:13.5px; color:var(--ink-soft); margin-top:6px; margin-bottom:14px; line-height:1.6;">
+      Buscas: ${(prefs.goals||[]).join(', ')||'—'}
     </p>
+    <div class="list-card" style="margin-left:0; margin-right:0;" onclick="openTranslationSheet()">
+      <div><div class="t">📖 Traducción de la Biblia</div><div class="s">En qué versión leer</div></div>
+      <span style="font-size:12.5px; color:var(--ink-soft); font-weight:600;">${prefs.translation||'RVR1960'} →</span>
+    </div>
     <div class="list-card" style="margin-left:0; margin-right:0;" onclick="toggleSound()">
       <div><div class="t">🔔 Sonido suave</div><div class="s">Un tono breve al recibir una palabra</div></div>
       <span>${soundOn?'Activado':'Desactivado'}</span>
@@ -5813,6 +5950,42 @@ function renderPerfil(){
     </div>
     <button class="btn-text" style="padding-left:0; margin-top:16px;" onclick="clearData()">Borrar mis datos</button>
   `;
+}
+// Hoja para elegir la traducción de la Biblia: RVR1960 siempre está, y las
+// demás (NVI, NTV, y lo que la cuenta de API.Bible tenga disponible) se
+// buscan en el momento — si todavía no hay clave configurada en Vercel, o
+// no hay conexión, la hoja simplemente muestra solo RVR1960, sin errores.
+function translationOptionRow(key, label, sub){
+  const active = (prefs.translation||'RVR1960') === key;
+  return `<div class="list-card" style="margin-left:0; margin-right:0;" onclick="chooseTranslation('${key}')">
+    <div><div class="t">${label}</div>${sub ? `<div class="s">${sub}</div>` : ''}</div>
+    <span style="font-size:15px;">${active ? '✓' : ''}</span>
+  </div>`;
+}
+function openTranslationSheet(){
+  openSheet(`
+    <div class="handle"></div>
+    <p style="font-size:13px; color:var(--ink-soft); margin-bottom:14px; text-align:center;">Traducción de la Biblia</p>
+    <div class="stack" id="translation-options">
+      ${translationOptionRow('RVR1960','Reina-Valera 1960','La de siempre, en todos los libros')}
+      <p style="text-align:center; color:var(--ink-soft); font-size:12.5px; padding:10px 0;">Buscando otras versiones <span class="loading-dot"></span></p>
+    </div>
+  `);
+  discoverBibleVersions().then(versions=>{
+    const listEl = document.getElementById('translation-options');
+    if(!listEl) return; // la hoja ya se cerró
+    const extraRows = versions ? Object.keys(versions).map(key=>translationOptionRow(key, versions[key].name || key)).join('') : '';
+    listEl.innerHTML = translationOptionRow('RVR1960','Reina-Valera 1960','La de siempre, en todos los libros') + extraRows
+      + (extraRows ? '' : '<p style="text-align:center; color:var(--ink-soft); font-size:12.5px; padding:10px 0 2px;">No hay otras versiones disponibles todavía.</p>');
+  });
+}
+function chooseTranslation(key){
+  prefs.translation = key;
+  save('here_prefs', prefs);
+  haptic(8);
+  closeSheet();
+  renderPerfil();
+  showHereToast('Traducción cambiada a '+key);
 }
 // Desde "Tu camino", la tarjeta de versículos resaltados lleva directo a la
 // pestaña "Favoritos" del diario (ahí ya viven los versículos resaltados),
