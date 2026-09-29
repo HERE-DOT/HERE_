@@ -1265,14 +1265,6 @@
     position:fixed; left:50%; bottom:calc(18px + env(safe-area-inset-bottom));
     transform:translateX(-50%); display:flex; align-items:center; gap:10px; z-index:60;
   }
-  .reader-navpill .play{
-    width:46px; height:46px; border-radius:50%; border:none; flex:none; cursor:pointer;
-    background:linear-gradient(135deg,var(--sage-deep),var(--sage-deeper)); color:#fff;
-    display:flex; align-items:center; justify-content:center; box-shadow:0 8px 22px rgba(44,79,59,0.35);
-    transition:transform .15s ease;
-  }
-  .reader-navpill .play svg{width:18px; height:18px; stroke-width:1.6;}
-  .reader-navpill .play:active{transform:scale(0.93);}
   .reader-navpill .navgroup{
     display:flex; align-items:center; gap:2px; background:var(--card); border:1px solid var(--line);
     border-radius:100px; padding:6px 6px; box-shadow:0 10px 26px rgba(20,19,16,0.14);
@@ -1287,6 +1279,49 @@
     padding:0 10px; font-size:11px; font-weight:700; letter-spacing:.03em; color:var(--ink); white-space:nowrap;
     text-transform:uppercase;
   }
+
+  /* ---------- mini reproductor de audio de la lectura (sticky) ----------
+     Acompaña la lectura desde arriba de la pantalla, sin tener que bajar
+     hasta el final del capítulo para reproducir o pausar. Usa la misma
+     familia visual que el mini player de música (vidrio esmerilado,
+     tipografía serif, acento dorado en la barra de progreso), pero como
+     una barra discreta y compacta en vez de un botón dominante. */
+  .reader-audiobar-wrap{
+    position:sticky; top:0; z-index:45; padding:8px 16px 8px;
+    background:linear-gradient(to bottom, var(--bg) 68%, rgba(0,0,0,0));
+  }
+  .reader-audiobar{
+    display:flex; flex-direction:column;
+    background:var(--glass-bg); -webkit-backdrop-filter:blur(20px) saturate(170%); backdrop-filter:blur(20px) saturate(170%);
+    border:1px solid var(--line-strong, var(--line)); border-radius:20px;
+    box-shadow:0 8px 22px rgba(20,19,16,0.12); overflow:hidden;
+  }
+  @supports not ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){
+    .reader-audiobar{ background:var(--card-elevated, var(--card)); }
+  }
+  .reader-audiobar-row{ display:flex; align-items:center; gap:10px; padding:9px 10px 9px 9px; }
+  .reader-audiobar .audiobar-play{
+    width:34px; height:34px; border-radius:50%; border:none; flex:none; cursor:pointer;
+    background:linear-gradient(135deg,var(--sage-deep),var(--sage-deeper)); color:#fff;
+    display:flex; align-items:center; justify-content:center; box-shadow:0 3px 10px rgba(44,79,59,0.3);
+    transition:transform .15s ease;
+  }
+  .reader-audiobar .audiobar-play svg{width:14px; height:14px; stroke-width:1.6;}
+  .reader-audiobar .audiobar-play:active{transform:scale(0.9);}
+  .reader-audiobar-info{flex:1; min-width:0; display:flex; flex-direction:column; gap:5px; cursor:pointer;}
+  .reader-audiobar-label{font-family:'Fraunces',serif; font-size:13px; font-weight:500; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .reader-audiobar-progress-track{width:100%; height:2.5px; border-radius:2px; background:var(--line); overflow:hidden;}
+  .reader-audiobar-progress-fill{height:100%; width:0%; background:var(--gold-grad); transition:width .35s linear;}
+  .reader-audiobar-expand-btn{
+    width:28px; height:28px; border-radius:50%; border:none; background:transparent; color:var(--ink-soft);
+    cursor:pointer; display:flex; align-items:center; justify-content:center; flex:none; transition:background .15s ease, transform .15s ease;
+  }
+  .reader-audiobar-expand-btn:active{ background:var(--beige); }
+  .reader-audiobar-expand-btn svg{width:16px; height:16px; stroke-width:2; transition:transform .2s ease;}
+  .reader-audiobar-expand-btn.open svg{ transform:rotate(180deg); }
+  .reader-audiobar-speed{ max-height:0; overflow:hidden; opacity:0; transition:max-height .25s ease, opacity .2s ease; }
+  .reader-audiobar-speed.open{ max-height:60px; opacity:1; }
+  .reader-audiobar-speed .rate-ctrl{ padding:0 10px 10px; }
 
   /* ---------- menú de versículo (verseTap) ---------- */
   .vmenu{display:flex; flex-direction:column;}
@@ -1774,10 +1809,26 @@
         <div class="reader-icon-btn" onclick="openFontSizeSheet()" aria-label="Tamaño de texto">Aa</div>
       </div>
     </div>
+    <div class="reader-audiobar-wrap">
+      <div class="reader-audiobar" id="reader-audiobar">
+        <div class="reader-audiobar-row">
+          <button class="audiobar-play" id="listen-btn" onclick="toggleListen()" title="Escuchar" aria-label="Escuchar"></button>
+          <div class="reader-audiobar-info" onclick="toggleListen()">
+            <span class="reader-audiobar-label" id="audiobar-label">Audio</span>
+            <div class="reader-audiobar-progress-track"><div class="reader-audiobar-progress-fill" id="audiobar-progress-fill"></div></div>
+          </div>
+          <button class="reader-audiobar-expand-btn" id="audiobar-expand-btn" onclick="toggleAudiobarSpeed()" title="Velocidad de lectura" aria-label="Velocidad de lectura">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+        </div>
+        <div class="reader-audiobar-speed" id="reader-audiobar-speed">
+          <div class="rate-ctrl" id="audiobar-rate-ctrl"></div>
+        </div>
+      </div>
+    </div>
     <div class="chapter-verse" id="reader-content"></div>
-    <div style="height:110px;"></div>
+    <div style="height:90px;"></div>
     <div class="reader-navpill">
-      <button class="play" id="listen-btn" onclick="toggleListen()" title="Escuchar" aria-label="Escuchar"></button>
       <div class="navgroup">
         <button onclick="stepChapter(-1)" title="Capítulo anterior" aria-label="Capítulo anterior">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
@@ -3468,6 +3519,9 @@ async function openChapter(book, chapterNum){
   currentReaderBook = book;
   currentReaderChapter = chapterNum;
   document.getElementById('reader-title').textContent = `${book} ${chapterNum}`;
+  const audiobarLabelEl = document.getElementById('audiobar-label');
+  if(audiobarLabelEl) audiobarLabelEl.textContent = `${book} ${chapterNum} · Audio`;
+  setAudiobarProgress(0);
   document.getElementById('reader-content').innerHTML = '<p style="padding:30px 0; text-align:center; color:var(--ink-soft);">Cargando <span class="loading-dot"></span></p>';
   go('reader');
 
@@ -3520,7 +3574,11 @@ function openFontSizeSheet(){
     <p style="font-size:12px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.4px; font-weight:700; margin-bottom:10px;">Ritmo al escuchar</p>
     <div class="rate-ctrl" id="rate-ctrl" style="margin-bottom:24px;"></div>
     <p style="font-size:12px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.4px; font-weight:700; margin-bottom:10px;">Voz</p>
-    <div class="vmenu" id="voice-options"></div>
+    <div class="vmenu" id="voice-options" style="margin-bottom:22px;"></div>
+    <button class="btn btn-primary" onclick="closeSheet()" aria-label="Guardar y cerrar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="width:16px; height:16px;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      Listo
+    </button>
   `);
   updateFontSizePreview();
   renderRateOptions();
@@ -3644,11 +3702,29 @@ function setReaderRate(rate){
   renderRateOptions();
 }
 function renderRateOptions(){
-  const c = document.getElementById('rate-ctrl');
-  if(!c) return;
-  c.innerHTML = READER_RATES.map(r=>
+  const html = READER_RATES.map(r=>
     `<button class="rate-chip ${Math.abs(r.v-readerVoiceRate)<0.01?'active':''}" onclick="setReaderRate(${r.v})">${r.label}</button>`
   ).join('');
+  // el ritmo de lectura se puede cambiar desde dos lugares (la hoja de
+  // ajustes de lectura, y el mini reproductor sticky al expandirlo), así
+  // que ambos se mantienen sincronizados con el mismo estado.
+  ['rate-ctrl','audiobar-rate-ctrl'].forEach(id=>{
+    const c = document.getElementById(id);
+    if(c) c.innerHTML = html;
+  });
+}
+let audiobarSpeedOpen = false;
+function toggleAudiobarSpeed(){
+  audiobarSpeedOpen = !audiobarSpeedOpen;
+  const row = document.getElementById('reader-audiobar-speed');
+  const btn = document.getElementById('audiobar-expand-btn');
+  if(row) row.classList.toggle('open', audiobarSpeedOpen);
+  if(btn) btn.classList.toggle('open', audiobarSpeedOpen);
+  if(audiobarSpeedOpen){ renderRateOptions(); haptic(6); }
+}
+function setAudiobarProgress(fraction){
+  const fill = document.getElementById('audiobar-progress-fill');
+  if(fill) fill.style.width = Math.max(0, Math.min(1, fraction)) * 100 + '%';
 }
 
 // trocea un versículo en frases cortas (por comas, punto y coma, dos puntos,
@@ -3689,6 +3765,7 @@ function toggleListen(){
   listenPos = 0;
   isListening = true;
   setListenBtn('pause');
+  setAudiobarProgress(0);
   speakNext();
 }
 function speakNext(){
@@ -3699,6 +3776,7 @@ function speakNext(){
     if(finished) stepChapter(1);
     return;
   }
+  setAudiobarProgress(listenQueue.length ? listenPos/listenQueue.length : 0);
   const item = listenQueue[listenPos];
   const prevItem = listenQueue[listenPos-1];
   if(!prevItem || prevItem.verseIndex !== item.verseIndex){
@@ -3729,6 +3807,7 @@ function stopListen(){
   if('speechSynthesis' in window) window.speechSynthesis.cancel();
   document.querySelectorAll('#reader-content .vtext').forEach(v=>v.classList.remove('speaking'));
   setListenBtn('play');
+  setAudiobarProgress(0);
 }
 let tappedVerseEl = null;
 const HIGHLIGHT_COLORS = {
