@@ -1080,27 +1080,52 @@
 
   /* mini reproductor: barra flotante que aparece cuando algo sigue sonando
      y saliste del reproductor a explorar otra pantalla — como en Spotify. */
+  /* Mini reproductor: retoma el mismo lenguaje visual que el resto de HERE
+     — esquinas redondeadas arriba (como una hoja/sheet), tipografía serif
+     para el nombre (igual que en las tarjetas de música), botones de
+     ícono con el mismo borde fino que "reader-icon-btn", y un puntito
+     dorado en la miniatura que cita al "orb" de HERE en la barra de
+     navegación, para que se sienta parte de la misma familia y no un
+     reproductor genérico pegado encima. */
   .mini-player{
-    display:none; align-items:center; gap:12px;
+    display:none; flex-direction:column;
     position:fixed; left:50%; transform:translateX(-50%); bottom:0; width:100%; max-width:480px;
-    background:var(--card); border-top:1px solid var(--line); padding:10px 14px;
-    padding-bottom:calc(10px + env(safe-area-inset-bottom));
-    z-index:49; cursor:pointer; box-shadow:0 -6px 20px rgba(33,31,26,0.07);
+    background:var(--card); border:1px solid var(--line); border-bottom:none;
+    border-radius:20px 20px 0 0; overflow:hidden;
+    padding-bottom:env(safe-area-inset-bottom);
+    z-index:49; cursor:pointer; box-shadow:0 -10px 28px rgba(33,31,26,0.1);
   }
   .mini-player.show{display:flex;}
-  .mini-player.above-nav{ bottom:78px; border-radius:16px 16px 0 0; padding-bottom:10px; box-shadow:0 -4px 16px rgba(33,31,26,0.08); }
+  .mini-player.above-nav{ bottom:78px; border-radius:20px; border-bottom:1px solid var(--line); box-shadow:0 10px 26px rgba(33,31,26,0.12); }
+  .mini-player-progress-track{ width:100%; height:3px; background:var(--line); flex:none; }
+  .mini-player-progress-fill{ height:100%; width:0%; background:var(--gold-grad); transition:width .4s linear; }
+  .mini-player-row{ display:flex; align-items:center; gap:12px; padding:11px 16px; }
   .mini-player-thumb{
-    width:38px; height:38px; border-radius:10px; flex:none; background:linear-gradient(135deg,var(--sage-deep),var(--gold-deep)) center/cover no-repeat;
-    display:flex; align-items:center; justify-content:center; font-size:15px; color:#fff;
+    width:42px; height:42px; border-radius:12px; flex:none; position:relative;
+    background:linear-gradient(135deg,var(--sage-deep),var(--sage-deeper)) center/cover no-repeat;
+    display:flex; align-items:center; justify-content:center; font-size:15px; color:rgba(255,255,255,0.92);
+    box-shadow:0 3px 10px rgba(33,31,26,0.14);
   }
+  .mini-player-thumb::after{
+    content:''; position:absolute; right:-3px; bottom:-3px; width:13px; height:13px; border-radius:50%;
+    background:radial-gradient(circle at 32% 28%, var(--gold-light), var(--gold) 60%, var(--gold-deep) 100%);
+    border:2px solid var(--card);
+  }
+  .mini-player.is-playing .mini-player-thumb::after{ animation:miniPulse 2.4s ease-in-out infinite; }
+  @keyframes miniPulse{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.18); } }
+  @media (prefers-reduced-motion: reduce){ .mini-player.is-playing .mini-player-thumb::after{ animation:none; } }
   .mini-player-info{flex:1; min-width:0;}
-  .mini-player-info .t{font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-  .mini-player-info .s{font-size:11px; color:var(--ink-soft); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .mini-player-info .t{font-family:'Fraunces',serif; font-size:14.5px; font-weight:500; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .mini-player-info .s{font-size:11px; color:var(--ink-soft); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:1px;}
+  .mini-player-controls{ display:flex; align-items:center; gap:8px; flex:none; }
   .mini-player-btn{
-    width:32px; height:32px; border-radius:50%; border:none; flex:none; cursor:pointer;
-    background:var(--bg); color:var(--ink); font-size:13px; display:flex; align-items:center; justify-content:center;
+    width:34px; height:34px; border-radius:50%; border:1px solid var(--line); flex:none; cursor:pointer;
+    background:transparent; color:var(--ink); display:flex; align-items:center; justify-content:center;
+    transition:background .15s ease, transform .12s ease;
   }
-  .mini-player-btn:active{transform:scale(0.92);}
+  .mini-player-btn svg{width:14px; height:14px;}
+  .mini-player-btn:active{transform:scale(0.9); background:var(--beige);}
+  .mini-player-btn-close{ color:var(--ink-soft); }
 
   /* ---------- bible ---------- */
   .book-grid{padding:8px 24px 24px; display:flex; flex-direction:column; gap:22px;}
@@ -1332,7 +1357,7 @@
     /* en escritorio no hay barra de navegación abajo (es un cajón lateral),
        así que el mini reproductor flota como una tarjeta suelta, no pegado
        a ningún borde de navegación inferior. */
-    .mini-player{ left:auto; right:24px; bottom:24px; transform:none; max-width:340px; border-radius:16px; border-top:none; box-shadow:var(--shadow-md); }
+    .mini-player{ left:auto; right:24px; bottom:24px; transform:none; max-width:340px; border-radius:20px; border-bottom:1px solid var(--line); box-shadow:var(--shadow-md); }
     .mini-player.above-nav{ bottom:24px; }
 
     /* reproductor: en escritorio, video + controles a la izquierda y la
@@ -1876,13 +1901,20 @@
 
   <!-- MINI REPRODUCTOR: sigue sonando aunque salgas del reproductor a explorar otra pantalla -->
   <div class="mini-player" id="mini-player" onclick="go('reproductor')">
-    <div class="mini-player-thumb" id="mini-player-thumb">🎵</div>
-    <div class="mini-player-info">
-      <div class="t" id="mini-player-title"></div>
-      <div class="s" id="mini-player-role"></div>
+    <div class="mini-player-progress-track"><div class="mini-player-progress-fill" id="mini-player-progress"></div></div>
+    <div class="mini-player-row">
+      <div class="mini-player-thumb" id="mini-player-thumb">🎵</div>
+      <div class="mini-player-info">
+        <div class="t" id="mini-player-title"></div>
+        <div class="s" id="mini-player-role"></div>
+      </div>
+      <div class="mini-player-controls">
+        <button class="mini-player-btn" id="mini-player-toggle" aria-label="Pausar" onclick="event.stopPropagation(); togglePlayerPlayback();"></button>
+        <button class="mini-player-btn mini-player-btn-close" aria-label="Detener" onclick="event.stopPropagation(); stopPlayback();">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
     </div>
-    <button class="mini-player-btn" id="mini-player-toggle" aria-label="Pausar" onclick="event.stopPropagation(); togglePlayerPlayback();">⏸</button>
-    <button class="mini-player-btn" aria-label="Detener" onclick="event.stopPropagation(); stopPlayback();">✕</button>
   </div>
 
   <div class="navbar" id="navbar">
@@ -4643,7 +4675,10 @@ function playTrack(item, mode){
     playerLoadTimer = setTimeout(()=>showPlayerFallback(item), 6000);
     if(ytApiReady) playTrackNow(item);
     loadRelatedVideos(item);
+    const miniFill = document.getElementById('mini-player-progress');
+    if(miniFill) miniFill.style.width = '0%';
   }
+  startMiniProgressTimer();
   updateFloatBtnUI();
 }
 // Quita paréntesis/corchetes ("(Video Oficial)", "[Lyric Video]") y símbolos,
@@ -4730,16 +4765,48 @@ function playTrackNow(item){
     });
   }catch(e){ showPlayerFallback(item); }
 }
+// Íconos del botón de play/pausa del mini reproductor, dibujados como los
+// demás íconos de la app (trazo/relleno simple en currentColor) en vez del
+// emoji ⏸/▶ que se veía distinto según el sistema operativo — una de las
+// cosas que lo hacía sentir "genérico".
+function miniPlayIcon(playing){
+  return playing
+    ? `<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect></svg>`
+    : `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7.5 5.2v13.6c0 .8.9 1.3 1.6.9l11-6.8c.7-.4.7-1.4 0-1.8l-11-6.8c-.7-.4-1.6.1-1.6.9z"></path></svg>`;
+}
 function onPlayerStateChange(e){
   const playing = e.data===1;
   const icon = playing ? '⏸' : '▶';
   const btn = document.getElementById('player-audio-toggle');
   if(btn) btn.textContent = icon;
   const miniBtn = document.getElementById('mini-player-toggle');
-  if(miniBtn) miniBtn.textContent = icon;
+  if(miniBtn) miniBtn.innerHTML = miniPlayIcon(playing);
+  const miniBar = document.getElementById('mini-player');
+  if(miniBar) miniBar.classList.toggle('is-playing', playing);
   // 0 = YT.PlayerState.ENDED: el video terminó solo (no lo pausó la
   // persona) — ahí es cuando entra la reproducción continua.
   if(e.data===0) handleTrackEnded();
+}
+// Barra de progreso del mini reproductor: un vistazo rápido de cuánto va
+// la canción/predicación sin tener que abrir el reproductor grande.
+let miniProgressTimer = null;
+function startMiniProgressTimer(){
+  if(miniProgressTimer) return;
+  miniProgressTimer = setInterval(updateMiniProgress, 1000);
+}
+function stopMiniProgressTimer(){
+  if(miniProgressTimer){ clearInterval(miniProgressTimer); miniProgressTimer = null; }
+  const fill = document.getElementById('mini-player-progress');
+  if(fill) fill.style.width = '0%';
+}
+function updateMiniProgress(){
+  const fill = document.getElementById('mini-player-progress');
+  if(!fill || !ytPlayer || !ytPlayer.getDuration) return;
+  try{
+    const dur = ytPlayer.getDuration() || 0;
+    const cur = ytPlayer.getCurrentTime() || 0;
+    fill.style.width = (dur > 0 ? Math.min(100, (cur/dur)*100) : 0) + '%';
+  }catch(e){}
 }
 function handleTrackEnded(){
   if(!autoplayNext) return;
@@ -4782,6 +4849,7 @@ function stopPlayback(){
   if(floatWindow){ try{ floatWindow.close(); }catch(e){} floatWindow = null; }
   pausePlayerIfPlaying();
   currentPlayItem = null;
+  stopMiniProgressTimer();
   updateMiniPlayer();
 }
 // Mini reproductor flotante: visible cuando hay algo sonando y no estás ya
@@ -4799,9 +4867,12 @@ function updateMiniPlayer(){
   const thumbEl = document.getElementById('mini-player-thumb');
   if(thumbEl){ thumbEl.style.backgroundImage = thumb ? `url('${thumb}')` : ''; thumbEl.textContent = thumb ? '' : '🎵'; }
   const btn = document.getElementById('mini-player-toggle');
-  if(btn && ytPlayer && ytPlayer.getPlayerState){
-    try{ btn.textContent = ytPlayer.getPlayerState()===1 ? '⏸' : '▶'; }catch(e){}
+  let playing = false;
+  if(ytPlayer && ytPlayer.getPlayerState){
+    try{ playing = ytPlayer.getPlayerState()===1; }catch(e){}
   }
+  if(btn) btn.innerHTML = miniPlayIcon(playing);
+  bar.classList.toggle('is-playing', playing);
   bar.classList.add('show');
   bar.classList.toggle('above-nav', NAV_SCREENS.includes(currentScreen));
 }
