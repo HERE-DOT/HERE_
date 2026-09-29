@@ -1657,7 +1657,7 @@
   <section class="screen" id="biblia">
     <div class="topbar"><h2>La Palabra</h2></div>
     <div class="container" style="padding-top:6px; padding-bottom:6px;">
-      <input type="text" id="search-input" placeholder="Escribe lo que buscas, con tus palabras…">
+      <input type="text" id="search-input" placeholder="Escribe lo que buscas, con tus palabras…" onkeydown="if(event.key==='Enter') runSearch();">
       <button class="btn btn-primary" style="margin-top:10px;" onclick="runSearch()">Buscar</button>
     </div>
     <div id="search-results"></div>
@@ -2007,6 +2007,27 @@
 </div>
 
 <script>
+/* ---------------- ruta base de la app ----------------
+   Los recursos propios (data/bible-rva.json, service-worker.js) se piden con
+   ruta relativa. Eso solo funciona si la URL de la página termina en "/" —
+   si el sitio queda montado en una subruta SIN barra final (ej. ".../app",
+   como pasa en algunos despliegues de Vercel), el navegador resuelve esa
+   ruta relativa contra la carpeta de ARRIBA y todo responde 404, aunque el
+   archivo sí exista. Esta función calcula la carpeta real donde vive este
+   index.html, tenga o no barra final la URL, para que las rutas relativas
+   funcionen sin importar cómo quede publicada la app. */
+function hereBaseUrl(){
+  let p = location.pathname;
+  if(p.endsWith('/')) return p;
+  const last = p.split('/').pop();
+  // termina en algo con punto (index.html, style.css...) → es un archivo,
+  // la carpeta es todo lo de antes de la última barra.
+  if(last.indexOf('.') !== -1) return p.slice(0, p.lastIndexOf('/')+1);
+  // termina en un segmento sin punto (ej. ".../app") → se trata como
+  // carpeta aunque a la URL le falte la barra final.
+  return p + '/';
+}
+const HERE_BASE = hereBaseUrl();
 /* ---------------- storage helpers ---------------- */
 function load(key, fallback){ try{ const v = localStorage.getItem(key); return v?JSON.parse(v):fallback; }catch(e){ return fallback; } }
 function save(key, val){ try{ localStorage.setItem(key, JSON.stringify(val)); }catch(e){} }
@@ -2329,7 +2350,7 @@ let bibleLoaded = false;
 let bibleLoadingPromise = null;
 function loadBible(){
   if(bibleLoadingPromise) return bibleLoadingPromise;
-  bibleLoadingPromise = fetch('data/bible-rva.json').then(r=>{
+  bibleLoadingPromise = fetch(HERE_BASE + 'data/bible-rva.json').then(r=>{
     // Si el archivo no se encuentra (404) o hay algún error del servidor, la
     // respuesta suele ser una página de error en HTML, no el JSON esperado —
     // sin este chequeo, r.json() intenta parsear ese HTML y avienta un error
@@ -2535,6 +2556,57 @@ function particlesHTML(n){
   return `<div class="particles">${s}</div>`;
 }
 function haptic(ms){ try{ if(navigator.vibrate) navigator.vibrate(ms||14); }catch(e){} }
+
+/* ---------------- toast (aviso breve, no bloqueante) ----------------
+   Reemplaza los alert() que se usaban para confirmar "copiado" o avisar
+   que algo no se pudo compartir: un alert() bloquea toda la página
+   (y en algunos entornos de prueba/automatización directamente la cuelga),
+   mientras que este aviso se muestra un momento y se cierra solo. */
+let hereToastTimer = null;
+function showHereToast(msg){
+  let el = document.getElementById('here-toast');
+  if(!el){
+    el = document.createElement('div');
+    el.id = 'here-toast';
+    el.style.cssText = 'position:fixed; left:50%; bottom:112px; transform:translateX(-50%) translateY(14px); background:var(--ink); color:var(--bg); font-size:13px; font-weight:600; padding:11px 20px; border-radius:100px; box-shadow:0 14px 34px rgba(0,0,0,0.22); opacity:0; pointer-events:none; transition:opacity .25s ease, transform .25s ease; z-index:400; max-width:82vw; text-align:center;';
+    document.body.appendChild(el);
+  }
+  el.textContent = msg;
+  requestAnimationFrame(()=>{
+    el.style.opacity = '1';
+    el.style.transform = 'translateX(-50%) translateY(0)';
+  });
+  clearTimeout(hereToastTimer);
+  hereToastTimer = setTimeout(()=>{
+    el.style.opacity = '0';
+    el.style.transform = 'translateX(-50%) translateY(14px)';
+  }, 2400);
+}
+/* ---------------- compartir con respaldo seguro ----------------
+   navigator.share() a veces no resuelve nunca (según el navegador/entorno
+   se queda "colgado" esperando una hoja de compartir que no va a aparecer).
+   Por eso nunca se espera indefinidamente: si no responde en unos segundos,
+   se copia el texto al portapapeles como si share() hubiera fallado — la
+   persona nunca se queda mirando una pantalla congelada. */
+function shareOrCopy(data, fallbackText){
+  const text = fallbackText != null ? fallbackText : ((data && data.text) || '');
+  function copyFallback(){
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text)
+        .then(()=> showHereToast('Copiado al portapapeles'))
+        .catch(()=> showHereToast('No se pudo copiar — selecciona el texto manualmente'));
+    } else {
+      showHereToast('No se pudo copiar — selecciona el texto manualmente');
+    }
+  }
+  const canTryShare = navigator.share && (!navigator.canShare || navigator.canShare(data));
+  if(canTryShare){
+    const timeout = new Promise((_, reject)=> setTimeout(()=>reject(new Error('share timeout')), 8000));
+    Promise.race([navigator.share(data), timeout]).catch(copyFallback);
+  } else {
+    copyFallback();
+  }
+}
 let soundOn = load('here_sound_on', true);
 function toggleSound(){ soundOn = !soundOn; save('here_sound_on', soundOn); if(currentScreen==='perfil') renderPerfil(); }
 function playChime(){
@@ -2603,7 +2675,14 @@ function go(id, opts){
   if(id==='musica') renderMusica();
   if(id==='chat' && !chatStarted) startChat();
   if(id==='biblia') { renderBooks(); renderPlanRow(); document.getElementById('search-results').innerHTML=''; }
-  if(id==='orar') renderOraciones();
+  if(id==='orar'){
+    renderOraciones();
+    // el resultado de "ayúdame a orar" (o el aviso de que hace falta escribir
+    // algo primero) es del intento anterior — no debe seguir ahí si vuelves
+    // a esta pantalla desde otro lado (por ejemplo, tras la oración guiada).
+    const orarOut = document.getElementById('orar-output');
+    if(orarOut) orarOut.innerHTML = '';
+  }
   if(id!=='reader') stopListen();
   if(id!=='musica' && id!=='musicaCategoria') stopFeaturedAuto();
   // la música/predicación NO se pausa al salir del reproductor — sigue sonando
@@ -2985,8 +3064,7 @@ function toggleSave(ref){
 function shareVerse(ref){
   const v = findVerse(ref);
   const text = `"${v.text}" — ${v.ref} (vía HERE)`;
-  if(navigator.share){ navigator.share({text}).catch(()=>{}); }
-  else { navigator.clipboard && navigator.clipboard.writeText(text).catch(()=>{}); alert('Copiado: '+text); }
+  shareOrCopy({text}, text);
 }
 
 /* ---------------- IA de HERE ----------------
@@ -3525,8 +3603,7 @@ function quickSave(ref, text){
   closeSheet();
 }
 function shareText(t){
-  if(navigator.share) navigator.share({text:t}).catch(()=>{});
-  else { navigator.clipboard && navigator.clipboard.writeText(t).catch(()=>{}); alert('Copiado'); }
+  shareOrCopy({text:t}, t);
 }
 function copyVerse(ref, text){
   const full = `${text} — ${ref}`;
@@ -3667,9 +3744,11 @@ async function shareVerseImage(){
   if(!lastVerseImageBlob) return;
   const file = new File([lastVerseImageBlob], 'here-versiculo.png', {type:'image/png'});
   if(navigator.canShare && navigator.canShare({files:[file]})){
-    try{ await navigator.share({files:[file]}); }catch(e){}
+    const timeout = new Promise((_, reject)=> setTimeout(()=>reject(new Error('share timeout')), 8000));
+    try{ await Promise.race([navigator.share({files:[file]}), timeout]); }
+    catch(e){ showHereToast('No se pudo compartir — usa "Guardar imagen"'); }
   } else {
-    alert('Tu navegador no soporta compartir imágenes directamente. Usa "Guardar imagen".');
+    showHereToast('Tu navegador no soporta compartir imágenes — usa "Guardar imagen"');
   }
 }
 function openEntenderRaw(ref, text){
@@ -5118,7 +5197,13 @@ function renderChat(){
     // mientras "piensa", tres puntos respirando — no un "…" estático, para
     // que se sienta a alguien tomándose un momento, no una app cargando.
     if(m.text==='…') return `<div class="bubble here"><span class="loading-dot"></span> <span class="loading-dot" style="animation-delay:.15s;"></span> <span class="loading-dot" style="animation-delay:.3s;"></span></div>`;
-    const actions = `
+    // si esta respuesta es el mensaje de respaldo (la IA no contestó), el
+    // botón de acción principal es reintentar — no tiene sentido ofrecer
+    // "guardar" o "reflexionar" sobre un mensaje que dice que algo falló.
+    const actions = m.failed ? `
+      <div class="bubble-actions">
+        <button onclick="retryChatMessage(${i})">↻ Reintentar</button>
+      </div>` : `
       <div class="bubble-actions">
         <button onclick="saveChatMessage(${i})">♡ Guardar</button>
         <button onclick="openReflectionEditor('Conversación con HERE', chatHistory[${i}].text)">Reflexionar</button>
@@ -5153,12 +5238,14 @@ function addChatBubble(role, text){
   chatHistory.push({role, text});
   renderChat();
 }
-async function sendChatMessage(){
+async function sendChatMessage(retryText){
   const input = document.getElementById('chat-input');
-  const val = input.value.trim();
+  const val = retryText != null ? retryText : input.value.trim();
   if(!val) return;
-  input.value = '';
-  addChatBubble('user', val);
+  if(retryText == null){
+    input.value = '';
+    addChatBubble('user', val);
+  }
   addChatBubble('here', '…');
   const thinkingIdx = chatHistory.length-1;
   let reply = null;
@@ -5170,9 +5257,20 @@ async function sendChatMessage(){
       reply = res.text;
     }catch(e){ reply = null; }
   }
-  if(!reply) reply = 'Estoy aquí contigo, aunque justo ahora no logro responder. ¿Lo intentamos de nuevo en un momento?';
-  chatHistory[thinkingIdx] = {role:'here', text:reply};
+  const failed = !reply;
+  if(!reply) reply = 'Estoy aquí contigo, aunque justo ahora no logro responder.';
+  chatHistory[thinkingIdx] = {role:'here', text:reply, failed, retryText: failed ? val : undefined};
   renderChat();
+}
+// El botón "Reintentar" de un mensaje que falló: vuelve a mandar el MISMO
+// mensaje del usuario (sin duplicar su burbuja) y reemplaza la respuesta
+// fallida por el intento nuevo.
+function retryChatMessage(i){
+  const m = chatHistory[i];
+  if(!m || !m.retryText) return;
+  chatHistory.splice(i, 1);
+  renderChat();
+  sendChatMessage(m.retryText);
 }
 
 /* ---------------- search (semantic-ish, constrained to curated verse list) ---------------- */
@@ -5483,7 +5581,7 @@ function renderPerfil(){
     <div class="section-title" style="padding-left:0; margin-top:26px;">Preferencias</div>
     <p style="font-size:13.5px; color:var(--ink-soft); margin-top:6px; line-height:1.6;">
       Buscas: ${(prefs.goals||[]).join(', ')||'—'}<br>
-      Traducción: ${prefs.translation||'—'}
+      Traducción: ${prefs.translation||'—'}${prefs.translation && prefs.translation!=='RVR1960' ? ' <span style="color:var(--ink-soft); font-style:italic;">(guardada para más adelante — hoy la Biblia se muestra en RVR1960)</span>' : ''}
     </p>
     <div class="list-card" style="margin-left:0; margin-right:0;" onclick="toggleSound()">
       <div><div class="t">🔔 Sonido suave</div><div class="s">Un tono breve al recibir una palabra</div></div>
@@ -5540,7 +5638,7 @@ if(a11yRoot) a11yObserver.observe(a11yRoot, {childList:true, subtree:true});
 /* ---------------- PWA: service worker (soporte offline básico + instalación) ---------------- */
 if('serviceWorker' in navigator){
   window.addEventListener('load', ()=>{
-    navigator.serviceWorker.register('./service-worker.js').catch(()=>{});
+    navigator.serviceWorker.register(HERE_BASE + 'service-worker.js').catch(()=>{});
   });
 }
 
