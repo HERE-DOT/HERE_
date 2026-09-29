@@ -2505,6 +2505,7 @@ function go(id, opts){
   if(id==='biblia') { renderBooks(); renderPlanRow(); document.getElementById('search-results').innerHTML=''; }
   if(id==='orar') renderOraciones();
   if(id!=='reader') stopListen();
+  if(id!=='musica' && id!=='musicaCategoria') stopFeaturedAuto();
   // la música/predicación NO se pausa al salir del reproductor — sigue sonando
   // de fondo mientras exploras otra pantalla, y el mini reproductor la controla.
   updateMiniPlayer();
@@ -3898,16 +3899,26 @@ function renderFeaturedCarousel(){
 }
 // Botones ‹ › discretos: además de deslizar con el dedo, sirven para
 // adelantar/devolver la tarjeta con un clic (imprescindible en escritorio,
-// donde no hay gesto de swipe). Mueven el carrusel una tarjeta completa.
+// donde no hay gesto de swipe). Mueven el carrusel una tarjeta completa, y
+// como es un gesto manual, apaga la rotación automática (para no pelearse
+// con lo que la persona está haciendo).
 function scrollFeatured(dir){
   const el = document.getElementById('featured-carousel');
   if(!el) return;
+  stopFeaturedAuto();
   el.scrollBy({ left: dir * el.clientWidth, behavior:'smooth' });
+}
+let featuredAutoTimer = null;
+function stopFeaturedAuto(){
+  if(featuredAutoTimer){ clearInterval(featuredAutoTimer); featuredAutoTimer = null; }
 }
 // Actualiza los puntitos según qué tarjeta quedó más visible al deslizar, y
 // atenúa la flecha ‹ o › cuando ya no hay más hacia ese lado (sin librerías —
 // un listener de scroll simple, con requestAnimationFrame para no recalcular
-// en cada pixel).
+// en cada pixel). También arranca la rotación automática: cada pocos
+// segundos pasa sola a la siguiente tarjeta (y de la última vuelve a la
+// primera), pero se detiene en cuanto la persona toca — desliza con el
+// dedo o usa las flechas — para no pelearse con su gesto.
 function setupFeaturedCarousel(){
   const el = document.getElementById('featured-carousel');
   const dotsWrap = document.getElementById('featured-dots');
@@ -3921,6 +3932,7 @@ function setupFeaturedCarousel(){
     dots.forEach((d,i)=> d.classList.toggle('active', i===idx));
     if(prevBtn) prevBtn.disabled = idx<=0;
     if(nextBtn) nextBtn.disabled = idx>=total-1;
+    return idx;
   };
   let ticking = false;
   el.onscroll = function(){
@@ -3928,7 +3940,17 @@ function setupFeaturedCarousel(){
     ticking = true;
     requestAnimationFrame(()=>{ update(); ticking = false; });
   };
+  // Deslizar con el dedo (o arrastrar con el mouse) también es un gesto
+  // manual — apaga el automático apenas empieza el toque.
+  el.addEventListener('pointerdown', stopFeaturedAuto, { passive:true });
   update();
+
+  stopFeaturedAuto();
+  featuredAutoTimer = setInterval(()=>{
+    const idx = update();
+    if(idx >= total-1){ el.scrollTo({ left:0, behavior:'smooth' }); }
+    else{ el.scrollBy({ left: el.clientWidth, behavior:'smooth' }); }
+  }, 6000);
 }
 
 /* ---------------- "Para este momento" ----------------
