@@ -33,7 +33,10 @@
     --gold-deep: #8A6A26;
     --gold-grad: linear-gradient(135deg, var(--gold-light), var(--gold));
     --line: rgba(33,31,26,0.09);
+    --line-strong: rgba(33,31,26,0.09);
     --card: #FFFFFF;
+    --card-elevated: #FFFFFF;
+    --glass-bg: rgba(255,255,255,0.7);
     --radius: 24px;
     --shadow-sm: 0 3px 14px rgba(33,31,26,0.05);
     --shadow-md: 0 14px 34px rgba(33,31,26,0.09);
@@ -63,7 +66,10 @@
     --gold-deep:#B48A3C;
     --gold-grad: linear-gradient(135deg, var(--gold-light), var(--gold));
     --line: rgba(242,237,226,0.10);
+    --line-strong: rgba(242,237,226,0.16);
     --card:#211C15;
+    --card-elevated:#2E2819;
+    --glass-bg: rgba(46,40,25,0.66);
     --shadow-sm: 0 3px 14px rgba(0,0,0,0.38);
     --shadow-md: 0 14px 34px rgba(0,0,0,0.42);
     --shadow-lg: 0 24px 52px rgba(0,0,0,0.55);
@@ -1102,55 +1108,67 @@
   .player-fallback{margin:0 24px; padding:16px; border-radius:16px; background:var(--card); border:1px solid var(--line); text-align:center; font-size:13px; color:var(--ink-soft); line-height:1.6;}
   .player-fallback button{margin-top:10px;}
 
-  /* mini reproductor: barra flotante que aparece cuando algo sigue sonando
-     y saliste del reproductor a explorar otra pantalla — como en Spotify. */
-  /* Mini reproductor: retoma el mismo lenguaje visual que el resto de HERE
-     — esquinas redondeadas arriba (como una hoja/sheet), tipografía serif
-     para el nombre (igual que en las tarjetas de música), botones de
-     ícono con el mismo borde fino que "reader-icon-btn", y un puntito
-     dorado en la miniatura que cita al "orb" de HERE en la barra de
-     navegación, para que se sienta parte de la misma familia y no un
-     reproductor genérico pegado encima. */
+  /* mini reproductor: "pastilla" flotante, separada de los bordes y de la
+     barra de navegación (no una barra rígida pegada a todo el ancho) —
+     vidrio esmerilado (glassmorphism) en el tono de la app, esquinas
+     totalmente redondeadas, carátula circular, título con desplazamiento
+     sutil si no cabe, y un solo botón de play/pausa: para cerrarlo del
+     todo se desliza hacia un lado (swipe), como en los reproductores
+     nativos — así queda mínimo pero sigue siendo parte de la familia
+     visual de HERE (tipografía serif, puntito dorado tipo "orb"). */
   .mini-player{
     display:none; flex-direction:column;
-    position:fixed; left:50%; transform:translateX(-50%); bottom:0; width:100%; max-width:480px;
-    background:var(--card); border:1px solid var(--line); border-bottom:none;
-    border-radius:20px 20px 0 0; overflow:hidden;
-    padding-bottom:env(safe-area-inset-bottom);
-    z-index:49; cursor:pointer; box-shadow:0 -10px 28px rgba(33,31,26,0.1);
+    position:fixed; left:14px; right:14px; margin:0 auto; max-width:452px; bottom:14px;
+    background:var(--glass-bg); -webkit-backdrop-filter:blur(22px) saturate(170%); backdrop-filter:blur(22px) saturate(170%);
+    border:1px solid var(--line-strong, var(--line));
+    border-radius:26px; overflow:hidden;
+    margin-bottom:env(safe-area-inset-bottom);
+    z-index:49; cursor:pointer; box-shadow:var(--shadow-lg);
+    transition:transform .32s cubic-bezier(.22,.8,.25,1), opacity .28s ease, bottom .25s ease;
+    touch-action:pan-y;
+  }
+  @supports not ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){
+    .mini-player{ background:var(--card-elevated, var(--card)); }
   }
   .mini-player.show{display:flex;}
-  .mini-player.above-nav{ bottom:78px; border-radius:20px; border-bottom:1px solid var(--line); box-shadow:0 10px 26px rgba(33,31,26,0.12); }
-  .mini-player-progress-track{ width:100%; height:3px; background:var(--line); flex:none; }
+  .mini-player.above-nav{ bottom:90px; }
+  .mini-player.mini-scroll-hidden{ transform:translateY(140%); opacity:0; pointer-events:none; }
+  .mini-player-progress-track{ width:100%; height:2.5px; background:var(--line); flex:none; }
   .mini-player-progress-fill{ height:100%; width:0%; background:var(--gold-grad); transition:width .4s linear; }
-  .mini-player-row{ display:flex; align-items:center; gap:12px; padding:11px 16px; }
+  .mini-player-row{ display:flex; align-items:center; gap:11px; padding:9px 10px 9px 9px; }
   .mini-player-thumb{
-    width:42px; height:42px; border-radius:12px; flex:none; position:relative;
+    width:40px; height:40px; border-radius:50%; flex:none; position:relative;
     background:linear-gradient(135deg,var(--sage-deep),var(--sage-deeper)) center/cover no-repeat;
     display:flex; align-items:center; justify-content:center; font-size:15px; color:rgba(255,255,255,0.92);
     box-shadow:0 3px 10px rgba(33,31,26,0.14);
   }
-  .mini-player-thumb svg{width:17px; height:17px;}
+  .mini-player-thumb svg{width:16px; height:16px;}
   .mini-player-thumb::after{
-    content:''; position:absolute; right:-3px; bottom:-3px; width:13px; height:13px; border-radius:50%;
+    content:''; position:absolute; right:-2px; bottom:-2px; width:12px; height:12px; border-radius:50%;
     background:radial-gradient(circle at 32% 28%, var(--gold-light), var(--gold) 60%, var(--gold-deep) 100%);
     border:2px solid var(--card);
   }
   .mini-player.is-playing .mini-player-thumb::after{ animation:miniPulse 2.4s ease-in-out infinite; }
   @keyframes miniPulse{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.18); } }
   @media (prefers-reduced-motion: reduce){ .mini-player.is-playing .mini-player-thumb::after{ animation:none; } }
-  .mini-player-info{flex:1; min-width:0;}
-  .mini-player-info .t{font-family:'Fraunces',serif; font-size:14.5px; font-weight:500; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .mini-player-info{flex:1; min-width:0; overflow:hidden;}
+  .mini-player-info .t{font-family:'Fraunces',serif; font-size:14px; font-weight:500; color:var(--ink); white-space:nowrap; display:inline-block; overflow:hidden; text-overflow:ellipsis; max-width:100%; vertical-align:top;}
+  .mini-player-info .t.marquee{ text-overflow:clip; animation:miniMarquee 6.5s ease-in-out infinite; }
+  @keyframes miniMarquee{
+    0%, 12%{ transform:translateX(0); }
+    45%, 58%{ transform:translateX(var(--marquee-dist, 0px)); }
+    92%, 100%{ transform:translateX(0); }
+  }
+  @media (prefers-reduced-motion: reduce){ .mini-player-info .t.marquee{ animation:none; text-overflow:ellipsis; } }
   .mini-player-info .s{font-size:11px; color:var(--ink-soft); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:1px;}
   .mini-player-controls{ display:flex; align-items:center; gap:8px; flex:none; }
   .mini-player-btn{
-    width:36px; height:36px; border-radius:50%; border:1px solid var(--line); flex:none; cursor:pointer;
-    background:transparent; color:var(--ink); display:flex; align-items:center; justify-content:center;
-    transition:background .15s ease, transform .12s ease;
+    width:36px; height:36px; border-radius:50%; border:none; flex:none; cursor:pointer;
+    background:var(--gold-grad); color:#3a2c0f; display:flex; align-items:center; justify-content:center;
+    transition:transform .12s ease; box-shadow:0 3px 10px rgba(138,106,38,0.25);
   }
   .mini-player-btn svg{width:15px; height:15px;}
-  .mini-player-btn:active{transform:scale(0.9); background:var(--beige);}
-  .mini-player-btn-close{ color:var(--ink-soft); }
+  .mini-player-btn:active{transform:scale(0.9);}
 
   /* ---------- bible ---------- */
   .book-grid{padding:8px 24px 24px; display:flex; flex-direction:column; gap:22px;}
@@ -1382,7 +1400,7 @@
     /* en escritorio no hay barra de navegación abajo (es un cajón lateral),
        así que el mini reproductor flota como una tarjeta suelta, no pegado
        a ningún borde de navegación inferior. */
-    .mini-player{ left:auto; right:24px; bottom:24px; transform:none; max-width:340px; border-radius:20px; border-bottom:1px solid var(--line); box-shadow:var(--shadow-md); }
+    .mini-player{ left:auto; right:24px; bottom:24px; margin:0; max-width:340px; box-shadow:var(--shadow-lg); }
     .mini-player.above-nav{ bottom:24px; }
 
     /* reproductor: en escritorio, video + controles a la izquierda y la
@@ -1956,9 +1974,6 @@
       </div>
       <div class="mini-player-controls">
         <button class="mini-player-btn" id="mini-player-toggle" aria-label="Pausar" onclick="event.stopPropagation(); togglePlayerPlayback();"></button>
-        <button class="mini-player-btn mini-player-btn-close" aria-label="Detener" onclick="event.stopPropagation(); stopPlayback();">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
-        </button>
       </div>
     </div>
   </div>
@@ -4947,7 +4962,8 @@ function updateMiniPlayer(){
     bar.classList.remove('show');
     return;
   }
-  document.getElementById('mini-player-title').textContent = currentPlayItem.name;
+  const titleEl = document.getElementById('mini-player-title');
+  titleEl.textContent = currentPlayItem.name;
   document.getElementById('mini-player-role').textContent = currentPlayItem.role || currentPlayItem.s || '';
   const thumb = trackThumbUrl(currentPlayItem);
   const thumbEl = document.getElementById('mini-player-thumb');
@@ -4964,7 +4980,88 @@ function updateMiniPlayer(){
   bar.classList.toggle('is-playing', playing);
   bar.classList.add('show');
   bar.classList.toggle('above-nav', NAV_SCREENS.includes(currentScreen));
+  // título largo: si no cabe en una línea, se desliza suavemente en vez
+  // de cortarse siempre igual — solo se activa cuando realmente se
+  // necesita (el texto es más ancho que su espacio disponible).
+  titleEl.classList.remove('marquee');
+  titleEl.style.removeProperty('--marquee-dist');
+  requestAnimationFrame(()=>{
+    const overflow = titleEl.scrollWidth - titleEl.parentElement.clientWidth;
+    if(overflow > 6){
+      titleEl.style.setProperty('--marquee-dist', `-${overflow + 4}px`);
+      titleEl.classList.add('marquee');
+    }
+  });
 }
+// La pastilla se aparta un momento al hacer scroll hacia abajo (para no
+// taparte lo que estás leyendo) y vuelve a aparecer en cuanto te detienes
+// o subes de nuevo — solo en el celular, donde el espacio pesa más.
+let lastMiniScrollY = window.scrollY || 0;
+let miniScrollHideTimer = null;
+function handleMiniPlayerScroll(){
+  if(window.innerWidth >= 760) return;
+  const bar = document.getElementById('mini-player');
+  if(!bar || !bar.classList.contains('show')) return;
+  const y = window.scrollY || 0;
+  const delta = y - lastMiniScrollY;
+  if(Math.abs(delta) > 4){
+    if(delta > 0 && y > 40) bar.classList.add('mini-scroll-hidden');
+    else bar.classList.remove('mini-scroll-hidden');
+  }
+  lastMiniScrollY = y;
+  clearTimeout(miniScrollHideTimer);
+  miniScrollHideTimer = setTimeout(()=> bar.classList.remove('mini-scroll-hidden'), 700);
+}
+window.addEventListener('scroll', handleMiniPlayerScroll, { passive:true });
+// Deslizar la pastilla hacia un lado la cierra del todo (detiene la
+// reproducción) — un gesto natural en vez de tener que buscar un botón.
+(function setupMiniPlayerSwipe(){
+  const bar = document.getElementById('mini-player');
+  if(!bar) return;
+  let startX = 0, startY = 0, dx = 0, dragging = false, horizontal = false;
+  bar.addEventListener('touchstart', (e)=>{
+    if(e.touches.length !== 1) return;
+    startX = e.touches[0].clientX; startY = e.touches[0].clientY;
+    dx = 0; dragging = true; horizontal = false;
+    bar.style.transition = 'none';
+  }, { passive:true });
+  bar.addEventListener('touchmove', (e)=>{
+    if(!dragging) return;
+    const x = e.touches[0].clientX, y = e.touches[0].clientY;
+    dx = x - startX;
+    const dy = y - startY;
+    if(!horizontal && Math.abs(dx) > 8 && Math.abs(dx) > Math.abs(dy)) horizontal = true;
+    if(horizontal){
+      bar.style.transform = `translateX(${dx}px)`;
+      bar.style.opacity = String(Math.max(0.1, 1 - Math.abs(dx)/200));
+    }
+  }, { passive:true });
+  bar.addEventListener('touchend', ()=>{
+    if(!dragging) return;
+    dragging = false;
+    bar.style.transition = '';
+    const threshold = 88;
+    if(horizontal && Math.abs(dx) > threshold){
+      const dir = dx > 0 ? 1 : -1;
+      bar.style.transform = `translateX(${dir*440}px)`;
+      bar.style.opacity = '0';
+      haptic(12);
+      setTimeout(()=>{
+        stopPlayback();
+        bar.style.transform = '';
+        bar.style.opacity = '';
+      }, 220);
+    } else {
+      bar.style.transform = '';
+      bar.style.opacity = '';
+    }
+    horizontal = false;
+  });
+  bar.addEventListener('touchcancel', ()=>{
+    dragging = false; horizontal = false;
+    bar.style.transition = ''; bar.style.transform = ''; bar.style.opacity = '';
+  });
+})();
 
 function openDiarioEntry(idx){
   const r = reflections[idx];
