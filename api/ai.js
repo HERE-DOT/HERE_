@@ -18,6 +18,31 @@
  */
 const GEMINI_MODEL = 'gemini-3.8-flash';
 
+// Para clasificar predicaciones por miniatura (ver "images" más abajo): se
+// descargan las imágenes aquí, en el servidor, y se le mandan a Gemini como
+// datos junto con el texto — así el navegador nunca tiene que exponer una
+// clave ni Gemini tiene que poder alcanzar la URL directamente. Límites
+// chicos a propósito para que la función responda rápido en Vercel.
+const MAX_IMAGES = 14;
+const IMAGE_FETCH_TIMEOUT_MS = 4000;
+const MAX_IMAGE_BYTES = 2 * 1024 * 1024;
+
+async function fetchImageAsInlineData(url) {
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), IMAGE_FETCH_TIMEOUT_MS);
+    const r = await fetch(url, { signal: controller.signal });
+    clearTimeout(timer);
+    if (!r.ok) return null;
+    const buf = Buffer.from(await r.arrayBuffer());
+    if (!buf.length || buf.length > MAX_IMAGE_BYTES) return null;
+    const mime = r.headers.get('content-type') || 'image/jpeg';
+    return { mimeType: mime, data: buf.toString('base64') };
+  } catch (e) {
+    return null;
+  }
+}
+
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'method not allowed' });
@@ -48,8 +73,30 @@ module.exports = async function handler(req, res) {
   const safePrompt = prompt.slice(0, 6000);
   const maxOutputTokens = modelTier === 'quick' ? 700 : 1200;
 
+  // images (opcional): [{id, url}] — miniaturas u otras imágenes a analizar
+  // junto con el texto (por ejemplo, para que HERE decida en qué "momento"
+  // va cada predicación mirando su miniatura, no solo el título). Cada una
+  // se descarga aquí mismo y se manda como inlineData antes del prompt,
+  // etiquetada con su id para que la respuesta pueda referirse a ella.
+  const rawImages = Array.isArray(body && body.images) ? body.images.slice(0, MAX_IMAGES) : [];
+  const parts = [];
+  if (rawImages.length) {
+    const fetched = await Promise.all(rawImages.map(async (img) => {
+      if (!img || typeof img.url !== 'string' || !img.url) return null;
+      const inline = await fetchImageAsInlineData(img.url);
+      if (!inline) return null;
+      return { id: String(img.id || ''), inline };
+    }));
+    fetched.forEach((f) => {
+      if (!f) return;
+      parts.push({ text: `[miniatura del video id="${f.id}"]` });
+      parts.push({ inlineData: f.inline });
+    });
+  }
+  parts.push({ text: safePrompt });
+
   const payload = {
-    contents: [{ parts: [{ text: safePrompt }] }],
+    contents: [{ parts }],
     generationConfig: {
       maxOutputTokens,
       temperature: 0.7,
@@ -78,10 +125,10 @@ module.exports = async function handler(req, res) {
 
     const data = await geminiRes.json();
     const candidate = data.candidates && data.candidates[0];
-    const parts = (candidate && candidate.content && candidate.content.parts) || [];
+    const resParts = (candidate && candidate.content && candidate.content.parts) || [];
     // por si acaso el modelo manda alguna parte de "pensamiento" (thought:true)
     // aunque la hayamos apagado arriba, la ignoramos y solo usamos la respuesta real.
-    const text = parts.filter((p) => p && p.text && !p.thought).map((p) => p.text).join('') || '';
+    const text = resParts.filter((p) => p && p.text && !p.thought).map((p) => p.text).join('') || '';
 
     if (!text) {
       // la IA pudo haber bloqueado la respuesta (filtros de seguridad, etc.)
