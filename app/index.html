@@ -1855,7 +1855,14 @@
         </div>
       </div>
       <div class="player-related-wrap">
-        <div class="section-title" style="margin-top:4px;">Videos relacionados</div>
+        <div class="section-title" style="margin-top:4px; justify-content:space-between; padding-right:24px; flex-wrap:nowrap;">
+          <span style="white-space:nowrap;">Videos relacionados</span>
+          <label class="theme-switch" style="display:flex; align-items:center; gap:6px; font-size:11px; font-weight:600; text-transform:none; letter-spacing:0; color:var(--ink-soft); cursor:pointer; flex:none; white-space:nowrap;">
+            Automático
+            <input type="checkbox" id="player-autoplay-toggle" checked onchange="toggleAutoplayNext(this)">
+            <span class="track"><span class="thumb"></span></span>
+          </label>
+        </div>
         <div class="stack" id="player-related" style="padding:0 24px 30px;"></div>
       </div>
     </div>
@@ -4437,6 +4444,18 @@ let ytPlayer = null;
 let playerMode = load('here_player_mode', 'video');
 let currentPlayItem = null;
 let playerLoadTimer = null;
+// Reproducción continua: al terminar una canción, mix o predicación, sigue
+// sola con la primera de "Videos relacionados" — funciona igual para
+// cualquier tipo de contenido porque esa lista ya se arma según el canal o
+// tema de lo que está sonando (loadRelatedVideos), no según su categoría.
+// Se puede apagar con el interruptor junto a "Videos relacionados", y esa
+// preferencia se recuerda entre sesiones.
+let autoplayNext = load('here_autoplay_next', true);
+let currentRelatedVideos = [];
+function toggleAutoplayNext(el){
+  autoplayNext = !!el.checked;
+  save('here_autoplay_next', autoplayNext);
+}
 
 function ensureYouTubeApi(){
   if(ytApiRequested) return;
@@ -4612,6 +4631,8 @@ function playTrack(item, mode){
   document.getElementById('player-fallback').style.display = 'none';
   go('reproductor');
   setPlayerMode(mode || playerMode);
+  const autoplayToggle = document.getElementById('player-autoplay-toggle');
+  if(autoplayToggle) autoplayToggle.checked = autoplayNext;
   updateMiniPlayer();
   if(isNewTrack){
     // si venía flotando un video distinto, esa ventana ya no corresponde
@@ -4666,6 +4687,7 @@ async function loadRelatedVideos(item){
     filtered.push(v);
     if(filtered.length >= 10) break;
   }
+  currentRelatedVideos = filtered;
   wrap.innerHTML = filtered.length ? filtered.map(v=>musicSearchResultRow(v)).join('')
     : `<div class="empty" style="padding:20px 0;"><div class="light-dot"></div>No hay más videos relacionados por ahora.</div>`;
 }
@@ -4715,6 +4737,22 @@ function onPlayerStateChange(e){
   if(btn) btn.textContent = icon;
   const miniBtn = document.getElementById('mini-player-toggle');
   if(miniBtn) miniBtn.textContent = icon;
+  // 0 = YT.PlayerState.ENDED: el video terminó solo (no lo pausó la
+  // persona) — ahí es cuando entra la reproducción continua.
+  if(e.data===0) handleTrackEnded();
+}
+function handleTrackEnded(){
+  if(!autoplayNext) return;
+  // una lista de reproducción (ytList) ya avanza sola de un video al
+  // siguiente por su cuenta — no hay que duplicar el avance aquí.
+  if(currentPlayItem && currentPlayItem.ytList) return;
+  playNextRelated();
+}
+function playNextRelated(){
+  if(!currentRelatedVideos || !currentRelatedVideos.length) return;
+  const next = currentRelatedVideos.shift();
+  haptic(8);
+  playAdhocVideo(next.id, next.title, next.channel);
 }
 function togglePlayerPlayback(){
   if(!ytPlayer || !ytPlayer.getPlayerState) return;
