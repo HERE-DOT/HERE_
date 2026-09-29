@@ -785,6 +785,23 @@
   }
   .featured-carousel::-webkit-scrollbar{ display:none; }
   .featured-slide{ flex:0 0 100%; min-width:0; scroll-snap-align:start; }
+  .featured-carousel-wrap{ position:relative; }
+  /* Flechas ‹ › discretas — circulitos translúcidos que no compiten con la
+     foto ni el texto, imprescindibles en escritorio (sin gesto de swipe). */
+  .featured-nav{
+    position:absolute; top:50%; transform:translateY(-50%); z-index:2;
+    width:32px; height:32px; border-radius:50%; border:1px solid rgba(255,255,255,0.6);
+    background:rgba(255,255,255,0.75); color:var(--ink); box-shadow:var(--shadow-sm);
+    display:flex; align-items:center; justify-content:center; cursor:pointer; padding:0;
+    transition:opacity .2s ease, transform .15s ease, background .15s ease;
+  }
+  .featured-nav svg{ width:17px; height:17px; }
+  .featured-nav:hover{ background:rgba(255,255,255,0.95); }
+  .featured-nav:active{ transform:translateY(-50%) scale(0.9); }
+  .featured-nav[disabled]{ opacity:0; pointer-events:none; }
+  .featured-nav-prev{ left:10px; }
+  .featured-nav-next{ right:10px; }
+  @media (min-width:900px){ .featured-nav-prev{ left:22px; } .featured-nav-next{ right:22px; } }
   .featured-dots{ display:flex; justify-content:center; align-items:center; gap:7px; margin:-16px 0 22px; }
   .featured-dot{ width:6px; height:6px; border-radius:50%; background:var(--line); transition:background .2s ease, transform .2s ease; }
   .featured-dot.active{ background:var(--gold); transform:scale(1.35); }
@@ -1264,10 +1281,16 @@
     .chapter-picker, .diario-entry, .top-greeting, .section-title, .hero-card,
     .feature-card, .tag-tabs, #search-results, .list-card, .chat-body, .chat-inputbar,
     .music-cat-grid, .week-scene, .music-person, .music-track,
+    .featured-carousel-wrap,
     .empty{
       max-width:760px; margin-left:auto; margin-right:auto; width:100%;
     }
     .diario-entry, .list-card, .feature-card{ margin-left:auto; margin-right:auto; }
+    /* .list-card.home-action (2 clases) le gana en especificidad a la regla
+       de arriba y traía su propio margin:16px 24px — eso anulaba el auto/auto
+       y las tres puertas del Home quedaban pegadas a la izquierda en vez de
+       centradas en pantallas anchas. Se repite aquí, más específico. */
+    .list-card.home-action{ margin-left:auto; margin-right:auto; }
 
     /* pantallas de "versículo en escena" (una palabra, sentir, quedarme, guiada, plan del día):
        más aire, tipografía más grande, para que se sientan a pantalla completa y no recortadas */
@@ -1326,6 +1349,7 @@
     .chapter-picker, .diario-entry, .top-greeting, .section-title, .hero-card,
     .feature-card, .tag-tabs, #search-results, .list-card, .chat-body, .chat-inputbar,
     .music-cat-grid, .week-scene, .music-person, .music-track,
+    .featured-carousel-wrap,
     .empty{
       max-width:860px;
     }
@@ -3855,31 +3879,56 @@ function renderFeaturedCarousel(){
 
   const wrap = document.getElementById('musica-featured');
   wrap.innerHTML = `
-    <div class="featured-carousel" id="featured-carousel">
-      ${slides.map(s=>featuredSlideHTML(s.item, s.opts)).join('')}
+    <div class="featured-carousel-wrap">
+      <div class="featured-carousel" id="featured-carousel">
+        ${slides.map(s=>featuredSlideHTML(s.item, s.opts)).join('')}
+      </div>
+      ${slides.length>1 ? `
+        <button class="featured-nav featured-nav-prev" id="featured-prev" onclick="scrollFeatured(-1)" aria-label="Anterior">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        </button>
+        <button class="featured-nav featured-nav-next" id="featured-next" onclick="scrollFeatured(1)" aria-label="Siguiente">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+      ` : ''}
     </div>
     ${slides.length>1 ? `<div class="featured-dots" id="featured-dots">${slides.map((_,i)=>`<span class="featured-dot${i===0?' active':''}"></span>`).join('')}</div>` : ''}
   `;
   if(slides.length>1) setupFeaturedCarousel();
 }
-// Actualiza los puntitos según qué tarjeta quedó más visible al deslizar
-// (sin librerías — un listener de scroll simple, con requestAnimationFrame
-// para no recalcular en cada pixel).
+// Botones ‹ › discretos: además de deslizar con el dedo, sirven para
+// adelantar/devolver la tarjeta con un clic (imprescindible en escritorio,
+// donde no hay gesto de swipe). Mueven el carrusel una tarjeta completa.
+function scrollFeatured(dir){
+  const el = document.getElementById('featured-carousel');
+  if(!el) return;
+  el.scrollBy({ left: dir * el.clientWidth, behavior:'smooth' });
+}
+// Actualiza los puntitos según qué tarjeta quedó más visible al deslizar, y
+// atenúa la flecha ‹ o › cuando ya no hay más hacia ese lado (sin librerías —
+// un listener de scroll simple, con requestAnimationFrame para no recalcular
+// en cada pixel).
 function setupFeaturedCarousel(){
   const el = document.getElementById('featured-carousel');
   const dotsWrap = document.getElementById('featured-dots');
+  const prevBtn = document.getElementById('featured-prev');
+  const nextBtn = document.getElementById('featured-next');
   if(!el || !dotsWrap) return;
   const dots = dotsWrap.querySelectorAll('.featured-dot');
+  const total = dots.length;
+  const update = ()=>{
+    const idx = Math.round(el.scrollLeft / Math.max(el.clientWidth,1));
+    dots.forEach((d,i)=> d.classList.toggle('active', i===idx));
+    if(prevBtn) prevBtn.disabled = idx<=0;
+    if(nextBtn) nextBtn.disabled = idx>=total-1;
+  };
   let ticking = false;
   el.onscroll = function(){
     if(ticking) return;
     ticking = true;
-    requestAnimationFrame(()=>{
-      const idx = Math.round(el.scrollLeft / Math.max(el.clientWidth,1));
-      dots.forEach((d,i)=> d.classList.toggle('active', i===idx));
-      ticking = false;
-    });
+    requestAnimationFrame(()=>{ update(); ticking = false; });
   };
+  update();
 }
 
 /* ---------------- "Para este momento" ----------------
