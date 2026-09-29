@@ -3704,6 +3704,18 @@ const MUSIC_CATEGORIES = [
     img:'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=800&q=70' },
   { id:'ingles', t:'Adoración en inglés', s:'Worship y CCM', q:'christian worship music english',
     img:'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=70' },
+  { id:'pop', t:'Pop cristiano', s:'Pop con mensaje de fe', q:'pop cristiano',
+    img:'https://images.unsplash.com/photo-1651336453395-0d0ab99047c7?auto=format&fit=crop&w=800&q=70' },
+  { id:'reggaeton', t:'Reggaetón cristiano', s:'Urbano con propósito', q:'reggaetón cristiano',
+    img:'https://images.unsplash.com/photo-1746211993837-dec7782c2050?auto=format&fit=crop&w=800&q=70' },
+  { id:'rap', t:'Rap cristiano', s:'Rimas con propósito', q:'rap cristiano',
+    img:'https://images.unsplash.com/photo-1767474365536-ef81bfa24c8a?auto=format&fit=crop&w=800&q=70' },
+  { id:'corridos', t:'Corridos cristianos', s:'Historias de fe al estilo corrido', q:'corridos cristianos',
+    img:'https://images.unsplash.com/photo-1501059104508-e158516511cd?auto=format&fit=crop&w=800&q=70' },
+  { id:'country', t:'Country cristiano', s:'Raíces country con fe', q:'country cristiano',
+    img:'https://images.unsplash.com/photo-1611068813580-b07ef920964b?auto=format&fit=crop&w=800&q=70' },
+  { id:'rancheras', t:'Rancheras cristianas', s:'Tradición mexicana con fe', q:'rancheras cristianas',
+    img:'https://images.unsplash.com/photo-1504622956513-06165f390646?auto=format&fit=crop&w=800&q=70' },
 ];
 
 // Pastores / predicadores recomendados.
@@ -3728,6 +3740,18 @@ const MUSIC_PODCASTS = [
     img:'https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&w=500&q=70' },
   { id:'podcast-warren', name:'Rick Warren', s:'Propósito y vida con sentido', role:'Podcast · Enseñanza', yt:'SEFbK0G21NA', q:'rick warren podcast sermon español',
     img:'https://images.unsplash.com/photo-1441829266145-5a7f74e46ca7?auto=format&fit=crop&w=500&q=70' },
+  { id:'podcast-renovando-mente', name:'Renovando tu Mente', s:'R.C. Sproul enseña la Biblia de forma profunda y aplicable a la vida diaria', role:'Podcast · Enseñanza bíblica', q:'renovando tu mente podcast rc sproul',
+    img:'https://images.unsplash.com/photo-1479648673956-a6b7ced23550?auto=format&fit=crop&w=500&q=70' },
+  { id:'podcast-corazon-dinero', name:'Tu Corazón y el Dinero', s:'Héctor Salcedo y Chárbela El Hage enseñan a administrar el dinero honrando a Dios', role:'Podcast · Finanzas y fe', q:'tu corazón y el dinero podcast héctor salcedo',
+    img:'https://images.unsplash.com/photo-1633158829875-e5316a358c6f?auto=format&fit=crop&w=500&q=70' },
+  { id:'podcast-abre-biblia', name:'Abre la Biblia', s:'Colin Smith explica las Escrituras con un enfoque centrado en Cristo', role:'Podcast · Enseñanza bíblica', q:'abre la biblia podcast colin smith',
+    img:'https://images.unsplash.com/photo-1747210391677-0bbf4f806319?auto=format&fit=crop&w=500&q=70' },
+  { id:'podcast-aviva-corazones', name:'Aviva Nuestros Corazones', s:'Nancy DeMoss Wolgemouth, reflexiones y devocionales diarios para mujeres', role:'Podcast · Para mujeres', q:'aviva nuestros corazones podcast nancy demoss',
+    img:'https://images.unsplash.com/photo-1550202256-47e53ffabc95?auto=format&fit=crop&w=500&q=70' },
+  { id:'podcast-vae', name:'VAE Podcast', s:'Conversaciones sobre la fe cristiana y la vida espiritual, volviendo a la esencia', role:'Podcast', q:'vae podcast volviendo a la esencia',
+    img:'https://images.unsplash.com/photo-1589903308904-1010c2294adc?auto=format&fit=crop&w=500&q=70' },
+  { id:'podcast-textos-fuera-contexto', name:'Textos Fuera de Contexto', s:'Pastores y teólogos hispanos conversan sobre temas del ministerio y la vida cristiana', role:'Podcast · Coalición por el Evangelio', q:'textos fuera de contexto podcast coalición por el evangelio',
+    img:'https://images.unsplash.com/photo-1499447155021-4907f71b9ef5?auto=format&fit=crop&w=500&q=70' },
 ];
 
 // Grupo del que rota el destacado de la semana — mezcla de artistas, pastores y
@@ -4175,17 +4199,31 @@ async function openMusicCategory(id){
   const results = await ytApiSearch(cat.q, 10);
   if(results && results.length){
     listEl.innerHTML = results.map(v=>musicSearchResultRow(v)).join('');
-    return;
+  }else{
+    // sin conexión a la búsqueda real (o falta la clave todavía): la
+    // categoría se ve curada igual, con lo mejor del pool semanal.
+    const list = fallbackCategoryList(cat, id);
+    listEl.innerHTML = list.map(renderCategoryTrackRow).join('') + `
+      <div class="list-card" style="margin-top:6px;" onclick="openMusicSearch('youtube','${cat.q.replace(/'/g,"\\'")}')">
+        <div><div class="t">Buscar más de "${cat.t}" en YouTube</div><div class="s">Se abre en una pestaña nueva</div></div>
+        <span>↗</span>
+      </div>
+    `;
   }
-  // sin conexión a la búsqueda real (o falta la clave todavía): la categoría
-  // se ve curada igual, con lo mejor del pool semanal.
-  const list = fallbackCategoryList(cat, id);
-  listEl.innerHTML = list.map(renderCategoryTrackRow).join('') + `
-    <div class="list-card" style="margin-top:6px;" onclick="openMusicSearch('youtube','${cat.q.replace(/'/g,"\\'")}')">
-      <div><div class="t">Buscar más de "${cat.t}" en YouTube</div><div class="s">Se abre en una pestaña nueva</div></div>
-      <span>↗</span>
-    </div>
-  `;
+
+  // Complemento, más abajo (se ve al hacer scroll): canciones individuales
+  // reales, no mixes — sin desarmar ni reemplazar la sección de arriba. Solo
+  // tiene sentido para música (no para "Palabra", que es predicación).
+  if(id !== 'palabra'){
+    const songs = await ytApiSearchSongs(cat.q, 10);
+    if(songs && songs.length){
+      listEl.insertAdjacentHTML('beforeend', `
+        <div class="section-title" style="margin-top:24px; padding-left:0; padding-right:0;">🎵 Canciones</div>
+        <p style="font-size:12.5px; color:var(--ink-soft); margin:-6px 0 10px;">Versiones individuales, no mixes ni sesiones largas.</p>
+        ${songs.map(v=>musicSearchResultRow(v)).join('')}
+      `);
+    }
+  }
 }
 
 // "Ver historia": la hoja corta de siempre — resumen breve del artista/
@@ -4284,17 +4322,39 @@ async function openMusicPersona(id){
    expuesta en el navegador. Si esa función no está conectada (o falla por
    cualquier motivo), devuelve null y quien la llama ya sabe caer de vuelta
    al contenido curado, en vez de romperse. */
-async function ytApiSearch(q, maxResults){
+async function ytApiSearch(q, maxResults, extra){
   try{
+    const body = Object.assign({ q, maxResults: maxResults||10 }, extra||{});
     const r = await fetch('/api/youtube', {
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ q, maxResults: maxResults||10 })
+      body: JSON.stringify(body)
     });
     if(!r.ok) return null;
     const data = await r.json();
     return (data.items && data.items.length) ? data.items : null;
   }catch(e){ return null; }
+}
+// Complemento de "canciones sueltas" para una categoría: en vez de adivinar
+// por palabras qué es un mix y qué no (poco confiable), usa el propio filtro
+// de duración de YouTube — pide solo videos cortos y medianos (menos de 20
+// minutos), que es como casi siempre se sube una canción individual, y deja
+// afuera las sesiones/mixes de una hora o más sin tocar la lista de arriba.
+async function ytApiSearchSongs(q, maxResults){
+  const half = Math.ceil((maxResults||10)/2);
+  const [shortR, mediumR] = await Promise.all([
+    ytApiSearch(q, half, { videoDuration:'short' }),
+    ytApiSearch(q, half, { videoDuration:'medium' }),
+  ]);
+  const merged = [...(shortR||[]), ...(mediumR||[])];
+  if(!merged.length) return null;
+  const seen = new Set();
+  const deduped = merged.filter(v=>{
+    if(seen.has(v.id)) return false;
+    seen.add(v.id);
+    return true;
+  });
+  return deduped.slice(0, maxResults||10);
 }
 function musicLoadingHTML(){
   return `<div style="display:flex; justify-content:center; padding:40px 0;"><div class="light-dot"></div></div>`;
