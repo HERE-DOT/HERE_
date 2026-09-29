@@ -3899,40 +3899,55 @@ function renderFeaturedCarousel(){
 }
 // Botones ‹ › discretos: además de deslizar con el dedo, sirven para
 // adelantar/devolver la tarjeta con un clic (imprescindible en escritorio,
-// donde no hay gesto de swipe). Mueven el carrusel una tarjeta completa, y
-// como es un gesto manual, apaga la rotación automática (para no pelearse
-// con lo que la persona está haciendo).
+// donde no hay gesto de swipe). En vez de trabarse al llegar a una punta,
+// da la vuelta: desde la última "siguiente" lleva de nuevo a la primera, y
+// desde la primera "anterior" lleva a la última.
 function scrollFeatured(dir){
   const el = document.getElementById('featured-carousel');
-  if(!el) return;
-  stopFeaturedAuto();
-  el.scrollBy({ left: dir * el.clientWidth, behavior:'smooth' });
+  const dotsWrap = document.getElementById('featured-dots');
+  if(!el || !dotsWrap) return;
+  const total = dotsWrap.querySelectorAll('.featured-dot').length;
+  const idx = Math.round(el.scrollLeft / Math.max(el.clientWidth,1));
+  let next = idx + dir;
+  if(next < 0) next = total - 1;
+  if(next > total - 1) next = 0;
+  el.scrollTo({ left: next * el.clientWidth, behavior:'smooth' });
+  restartFeaturedAuto();
 }
 let featuredAutoTimer = null;
 function stopFeaturedAuto(){
   if(featuredAutoTimer){ clearInterval(featuredAutoTimer); featuredAutoTimer = null; }
 }
-// Actualiza los puntitos según qué tarjeta quedó más visible al deslizar, y
-// atenúa la flecha ‹ o › cuando ya no hay más hacia ese lado (sin librerías —
-// un listener de scroll simple, con requestAnimationFrame para no recalcular
-// en cada pixel). También arranca la rotación automática: cada pocos
-// segundos pasa sola a la siguiente tarjeta (y de la última vuelve a la
-// primera), pero se detiene en cuanto la persona toca — desliza con el
-// dedo o usa las flechas — para no pelearse con su gesto.
+// La rotación automática NUNCA se apaga del todo con un toque — solo se
+// reinicia la cuenta de 6 segundos, para no pelearse con el gesto de la
+// persona. Así, si alguien desliza manualmente hasta la última tarjeta (o
+// toca la pantalla cerca del carrusel por cualquier otro motivo, como
+// scrollear la página), en 6 segundos igual vuelve sola a la primera —
+// nunca se queda "muerta" a mitad de camino.
+function restartFeaturedAuto(){
+  const el = document.getElementById('featured-carousel');
+  const dotsWrap = document.getElementById('featured-dots');
+  if(!el || !dotsWrap) return;
+  const total = dotsWrap.querySelectorAll('.featured-dot').length;
+  stopFeaturedAuto();
+  if(total<2) return;
+  featuredAutoTimer = setInterval(()=>{
+    const idx = Math.round(el.scrollLeft / Math.max(el.clientWidth,1));
+    const next = idx >= total-1 ? 0 : idx+1;
+    el.scrollTo({ left: next * el.clientWidth, behavior:'smooth' });
+  }, 6000);
+}
+// Actualiza los puntitos según qué tarjeta quedó más visible al deslizar
+// (sin librerías — un listener de scroll simple, con requestAnimationFrame
+// para no recalcular en cada pixel), y arranca/reinicia la rotación.
 function setupFeaturedCarousel(){
   const el = document.getElementById('featured-carousel');
   const dotsWrap = document.getElementById('featured-dots');
-  const prevBtn = document.getElementById('featured-prev');
-  const nextBtn = document.getElementById('featured-next');
   if(!el || !dotsWrap) return;
   const dots = dotsWrap.querySelectorAll('.featured-dot');
-  const total = dots.length;
   const update = ()=>{
     const idx = Math.round(el.scrollLeft / Math.max(el.clientWidth,1));
     dots.forEach((d,i)=> d.classList.toggle('active', i===idx));
-    if(prevBtn) prevBtn.disabled = idx<=0;
-    if(nextBtn) nextBtn.disabled = idx>=total-1;
-    return idx;
   };
   let ticking = false;
   el.onscroll = function(){
@@ -3940,17 +3955,11 @@ function setupFeaturedCarousel(){
     ticking = true;
     requestAnimationFrame(()=>{ update(); ticking = false; });
   };
-  // Deslizar con el dedo (o arrastrar con el mouse) también es un gesto
-  // manual — apaga el automático apenas empieza el toque.
-  el.addEventListener('pointerdown', stopFeaturedAuto, { passive:true });
+  // Deslizar con el dedo (o arrastrar con el mouse) reinicia la cuenta —
+  // no la apaga — para que 6 segundos después de soltar, siga rotando.
+  el.addEventListener('pointerdown', restartFeaturedAuto, { passive:true });
   update();
-
-  stopFeaturedAuto();
-  featuredAutoTimer = setInterval(()=>{
-    const idx = update();
-    if(idx >= total-1){ el.scrollTo({ left:0, behavior:'smooth' }); }
-    else{ el.scrollBy({ left: el.clientWidth, behavior:'smooth' }); }
-  }, 6000);
+  restartFeaturedAuto();
 }
 
 /* ---------------- "Para este momento" ----------------
