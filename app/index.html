@@ -777,7 +777,7 @@
      ni un póster de concierto oscuro. */
   .week-scene{
     position:relative; overflow:hidden; display:flex; align-items:center; cursor:pointer;
-    margin:4px 24px 24px; min-height:196px; border-radius:26px;
+    margin:4px 24px 24px; min-height:230px; border-radius:26px;
     background:linear-gradient(155deg, var(--bg-warm), var(--card));
     border:1px solid var(--line); box-shadow:var(--shadow-md);
     transition:transform .15s ease;
@@ -789,31 +789,35 @@
   }
   .week-scene:active{transform:scale(0.98);}
   .week-scene-photo{
-    position:absolute; inset:0; width:62%; height:100%;
+    position:absolute; inset:0; width:68%; height:100%;
     background:var(--beige) center/cover no-repeat;
   }
   .week-scene-photo::after{
     content:''; position:absolute; inset:0;
-    background:linear-gradient(100deg, rgba(20,16,8,0.05) 0%, rgba(20,16,8,0.05) 42%, var(--bg-warm) 88%);
+    background:linear-gradient(100deg, rgba(20,16,8,0.02) 0%, rgba(20,16,8,0.02) 62%, var(--bg-warm) 94%);
   }
-  .week-scene-body{position:relative; z-index:1; flex:1; min-width:0; margin-left:46%; padding:20px 22px 22px 18px;}
-  .week-scene .eyebrow{display:flex; align-items:center; gap:7px; font-size:11px; letter-spacing:.6px; text-transform:uppercase; font-weight:700; color:var(--gold-deep); opacity:.95;}
+  .week-scene-body{position:relative; z-index:1; flex:1; min-width:0; margin-left:44%; padding:20px 22px 22px 18px;}
+  .week-scene .eyebrow{display:flex; align-items:center; gap:7px; font-size:11px; letter-spacing:.6px; text-transform:uppercase; font-weight:700; color:var(--gold-deep); opacity:.95; text-shadow:0 1px 6px rgba(255,251,240,0.6);}
   .week-scene .eyebrow .dot{width:6px; height:6px; border-radius:50%; background:var(--gold); animation:weekScenePulse 2.2s ease-in-out infinite;}
   @keyframes weekScenePulse{
     0%,100%{ box-shadow:0 0 0 0 rgba(201,162,78,0.5); }
     50%{ box-shadow:0 0 0 5px rgba(201,162,78,0); }
   }
-  .week-scene .name{font-family:'Fraunces'; font-size:21px; font-weight:500; color:var(--ink); margin-top:5px; line-height:1.15;}
-  .week-scene .role{font-size:12.5px; color:var(--ink-soft); margin-top:3px;}
-  .week-scene .blurb{font-size:12.5px; color:var(--ink-soft); margin-top:8px; line-height:1.5; font-style:italic; font-family:'Fraunces';}
+  .week-scene .name{font-family:'Fraunces'; font-size:21px; font-weight:500; color:var(--ink); margin-top:5px; line-height:1.15; text-shadow:0 1px 8px rgba(255,251,240,0.5);}
+  .week-scene .role{font-size:12.5px; color:var(--ink-soft); margin-top:3px; text-shadow:0 1px 8px rgba(255,251,240,0.5);}
+  .week-scene .blurb{font-size:12.5px; color:var(--ink-soft); margin-top:8px; line-height:1.5; font-style:italic; font-family:'Fraunces'; text-shadow:0 1px 8px rgba(255,251,240,0.5);}
+  .week-scene-actions{display:flex; flex-wrap:wrap; gap:8px; margin-top:12px;}
   .week-scene-btn{
-    margin-top:12px; border:none; background:linear-gradient(135deg,var(--sage-deep),var(--sage-deeper)); color:#fff; font-weight:600;
-    font-size:12.5px; padding:9px 18px; border-radius:100px; cursor:pointer; display:inline-flex; align-items:center; gap:6px;
+    border:none; background:linear-gradient(135deg,var(--sage-deep),var(--sage-deeper)); color:#fff; font-weight:600;
+    font-size:12.5px; padding:9px 16px; border-radius:100px; cursor:pointer; display:inline-flex; align-items:center; gap:6px;
     transition:opacity .15s ease, transform .15s ease; box-shadow:0 3px 10px rgba(60,90,60,0.25);
+  }
+  .week-scene-btn-ghost{
+    background:rgba(255,255,255,0.7); color:var(--ink); box-shadow:none; border:1px solid rgba(255,255,255,0.9);
+    backdrop-filter:blur(2px);
   }
   @media (max-width:359px){ .week-scene-body{ margin-left:40%; } }
   .week-scene-btn:active{ transform:scale(0.95); opacity:.85; }
-  @media (max-width:359px){ .week-scene{ flex-wrap:wrap; } }
 
   .music-search-bar{display:flex; gap:8px; padding:4px 24px 14px; align-items:center;}
   /* ---------- "Para este momento": capa contextual, la que diferencia a
@@ -1074,6 +1078,7 @@
   .sheet{width:100%; max-width:480px; background:var(--bg); border-radius:28px 28px 0 0; padding:26px 24px calc(26px + env(safe-area-inset-bottom)); animation:slideUp .32s cubic-bezier(.22,.7,.25,1); box-shadow:0 -20px 50px rgba(0,0,0,0.2);}
   @keyframes slideUp{from{transform:translateY(30px); opacity:0;} to{transform:translateY(0); opacity:1;}}
   .sheet .handle{width:36px; height:4px; background:var(--line); border-radius:2px; margin:0 auto 18px;}
+  .artist-story-photo{width:100%; height:190px; border-radius:18px; background:var(--beige) center/cover no-repeat;}
 
   .empty{padding:60px 30px; text-align:center; color:var(--ink-soft);}
   .empty .light-dot{width:8px; height:8px; border-radius:50%; background:var(--gold); margin:0 auto 16px;}
@@ -3593,18 +3598,30 @@ const MUSIC_PODCASTS = [
 // Grupo del que rota el destacado de la semana — mezcla de artistas, pastores y
 // podcasts, cada uno con un video real de YouTube para reproducir dentro de la app.
 const MUSIC_WEEKLY_POOL = [
-  { id:'hillsong', type:'Artista de la semana', name:'Hillsong Worship', role:'Adoración', blurb:'La comunidad detrás de himnos de adoración cantados en todo el mundo.', yt:'nQWFzMvCfLE', q:'hillsong worship' },
-  { id:'dclario', type:'Artista de la semana', name:'Christine D’Clario', role:'Adoración', blurb:'Voz puertorriqueña conocida por su intimidad en la adoración.', yt:'5i6pSmfmynY', q:'christine dclario' },
-  { id:'corson', type:'Pastor de la semana', name:'Andrés Corson', role:'Pastor · Enseñanza bíblica', blurb:'Enseñanzas claras y prácticas para vivir la fe día a día.', yt:'rfPmW0G4mOI', q:'andrés corson prédica' },
-  { id:'redimi2', type:'Artista de la semana', name:'Redimi2', role:'Rap / hip-hop cristiano', blurb:'Uno de los referentes del rap cristiano en español.', yt:'bQNikeLRJQw', q:'redimi2' },
-  { id:'cafedios', type:'Podcast de la semana', name:'Un Café con Dios', role:'Podcast devocional', blurb:'Un momento breve para detenerte y escuchar, cada día.', yt:'azRuIRgUMbw', q:'un café con dios podcast' },
-  { id:'miel', type:'Artista de la semana', name:'Miel San Marcos', role:'Adoración', blurb:'Adoración guatemalteca con una energía que ha marcado a toda una generación.', yt:'D-HHlMXfxbg', q:'miel san marcos' },
-  { id:'daigle', type:'Artista de la semana', name:'Lauren Daigle', role:'Cristiana en inglés', blurb:'Una de las voces más escuchadas del CCM contemporáneo.', yt:'sIaT8Jl2zpI', q:'lauren daigle' },
-  { id:'danilo', type:'Pastor de la semana', name:'Danilo Montero', role:'Pastor · Adoración', blurb:'Une la enseñanza con la adoración de una forma cercana.', yt:'B5myKc92POU', q:'danilo montero prédica' },
-  { id:'funky', type:'Artista de la semana', name:'Funky', role:'Reggaetón cristiano', blurb:'Pionero del reggaetón cristiano, ritmo urbano con mensaje de esperanza.', yt:'A0i9sO__QvI', q:'funky reggaeton cristiano' },
-  { id:'bibleproject', type:'Podcast de la semana', name:'BibleProject en español', role:'Podcast bíblico', blurb:'La Biblia explicada libro por libro, de forma sencilla.', yt:'IgE2p95QqFw', q:'bibleproject español podcast' },
-  { id:'witt', type:'Artista de la semana', name:'Marcos Witt', role:'Adoración', blurb:'Uno de los pioneros de la adoración contemporánea en español.', yt:'F5gMNbGfy1g', q:'marcos witt' },
-  { id:'tercercielo', type:'Artista de la semana', name:'Tercer Cielo', role:'Pop cristiano', blurb:'Baladas y pop cristiano que han acompañado a generaciones.', yt:'BDwEyfgClF4', q:'tercer cielo' },
+  { id:'hillsong', type:'Artista de la semana', name:'Hillsong Worship', role:'Adoración', blurb:'La comunidad detrás de himnos de adoración cantados en todo el mundo.', yt:'nQWFzMvCfLE', q:'hillsong worship',
+    story:'Hillsong Worship es el equipo de adoración de la iglesia Hillsong, en Australia. Desde los años 90 han escrito himnos que hoy se cantan en congregaciones de todo el mundo, con un sonido que une lo contemporáneo con lo profundamente congregacional — canciones pensadas para cantarse juntos, no solo para escucharse.' },
+  { id:'dclario', type:'Artista de la semana', name:'Christine D’Clario', role:'Adoración', blurb:'Voz puertorriqueña conocida por su intimidad en la adoración.', yt:'5i6pSmfmynY', q:'christine dclario',
+    story:'Christine D’Clario es una cantautora puertorriqueña de adoración con más de una década de trayectoria. Es conocida por la intimidad de su música y por compartir abiertamente, dentro y fuera del escenario, su propio caminar de fe.' },
+  { id:'corson', type:'Pastor de la semana', name:'Andrés Corson', role:'Pastor · Enseñanza bíblica', blurb:'Enseñanzas claras y prácticas para vivir la fe día a día.', yt:'rfPmW0G4mOI', q:'andrés corson prédica',
+    story:'Andrés Corson es un pastor colombiano, líder de una de las congregaciones más grandes de Bogotá. Sus enseñanzas se caracterizan por ser claras, prácticas y enfocadas en cómo vivir la fe en las decisiones del día a día, más que en el discurso abstracto.' },
+  { id:'redimi2', type:'Artista de la semana', name:'Redimi2', role:'Rap / hip-hop cristiano', blurb:'Uno de los referentes del rap cristiano en español.', yt:'bQNikeLRJQw', q:'redimi2',
+    story:'Redimi2 es un rapero cristiano puertorriqueño y uno de los pioneros del género en español. Su música nace de un testimonio personal de transformación, y sus letras suelen hablar de identidad, lucha y propósito desde una fe muy concreta, no idealizada.' },
+  { id:'cafedios', type:'Podcast de la semana', name:'Un Café con Dios', role:'Podcast devocional', blurb:'Un momento breve para detenerte y escuchar, cada día.', yt:'azRuIRgUMbw', q:'un café con dios podcast',
+    story:'Un Café con Dios es un podcast devocional pensado para un momento breve del día: una pausa corta, del tamaño de un café, para orar, reflexionar y volver a enfocar el corazón antes de seguir con la rutina.' },
+  { id:'miel', type:'Artista de la semana', name:'Miel San Marcos', role:'Adoración', blurb:'Adoración guatemalteca con una energía que ha marcado a toda una generación.', yt:'D-HHlMXfxbg', q:'miel san marcos',
+    story:'Miel San Marcos es una banda de adoración guatemalteca formada por tres hermanos. Su música ha marcado a toda una generación de jóvenes en Latinoamérica, con un estilo que combina intensidad en el escenario y mucha cercanía en el mensaje.' },
+  { id:'daigle', type:'Artista de la semana', name:'Lauren Daigle', role:'Cristiana en inglés', blurb:'Una de las voces más escuchadas del CCM contemporáneo.', yt:'sIaT8Jl2zpI', q:'lauren daigle',
+    story:'Lauren Daigle es una cantante estadounidense de música cristiana contemporánea, reconocida con varios premios Grammy y Dove. Su voz y la honestidad de sus letras han hecho que su música llegue también a personas fuera del ámbito cristiano.' },
+  { id:'danilo', type:'Pastor de la semana', name:'Danilo Montero', role:'Pastor · Adoración', blurb:'Une la enseñanza con la adoración de una forma cercana.', yt:'B5myKc92POU', q:'danilo montero prédica',
+    story:'Danilo Montero es pastor y adorador, con varias décadas de trayectoria uniendo la enseñanza bíblica con la adoración. Es una de las voces más reconocidas de la música cristiana en español, con un estilo cercano y pastoral.' },
+  { id:'funky', type:'Artista de la semana', name:'Funky', role:'Reggaetón cristiano', blurb:'Pionero del reggaetón cristiano, ritmo urbano con mensaje de esperanza.', yt:'A0i9sO__QvI', q:'funky reggaeton cristiano',
+    story:'Funky es un artista cristiano puertorriqueño y uno de los pioneros del reggaetón cristiano. Su propio testimonio de transformación, desde una vida muy distinta, es parte central de su mensaje y de la esperanza que transmite su música.' },
+  { id:'bibleproject', type:'Podcast de la semana', name:'BibleProject en español', role:'Podcast bíblico', blurb:'La Biblia explicada libro por libro, de forma sencilla.', yt:'IgE2p95QqFw', q:'bibleproject español podcast',
+    story:'BibleProject en español produce videos y episodios que explican la Biblia libro por libro, de una manera visual, sencilla y fiel al texto — pensados para quien quiere entender mejor lo que lee, sin sentirse perdido.' },
+  { id:'witt', type:'Artista de la semana', name:'Marcos Witt', role:'Adoración', blurb:'Uno de los pioneros de la adoración contemporánea en español.', yt:'F5gMNbGfy1g', q:'marcos witt',
+    story:'Marcos Witt es uno de los pioneros de la adoración contemporánea en español. Con más de tres décadas de trayectoria, su música y su forma de enseñar han marcado a varias generaciones de creyentes en toda Latinoamérica.' },
+  { id:'tercercielo', type:'Artista de la semana', name:'Tercer Cielo', role:'Pop cristiano', blurb:'Baladas y pop cristiano que han acompañado a generaciones.', yt:'BDwEyfgClF4', q:'tercer cielo',
+    story:'Tercer Cielo es una banda puertorriqueña de pop cristiano, conocida por baladas que han acompañado momentos importantes — de duelo, de sanidad, de celebración — en la vida de fe de muchas personas.' },
 ];
 function findTrackById(id){
   return MUSIC_WEEKLY_POOL.find(t=>t.id===id) || MUSIC_PASTORES.find(t=>t.id===id) || MUSIC_PODCASTS.find(t=>t.id===id);
@@ -3781,7 +3798,10 @@ function renderMusica(){
         <div class="name serif">${featured.name}</div>
         <div class="role">${featured.role}</div>
         <div class="blurb">${warmFeaturedLine(featured)}</div>
-        <button class="week-scene-btn" onclick="playTrackById('${featured.id}', null, event)">▶ Escuchar ahora</button>
+        <div class="week-scene-actions">
+          <button class="week-scene-btn" onclick="playTrackById('${featured.id}', null, event)">▶ Escuchar ahora</button>
+          <button class="week-scene-btn week-scene-btn-ghost" onclick="openArtistStory('${featured.id}', event)">Ver historia</button>
+        </div>
       </div>
     </div>
   `;
@@ -3868,6 +3888,24 @@ async function openMusicCategory(id){
   `;
 }
 
+// "Ver historia": una hoja corta con la reseña del artista/pastor/podcast
+// destacado de la semana — quién es, de dónde viene, por qué está aquí.
+function openArtistStory(id, ev){
+  if(ev) ev.stopPropagation();
+  const item = findTrackById(id);
+  if(!item || !item.story) return;
+  haptic(8);
+  const thumb = trackThumbUrl(item);
+  openSheet(`
+    <div class="handle"></div>
+    ${thumb ? `<div class="artist-story-photo" style="background-image:url('${thumb}');"></div>` : ''}
+    <p style="font-size:11px; color:var(--gold-deep); text-transform:uppercase; letter-spacing:.5px; font-weight:700; margin-top:${thumb?'16px':'0'};">${item.type || 'Destacado de la semana'}</p>
+    <p class="serif" style="font-size:21px; font-weight:500; color:var(--ink); margin-top:4px;">${item.name}</p>
+    <p style="font-size:13px; color:var(--ink-soft); margin-top:2px;">${item.role || ''}</p>
+    <p style="font-size:14.5px; color:var(--ink); line-height:1.7; margin-top:16px;">${item.story}</p>
+    <button class="btn btn-primary" style="margin-top:22px;" onclick="closeSheet(); playTrackById('${item.id}');">▶ Escuchar ahora</button>
+  `);
+}
 // Catálogo de una persona (artista, pastor o podcast): trae muchos videos
 // reales de YouTube en vez de reproducir uno solo de una — reutiliza la
 // misma pantalla de categoría, con la búsqueda dirigida a esa persona.
