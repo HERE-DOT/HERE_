@@ -774,6 +774,20 @@
   /* Tarjeta "de la semana": misma receta cinematográfica que .hoy-scene
      (degradado + foto + degradado de respaldo, texto blanco encima), pero
      su propio nombre porque el contenido que destaca cambia cada semana. */
+  /* La tarjeta destacada ahora es dinámica: un carrusel deslizable de hasta
+     3 tarjetas con el MISMO diseño (.week-scene, intacto) — Artista de la
+     semana, Pastor de la semana y Canción del día — en vez de una sola cosa
+     fija. Cada tarjeta ocupa el ancho completo; se desliza con el dedo y los
+     puntitos de abajo marcan en cuál va. */
+  .featured-carousel{
+    display:flex; overflow-x:auto; scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling:touch; scrollbar-width:none;
+  }
+  .featured-carousel::-webkit-scrollbar{ display:none; }
+  .featured-slide{ flex:0 0 100%; min-width:0; scroll-snap-align:start; }
+  .featured-dots{ display:flex; justify-content:center; align-items:center; gap:7px; margin:-16px 0 22px; }
+  .featured-dot{ width:6px; height:6px; border-radius:50%; background:var(--line); transition:background .2s ease, transform .2s ease; }
+  .featured-dot.active{ background:var(--gold); transform:scale(1.35); }
   /* "Artista de la semana": la foto ahora es el fondo de toda la tarjeta —
      visible a la izquierda y difuminada en degradado hacia el crema donde
      va el texto, para que se sienta rica e integrada, no un cuadrito suelto
@@ -3769,16 +3783,103 @@ function weekSeed(){
   const weekNum = Math.ceil((((d - start) / 86400000) + start.getDay() + 1) / 7);
   return d.getFullYear() * 53 + weekNum;
 }
-// Si se define un id aquí, ese siempre gana como destacado de la semana
+// Si se define un id aquí, ese siempre gana como Artista de la semana
 // (pedido manual, por ejemplo "pon a Redimi2"), sin importar la rotación
 // automática. Poner en null para volver a la rotación automática normal.
 const FEATURED_OVERRIDE_ID = 'redimi2';
 function pickWeeklyFeatured(){
+  const artists = MUSIC_WEEKLY_POOL.filter(t=>t.type==='Artista de la semana');
   if(FEATURED_OVERRIDE_ID){
-    const forced = MUSIC_WEEKLY_POOL.find(t=>t.id===FEATURED_OVERRIDE_ID);
+    const forced = artists.find(t=>t.id===FEATURED_OVERRIDE_ID);
     if(forced) return forced;
   }
-  return MUSIC_WEEKLY_POOL[weekSeed() % MUSIC_WEEKLY_POOL.length];
+  return artists[weekSeed() % artists.length];
+}
+// "Pastor de la semana": misma idea, rota cada 7 días, tomado del mismo pool
+// pero filtrado a los que son pastor/enseñanza.
+function pickPastorOfWeek(){
+  const pastors = MUSIC_WEEKLY_POOL.filter(t=>t.type==='Pastor de la semana');
+  if(!pastors.length) return null;
+  return pastors[weekSeed() % pastors.length];
+}
+// "Canción del día": rota cada día (no cada semana) — misma semilla que
+// pickTodayVerse(), a nivel de día en vez de semana.
+function daySeed(){
+  const d = new Date();
+  const start = new Date(d.getFullYear(), 0, 0);
+  return Math.floor((d - start) / 86400000) + d.getFullYear() * 400;
+}
+function pickSongOfDay(){
+  const songs = MUSIC_WEEKLY_POOL.filter(t=>t.type==='Artista de la semana');
+  if(!songs.length) return null;
+  return songs[daySeed() % songs.length];
+}
+
+// ---------- Tarjeta destacada, ahora dinámica ----------
+// Un mismo diseño de tarjeta (.week-scene, sin tocarlo) para 3 contenidos
+// que rotan como un carrusel deslizable: Artista de la semana, Pastor de la
+// semana (con resumen + "Ver historia" igual que el artista) y Canción del
+// día (solo para reproducir, sin biografía — por eso showStory:false).
+function featuredSlideHTML(item, opts){
+  opts = opts || {};
+  const thumb = featuredPhotoUrl(item);
+  const label = opts.label || item.type;
+  const showStory = opts.showStory !== false && !!item.story;
+  return `
+    <div class="featured-slide">
+      <div class="week-scene" onclick="openMusicPersona('${item.id}')">
+        <div class="week-scene-photo" ${thumb ? `style="background-image:url('${thumb}');"` : ''}></div>
+        <div class="week-scene-body">
+          <div class="eyebrow"><span class="dot"></span>${label}</div>
+          <div class="name serif">${item.name}</div>
+          <div class="role">${item.role}</div>
+          <div class="blurb">${warmFeaturedLine(item)}</div>
+          <div class="week-scene-actions">
+            <button class="week-scene-btn" onclick="playTrackById('${item.id}', null, event)">▶ Escuchar ahora</button>
+            ${showStory ? `<button class="week-scene-btn week-scene-btn-ghost" onclick="openArtistStory('${item.id}', event)">Ver historia</button>` : ''}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+function renderFeaturedCarousel(){
+  const artistItem = pickWeeklyFeatured();
+  const pastorItem = pickPastorOfWeek();
+  const songItem = pickSongOfDay();
+  const slides = [
+    artistItem ? { item:artistItem, opts:{} } : null,
+    pastorItem ? { item:pastorItem, opts:{} } : null,
+    songItem ? { item:songItem, opts:{ label:'Canción del día', showStory:false } } : null,
+  ].filter(Boolean);
+
+  const wrap = document.getElementById('musica-featured');
+  wrap.innerHTML = `
+    <div class="featured-carousel" id="featured-carousel">
+      ${slides.map(s=>featuredSlideHTML(s.item, s.opts)).join('')}
+    </div>
+    ${slides.length>1 ? `<div class="featured-dots" id="featured-dots">${slides.map((_,i)=>`<span class="featured-dot${i===0?' active':''}"></span>`).join('')}</div>` : ''}
+  `;
+  if(slides.length>1) setupFeaturedCarousel();
+}
+// Actualiza los puntitos según qué tarjeta quedó más visible al deslizar
+// (sin librerías — un listener de scroll simple, con requestAnimationFrame
+// para no recalcular en cada pixel).
+function setupFeaturedCarousel(){
+  const el = document.getElementById('featured-carousel');
+  const dotsWrap = document.getElementById('featured-dots');
+  if(!el || !dotsWrap) return;
+  const dots = dotsWrap.querySelectorAll('.featured-dot');
+  let ticking = false;
+  el.onscroll = function(){
+    if(ticking) return;
+    ticking = true;
+    requestAnimationFrame(()=>{
+      const idx = Math.round(el.scrollLeft / Math.max(el.clientWidth,1));
+      dots.forEach((d,i)=> d.classList.toggle('active', i===idx));
+      ticking = false;
+    });
+  };
 }
 
 /* ---------------- "Para este momento" ----------------
@@ -3920,23 +4021,7 @@ function renderMusica(){
   document.getElementById('musica-search-results').innerHTML = '';
   document.getElementById('musica-default-sections').style.display = '';
   renderListenMoment();
-  const featured = pickWeeklyFeatured();
-  const featuredThumb = featuredPhotoUrl(featured);
-  document.getElementById('musica-featured').innerHTML = `
-    <div class="week-scene" onclick="openMusicPersona('${featured.id}')">
-      <div class="week-scene-photo" ${featuredThumb ? `style="background-image:url('${featuredThumb}');"` : ''}></div>
-      <div class="week-scene-body">
-        <div class="eyebrow"><span class="dot"></span>${featured.type}</div>
-        <div class="name serif">${featured.name}</div>
-        <div class="role">${featured.role}</div>
-        <div class="blurb">${warmFeaturedLine(featured)}</div>
-        <div class="week-scene-actions">
-          <button class="week-scene-btn" onclick="playTrackById('${featured.id}', null, event)">▶ Escuchar ahora</button>
-          ${featured.story ? `<button class="week-scene-btn week-scene-btn-ghost" onclick="openArtistStory('${featured.id}', event)">Ver historia</button>` : ''}
-        </div>
-      </div>
-    </div>
-  `;
+  renderFeaturedCarousel();
   document.getElementById('musica-categorias').innerHTML = MUSIC_CATEGORIES.map(cat=>`
     <div class="music-cat-item" style="background-image:url('${cat.img}');" onclick="openMusicCategory('${cat.id}')">
       <div class="t">${cat.t}</div>
