@@ -3740,6 +3740,18 @@ const MUSIC_PODCASTS = [
     img:'https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&w=500&q=70' },
   { id:'podcast-warren', name:'Rick Warren', s:'Propósito y vida con sentido', role:'Podcast · Enseñanza', yt:'SEFbK0G21NA', q:'rick warren podcast sermon español',
     img:'https://images.unsplash.com/photo-1441829266145-5a7f74e46ca7?auto=format&fit=crop&w=500&q=70' },
+  { id:'podcast-renovando-mente', name:'Renovando tu Mente', s:'R.C. Sproul enseña la Biblia de forma profunda y aplicable a la vida diaria', role:'Podcast · Enseñanza bíblica', q:'renovando tu mente podcast rc sproul',
+    img:'https://images.unsplash.com/photo-1479648673956-a6b7ced23550?auto=format&fit=crop&w=500&q=70' },
+  { id:'podcast-corazon-dinero', name:'Tu Corazón y el Dinero', s:'Héctor Salcedo y Chárbela El Hage enseñan a administrar el dinero honrando a Dios', role:'Podcast · Finanzas y fe', q:'tu corazón y el dinero podcast héctor salcedo',
+    img:'https://images.unsplash.com/photo-1633158829875-e5316a358c6f?auto=format&fit=crop&w=500&q=70' },
+  { id:'podcast-abre-biblia', name:'Abre la Biblia', s:'Colin Smith explica las Escrituras con un enfoque centrado en Cristo', role:'Podcast · Enseñanza bíblica', q:'abre la biblia podcast colin smith',
+    img:'https://images.unsplash.com/photo-1747210391677-0bbf4f806319?auto=format&fit=crop&w=500&q=70' },
+  { id:'podcast-aviva-corazones', name:'Aviva Nuestros Corazones', s:'Nancy DeMoss Wolgemouth, reflexiones y devocionales diarios para mujeres', role:'Podcast · Para mujeres', q:'aviva nuestros corazones podcast nancy demoss',
+    img:'https://images.unsplash.com/photo-1550202256-47e53ffabc95?auto=format&fit=crop&w=500&q=70' },
+  { id:'podcast-vae', name:'VAE Podcast', s:'Conversaciones sobre la fe cristiana y la vida espiritual, volviendo a la esencia', role:'Podcast', q:'vae podcast volviendo a la esencia',
+    img:'https://images.unsplash.com/photo-1589903308904-1010c2294adc?auto=format&fit=crop&w=500&q=70' },
+  { id:'podcast-textos-fuera-contexto', name:'Textos Fuera de Contexto', s:'Pastores y teólogos hispanos conversan sobre temas del ministerio y la vida cristiana', role:'Podcast · Coalición por el Evangelio', q:'textos fuera de contexto podcast coalición por el evangelio',
+    img:'https://images.unsplash.com/photo-1499447155021-4907f71b9ef5?auto=format&fit=crop&w=500&q=70' },
 ];
 
 // Grupo del que rota el destacado de la semana — mezcla de artistas, pastores y
@@ -4202,15 +4214,43 @@ async function openMusicCategory(id){
   // Complemento, más abajo (se ve al hacer scroll): canciones individuales
   // reales, no mixes — sin desarmar ni reemplazar la sección de arriba. Solo
   // tiene sentido para música (no para "Palabra", que es predicación).
+  categorySongsState = null;
   if(id !== 'palabra'){
-    const songs = await ytApiSearchSongs(cat.q, 10);
-    if(songs && songs.length){
+    const result = await ytApiSearchSongs(cat.q, 10);
+    const seen = new Set();
+    const deduped = (result.items||[]).filter(v=>{ if(seen.has(v.id)) return false; seen.add(v.id); return true; });
+    if(deduped.length){
+      const hasMore = !!(result.shortToken || result.mediumToken);
+      categorySongsState = { q: cat.q, shortToken: result.shortToken, mediumToken: result.mediumToken, shownIds: new Set(deduped.map(v=>v.id)) };
       listEl.insertAdjacentHTML('beforeend', `
         <div class="section-title" style="margin-top:24px; padding-left:0; padding-right:0;">🎵 Canciones</div>
-        <p style="font-size:12.5px; color:var(--ink-soft); margin:-6px 0 10px;">Versiones individuales, no mixes ni sesiones largas.</p>
-        ${songs.map(v=>musicSearchResultRow(v)).join('')}
+        <p style="font-size:12.5px; color:var(--ink-soft); margin:-6px 0 10px;">Versiones individuales de hasta 7 minutos, no mixes ni sesiones largas.</p>
+        <div id="musicaCategoria-songs">${deduped.map(v=>musicSearchResultRow(v)).join('')}</div>
+        ${hasMore ? `<button class="btn-text" id="musicaCategoria-songs-more" style="margin-top:12px;" onclick="loadMoreCategorySongs()">Ver más</button>` : ''}
       `);
     }
+  }
+}
+// Estado de paginación de la sección "Canciones" de la categoría abierta
+// ahora mismo — se reinicia cada vez que se entra a una categoría distinta.
+let categorySongsState = null;
+async function loadMoreCategorySongs(){
+  if(!categorySongsState) return;
+  const btn = document.getElementById('musicaCategoria-songs-more');
+  if(btn){ btn.disabled = true; btn.textContent = 'Cargando…'; }
+  const result = await ytApiSearchSongs(categorySongsState.q, 10, { shortToken: categorySongsState.shortToken, mediumToken: categorySongsState.mediumToken });
+  const fresh = (result.items||[]).filter(v=>!categorySongsState.shownIds.has(v.id));
+  fresh.forEach(v=>categorySongsState.shownIds.add(v.id));
+  const container = document.getElementById('musicaCategoria-songs');
+  if(container && fresh.length){
+    container.insertAdjacentHTML('beforeend', fresh.map(v=>musicSearchResultRow(v)).join(''));
+  }
+  categorySongsState.shortToken = result.shortToken;
+  categorySongsState.mediumToken = result.mediumToken;
+  const hasMore = !!(result.shortToken || result.mediumToken);
+  if(btn){
+    if(hasMore){ btn.disabled = false; btn.textContent = 'Ver más'; }
+    else { btn.remove(); }
   }
 }
 
@@ -4310,7 +4350,7 @@ async function openMusicPersona(id){
    expuesta en el navegador. Si esa función no está conectada (o falla por
    cualquier motivo), devuelve null y quien la llama ya sabe caer de vuelta
    al contenido curado, en vez de romperse. */
-async function ytApiSearch(q, maxResults, extra){
+async function ytApiSearchFull(q, maxResults, extra){
   try{
     const body = Object.assign({ q, maxResults: maxResults||10 }, extra||{});
     const r = await fetch('/api/youtube', {
@@ -4320,29 +4360,35 @@ async function ytApiSearch(q, maxResults, extra){
     });
     if(!r.ok) return null;
     const data = await r.json();
-    return (data.items && data.items.length) ? data.items : null;
+    if(!data.items || !data.items.length) return { items:[], nextPageToken: data.nextPageToken || null };
+    return { items: data.items, nextPageToken: data.nextPageToken || null };
   }catch(e){ return null; }
+}
+async function ytApiSearch(q, maxResults, extra){
+  const res = await ytApiSearchFull(q, maxResults, extra);
+  return (res && res.items.length) ? res.items : null;
 }
 // Complemento de "canciones sueltas" para una categoría: en vez de adivinar
 // por palabras qué es un mix y qué no (poco confiable), usa el propio filtro
-// de duración de YouTube — pide solo videos cortos y medianos (menos de 20
-// minutos), que es como casi siempre se sube una canción individual, y deja
-// afuera las sesiones/mixes de una hora o más sin tocar la lista de arriba.
-async function ytApiSearchSongs(q, maxResults){
-  const half = Math.ceil((maxResults||10)/2);
-  const [shortR, mediumR] = await Promise.all([
-    ytApiSearch(q, half, { videoDuration:'short' }),
-    ytApiSearch(q, half, { videoDuration:'medium' }),
+// de duración de YouTube (videos cortos/medianos) MÁS un filtro exacto de
+// hasta 7 minutos (que aplica el servidor consultando la duración real de
+// cada video), así quedan afuera tanto los mixes de una hora como las
+// versiones "extendidas" de 8-20 minutos. tokens={shortToken,mediumToken}
+// permite pedir la página siguiente para el botón "Ver más".
+const SONG_MAX_DURATION_SECONDS = 7*60;
+async function ytApiSearchSongs(q, maxResults, tokens){
+  tokens = tokens || {};
+  const half = Math.max(4, Math.ceil((maxResults||10)/2));
+  const [shortRes, mediumRes] = await Promise.all([
+    ytApiSearchFull(q, half, { videoDuration:'short', maxDurationSeconds:SONG_MAX_DURATION_SECONDS, pageToken: tokens.shortToken || undefined }),
+    ytApiSearchFull(q, half, { videoDuration:'medium', maxDurationSeconds:SONG_MAX_DURATION_SECONDS, pageToken: tokens.mediumToken || undefined }),
   ]);
-  const merged = [...(shortR||[]), ...(mediumR||[])];
-  if(!merged.length) return null;
-  const seen = new Set();
-  const deduped = merged.filter(v=>{
-    if(seen.has(v.id)) return false;
-    seen.add(v.id);
-    return true;
-  });
-  return deduped.slice(0, maxResults||10);
+  const items = [...(shortRes ? shortRes.items : []), ...(mediumRes ? mediumRes.items : [])];
+  return {
+    items,
+    shortToken: shortRes ? shortRes.nextPageToken : null,
+    mediumToken: mediumRes ? mediumRes.nextPageToken : null,
+  };
 }
 function musicLoadingHTML(){
   return `<div style="display:flex; justify-content:center; padding:40px 0;"><div class="light-dot"></div></div>`;
