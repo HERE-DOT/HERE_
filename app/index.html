@@ -775,27 +775,37 @@
      izquierda, texto a la derecha, un solo botón suave. Nada de imagen de
      fondo a página completa ni look de póster de concierto. */
   .week-scene{
-    display:flex; align-items:center; gap:15px; cursor:pointer;
-    margin:6px 24px 18px; padding:16px; border-radius:22px;
-    background:linear-gradient(165deg, var(--bg-warm), var(--card));
-    border:1px solid var(--line); box-shadow:var(--shadow-sm);
+    position:relative; display:flex; align-items:center; gap:18px; cursor:pointer;
+    margin:4px 24px 24px; padding:20px; border-radius:26px;
+    background:linear-gradient(155deg, var(--bg-warm), var(--card));
+    border:1px solid var(--line); box-shadow:var(--shadow-md);
     transition:transform .15s ease;
+    animation:weekSceneIn .5s cubic-bezier(.22,1,.36,1) both;
   }
-  .week-scene:active{transform:scale(0.985);}
+  @keyframes weekSceneIn{
+    from{ opacity:0; transform:translateY(10px) scale(0.98); }
+    to{ opacity:1; transform:translateY(0) scale(1); }
+  }
+  .week-scene:active{transform:scale(0.98);}
   .week-scene-photo{
-    width:82px; height:82px; border-radius:16px; flex:none; object-fit:cover;
-    background:var(--beige) center/cover no-repeat; box-shadow:var(--shadow-sm);
+    width:104px; height:104px; border-radius:20px; flex:none; object-fit:cover;
+    background:var(--beige) center/cover no-repeat;
+    box-shadow:0 6px 18px rgba(193,155,74,0.28), 0 0 0 3px rgba(255,255,255,0.6);
   }
   .week-scene-body{flex:1; min-width:0;}
-  .week-scene .eyebrow{display:flex; align-items:center; gap:7px; font-size:10.5px; letter-spacing:.5px; text-transform:uppercase; font-weight:700; color:var(--gold-deep); opacity:.9;}
-  .week-scene .eyebrow .dot{width:5px; height:5px; border-radius:50%; background:var(--gold);}
-  .week-scene .name{font-family:'Fraunces'; font-size:19px; font-weight:500; color:var(--ink); margin-top:4px;}
-  .week-scene .role{font-size:12.5px; color:var(--ink-soft); margin-top:2px;}
-  .week-scene .blurb{font-size:12.5px; color:var(--ink-soft); margin-top:6px; line-height:1.45; font-style:italic; font-family:'Fraunces';}
+  .week-scene .eyebrow{display:flex; align-items:center; gap:7px; font-size:11px; letter-spacing:.6px; text-transform:uppercase; font-weight:700; color:var(--gold-deep); opacity:.95;}
+  .week-scene .eyebrow .dot{width:6px; height:6px; border-radius:50%; background:var(--gold); animation:weekScenePulse 2.2s ease-in-out infinite;}
+  @keyframes weekScenePulse{
+    0%,100%{ box-shadow:0 0 0 0 rgba(201,162,78,0.5); }
+    50%{ box-shadow:0 0 0 5px rgba(201,162,78,0); }
+  }
+  .week-scene .name{font-family:'Fraunces'; font-size:22px; font-weight:500; color:var(--ink); margin-top:5px; line-height:1.15;}
+  .week-scene .role{font-size:13px; color:var(--ink-soft); margin-top:3px;}
+  .week-scene .blurb{font-size:13px; color:var(--ink-soft); margin-top:8px; line-height:1.5; font-style:italic; font-family:'Fraunces';}
   .week-scene-btn{
-    margin-top:10px; border:none; background:var(--sage-deep); color:#fff; font-weight:600;
-    font-size:12px; padding:8px 16px; border-radius:100px; cursor:pointer; display:inline-flex; align-items:center; gap:5px;
-    transition:opacity .15s ease, transform .15s ease;
+    margin-top:12px; border:none; background:linear-gradient(135deg,var(--sage-deep),var(--sage-deeper)); color:#fff; font-weight:600;
+    font-size:12.5px; padding:9px 18px; border-radius:100px; cursor:pointer; display:inline-flex; align-items:center; gap:6px;
+    transition:opacity .15s ease, transform .15s ease; box-shadow:0 3px 10px rgba(60,90,60,0.25);
   }
   .week-scene-btn:active{ transform:scale(0.95); opacity:.85; }
   @media (max-width:359px){ .week-scene{ flex-wrap:wrap; } }
@@ -1630,9 +1640,13 @@
     <div id="musica-search-results"></div>
     <div id="musica-default-sections">
 
-    <!-- CAPA A — "Para este momento": lo primero que se ve, con más peso
-         visual y emocional que la biblioteca de abajo. Exactamente 3 caminos
-         simples y suaves, sin selector de humor. -->
+    <!-- Destacado de la semana: lo primero que se ve, arriba de "Para este
+         momento" — más grande y con vida, para que abra la pantalla. -->
+    <div id="musica-featured"></div>
+
+    <!-- CAPA A — "Para este momento": con más peso visual y emocional que la
+         biblioteca de abajo. Exactamente 3 caminos simples y suaves, sin
+         selector de humor. -->
     <div class="listen-moment" id="listen-moment">
       <div class="listen-moment-head">
         <span class="listen-moment-icon" aria-hidden="true">🌿</span>
@@ -1656,7 +1670,6 @@
         <button class="escuchar-tab" data-t="predicaciones" onclick="setEscucharTab('predicaciones')">Predicaciones</button>
       </div>
     </div>
-    <div id="musica-featured"></div>
     <div id="escuchar-panel-musica">
       <div class="section-title serif" style="margin-top:6px; font-size:16px; font-weight:500; text-transform:none; letter-spacing:0; opacity:1; color:var(--ink);">Explora por momento</div>
       <div class="music-cat-grid" id="musica-categorias"></div>
