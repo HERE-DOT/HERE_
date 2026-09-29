@@ -911,21 +911,19 @@
   @media (min-width:900px){ .story-hero{ height:400px; } }
 
   .music-search-bar{display:flex; gap:8px; padding:4px 24px 14px; align-items:center;}
-  /* ---------- Podcasts: carrusel horizontal con ritmo, no una lista para
-     scrollear. Tarjetas fotográficas de distinto alto (zig-zag suave) para
-     que se sienta como algo que se explora por curiosidad, no un menú. ---- */
+  /* ---------- Podcasts: cuadrícula de dos columnas que se desliza con el
+     resto de la pantalla (hacia abajo), no un carrusel aparte hacia el
+     lado — tarjetas fotográficas, misma idea de "explorar por curiosidad"
+     pero siguiendo el mismo gesto de scroll que ya usa toda la app. ---- */
   .podcast-carousel{
-    display:flex; gap:14px; overflow-x:auto; padding:8px 24px 20px;
-    scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch;
+    display:grid; grid-template-columns:repeat(2, 1fr); gap:14px; padding:8px 24px 20px;
   }
-  .podcast-carousel::-webkit-scrollbar{ display:none; }
   .podcast-card{
-    flex:0 0 148px; scroll-snap-align:start; height:206px; border-radius:20px;
+    aspect-ratio:0.82; border-radius:20px;
     position:relative; overflow:hidden; cursor:pointer;
     background:var(--beige) center/cover no-repeat; box-shadow:var(--shadow-sm);
     transition:transform .15s ease;
   }
-  .podcast-card:nth-child(even){ margin-top:26px; }
   .podcast-card:active{ transform:scale(0.96); }
   .podcast-card::after{
     content:''; position:absolute; left:0; right:0; bottom:0; height:68%;
@@ -935,6 +933,30 @@
   .podcast-card .t{ color:#fff; font-family:'Fraunces'; font-size:15px; font-weight:500; line-height:1.22; }
   .podcast-card .s{ color:rgba(255,255,255,0.82); font-size:11px; margin-top:4px; line-height:1.4; }
   .podcast-card .eyebrow{ color:var(--gold-light); font-size:9.5px; letter-spacing:.5px; text-transform:uppercase; font-weight:700; margin-bottom:4px; }
+  /* ---------- Predicaciones: el carrusel horizontal con ritmo que antes
+     tenían los podcasts — tarjetas fotográficas de distinto alto (zig-zag
+     suave) que se deslizan hacia el lado, para explorar por curiosidad. ---- */
+  .pred-carousel{
+    display:flex; gap:14px; overflow-x:auto; padding:8px 24px 20px;
+    scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch;
+  }
+  .pred-carousel::-webkit-scrollbar{ display:none; }
+  .pred-card{
+    flex:0 0 148px; scroll-snap-align:start; height:206px; border-radius:20px;
+    position:relative; overflow:hidden; cursor:pointer;
+    background:var(--beige) center/cover no-repeat; box-shadow:var(--shadow-sm);
+    transition:transform .15s ease;
+  }
+  .pred-card:nth-child(even){ margin-top:26px; }
+  .pred-card:active{ transform:scale(0.96); }
+  .pred-card::after{
+    content:''; position:absolute; left:0; right:0; bottom:0; height:68%;
+    background:linear-gradient(0deg, rgba(18,14,8,0.86) 0%, rgba(18,14,8,0.15) 70%, rgba(18,14,8,0) 100%);
+  }
+  .pred-card-body{ position:absolute; left:0; right:0; bottom:0; z-index:1; padding:14px 14px 16px; }
+  .pred-card .t{ color:#fff; font-family:'Fraunces'; font-size:15px; font-weight:500; line-height:1.22; }
+  .pred-card .s{ color:rgba(255,255,255,0.82); font-size:11px; margin-top:4px; line-height:1.4; }
+  .pred-card .eyebrow{ color:var(--gold-light); font-size:9.5px; letter-spacing:.5px; text-transform:uppercase; font-weight:700; margin-bottom:4px; }
   /* ---------- "Para este momento": capa contextual, la que diferencia a
      Escuchar de una biblioteca de contenido genérica — un acompañamiento
      emocional breve (3 caminos suaves) en vez de una lista más para
@@ -1875,7 +1897,7 @@
     </div>
     <div id="escuchar-panel-predicaciones">
       <div class="section-title" style="margin-top:6px;">Pastores y predicaciones</div>
-      <div class="stack" id="musica-pastores" style="padding:0 24px 24px;"></div>
+      <div class="pred-carousel" id="musica-pastores"></div>
     </div>
     </div>
   </section>
@@ -4315,11 +4337,11 @@ function renderMusica(){
   // no solo uno); el botón ▶ es un atajo para reproducir de una vez su video
   // insignia, sin tener que entrar al catálogo primero.
   document.getElementById('musica-pastores').innerHTML = MUSIC_PASTORES.map(p=>`
-    <div class="music-person" onclick="openMusicPersona('${p.id}')">
-      <div class="music-person-avatar" style="background:${p.bg};">🎙️</div>
-      <div><div class="t">${p.name}</div><div class="s">${p.s}</div></div>
-      <div class="music-person-links">
-        <button aria-label="Reproducir" onclick="playTrackById('${p.id}', null, event)">▶</button>
+    <div class="pred-card" style="background:${p.img ? `url('${p.img}') center/cover no-repeat` : p.bg};" onclick="openMusicPersona('${p.id}')">
+      <div class="pred-card-body">
+        <div class="eyebrow">Predicación</div>
+        <div class="t">${p.name}</div>
+        <div class="s">${p.s}</div>
       </div>
     </div>
   `).join('');
