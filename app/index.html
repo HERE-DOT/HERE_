@@ -790,7 +790,7 @@
   .week-scene:active{transform:scale(0.98);}
   .week-scene-photo{
     position:absolute; inset:0; width:68%; height:100%;
-    background:var(--beige) center/cover no-repeat;
+    background:var(--beige) center 18% / cover no-repeat;
   }
   /* Importante: estos % son relativos al ANCHO DE LA FOTO (68% de la
      tarjeta), no al de la tarjeta completa — por eso tienen que terminar
@@ -1083,7 +1083,7 @@
   .sheet{width:100%; max-width:480px; background:var(--bg); border-radius:28px 28px 0 0; padding:26px 24px calc(26px + env(safe-area-inset-bottom)); animation:slideUp .32s cubic-bezier(.22,.7,.25,1); box-shadow:0 -20px 50px rgba(0,0,0,0.2);}
   @keyframes slideUp{from{transform:translateY(30px); opacity:0;} to{transform:translateY(0); opacity:1;}}
   .sheet .handle{width:36px; height:4px; background:var(--line); border-radius:2px; margin:0 auto 18px;}
-  .artist-story-photo{width:100%; height:190px; border-radius:18px; background:var(--beige) center/cover no-repeat;}
+  .artist-story-photo{width:100%; height:220px; border-radius:18px; background:var(--beige) center 15% / cover no-repeat;}
 
   .empty{padding:60px 30px; text-align:center; color:var(--ink-soft);}
   .empty .light-dot{width:8px; height:8px; border-radius:50%; background:var(--gold); margin:0 auto 16px;}
@@ -3608,14 +3608,17 @@ const MUSIC_WEEKLY_POOL = [
   { id:'dclario', type:'Artista de la semana', name:'Christine D’Clario', role:'Adoración', blurb:'Voz puertorriqueña conocida por su intimidad en la adoración.', yt:'5i6pSmfmynY', q:'christine dclario',
     story:'Christine D’Clario es una cantautora puertorriqueña de adoración con más de una década de trayectoria. Es conocida por la intimidad de su música y por compartir abiertamente, dentro y fuera del escenario, su propio caminar de fe.' },
   { id:'corson', type:'Pastor de la semana', name:'Andrés Corson', role:'Pastor · Enseñanza bíblica', blurb:'Enseñanzas claras y prácticas para vivir la fe día a día.', yt:'rfPmW0G4mOI', q:'andrés corson prédica',
+    photo:'https://commons.wikimedia.org/wiki/Special:FilePath/Andres_Corson.jpg?width=500',
     story:'Andrés Corson es un pastor colombiano, líder de una de las congregaciones más grandes de Bogotá. Sus enseñanzas se caracterizan por ser claras, prácticas y enfocadas en cómo vivir la fe en las decisiones del día a día, más que en el discurso abstracto.' },
   { id:'redimi2', type:'Artista de la semana', name:'Redimi2', role:'Rap / hip-hop cristiano', blurb:'Uno de los referentes del rap cristiano en español.', yt:'bQNikeLRJQw', q:'redimi2',
     story:'Redimi2 es un rapero cristiano puertorriqueño y uno de los pioneros del género en español. Su música nace de un testimonio personal de transformación, y sus letras suelen hablar de identidad, lucha y propósito desde una fe muy concreta, no idealizada.' },
   { id:'cafedios', type:'Podcast de la semana', name:'Un Café con Dios', role:'Podcast devocional', blurb:'Un momento breve para detenerte y escuchar, cada día.', yt:'azRuIRgUMbw', q:'un café con dios podcast',
     story:'Un Café con Dios es un podcast devocional pensado para un momento breve del día: una pausa corta, del tamaño de un café, para orar, reflexionar y volver a enfocar el corazón antes de seguir con la rutina.' },
   { id:'miel', type:'Artista de la semana', name:'Miel San Marcos', role:'Adoración', blurb:'Adoración guatemalteca con una energía que ha marcado a toda una generación.', yt:'D-HHlMXfxbg', q:'miel san marcos',
+    photo:'https://commons.wikimedia.org/wiki/Special:FilePath/Miel_San_Marcos_-_Josh_%26_Matthew_Morales.jpg?width=500',
     story:'Miel San Marcos es una banda de adoración guatemalteca formada por tres hermanos. Su música ha marcado a toda una generación de jóvenes en Latinoamérica, con un estilo que combina intensidad en el escenario y mucha cercanía en el mensaje.' },
   { id:'daigle', type:'Artista de la semana', name:'Lauren Daigle', role:'Cristiana en inglés', blurb:'Una de las voces más escuchadas del CCM contemporáneo.', yt:'sIaT8Jl2zpI', q:'lauren daigle',
+    photo:'https://commons.wikimedia.org/wiki/Special:FilePath/Lauren_Daigle_in_2023_(cropped).jpg?width=500',
     story:'Lauren Daigle es una cantante estadounidense de música cristiana contemporánea, reconocida con varios premios Grammy y Dove. Su voz y la honestidad de sus letras han hecho que su música llegue también a personas fuera del ámbito cristiano.' },
   { id:'danilo', type:'Pastor de la semana', name:'Danilo Montero', role:'Pastor · Adoración', blurb:'Une la enseñanza con la adoración de una forma cercana.', yt:'B5myKc92POU', q:'danilo montero prédica',
     story:'Danilo Montero es pastor y adorador, con varias décadas de trayectoria uniendo la enseñanza bíblica con la adoración. Es una de las voces más reconocidas de la música cristiana en español, con un estilo cercano y pastoral.' },
@@ -3626,6 +3629,7 @@ const MUSIC_WEEKLY_POOL = [
   { id:'witt', type:'Artista de la semana', name:'Marcos Witt', role:'Adoración', blurb:'Uno de los pioneros de la adoración contemporánea en español.', yt:'F5gMNbGfy1g', q:'marcos witt',
     story:'Marcos Witt es uno de los pioneros de la adoración contemporánea en español. Con más de tres décadas de trayectoria, su música y su forma de enseñar han marcado a varias generaciones de creyentes en toda Latinoamérica.' },
   { id:'tercercielo', type:'Artista de la semana', name:'Tercer Cielo', role:'Pop cristiano', blurb:'Baladas y pop cristiano que han acompañado a generaciones.', yt:'BDwEyfgClF4', q:'tercer cielo',
+    photo:'https://commons.wikimedia.org/wiki/Special:FilePath/Juan_Carlos_Rodr%C3%ADguez_(Tercer_Cielo)_(cropped).jpg?width=500',
     story:'Tercer Cielo es una banda puertorriqueña de pop cristiano, conocida por baladas que han acompañado momentos importantes — de duelo, de sanidad, de celebración — en la vida de fe de muchas personas.' },
 ];
 function findTrackById(id){
@@ -3794,7 +3798,7 @@ function renderMusica(){
   document.getElementById('musica-default-sections').style.display = '';
   renderListenMoment();
   const featured = pickWeeklyFeatured();
-  const featuredThumb = trackThumbUrl(featured);
+  const featuredThumb = featuredPhotoUrl(featured);
   document.getElementById('musica-featured').innerHTML = `
     <div class="week-scene" onclick="openMusicPersona('${featured.id}')">
       <div class="week-scene-photo" ${featuredThumb ? `style="background-image:url('${featuredThumb}');"` : ''}></div>
@@ -3900,7 +3904,7 @@ function openArtistStory(id, ev){
   const item = findTrackById(id);
   if(!item || !item.story) return;
   haptic(8);
-  const thumb = trackThumbUrl(item);
+  const thumb = featuredPhotoUrl(item);
   openSheet(`
     <div class="handle"></div>
     ${thumb ? `<div class="artist-story-photo" style="background-image:url('${thumb}');"></div>` : ''}
@@ -4136,6 +4140,13 @@ function trackThumbUrl(item){
   if(item.thumb) return item.thumb;
   if(item.yt) return `https://i.ytimg.com/vi/${item.yt}/hqdefault.jpg`;
   return '';
+}
+// Para "Artista de la semana" y "Ver historia": preferimos una foto real de
+// la persona (item.photo, cara y medio cuerpo) sobre la miniatura del video
+// de YouTube, que casi nunca muestra bien al artista.
+function featuredPhotoUrl(item){
+  if(!item) return '';
+  return item.photo || trackThumbUrl(item);
 }
 function setPlayerMode(mode){
   playerMode = mode;
