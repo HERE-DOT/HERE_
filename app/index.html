@@ -958,6 +958,39 @@
   .pred-card .t{ color:#fff; font-family:'Fraunces'; font-size:15px; font-weight:500; line-height:1.22; }
   .pred-card .s{ color:rgba(255,255,255,0.82); font-size:11px; margin-top:4px; line-height:1.4; }
   .pred-card .eyebrow{ color:var(--gold-light); font-size:9.5px; letter-spacing:.5px; text-transform:uppercase; font-weight:700; margin-bottom:4px; }
+  /* ---------- Predicaciones por momento: no son fotos sino color y un
+     ícono — para que se note de inmediato que es otra forma de explorar
+     (por cómo te sientes, no por quién predica). Cada tarjeta tiene su
+     propio degradado y una burbuja decorativa que respira suavemente. ---- */
+  .pred-mood-grid{ display:grid; grid-template-columns:1fr 1fr; gap:13px; padding:6px 24px 28px; }
+  .pred-mood-card{
+    position:relative; overflow:hidden; border-radius:22px; cursor:pointer;
+    min-height:128px; padding:16px 16px 15px; box-shadow:var(--shadow-sm);
+    display:flex; flex-direction:column; justify-content:space-between;
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .pred-mood-card::before{
+    content:''; position:absolute; width:92px; height:92px; border-radius:50%;
+    background:rgba(255,255,255,0.16); top:-30px; right:-26px;
+    animation:predMoodFloat 5.5s ease-in-out infinite;
+  }
+  .pred-mood-card:nth-child(3n+2)::before{ animation-delay:-1.6s; }
+  .pred-mood-card:nth-child(3n)::before{ animation-delay:-3.2s; }
+  @keyframes predMoodFloat{
+    0%,100%{ transform:translate(0,0) scale(1); }
+    50%{ transform:translate(-6px,8px) scale(1.08); }
+  }
+  .pred-mood-card:active{ transform:scale(0.96); }
+  .pred-mood-icon{
+    position:relative; z-index:1; width:38px; height:38px; border-radius:50%;
+    background:rgba(255,255,255,0.22); display:flex; align-items:center; justify-content:center;
+    font-size:17px; -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
+  }
+  .pred-mood-card .t{ position:relative; z-index:1; color:#fff; font-family:'Fraunces'; font-size:15px; font-weight:500; line-height:1.2; margin-top:12px; text-shadow:0 1px 6px rgba(0,0,0,0.12); }
+  .pred-mood-card .s{ position:relative; z-index:1; color:rgba(255,255,255,0.86); font-size:10.5px; margin-top:3px; line-height:1.4; }
+  @media (prefers-reduced-motion: reduce){
+    .pred-mood-card::before{ animation:none; }
+  }
   /* ---------- "Para este momento": capa contextual, la que diferencia a
      Escuchar de una biblioteca de contenido genérica — un acompañamiento
      emocional breve (3 caminos suaves) en vez de una lista más para
@@ -1899,6 +1932,9 @@
     <div id="escuchar-panel-predicaciones">
       <div class="section-title" style="margin-top:6px;">Pastores y predicaciones</div>
       <div class="pred-carousel" id="musica-pastores"></div>
+      <div class="section-title" style="margin-top:8px;">Predicaciones por momento</div>
+      <p style="padding:0 24px; margin-top:-2px; margin-bottom:2px; color:var(--ink-soft); font-size:13px; line-height:1.5;">Mensajes elegidos según lo que estás viviendo</p>
+      <div class="pred-mood-grid" id="pred-moods"></div>
     </div>
     </div>
   </section>
@@ -3920,6 +3956,29 @@ const MUSIC_CATEGORIES = [
     img:'https://images.unsplash.com/photo-1504622956513-06165f390646?auto=format&fit=crop&w=800&q=70' },
 ];
 
+// Predicaciones por momento: no por artista ni tema musical, sino por lo que
+// la persona está sintiendo — cada una busca predicaciones reales en YouTube
+// con una consulta orientada a ese sentimiento (mismo mecanismo que
+// MUSIC_CATEGORIES, reutilizando ytApiSearch y la pantalla musicaCategoria).
+const PRED_MOODS = [
+  { id:'agradecimiento', emoji:'🙏', t:'Agradecimiento', s:'Para dar gracias a Dios',
+    q:'predicación cristiana de agradecimiento a Dios', bg:'linear-gradient(135deg,#D4AF6A,#96731F)' },
+  { id:'tristeza', emoji:'💧', t:'Momentos tristes', s:'Cuando el corazón está quebrantado',
+    q:'predicación cristiana para el dolor y la tristeza', bg:'linear-gradient(135deg,#6E8FB0,#33526E)' },
+  { id:'ansiedad', emoji:'🕊️', t:'Ansiedad y miedo', s:'Para encontrar calma',
+    q:'predicación cristiana para la ansiedad y el miedo', bg:'linear-gradient(135deg,#7CA184,#425F49)' },
+  { id:'esperanza', emoji:'🌅', t:'Esperanza', s:'Para renovar las fuerzas',
+    q:'predicación cristiana de esperanza', bg:'linear-gradient(135deg,#C98A5E,#8A5636)' },
+  { id:'fortaleza', emoji:'🔥', t:'Fortaleza', s:'Cuando necesitas valentía',
+    q:'predicación cristiana de fortaleza y fe', bg:'linear-gradient(135deg,#9C5B54,#5E312C)' },
+  { id:'perdon', emoji:'🤍', t:'Perdón y sanidad', s:'Para soltar y sanar',
+    q:'predicación cristiana sobre el perdón y la sanidad interior', bg:'linear-gradient(135deg,#5B9490,#2E5B57)' },
+  { id:'familia', emoji:'🏡', t:'Familia y hogar', s:'Fe para el hogar',
+    q:'predicación cristiana para la familia', bg:'linear-gradient(135deg,#8C8256,#544C2C)' },
+  { id:'proposito', emoji:'✨', t:'Propósito', s:'Para encontrar dirección',
+    q:'predicación cristiana sobre el propósito de Dios', bg:'linear-gradient(135deg,#736A55,#3E3826)' },
+];
+
 // Pastores / predicadores recomendados.
 // Pastores / predicadores recomendados — cada uno con un video real (yt) o,
 // cuando no hay un solo video representativo, una lista de reproducción (ytList).
@@ -4361,6 +4420,18 @@ function renderMusica(){
       </div>
     </div>
   `).join('');
+  const predMoodsEl = document.getElementById('pred-moods');
+  if(predMoodsEl){
+    predMoodsEl.innerHTML = PRED_MOODS.map(m=>`
+      <div class="pred-mood-card" style="background:${m.bg};" onclick="openPredMood('${m.id}')">
+        <div class="pred-mood-icon" aria-hidden="true">${m.emoji}</div>
+        <div>
+          <div class="t">${m.t}</div>
+          <div class="s">${m.s}</div>
+        </div>
+      </div>
+    `).join('');
+  }
   setEscucharTab(load('here_escuchar_tab','musica'));
 }
 // Segmentado Música / Podcast / Predicaciones en la parte de arriba de
@@ -4438,6 +4509,41 @@ async function openMusicCategory(id){
       `);
     }
   }
+}
+// Abre una "Predicación por momento": misma pantalla y mecanismo que
+// openMusicCategory (busca en YouTube con la consulta de ese sentimiento),
+// pero si no hay resultados reales, en vez del pool de música cae en los
+// pastores ya conocidos de la app — siguen siendo predicaciones reales.
+function renderPastorFallbackRow(p){
+  return `<div class="music-track" onclick="openMusicPersona('${p.id}')">
+    <div class="music-track-icon" style="background:${p.img ? `url('${p.img}') center/cover no-repeat` : p.bg};">${p.img ? '' : '🎙️'}</div>
+    <div><div class="t">${p.name}</div><div class="s">${p.role || p.s}</div></div>
+  </div>`;
+}
+async function openPredMood(id){
+  const mood = PRED_MOODS.find(m=>m.id===id);
+  if(!mood) return;
+  document.getElementById('musicaCategoria-title').textContent = mood.t;
+  document.getElementById('musicaCategoria-subtitle').textContent = mood.s + '.';
+  const listEl = document.getElementById('musicaCategoria-list');
+  listEl.innerHTML = musicLoadingHTML();
+  go('musicaCategoria');
+
+  const results = await ytApiSearch(mood.q, 10);
+  if(results && results.length){
+    listEl.innerHTML = results.map(v=>musicSearchResultRow(v)).join('');
+  }else{
+    // sin conexión a la búsqueda real: se muestran los pastores de la app
+    // (predicaciones reales igual, solo que curadas por nosotros en vez de
+    // encontradas por búsqueda) más un enlace directo a YouTube.
+    listEl.innerHTML = MUSIC_PASTORES.map(renderPastorFallbackRow).join('') + `
+      <div class="list-card" style="margin-top:6px;" onclick="openMusicSearch('youtube','${mood.q.replace(/'/g,"\\'")}')">
+        <div><div class="t">Buscar más de "${mood.t}" en YouTube</div><div class="s">Se abre en una pestaña nueva</div></div>
+        <span>↗</span>
+      </div>
+    `;
+  }
+  categorySongsState = null;
 }
 // Estado de paginación de la sección "Canciones" de la categoría abierta
 // ahora mismo — se reinicia cada vez que se entra a una categoría distinta.
