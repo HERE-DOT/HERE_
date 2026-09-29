@@ -32,6 +32,11 @@ module.exports = async function handler(req, res) {
   // que sea fácil de probar directo desde el navegador.
   const q = (body && body.q) || req.query.q;
   const maxResults = Math.min(parseInt((body && body.maxResults) || req.query.maxResults || 10, 10) || 10, 20);
+  // videoDuration (opcional): "short" (<4 min), "medium" (4–20 min) o "long"
+  // (>20 min). La usa el frontend para pedir canciones sueltas en vez de
+  // mixes largos, sin tener que adivinar por palabras en la búsqueda.
+  const rawDuration = (body && body.videoDuration) || req.query.videoDuration;
+  const videoDuration = ['short', 'medium', 'long'].includes(rawDuration) ? rawDuration : null;
 
   if (!q || typeof q !== 'string' || !q.trim()) {
     res.status(400).json({ error: 'falta "q" (qué buscar)' });
@@ -51,6 +56,7 @@ module.exports = async function handler(req, res) {
       relevanceLanguage: 'es',
       key: apiKey,
     });
+    if (videoDuration) params.set('videoDuration', videoDuration);
     const url = `https://www.googleapis.com/youtube/v3/search?${params.toString()}`;
     const ytRes = await fetch(url);
 
