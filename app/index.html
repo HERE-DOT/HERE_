@@ -792,11 +792,16 @@
     position:absolute; inset:0; width:68%; height:100%;
     background:var(--beige) center/cover no-repeat;
   }
+  /* Importante: estos % son relativos al ANCHO DE LA FOTO (68% de la
+     tarjeta), no al de la tarjeta completa — por eso tienen que terminar
+     bien sólidos mucho antes del punto donde arranca el texto
+     (.week-scene-body, margin-left:42% DE LA TARJETA ≈ 62% de la foto),
+     si no el texto queda encima de la imagen todavía visible. */
   .week-scene-photo::after{
     content:''; position:absolute; inset:0;
-    background:linear-gradient(100deg, rgba(20,16,8,0.02) 0%, rgba(20,16,8,0.02) 62%, var(--bg-warm) 94%);
+    background:linear-gradient(100deg, rgba(20,16,8,0.04) 0%, rgba(20,16,8,0.04) 30%, var(--bg-warm) 56%);
   }
-  .week-scene-body{position:relative; z-index:1; flex:1; min-width:0; margin-left:44%; padding:20px 22px 22px 18px;}
+  .week-scene-body{position:relative; z-index:1; flex:1; min-width:0; margin-left:42%; padding:20px 22px 22px 18px;}
   .week-scene .eyebrow{display:flex; align-items:center; gap:7px; font-size:11px; letter-spacing:.6px; text-transform:uppercase; font-weight:700; color:var(--gold-deep); opacity:.95; text-shadow:0 1px 6px rgba(255,251,240,0.6);}
   .week-scene .eyebrow .dot{width:6px; height:6px; border-radius:50%; background:var(--gold); animation:weekScenePulse 2.2s ease-in-out infinite;}
   @keyframes weekScenePulse{
@@ -816,7 +821,7 @@
     background:rgba(255,255,255,0.7); color:var(--ink); box-shadow:none; border:1px solid rgba(255,255,255,0.9);
     backdrop-filter:blur(2px);
   }
-  @media (max-width:359px){ .week-scene-body{ margin-left:40%; } }
+  @media (max-width:359px){ .week-scene-body{ margin-left:46%; } }
   .week-scene-btn:active{ transform:scale(0.95); opacity:.85; }
 
   .music-search-bar{display:flex; gap:8px; padding:4px 24px 14px; align-items:center;}
@@ -4810,13 +4815,12 @@ window.addEventListener('load', ()=>{
   // YA, detrás del splash — así la "puerta" revela contenido real de HERE,
   // no una imagen de mentira ni una carga tardía.
   const onboarded = skipOnboarding || load('here_onboarded', false);
-  let target;
-  if(!onboarded){ target = 'ob-1'; }
-  else if(skipOnboarding){ target = 'home'; } // directo al Home, sin pasar por el check-in diario
-  else{
-    const lastScreen = load('here_last_screen', null);
-    target = RESUMABLE_SCREENS.includes(lastScreen) ? lastScreen : 'checkin';
-  }
+  // Al volver a abrir la app, siempre se entra por Inicio — sin importar cuál
+  // fue la última pantalla visitada (antes se "resumía" ahí, y eso hacía que
+  // la app pareciera quedarse pegada en Orar, Escuchar, etc.). El check-in
+  // diario ("¿Cómo te sientes hoy?") sigue apareciendo justo después de
+  // terminar el onboarding, pero ya no como pantalla de arranque normal.
+  const target = onboarded ? 'home' : 'ob-1';
   go(target, {fromPopstate:true});
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
