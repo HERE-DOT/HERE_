@@ -2532,20 +2532,29 @@ const BOOK_USFM = {
 };
 /* ---------------- Biblia en otras versiones (API.Bible) ----------------
    RVR1960 (arriba) tiene su propio camino con Biblia.com porque ya estaba
-   funcionando así. Para versiones adicionales (NVI, NTV, y una tercera según
-   lo que la clave tenga disponible) se usa API.Bible a través de nuestro
-   propio servidor (api/bible.js) — el navegador nunca ve esa clave. Como no
-   sabemos de antemano qué versiones exactas incluye la cuenta, HERE le
-   pregunta al API cuáles hay en español y elige, por nombre, las que ya se
-   le prometieron a la persona en el onboarding (NVI, NTV) más una tercera
-   conocida — todo esto se guarda en el celular por un tiempo para no volver
-   a preguntar en cada visita. Si esa clave todavía no está configurada en
-   Vercel, o el API no responde, estas versiones simplemente no aparecen y
-   la Biblia se sigue leyendo en RVR1960, sin romper nada. */
-const BIBLE_VERSIONS_CACHE_KEY = 'here_bible_versions_v2';
-const BIBLE_VERSIONS_TTL_MS = 30*24*60*60*1000; // 30 días: el catálogo de versiones casi no cambia
-// Orden de preferencia: primero las que ya aparecen nombradas en el
-// onboarding (OB4), después otras conocidas, hasta completar 3.
+   funcionando así. Para versiones adicionales se usa API.Bible a través de
+   nuestro propio servidor (api/bible.js) — el navegador nunca ve esa clave.
+   IMPORTANTE: traducciones con derechos de autor comerciales (NVI, NTV,
+   DHH, etc.) NO vienen incluidas en una cuenta gratuita de API.Bible — cada
+   editorial (Biblica, Tyndale, SBU...) tiene que aprobar el acceso a su
+   texto por separado desde el panel de API.Bible. Sin esa aprobación, la
+   cuenta solo da acceso a versiones de licencia abierta o dominio público
+   (Reina Valera 1909, Palabra de Dios para ti, Biblia en Español Sencillo,
+   Versión Biblia Libre...). Por eso HERE no adivina nombres fijos: le
+   pregunta al API cuáles hay disponibles en español AHORA MISMO con esta
+   clave, descarta las que son solo Nuevo Testamento (no sirven para leer
+   el Antiguo Testamento), y elige hasta 3 completas por nombre/abreviatura
+   — todo esto se guarda en el celular por un tiempo para no volver a
+   preguntar en cada visita. Si el API no responde o la cuenta no tiene
+   ninguna versión completa, estas simplemente no aparecen y la Biblia se
+   sigue leyendo en RVR1960, sin romper nada. Si más adelante se solicita
+   (y se aprueba) acceso a NVI/NTV/DHH en el panel de API.Bible, alcanza
+   con agregarlas aquí abajo — no hace falta tocar nada más. */
+const BIBLE_VERSIONS_CACHE_KEY = 'here_bible_versions_v3';
+const BIBLE_VERSIONS_TTL_MS = 7*24*60*60*1000; // 7 días: más corto que antes, para notar rápido si se habilitan nuevas versiones
+// Traducciones "de lujo" (piden aprobación aparte del editor en API.Bible)
+// primero, por si algún día se aprueban; después las de licencia abierta o
+// dominio público que sí suelen venir incluidas de entrada.
 const BIBLE_VERSION_WANTED = [
   { key:'NVI', patterns:[/\bnvi\b/i, /nueva\s*versi[oó]n\s*internacional/i] },
   { key:'NTV', patterns:[/\bntv\b/i, /nueva\s*traducci[oó]n\s*viviente/i] },
@@ -2553,7 +2562,20 @@ const BIBLE_VERSION_WANTED = [
   { key:'PDT', patterns:[/\bpdt\b/i, /palabra\s*de\s*dios\s*para\s*todos/i] },
   { key:'RVC', patterns:[/\brvc\b/i, /reina\s*valera\s*contempor[aá]nea/i] },
   { key:'TLA', patterns:[/\btla\b/i, /traducci[oó]n\s*en\s*lenguaje\s*actual/i] },
+  { key:'RVR1909', patterns:[/\brvr\s*0?9\b/i, /reina\s*valera\s*1909/i] },
+  { key:'PDDT', patterns:[/palabra\s*de\s*dios\s*para\s*ti/i, /\bpddpt\b/i] },
+  { key:'BES', patterns:[/\bbes\b/i, /espa[ñn]ol\s*sencillo/i, /simple\s*spanish/i] },
+  { key:'VBL', patterns:[/versi[oó]n\s*biblia\s*libre/i, /free\s*bible\s*version/i, /\bvbl\b/i] },
 ];
+// Traducciones incompletas (por ejemplo solo Nuevo Testamento + Salmos/
+// Proverbios) — nunca se ofrecen como opción principal, porque si la
+// persona las elige y luego abre un libro del Antiguo Testamento (como
+// Génesis) se quedaría sin texto. API.Bible no marca esto con un campo
+// aparte, así que se detecta por el propio nombre de la versión.
+function isFullBibleVersion(b){
+  const hay = [b.name, b.nameLocal].filter(Boolean).join(' ').toLowerCase();
+  return !/(nuevo\s*testamento|new\s*testament|\bnt\s*\+|\bntpp\b)/i.test(hay);
+}
 let bibleVersionsPromise = null;
 function loadBibleVersionsCache(){
   const raw = load(BIBLE_VERSIONS_CACHE_KEY, null);
@@ -2580,7 +2602,7 @@ async function discoverBibleVersions(){
       });
       if(!r.ok) return null;
       const data = await r.json();
-      const items = data.items || [];
+      const items = (data.items || []).filter(isFullBibleVersion);
       const found = {};
       for(const want of BIBLE_VERSION_WANTED){
         if(Object.keys(found).length >= 3) break;
