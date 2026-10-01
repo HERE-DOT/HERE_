@@ -847,7 +847,7 @@
      sin comerse la cara. */
   .week-scene-photo{
     position:relative; flex:0 0 42%; width:42%; min-width:132px; align-self:stretch;
-    background:var(--beige) center 22% / cover no-repeat;
+    background:linear-gradient(160deg, var(--sage), var(--sage-deep)) center 22% / cover no-repeat;
   }
   .week-scene-photo::after{
     content:''; position:absolute; top:0; right:0; bottom:0; width:22%;
@@ -892,28 +892,6 @@
     .week-scene-body{ padding:18px 20px 20px; }
   }
   .week-scene-btn:active{ transform:scale(0.95); opacity:.85; }
-  /* ---------- "Canción del día": tarjeta compacta de una sola fila, a
-     propósito mucho más chica que .week-scene — es una canción concreta
-     para tocar y reproducir, no el perfil de un artista. ---------- */
-  .song-of-day-card{
-    margin:4px 24px 24px; padding:16px 18px; border-radius:26px;
-    background:var(--card); border:1px solid var(--line); box-shadow:var(--shadow-md);
-    animation:weekSceneIn .5s cubic-bezier(.22,1,.36,1) both;
-  }
-  .song-of-day-card .eyebrow{display:flex; align-items:center; gap:7px; font-size:11px; letter-spacing:.6px; text-transform:uppercase; font-weight:700; color:var(--gold-deep); opacity:.95; margin-bottom:12px;}
-  .song-of-day-card .eyebrow .dot{width:6px; height:6px; border-radius:50%; background:var(--gold); animation:weekScenePulse 2.2s ease-in-out infinite;}
-  .song-of-day-row{ display:flex; align-items:center; gap:13px; cursor:pointer; min-height:56px; }
-  .song-of-day-thumb{ width:56px; height:56px; border-radius:14px; object-fit:cover; flex:none; background:var(--beige); }
-  .song-of-day-thumb-fallback{ display:flex; align-items:center; justify-content:center; font-size:20px; background:linear-gradient(135deg,var(--sage-deep),var(--sage-deeper)); }
-  .song-of-day-info{ flex:1; min-width:0; }
-  .song-of-day-info .t{ font-family:'Fraunces'; font-size:15.5px; font-weight:500; color:var(--ink); line-height:1.25; overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
-  .song-of-day-info .s{ font-size:12px; color:var(--ink-soft); margin-top:3px; }
-  .song-of-day-play{
-    width:36px; height:36px; border-radius:50%; flex:none;
-    background:linear-gradient(135deg,var(--sage-deep),var(--sage-deeper)); color:#fff;
-    display:flex; align-items:center; justify-content:center; font-size:13px;
-    box-shadow:0 3px 10px rgba(60,90,60,0.25);
-  }
 
   /* ---------- "Su historia": página editorial dedicada al artista/pastor
      destacado — foto completa arriba, luego texto largo y cómodo de leer,
@@ -4704,11 +4682,11 @@ function pickSongOfDayArtist(){
 }
 
 // ---------- Tarjeta destacada, ahora dinámica ----------
-// Un mismo diseño de tarjeta (.week-scene, sin tocarlo) para Artista del día
-// y Pastor del día (con resumen + "Ver historia", cada uno con su perfil
-// completo). Canción del día usa una tarjeta distinta y más simple
-// (.song-of-day-card): una canción concreta para reproducir, no el perfil
-// de un artista — ver songOfDaySlideHTML más abajo.
+// Las 3 tarjetas (Artista del día, Pastor del día, Canción del día) usan el
+// mismo diseño grande (.week-scene) y el mismo tamaño. Lo que cambia es el
+// comportamiento: Artista/Pastor abren su perfil completo (openMusicPersona
+// + "Ver historia"); Canción del día reproduce esa canción directamente al
+// tocar la tarjeta, sin pasar por ningún perfil — ver songOfDaySlideHTML.
 function featuredSlideHTML(item, opts){
   opts = opts || {};
   const thumb = featuredPhotoUrl(item);
@@ -4733,40 +4711,43 @@ function featuredSlideHTML(item, opts){
   `;
 }
 // Tarjeta de "Canción del día": una fila compacta con la carátula/miniatura,
-// el título real de la canción y quién la canta — no el banner grande de un
-// artista. data: {title, artistName, thumb, onClick, loading}.
+// el título real de la canción y quién la canta. Mismo diseño grande que
+// Artista/Pastor del día (.week-scene, mismo tamaño) — lo que cambia es que
+// TODA la tarjeta reproduce esa canción al tocarla (playNow), en vez de
+// abrir el perfil de un artista con openMusicPersona. data: {title,
+// artistName, thumb, playNow, loading}.
 function songOfDaySlideHTML(data){
   if(data.loading){
-    return `<div class="featured-slide"><div class="song-of-day-card">
-      <div class="eyebrow"><span class="dot"></span>Canción del día</div>
-      <div class="song-of-day-row"><div class="light-dot"></div></div>
+    return `<div class="featured-slide"><div class="week-scene" style="align-items:center; justify-content:center;">
+      <div class="light-dot"></div>
     </div></div>`;
   }
   return `
     <div class="featured-slide">
-      <div class="song-of-day-card">
-        <div class="eyebrow"><span class="dot"></span>Canción del día</div>
-        <div class="song-of-day-row" onclick="${data.onClick}">
-          ${data.thumb ? `<img class="song-of-day-thumb" src="${data.thumb}" alt="" loading="lazy">` : `<div class="song-of-day-thumb song-of-day-thumb-fallback">🎵</div>`}
-          <div class="song-of-day-info">
-            <div class="t">${data.title}</div>
-            <div class="s">${data.artistName}</div>
+      <div class="week-scene" onclick="${data.playNow}">
+        <div class="week-scene-photo" ${data.thumb ? `style="background-image:url('${data.thumb}');"` : ''}></div>
+        <div class="week-scene-body">
+          <div class="eyebrow"><span class="dot"></span>Canción del día</div>
+          <div class="name serif">${data.title}</div>
+          <div class="role">${data.artistName}</div>
+          <div class="week-scene-actions">
+            <button class="week-scene-btn" onclick="${data.playNow}; event.stopPropagation();">▶ Escuchar ahora</button>
           </div>
-          <div class="song-of-day-play" aria-hidden="true">▶</div>
         </div>
       </div>
     </div>
   `;
 }
 // Arma la tarjeta de respaldo (siempre válida, sin red): el video insignia
-// ya curado del artista elegido para hoy, en el formato compacto de canción
-// — nunca inventa un título de canción que no podamos verificar.
+// ya curado del artista elegido para hoy — nunca inventa un título de
+// canción que no podamos verificar. Sigue reproduciendo directo, no abre
+// el perfil del artista.
 function songOfDayFallback(artist){
   return {
     title: artist.name,
     artistName: 'Toca para escuchar',
     thumb: featuredPhotoUrl(artist),
-    onClick: `playTrackById('${artist.id}', null, event)`,
+    playNow: `playTrackById('${artist.id}', null, event)`,
   };
 }
 // Busca en vivo (misma API que el resto de "Escuchar") una canción real y
@@ -4786,7 +4767,7 @@ async function loadSongOfDay(){
   const channel = (song.channel||artist.name).replace(/"/g,'&quot;');
   freshSlideEl.innerHTML = songOfDaySlideHTML({
     title, artistName: channel, thumb: song.thumb,
-    onClick: `playAdhocVideo('${song.id}','${title.replace(/'/g,"\\'")}','${channel.replace(/'/g,"\\'")}')`,
+    playNow: `playAdhocVideo('${song.id}','${title.replace(/'/g,"\\'")}','${channel.replace(/'/g,"\\'")}')`,
   });
 }
 function renderFeaturedCarousel(){
