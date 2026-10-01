@@ -847,7 +847,7 @@
      sin comerse la cara. */
   .week-scene-photo{
     position:relative; flex:0 0 42%; width:42%; min-width:132px; align-self:stretch;
-    background:var(--beige) center 22% / cover no-repeat;
+    background:linear-gradient(160deg, var(--sage), var(--sage-deep)) center 22% / cover no-repeat;
   }
   .week-scene-photo::after{
     content:''; position:absolute; top:0; right:0; bottom:0; width:22%;
@@ -4718,12 +4718,11 @@ function featuredSlideHTML(item, opts){
 // artistName, thumb, playNow, loading}.
 function songOfDaySlideHTML(data){
   if(data.loading){
-    return `<div class="featured-slide"><div class="week-scene" style="align-items:center; justify-content:center;">
+    return `<div class="week-scene" style="align-items:center; justify-content:center;">
       <div class="light-dot"></div>
-    </div></div>`;
+    </div>`;
   }
   return `
-    <div class="featured-slide">
       <div class="week-scene" onclick="${data.playNow}">
         <div class="week-scene-photo" ${data.thumb ? `style="background-image:url('${data.thumb}');"` : ''}></div>
         <div class="week-scene-body">
@@ -4735,7 +4734,6 @@ function songOfDaySlideHTML(data){
           </div>
         </div>
       </div>
-    </div>
   `;
 }
 // Arma la tarjeta de respaldo (siempre válida, sin red): el video insignia
@@ -4758,7 +4756,7 @@ async function loadSongOfDay(){
   const artist = pickSongOfDayArtist();
   const slideEl = document.getElementById('song-of-day-slide');
   if(!artist || !slideEl) return;
-  slideEl.outerHTML = `<div id="song-of-day-slide">${songOfDaySlideHTML(songOfDayFallback(artist))}</div>`;
+  slideEl.innerHTML = songOfDaySlideHTML(songOfDayFallback(artist));
   const result = await ytApiSearchSongs(artist.q || artist.name, 1);
   const song = result && result.items && result.items[0];
   const freshSlideEl = document.getElementById('song-of-day-slide');
@@ -4777,7 +4775,7 @@ function renderFeaturedCarousel(){
   const slides = [
     artistItem ? { html: featuredSlideHTML(artistItem, { label:'Artista del día' }) } : null,
     pastorItem ? { html: featuredSlideHTML(pastorItem, { label:'Pastor del día' }) } : null,
-    songArtist ? { html: `<div id="song-of-day-slide">${songOfDaySlideHTML({ loading:true })}</div>` } : null,
+    songArtist ? { html: `<div class="featured-slide" id="song-of-day-slide">${songOfDaySlideHTML({ loading:true })}</div>` } : null,
   ].filter(Boolean);
 
   const wrap = document.getElementById('musica-featured');
