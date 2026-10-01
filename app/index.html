@@ -892,6 +892,28 @@
     .week-scene-body{ padding:18px 20px 20px; }
   }
   .week-scene-btn:active{ transform:scale(0.95); opacity:.85; }
+  /* ---------- "Canción del día": tarjeta compacta de una sola fila, a
+     propósito mucho más chica que .week-scene — es una canción concreta
+     para tocar y reproducir, no el perfil de un artista. ---------- */
+  .song-of-day-card{
+    margin:4px 24px 24px; padding:16px 18px; border-radius:26px;
+    background:var(--card); border:1px solid var(--line); box-shadow:var(--shadow-md);
+    animation:weekSceneIn .5s cubic-bezier(.22,1,.36,1) both;
+  }
+  .song-of-day-card .eyebrow{display:flex; align-items:center; gap:7px; font-size:11px; letter-spacing:.6px; text-transform:uppercase; font-weight:700; color:var(--gold-deep); opacity:.95; margin-bottom:12px;}
+  .song-of-day-card .eyebrow .dot{width:6px; height:6px; border-radius:50%; background:var(--gold); animation:weekScenePulse 2.2s ease-in-out infinite;}
+  .song-of-day-row{ display:flex; align-items:center; gap:13px; cursor:pointer; min-height:56px; }
+  .song-of-day-thumb{ width:56px; height:56px; border-radius:14px; object-fit:cover; flex:none; background:var(--beige); }
+  .song-of-day-thumb-fallback{ display:flex; align-items:center; justify-content:center; font-size:20px; background:linear-gradient(135deg,var(--sage-deep),var(--sage-deeper)); }
+  .song-of-day-info{ flex:1; min-width:0; }
+  .song-of-day-info .t{ font-family:'Fraunces'; font-size:15.5px; font-weight:500; color:var(--ink); line-height:1.25; overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
+  .song-of-day-info .s{ font-size:12px; color:var(--ink-soft); margin-top:3px; }
+  .song-of-day-play{
+    width:36px; height:36px; border-radius:50%; flex:none;
+    background:linear-gradient(135deg,var(--sage-deep),var(--sage-deeper)); color:#fff;
+    display:flex; align-items:center; justify-content:center; font-size:13px;
+    box-shadow:0 3px 10px rgba(60,90,60,0.25);
+  }
 
   /* ---------- "Su historia": página editorial dedicada al artista/pastor
      destacado — foto completa arriba, luego texto largo y cómodo de leer,
@@ -970,6 +992,28 @@
   .pred-card .t{ color:#fff; font-family:'Fraunces'; font-size:15px; font-weight:500; line-height:1.22; }
   .pred-card .s{ color:rgba(255,255,255,0.82); font-size:11px; margin-top:4px; line-height:1.4; }
   .pred-card .eyebrow{ color:var(--gold-light); font-size:9.5px; letter-spacing:.5px; text-transform:uppercase; font-weight:700; margin-bottom:4px; }
+  /* ---------- botón "+ Seguir" sobre pastores: un + circular que se vuelve
+     un check relleno cuando ya lo sigues. Tres tamaños: sobre la foto de la
+     tarjeta (card), en una fila de lista (row), y junto al título de su
+     página (header). ---- */
+  .follow-btn{
+    appearance:none; border:none; cursor:pointer; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:15px; font-weight:700; line-height:1;
+    background:rgba(255,255,255,0.92); color:var(--sage-deep);
+    box-shadow:0 2px 6px rgba(0,0,0,0.18);
+    transition:transform .12s ease, background .15s ease, color .15s ease;
+  }
+  .follow-btn:active{ transform:scale(0.88); }
+  .follow-btn.following{ background:var(--sage-deep); color:#fff; }
+  .follow-btn-card{ position:absolute; top:10px; right:10px; z-index:2; width:26px; height:26px; }
+  .follow-btn-row{ width:30px; height:30px; flex:none; font-size:16px; background:var(--bg); border:1px solid var(--line); }
+  .follow-btn-row.following{ background:var(--sage-deep); border-color:var(--sage-deep); }
+  .follow-btn-header{
+    width:34px; height:34px; font-size:17px; background:var(--card); border:1px solid var(--line);
+    box-shadow:none; margin-right:4px;
+  }
+  .follow-btn-header.following{ background:var(--sage-deep); border-color:var(--sage-deep); }
   /* ---------- Predicaciones por momento: no son fotos sino color y un
      ícono — para que se note de inmediato que es otra forma de explorar
      (por cómo te sientes, no por quién predica). Cada tarjeta tiene su
@@ -1924,6 +1968,12 @@
     <div id="misPalabras-list" class="container" style="padding-top:6px;"></div>
   </section>
 
+  <!-- PASTORES QUE SIGUES -->
+  <section class="screen noNav" id="misPastores">
+    <div class="topbar"><div class="backbtn" onclick="go('perfil')">←</div><h2>Pastores que sigues</h2></div>
+    <div id="misPastores-list" class="container" style="padding-top:6px;"></div>
+  </section>
+
   <!-- CHAT CON HERE -->
   <section class="screen noNav" id="chat" style="padding-bottom:0;">
     <div class="topbar" style="flex-direction:column; align-items:flex-start; gap:2px;">
@@ -2016,7 +2066,7 @@
 
   <!-- CATEGORÍA DE MÚSICA -->
   <section class="screen noNav" id="musicaCategoria">
-    <div class="topbar"><div class="backbtn" onclick="go('musica')">←</div><h2 id="musicaCategoria-title"></h2></div>
+    <div class="topbar"><div class="backbtn" onclick="go('musica')">←</div><h2 id="musicaCategoria-title" style="flex:1;"></h2><span id="musicaCategoria-follow"></span></div>
     <p id="musicaCategoria-subtitle" style="padding:0 24px; margin-top:-4px; color:var(--ink-soft); font-size:13.5px; line-height:1.5;"></p>
     <div class="stack" id="musicaCategoria-list" style="padding:10px 24px 40px;"></div>
   </section>
@@ -2191,7 +2241,7 @@ const SUPABASE_ANON_KEY = 'sb_publishable_fwA5wuaJh0ksqfaVCxGjSg_CyYnokIo';
 // incluye ajustes propios del dispositivo (tamaño de letra, voz elegida,
 // tema, si el sonido está activado): esas tiene sentido que cada celular
 // las recuerde por su cuenta.
-const SYNC_SIMPLE_KEYS = ['here_prefs','here_saved','here_prayers','here_reflections','here_visited','here_highlights','here_streak','here_visit_log','here_onboarded'];
+const SYNC_SIMPLE_KEYS = ['here_prefs','here_saved','here_prayers','here_reflections','here_visited','here_highlights','here_streak','here_visit_log','here_onboarded','here_followed_pastores'];
 function isSyncedKey(key){ return SYNC_SIMPLE_KEYS.includes(key) || key.indexOf('here_plan_')===0; }
 
 let hereUser = null; // {id, email, ...} cuando hay sesión iniciada, si no null
@@ -2234,7 +2284,9 @@ function applyCloudData(data){
   prefs = load('here_prefs', {goals:[], remind:null});
   visited = load('here_visited', []);
   highlightedVerses = load('here_highlights', []);
+  followedPastores = load('here_followed_pastores', []);
   try{ renderPerfil(); }catch(e){}
+  try{ if(currentScreen==='musica' || currentScreen==='musicaCategoria') renderMusica(); }catch(e){}
 }
 let cloudSyncTimer = null;
 function queueCloudSync(){
@@ -2382,6 +2434,7 @@ let prayers = load('here_prayers', []);
 let reflections = load('here_reflections', []);
 let prefs = load('here_prefs', {goals:[], remind:null});
 let visited = load('here_visited', []);
+let followedPastores = load('here_followed_pastores', []);
 let readerFontSize = load('here_reader_fontsize', 17);
 
 /* ---------------- theme (light / dark) ----------------
@@ -3151,6 +3204,7 @@ function go(id, opts){
   if(id==='home') renderHomeQuick();
   if(id==='perfil') renderPerfil();
   if(id==='misPalabras') renderMisPalabras();
+  if(id==='misPastores') renderMisPastores();
   if(id==='hoy') renderHoy();
   if(id==='diario') renderDiario();
   if(id==='musica') renderMusica();
@@ -4555,62 +4609,106 @@ const MUSIC_WEEKLY_POOL = [
 function findTrackById(id){
   return MUSIC_WEEKLY_POOL.find(t=>t.id===id) || MUSIC_PASTORES.find(t=>t.id===id) || MUSIC_PODCASTS.find(t=>t.id===id);
 }
+
+/* ---------------- pastores favoritos ("seguir") ----------------
+   Seguir a un pastor es simplemente guardar su id en here_followed_pastores
+   (sincronizado con la cuenta como cualquier otro dato). Sirve para: 1) mostrar
+   un check/+ en sus tarjetas, 2) ordenar "Pastores y predicaciones" con los
+   que sigues primero (personalización), y 3) la sección "Pastores que sigues"
+   en Tu camino. */
+function isPastorFollowed(id){ return followedPastores.includes(id); }
+function toggleFollowPastor(id, ev){
+  if(ev){ ev.stopPropagation(); }
+  const idx = followedPastores.indexOf(id);
+  const nowFollowing = idx === -1;
+  if(nowFollowing) followedPastores.push(id); else followedPastores.splice(idx,1);
+  save('here_followed_pastores', followedPastores);
+  haptic(8);
+  const pastor = MUSIC_PASTORES.find(p=>p.id===id);
+  showHereToast(nowFollowing ? `Ahora sigues a ${pastor?pastor.name:'este pastor'}` : 'Dejaste de seguir');
+  // refresca cualquier vista visible que muestre el estado de "seguir"
+  if(currentScreen==='musica') renderMusica();
+  if(currentScreen==='musicaCategoria') updatePersonaFollowBtn(id);
+  if(currentScreen==='perfil') renderPerfil();
+  if(currentScreen==='misPastores') renderMisPastores();
+}
+function followBtnHTML(id, size){
+  const on = isPastorFollowed(id);
+  size = size || 'card';
+  return `<button class="follow-btn follow-btn-${size} ${on?'following':''}" onclick="toggleFollowPastor('${id}', event)" aria-label="${on?'Dejar de seguir':'Seguir'}">${on?'✓':'+'}</button>`;
+}
+function updatePersonaFollowBtn(id){
+  const el = document.getElementById('musicaCategoria-follow');
+  if(!el) return;
+  el.innerHTML = followBtnHTML(id, 'header');
+}
+function sortPastoresByFollowed(list){
+  return list.slice().sort((a,b)=>{
+    const fa = isPastorFollowed(a.id) ? 0 : 1;
+    const fb = isPastorFollowed(b.id) ? 0 : 1;
+    return fa - fb;
+  });
+}
 // Frase cálida y calmada para la tarjeta de "Artista de la semana" — más
 // serena y humana que la bio corta usada en otras partes de Escuchar.
 function warmFeaturedLine(item){
   const byType = {
     'Artista de la semana': 'Canciones que acercan el corazón a Dios.',
-    'Pastor de la semana': 'Una palabra clara y cercana para esta semana.',
+    'Pastor de la semana': 'Una palabra clara y cercana para hoy.',
     'Podcast de la semana': 'Un momento breve para detenerte y escuchar.',
   };
   return byType[item.type] || item.blurb;
 }
 
-// Semilla por semana del año — mismo espíritu que pickTodayVerse(), pero
-// a nivel de semana, para que el destacado cambie cada 7 días, no cada día.
-function weekSeed(){
-  const d = new Date();
-  const start = new Date(d.getFullYear(), 0, 1);
-  const weekNum = Math.ceil((((d - start) / 86400000) + start.getDay() + 1) / 7);
-  return d.getFullYear() * 53 + weekNum;
-}
-// Si se define un id aquí, ese siempre gana como Artista de la semana
-// (pedido manual, por ejemplo "pon a Redimi2"), sin importar la rotación
-// automática. Poner en null para volver a la rotación automática normal.
-const FEATURED_OVERRIDE_ID = 'redimi2';
-function pickWeeklyFeatured(){
-  const artists = MUSIC_WEEKLY_POOL.filter(t=>t.type==='Artista de la semana');
-  if(FEATURED_OVERRIDE_ID){
-    const forced = artists.find(t=>t.id===FEATURED_OVERRIDE_ID);
-    if(forced) return forced;
-  }
-  return artists[weekSeed() % artists.length];
-}
-// "Pastor de la semana": misma idea, rota cada 7 días, tomado del mismo pool
-// pero filtrado a los que son pastor/enseñanza.
-function pickPastorOfWeek(){
-  const pastors = MUSIC_WEEKLY_POOL.filter(t=>t.type==='Pastor de la semana');
-  if(!pastors.length) return null;
-  return pastors[weekSeed() % pastors.length];
-}
-// "Canción del día": rota cada día (no cada semana) — misma semilla que
-// pickTodayVerse(), a nivel de día en vez de semana.
+// Semilla por día del año — mismo espíritu que pickTodayVerse(): el
+// destacado cambia cada día, no cada semana. (Antes había una semilla por
+// semana; Artista y Pastor del día usan ahora esta misma, cada uno con su
+// propio desplazamiento para no repetir siempre la misma persona.)
 function daySeed(){
   const d = new Date();
   const start = new Date(d.getFullYear(), 0, 0);
   return Math.floor((d - start) / 86400000) + d.getFullYear() * 400;
 }
-function pickSongOfDay(){
-  const songs = MUSIC_WEEKLY_POOL.filter(t=>t.type==='Artista de la semana');
-  if(!songs.length) return null;
-  return songs[daySeed() % songs.length];
+// Si se define un id aquí, ese siempre gana como Artista del día (pedido
+// manual, por ejemplo "pon a Redimi2"), sin importar la rotación automática.
+// Dejar en null para la rotación automática normal (lo normal).
+const FEATURED_OVERRIDE_ID = null;
+function pickArtistOfDay(){
+  const artists = MUSIC_WEEKLY_POOL.filter(t=>t.type==='Artista de la semana');
+  if(FEATURED_OVERRIDE_ID){
+    const forced = artists.find(t=>t.id===FEATURED_OVERRIDE_ID);
+    if(forced) return forced;
+  }
+  return artists[daySeed() % artists.length];
+}
+// "Pastor del día": misma idea, rota cada día, tomado del mismo pool pero
+// filtrado a los que son pastor/enseñanza.
+function pickPastorOfDay(){
+  const pastors = MUSIC_WEEKLY_POOL.filter(t=>t.type==='Pastor de la semana');
+  if(!pastors.length) return null;
+  return pastors[daySeed() % pastors.length];
+}
+// "Canción del día": a diferencia de Artista/Pastor del día (que abren el
+// perfil completo de la persona), esta muestra una canción concreta y
+// reproducible — no el banner de un artista. Se busca en vivo en YouTube
+// (misma API que el resto de "Escuchar") una canción corta/mediana de un
+// artista del pool, elegido con un desplazamiento propio para no coincidir
+// siempre con el Artista del día. Si la búsqueda en vivo no está disponible
+// todavía (sin clave, sin conexión o cupo agotado), cae de vuelta al video
+// insignia ya curado de ese mismo artista — nunca se inventa un título de
+// canción que no se pueda verificar.
+function pickSongOfDayArtist(){
+  const artists = MUSIC_WEEKLY_POOL.filter(t=>t.type==='Artista de la semana');
+  if(!artists.length) return null;
+  return artists[(daySeed()+1) % artists.length];
 }
 
 // ---------- Tarjeta destacada, ahora dinámica ----------
-// Un mismo diseño de tarjeta (.week-scene, sin tocarlo) para 3 contenidos
-// que rotan como un carrusel deslizable: Artista de la semana, Pastor de la
-// semana (con resumen + "Ver historia" igual que el artista) y Canción del
-// día (solo para reproducir, sin biografía — por eso showStory:false).
+// Un mismo diseño de tarjeta (.week-scene, sin tocarlo) para Artista del día
+// y Pastor del día (con resumen + "Ver historia", cada uno con su perfil
+// completo). Canción del día usa una tarjeta distinta y más simple
+// (.song-of-day-card): una canción concreta para reproducir, no el perfil
+// de un artista — ver songOfDaySlideHTML más abajo.
 function featuredSlideHTML(item, opts){
   opts = opts || {};
   const thumb = featuredPhotoUrl(item);
@@ -4634,21 +4732,78 @@ function featuredSlideHTML(item, opts){
     </div>
   `;
 }
+// Tarjeta de "Canción del día": una fila compacta con la carátula/miniatura,
+// el título real de la canción y quién la canta — no el banner grande de un
+// artista. data: {title, artistName, thumb, onClick, loading}.
+function songOfDaySlideHTML(data){
+  if(data.loading){
+    return `<div class="featured-slide"><div class="song-of-day-card">
+      <div class="eyebrow"><span class="dot"></span>Canción del día</div>
+      <div class="song-of-day-row"><div class="light-dot"></div></div>
+    </div></div>`;
+  }
+  return `
+    <div class="featured-slide">
+      <div class="song-of-day-card">
+        <div class="eyebrow"><span class="dot"></span>Canción del día</div>
+        <div class="song-of-day-row" onclick="${data.onClick}">
+          ${data.thumb ? `<img class="song-of-day-thumb" src="${data.thumb}" alt="" loading="lazy">` : `<div class="song-of-day-thumb song-of-day-thumb-fallback">🎵</div>`}
+          <div class="song-of-day-info">
+            <div class="t">${data.title}</div>
+            <div class="s">${data.artistName}</div>
+          </div>
+          <div class="song-of-day-play" aria-hidden="true">▶</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+// Arma la tarjeta de respaldo (siempre válida, sin red): el video insignia
+// ya curado del artista elegido para hoy, en el formato compacto de canción
+// — nunca inventa un título de canción que no podamos verificar.
+function songOfDayFallback(artist){
+  return {
+    title: artist.name,
+    artistName: 'Toca para escuchar',
+    thumb: featuredPhotoUrl(artist),
+    onClick: `playTrackById('${artist.id}', null, event)`,
+  };
+}
+// Busca en vivo (misma API que el resto de "Escuchar") una canción real y
+// corta/mediana del artista elegido para hoy, y reemplaza la tarjeta de
+// respaldo por ella si la encuentra. Si no hay búsqueda disponible todavía
+// (sin clave, sin conexión, cupo agotado), la tarjeta de respaldo se queda.
+async function loadSongOfDay(){
+  const artist = pickSongOfDayArtist();
+  const slideEl = document.getElementById('song-of-day-slide');
+  if(!artist || !slideEl) return;
+  slideEl.outerHTML = `<div id="song-of-day-slide">${songOfDaySlideHTML(songOfDayFallback(artist))}</div>`;
+  const result = await ytApiSearchSongs(artist.q || artist.name, 1);
+  const song = result && result.items && result.items[0];
+  const freshSlideEl = document.getElementById('song-of-day-slide');
+  if(!song || !freshSlideEl) return;
+  const title = (song.title||'').replace(/"/g,'&quot;');
+  const channel = (song.channel||artist.name).replace(/"/g,'&quot;');
+  freshSlideEl.innerHTML = songOfDaySlideHTML({
+    title, artistName: channel, thumb: song.thumb,
+    onClick: `playAdhocVideo('${song.id}','${title.replace(/'/g,"\\'")}','${channel.replace(/'/g,"\\'")}')`,
+  });
+}
 function renderFeaturedCarousel(){
-  const artistItem = pickWeeklyFeatured();
-  const pastorItem = pickPastorOfWeek();
-  const songItem = pickSongOfDay();
+  const artistItem = pickArtistOfDay();
+  const pastorItem = pickPastorOfDay();
+  const songArtist = pickSongOfDayArtist();
   const slides = [
-    artistItem ? { item:artistItem, opts:{} } : null,
-    pastorItem ? { item:pastorItem, opts:{} } : null,
-    songItem ? { item:songItem, opts:{ label:'Canción del día', showStory:false } } : null,
+    artistItem ? { html: featuredSlideHTML(artistItem, { label:'Artista del día' }) } : null,
+    pastorItem ? { html: featuredSlideHTML(pastorItem, { label:'Pastor del día' }) } : null,
+    songArtist ? { html: `<div id="song-of-day-slide">${songOfDaySlideHTML({ loading:true })}</div>` } : null,
   ].filter(Boolean);
 
   const wrap = document.getElementById('musica-featured');
   wrap.innerHTML = `
     <div class="featured-carousel-wrap">
       <div class="featured-carousel" id="featured-carousel">
-        ${slides.map(s=>featuredSlideHTML(s.item, s.opts)).join('')}
+        ${slides.map(s=>s.html).join('')}
       </div>
       ${slides.length>1 ? `
         <button class="featured-nav featured-nav-prev" id="featured-prev" onclick="scrollFeatured(-1)" aria-label="Anterior">
@@ -4662,6 +4817,7 @@ function renderFeaturedCarousel(){
     ${slides.length>1 ? `<div class="featured-dots" id="featured-dots">${slides.map((_,i)=>`<span class="featured-dot${i===0?' active':''}"></span>`).join('')}</div>` : ''}
   `;
   if(slides.length>1) setupFeaturedCarousel();
+  if(songArtist) loadSongOfDay();
 }
 // Botones ‹ › discretos: además de deslizar con el dedo, sirven para
 // adelantar/devolver la tarjeta con un clic (imprescindible en escritorio,
@@ -4837,6 +4993,7 @@ async function openListenMoment(id){
   listenMoodActive = mood;
   document.getElementById('musicaCategoria-title').textContent = mood.promptLabel || mood.label;
   document.getElementById('musicaCategoria-subtitle').textContent = mood.line;
+  document.getElementById('musicaCategoria-follow').innerHTML = '';
   const listEl = document.getElementById('musicaCategoria-list');
   listEl.innerHTML = musicLoadingHTML();
   go('musicaCategoria');
@@ -4877,8 +5034,9 @@ function renderMusica(){
   // Tocar la fila abre el catálogo completo de esa persona (muchos videos,
   // no solo uno); el botón ▶ es un atajo para reproducir de una vez su video
   // insignia, sin tener que entrar al catálogo primero.
-  document.getElementById('musica-pastores').innerHTML = MUSIC_PASTORES.map(p=>`
+  document.getElementById('musica-pastores').innerHTML = sortPastoresByFollowed(MUSIC_PASTORES).map(p=>`
     <div class="pred-card" style="background:${p.img ? `url('${p.img}') center/cover no-repeat` : p.bg};" onclick="openMusicPersona('${p.id}')">
+      ${followBtnHTML(p.id)}
       <div class="pred-card-body">
         <div class="eyebrow">Predicación</div>
         <div class="t">${p.name}</div>
@@ -4947,6 +5105,7 @@ async function openMusicCategory(id){
   if(!cat) return;
   document.getElementById('musicaCategoria-title').textContent = cat.t;
   document.getElementById('musicaCategoria-subtitle').textContent = cat.s + '.';
+  document.getElementById('musicaCategoria-follow').innerHTML = '';
   const listEl = document.getElementById('musicaCategoria-list');
   listEl.innerHTML = musicLoadingHTML();
   go('musicaCategoria');
@@ -4989,7 +5148,8 @@ async function openMusicCategory(id){
 function renderPastorFallbackRow(p){
   return `<div class="music-track" onclick="openMusicPersona('${p.id}')">
     <div class="music-track-icon" style="background:${p.img ? `url('${p.img}') center/cover no-repeat` : p.bg};">${p.img ? '' : '🎙️'}</div>
-    <div><div class="t">${p.name}</div><div class="s">${p.role || p.s}</div></div>
+    <div style="flex:1;"><div class="t">${p.name}</div><div class="s">${p.role || p.s}</div></div>
+    ${followBtnHTML(p.id, 'row')}
   </div>`;
 }
 /* ---------------- clasificación por IA de "Predicaciones por momento" ----
@@ -5075,6 +5235,7 @@ async function openPredMood(id){
   if(!mood) return;
   document.getElementById('musicaCategoria-title').textContent = mood.t;
   document.getElementById('musicaCategoria-subtitle').textContent = mood.s + '.';
+  document.getElementById('musicaCategoria-follow').innerHTML = '';
   const listEl = document.getElementById('musicaCategoria-list');
   listEl.innerHTML = musicLoadingHTML();
   go('musicaCategoria');
@@ -5201,6 +5362,9 @@ async function openMusicPersona(id){
   if(!item) return;
   document.getElementById('musicaCategoria-title').textContent = item.name;
   document.getElementById('musicaCategoria-subtitle').textContent = (item.role || item.s || '') + '.';
+  // El botón de "Seguir" solo aplica a pastores del directorio principal
+  // (los que viven en MUSIC_PASTORES, que es la lista que se puede seguir).
+  document.getElementById('musicaCategoria-follow').innerHTML = MUSIC_PASTORES.some(p=>p.id===id) ? followBtnHTML(id, 'header') : '';
   const listEl = document.getElementById('musicaCategoria-list');
   listEl.innerHTML = musicLoadingHTML();
   go('musicaCategoria');
@@ -6238,6 +6402,20 @@ function renderMisPalabras(){
   if(!html){ html = '<div class="empty"><div class="light-dot"></div>Las palabras que guardes o resaltes aparecerán aquí.</div>'; }
   c.innerHTML = html;
 }
+function renderMisPastores(){
+  const c = document.getElementById('misPastores-list');
+  const list = MUSIC_PASTORES.filter(p=>isPastorFollowed(p.id));
+  if(!list.length){
+    c.innerHTML = `<div class="empty"><div class="light-dot"></div>
+      Todavía no sigues a ningún pastor.<br>
+      Toca el <strong>+</strong> en cualquier predicador que te hable para que aparezca aquí, y para que HERE te recomiende más de lo suyo.
+    </div>
+    <div class="list-card" style="margin-top:18px;" onclick="go('musica'); setEscucharTab('predicaciones');"><div><div class="t">Explorar pastores</div></div><span>→</span></div>`;
+    return;
+  }
+  c.innerHTML = `<p style="font-size:13.5px; color:var(--ink-soft); margin:0 0 14px; line-height:1.6;">Sus predicaciones aparecen primero cuando abres "Pastores y predicaciones".</p>`
+    + list.map(renderPastorFallbackRow).join('');
+}
 
 /* ---------------- perfil ---------------- */
 function computeExploredTopics(){
@@ -6268,11 +6446,13 @@ function renderPerfil(){
       <div class="camino-stat"><div class="num">${reflections.length}</div><div class="lbl">reflexiones</div></div>
       <div class="camino-stat"><div class="num">${savedWords.length}</div><div class="lbl">palabras guardadas</div></div>
       <div class="camino-stat"><div class="num">${computeExploredTopics()}</div><div class="lbl">temas explorados</div></div>
+      <div class="camino-stat"><div class="num">${followedPastores.length}</div><div class="lbl">pastores que sigues</div></div>
     </div>
     <div class="stack">
       <div class="list-card" onclick="go('misPalabras')"><div><div class="t">Ver palabras guardadas</div></div><span>→</span></div>
       <div class="list-card" onclick="go('diario')"><div><div class="t">Ver reflexiones y oraciones</div></div><span>→</span></div>
       <div class="list-card" onclick="goVersiculosResaltados()"><div><div class="t">🖍 Ver versículos resaltados</div></div><span>→</span></div>
+      <div class="list-card" onclick="go('misPastores')"><div><div class="t">⭐ Pastores que sigues</div>${followedPastores.length?`<div class="s">${followedPastores.length} ${followedPastores.length===1?'pastor':'pastores'}</div>`:''}</div><span>→</span></div>
     </div>
     <div class="section-title" style="padding-left:0; margin-top:26px;">Cuenta</div>
     <div class="list-card" style="margin-left:0; margin-right:0;" onclick="openAccountSheet()">
