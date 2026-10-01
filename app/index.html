@@ -705,12 +705,24 @@
   .navbtn svg{width:22px; height:22px;}
 
   /* ---------- textarea / inputs ---------- */
-  textarea, input[type=text]{
+  textarea, input[type=text], input[type=email], input[type=password]{
     width:100%; border-radius:16px; border:1px solid var(--line); background:var(--card);
     padding:16px; font-family:'Manrope'; font-size:15px; color:var(--ink); resize:none;
     box-shadow:var(--shadow-sm); transition:border-color .15s ease, box-shadow .15s ease;
   }
   textarea:focus, input:focus{outline:none; border-color:var(--sage-deep); box-shadow:0 0 0 3px rgba(44,79,59,0.12);}
+
+  /* ---------- cuenta (Supabase) ---------- */
+  .auth-divider{display:flex; align-items:center; gap:10px; margin:16px 0;}
+  .auth-divider .line{flex:1; height:1px; background:var(--line);}
+  .auth-divider span{font-size:12px; color:var(--ink-soft);}
+  .auth-google-btn{display:flex; align-items:center; justify-content:center; gap:10px;}
+  .auth-error{color:#b14545; font-size:12.5px; margin-top:10px; margin-bottom:2px; min-height:16px; line-height:1.4;}
+  .auth-switch{text-align:center; font-size:13px; color:var(--ink-soft); margin-top:16px;}
+  .auth-switch b{color:var(--sage-deep); font-weight:600; cursor:pointer;}
+  .account-benefits{list-style:none; margin:0 0 20px; padding:0; display:flex; flex-direction:column; gap:10px;}
+  .account-benefits li{display:flex; align-items:flex-start; gap:10px; font-size:13.5px; color:var(--ink); line-height:1.4;}
+  .account-benefits li .dot{flex:none; width:6px; height:6px; border-radius:50%; background:var(--gold); margin-top:6px;}
 
   /* ---------- Orar: "Guíame" como la puerta principal — más presencia que
      un list-card cualquiera, sin llegar a ser un CTA que grite. Un tinte
@@ -2128,6 +2140,13 @@
   <div class="sheet" id="sheet-content"></div>
 </div>
 
+<!-- Cliente de Supabase (cuenta opcional + progreso en la nube). Se carga
+     antes del script principal para que window.supabase ya exista cuando
+     se llama a getSupabase() más abajo. Si este script no llega a cargar
+     (sin conexión, CDN bloqueado), getSupabase() devuelve null y toda la
+     app sigue funcionando igual de bien solo con el dispositivo. -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
 <script>
 /* ---------------- ruta base de la app ----------------
    Los recursos propios (data/bible-rva.json, service-worker.js) se piden con
@@ -2152,7 +2171,211 @@ function hereBaseUrl(){
 const HERE_BASE = hereBaseUrl();
 /* ---------------- storage helpers ---------------- */
 function load(key, fallback){ try{ const v = localStorage.getItem(key); return v?JSON.parse(v):fallback; }catch(e){ return fallback; } }
-function save(key, val){ try{ localStorage.setItem(key, JSON.stringify(val)); }catch(e){} }
+function save(key, val){
+  try{ localStorage.setItem(key, JSON.stringify(val)); }catch(e){}
+  // si hay una cuenta iniciada y esta clave es de las que se sincronizan,
+  // de paso programa una subida a la nube (ver bloque "cuenta" más abajo).
+  if(typeof queueCloudSync === 'function' && hereUser && isSyncedKey(key)) queueCloudSync();
+}
+
+/* ---------------- cuenta opcional (Supabase): progreso en la nube ----------
+   HERE funciona completo sin cuenta — todo vive en este dispositivo como
+   siempre. Si la persona decide crear una cuenta (correo/contraseña o
+   Google), además se guarda una copia de su progreso (versículos
+   resaltados, oraciones, reflexiones, racha, etc.) en Supabase, para que
+   no se pierda si cambia de celular o reinstala la app. Nunca es
+   obligatorio ni bloquea nada. */
+const SUPABASE_URL = 'https://xsvhqopjzzqouiqnkuwb.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_fwA5wuaJh0ksqfaVCxGjSg_CyYnokIo';
+// Claves de localStorage que sí viajan a la nube — deliberadamente NO
+// incluye ajustes propios del dispositivo (tamaño de letra, voz elegida,
+// tema, si el sonido está activado): esas tiene sentido que cada celular
+// las recuerde por su cuenta.
+const SYNC_SIMPLE_KEYS = ['here_prefs','here_saved','here_prayers','here_reflections','here_visited','here_highlights','here_streak','here_visit_log','here_onboarded'];
+function isSyncedKey(key){ return SYNC_SIMPLE_KEYS.includes(key) || key.indexOf('here_plan_')===0; }
+
+let hereUser = null; // {id, email, ...} cuando hay sesión iniciada, si no null
+let supabaseClient = null;
+function getSupabase(){
+  if(supabaseClient) return supabaseClient;
+  if(!window.supabase || !window.supabase.createClient) return null;
+  try{ supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); }catch(e){ return null; }
+  return supabaseClient;
+}
+// Arma, a partir de lo que ya hay en este dispositivo, el "paquete" que se
+// sube a la nube — incluye los planes de lectura (here_plan_<id>), que son
+// una clave distinta por cada plan, así que se recorren aparte.
+function buildSyncPayload(){
+  const data = {};
+  SYNC_SIMPLE_KEYS.forEach(k=>{ const v = load(k, null); if(v !== null) data[k] = v; });
+  const plans = {};
+  for(let i=0;i<localStorage.length;i++){
+    const k = localStorage.key(i);
+    if(k && k.indexOf('here_plan_')===0){
+      const v = load(k, null);
+      if(v !== null) plans[k] = v;
+    }
+  }
+  if(Object.keys(plans).length) data.__plans = plans;
+  return data;
+}
+// Aplica al dispositivo lo que llegó de la nube (al iniciar sesión en un
+// celular nuevo, por ejemplo) — guarda cada clave y refresca las variables
+// en memoria que ya se habían cargado antes de iniciar sesión.
+function applyCloudData(data){
+  if(!data || typeof data !== 'object') return;
+  SYNC_SIMPLE_KEYS.forEach(k=>{ if(data[k] !== undefined) save(k, data[k]); });
+  if(data.__plans && typeof data.__plans === 'object'){
+    Object.keys(data.__plans).forEach(k=>{ save(k, data.__plans[k]); });
+  }
+  savedWords = load('here_saved', []);
+  prayers = load('here_prayers', []);
+  reflections = load('here_reflections', []);
+  prefs = load('here_prefs', {goals:[], remind:null});
+  visited = load('here_visited', []);
+  highlightedVerses = load('here_highlights', []);
+  try{ renderPerfil(); }catch(e){}
+}
+let cloudSyncTimer = null;
+function queueCloudSync(){
+  if(!hereUser) return;
+  clearTimeout(cloudSyncTimer);
+  cloudSyncTimer = setTimeout(pushCloudData, 1200);
+}
+async function pushCloudData(){
+  const sb = getSupabase();
+  if(!sb || !hereUser) return;
+  try{
+    await sb.from('profiles').upsert({ id: hereUser.id, data: buildSyncPayload(), updated_at: new Date().toISOString() });
+  }catch(e){}
+}
+async function pullCloudData(){
+  const sb = getSupabase();
+  if(!sb || !hereUser) return;
+  try{
+    const { data, error } = await sb.from('profiles').select('data').eq('id', hereUser.id).maybeSingle();
+    if(error) return;
+    if(data && data.data && Object.keys(data.data).length){
+      applyCloudData(data.data);
+    }else{
+      // primera vez que esta cuenta inicia sesión en cualquier celular: no
+      // hay nada en la nube todavía, así que sube lo que ya tenía este
+      // dispositivo, para no empezar de cero.
+      await pushCloudData();
+    }
+  }catch(e){}
+}
+let authMode = 'signin'; // 'signin' | 'signup', controla qué muestra la hoja de cuenta
+function openAccountSheet(){
+  if(hereUser){
+    openSheet(`
+      <div class="handle"></div>
+      <p style="font-size:13px; color:var(--ink-soft); margin-bottom:4px; text-align:center;">Tu cuenta</p>
+      <p class="serif" style="font-size:17px; text-align:center; margin-bottom:20px; word-break:break-word;">${hereUser.email || ''}</p>
+      <p style="font-size:13px; color:var(--ink-soft); text-align:center; margin-bottom:22px; line-height:1.5;">Tu progreso se guarda en la nube y te espera en cualquier celular donde inicies sesión con esta cuenta.</p>
+      <button class="btn btn-ghost" onclick="hereSignOut()">Cerrar sesión</button>
+    `);
+    return;
+  }
+  authMode = 'signin';
+  openSheet(authSheetHTML());
+}
+function authSheetHTML(){
+  const isSignup = authMode === 'signup';
+  return `
+    <div class="handle"></div>
+    <p style="font-size:13px; color:var(--ink-soft); margin-bottom:2px; text-align:center;">Crea una cuenta gratis</p>
+    <p class="serif" style="font-size:18px; text-align:center; margin-bottom:16px;">No pierdas tu progreso</p>
+    <ul class="account-benefits">
+      <li><span class="dot"></span>Tus versículos resaltados, oraciones y reflexiones, a salvo aunque cambies de celular</li>
+      <li><span class="dot"></span>Tu racha de lectura no se pierde si reinstalas la app</li>
+      <li><span class="dot"></span>Entra con la misma cuenta desde cualquier dispositivo</li>
+    </ul>
+    <button class="btn btn-ghost auth-google-btn" onclick="hereSignInGoogle()">${ICON_GOOGLE} Continuar con Google</button>
+    <div class="auth-divider"><div class="line"></div><span>o con tu correo</span><div class="line"></div></div>
+    <div class="stack" style="gap:10px;">
+      <input type="email" id="auth-email" placeholder="Correo electrónico" autocomplete="email">
+      <input type="password" id="auth-password" placeholder="Contraseña (mínimo 6 caracteres)" autocomplete="${isSignup?'new-password':'current-password'}">
+    </div>
+    <p class="auth-error" id="auth-error"></p>
+    <button class="btn btn-primary" onclick="submitAuthForm()">${isSignup ? 'Crear cuenta' : 'Iniciar sesión'}</button>
+    <p class="auth-switch">${isSignup ? '¿Ya tienes cuenta?' : '¿Primera vez en HERE?'} <b onclick="toggleAuthMode()">${isSignup ? 'Inicia sesión' : 'Crea una cuenta'}</b></p>
+  `;
+}
+function toggleAuthMode(){
+  authMode = authMode === 'signin' ? 'signup' : 'signin';
+  openSheet(authSheetHTML());
+}
+async function submitAuthForm(){
+  const emailEl = document.getElementById('auth-email');
+  const passEl = document.getElementById('auth-password');
+  const errEl = document.getElementById('auth-error');
+  const email = (emailEl.value||'').trim();
+  const password = passEl.value||'';
+  errEl.style.color = ''; errEl.textContent = '';
+  if(!email || !password){ errEl.textContent = 'Escribe tu correo y tu contraseña.'; return; }
+  const sb = getSupabase();
+  if(!sb){ errEl.textContent = 'No se pudo conectar ahora mismo. Intenta de nuevo en un momento.'; return; }
+  const { data, error } = authMode === 'signup'
+    ? await sb.auth.signUp({ email, password })
+    : await sb.auth.signInWithPassword({ email, password });
+  if(error){ errEl.textContent = translateAuthError(error.message); return; }
+  if(authMode === 'signup' && data && data.user && !data.session){
+    errEl.style.color = 'var(--sage-deep)';
+    errEl.textContent = 'Casi listo: revisa tu correo para confirmar la cuenta.';
+    return;
+  }
+  // si ya hay sesión, onAuthStateChange (más abajo) se encarga de cerrar
+  // la hoja, sincronizar y avisar con un toast.
+}
+function translateAuthError(msg){
+  msg = msg || '';
+  if(/already registered|already exists|user already/i.test(msg)) return 'Ese correo ya tiene una cuenta — mejor inicia sesión.';
+  if(/invalid login credentials/i.test(msg)) return 'Correo o contraseña incorrectos.';
+  if(/at least 6|should be at least/i.test(msg)) return 'La contraseña debe tener al menos 6 caracteres.';
+  if(/rate limit/i.test(msg)) return 'Demasiados intentos — espera un momento y vuelve a intentar.';
+  if(/invalid email/i.test(msg)) return 'Ese correo no parece válido.';
+  return 'No se pudo completar: ' + msg;
+}
+async function hereSignInGoogle(){
+  const sb = getSupabase();
+  if(!sb) return;
+  try{
+    await sb.auth.signInWithOAuth({ provider:'google', options:{ redirectTo: window.location.origin + window.location.pathname } });
+  }catch(e){}
+}
+async function hereSignOut(){
+  const sb = getSupabase();
+  if(sb){ try{ await sb.auth.signOut(); }catch(e){} }
+  hereUser = null;
+  closeSheet();
+  renderPerfil();
+  showHereToast('Sesión cerrada — tus datos siguen en este dispositivo');
+}
+function initHereAuth(){
+  const sb = getSupabase();
+  if(!sb) return; // sin conexión al cargar, o el script de Supabase no cargó: la app sigue sin cuenta
+  sb.auth.onAuthStateChange((event, session)=>{
+    const wasLoggedOut = !hereUser;
+    hereUser = (session && session.user) ? session.user : null;
+    if(event === 'SIGNED_IN' && hereUser){
+      pullCloudData();
+      closeSheet();
+      renderPerfil();
+      if(wasLoggedOut) showHereToast('Sesión iniciada');
+    }else if(event === 'SIGNED_OUT'){
+      renderPerfil();
+    }
+  });
+  sb.auth.getSession().then(({data})=>{
+    if(data && data.session && data.session.user){
+      hereUser = data.session.user;
+      pullCloudData();
+      renderPerfil();
+    }
+  }).catch(()=>{});
+}
+const ICON_GOOGLE = '<svg viewBox="0 0 48 48" style="width:17px; height:17px;"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.6-6 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 8 3l5.7-5.7C34.5 6 29.5 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.9 18.9 13 24 13c3.1 0 5.8 1.1 8 3l5.7-5.7C34.5 6 29.5 4 24 4 16.3 4 9.6 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.4 0 10.3-1.8 14.1-4.9L32 33.1C29.8 34.7 27 35.6 24 35.6c-5.2 0-9.7-3.4-11.3-8.1l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.2 4.2-4.2 5.6l6.1 5.9C40.8 36.3 44 30.6 44 24c0-1.3-.1-2.7-.4-3.5z"/></svg>';
 
 let savedWords = load('here_saved', []);
 let prayers = load('here_prayers', []);
@@ -6051,6 +6274,12 @@ function renderPerfil(){
       <div class="list-card" onclick="go('diario')"><div><div class="t">Ver reflexiones y oraciones</div></div><span>→</span></div>
       <div class="list-card" onclick="goVersiculosResaltados()"><div><div class="t">🖍 Ver versículos resaltados</div></div><span>→</span></div>
     </div>
+    <div class="section-title" style="padding-left:0; margin-top:26px;">Cuenta</div>
+    <div class="list-card" style="margin-left:0; margin-right:0;" onclick="openAccountSheet()">
+      ${hereUser
+        ? `<div><div class="t">👤 ${hereUser.email}</div><div class="s">Tu progreso se guarda en la nube</div></div><span style="font-size:12.5px; color:var(--ink-soft); font-weight:600;">→</span>`
+        : `<div><div class="t">☁️ Crea una cuenta gratis</div><div class="s">No pierdas tu progreso si cambias de celular</div></div><span>→</span>`}
+    </div>
     <div class="section-title" style="padding-left:0; margin-top:26px;">Preferencias</div>
     <p style="font-size:13.5px; color:var(--ink-soft); margin-top:6px; margin-bottom:14px; line-height:1.6;">
       Buscas: ${(prefs.goals||[]).join(', ')||'—'}
@@ -6155,6 +6384,9 @@ if('serviceWorker' in navigator){
 }
 
 /* ---------------- boot ---------------- */
+// Revisa (sin bloquear nada) si ya había una sesión de cuenta iniciada en
+// este dispositivo; si la hay, trae el progreso guardado en la nube.
+initHereAuth();
 window.addEventListener('load', ()=>{
   const splash = document.getElementById('splash');
   // Atajo para revisores/herramientas externas (ej. compartir el link con
