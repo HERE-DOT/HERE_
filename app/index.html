@@ -284,6 +284,26 @@
   }
   .chip.selected{border-color:var(--gold); background:linear-gradient(135deg, rgba(231,204,139,0.22), rgba(173,132,47,0.12)); box-shadow:var(--shadow-md);}
   .chip:active{transform:scale(0.98);}
+
+  /* fila compacta de ánimo del Home — a propósito más pequeña que .chip/.feel-item,
+     que son para pantallas dedicadas (checkin/sentir); aquí es solo un detalle inline. */
+  .home-mood-row{
+    display:flex; gap:8px; overflow-x:auto; padding:2px 24px 10px; margin:2px 0 0;
+    -webkit-overflow-scrolling:touch; scrollbar-width:none;
+  }
+  .home-mood-row::-webkit-scrollbar{ display:none; }
+  .home-mood-chip{
+    flex:none; display:inline-flex; align-items:center; gap:6px; padding:8px 14px;
+    border-radius:100px; border:1px solid var(--line); background:var(--card);
+    font-family:'Manrope', sans-serif; font-size:13px; color:var(--ink-soft);
+    cursor:pointer; white-space:nowrap; transition:all .18s ease;
+  }
+  .home-mood-chip .e{ font-size:14px; }
+  .home-mood-chip.active{
+    border-color:var(--gold); background:linear-gradient(135deg, rgba(231,204,139,0.22), rgba(173,132,47,0.12));
+    color:var(--ink); font-weight:600;
+  }
+  .home-mood-chip:active{ transform:scale(0.96); }
   .dot{width:6px; height:6px; border-radius:50%; background:var(--gold); flex:none;}
   .progress-dots{display:flex; gap:6px; justify-content:center; margin:18px 0;}
   .progress-dots span{width:6px; height:6px; border-radius:50%; background:var(--line);}
@@ -427,7 +447,7 @@
   .hoy-scene-eyebrow{ font-size:12px; letter-spacing:.4px; opacity:.82; font-weight:600; margin-bottom:14px; }
   .hoy-scene-verse{ font-size:18px; line-height:1.56; font-weight:400; }
   .hoy-scene-ref{ margin-top:14px; font-size:12.5px; font-weight:500; opacity:.72; letter-spacing:.2px; }
-  .hoy-scene-actions{display:flex; gap:8px; margin-top:22px; width:100%;}
+  .hoy-scene-actions{display:flex; gap:8px; margin-top:22px; width:100%; flex-wrap:wrap;}
   .hoy-scene-actions button{
     border:none; background:rgba(255,255,255,0.14); color:#fff; font-weight:500;
     font-size:12px; padding:8px 13px; border-radius:100px; cursor:pointer; display:flex; align-items:center; gap:5px;
@@ -1719,11 +1739,23 @@
 
   <section class="screen noNav" id="ob-2">
     <div class="container">
-      <div class="progress-dots"><span class="on"></span><span></span><span></span><span></span></div>
+      <div class="progress-dots"><span class="on"></span><span></span><span></span><span></span><span></span></div>
       <h2 class="serif" style="font-size:22px;">¿Qué buscas hoy?</h2>
       <p style="color:var(--ink-soft); margin-top:8px; font-size:14px;">Puedes elegir varias.</p>
     </div>
     <div class="stack container" id="ob2-options"></div>
+    <div class="container" style="margin-top:auto;">
+      <button class="btn btn-primary" onclick="go('ob-receive')">Continuar →</button>
+    </div>
+  </section>
+
+  <section class="screen noNav" id="ob-receive">
+    <div class="container">
+      <div class="progress-dots"><span class="on"></span><span class="on"></span><span></span><span></span><span></span></div>
+      <h2 class="serif" style="font-size:22px;">¿Cómo quieres recibirlo?</h2>
+      <p style="color:var(--ink-soft); margin-top:8px; font-size:14px;">Así te mostramos primero lo que mejor te sirve.</p>
+    </div>
+    <div class="stack container" id="obReceive-options"></div>
     <div class="container" style="margin-top:auto;">
       <button class="btn btn-primary" onclick="go('ob-3')">Continuar →</button>
     </div>
@@ -1731,7 +1763,7 @@
 
   <section class="screen noNav" id="ob-3">
     <div class="container">
-      <div class="progress-dots"><span class="on"></span><span class="on"></span><span></span><span></span></div>
+      <div class="progress-dots"><span class="on"></span><span class="on"></span><span class="on"></span><span></span><span></span></div>
       <h2 class="serif" style="font-size:22px;">¿Cuándo crees que más necesitarás HERE?</h2>
     </div>
     <div class="stack container" id="ob3-options"></div>
@@ -1742,7 +1774,7 @@
 
   <section class="screen noNav" id="ob-4">
     <div class="container">
-      <div class="progress-dots"><span class="on"></span><span class="on"></span><span class="on"></span><span></span></div>
+      <div class="progress-dots"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span></span></div>
       <h2 class="serif" style="font-size:22px;">Elige cómo quieres leer</h2>
       <p style="color:var(--ink-soft); margin-top:8px; font-size:14px;">No afirmamos que una traducción sea superior a otra. Por ahora todo el contenido se muestra en Reina-Valera 1960; guardamos tu preferencia para cuando sumemos más traducciones.</p>
     </div>
@@ -1754,7 +1786,7 @@
 
   <section class="screen noNav" id="ob-5">
     <div class="container">
-      <div class="progress-dots"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span></div>
+      <div class="progress-dots"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span></div>
       <h2 class="serif" style="font-size:22px;">¿Quieres que HERE te recuerde volver?</h2>
     </div>
     <div class="stack container">
@@ -1799,15 +1831,25 @@
 
     <div class="week-streak" id="home-week-streak" style="display:none;"></div>
 
+    <!-- Fila de ánimo: deja elegir cómo se siente hoy la persona sin salir del
+         Home ni abrir otra pantalla. "Hoy" (por defecto) deja todo exactamente
+         como estaba. Elegir otra opción solo actualiza la tarjeta de abajo. -->
+    <div class="home-mood-row" id="home-mood-row"></div>
+
     <!-- La palabra de hoy: el elemento con más peso visual de la pantalla,
          a propósito — lo primero que se lee después del saludo. -->
-    <div class="feature-card hoy-scene" id="home-hoy-card" style="align-items:flex-start; cursor:pointer;" onclick="go('hoy')">
+    <div class="feature-card hoy-scene" id="home-hoy-card" style="align-items:flex-start; cursor:pointer;">
       <div class="hoy-scene-eyebrow" id="home-hoy-eyebrow">Tu palabra de hoy</div>
       <div class="hoy-scene-verse serif" id="home-hoy-verse"></div>
       <div class="hoy-scene-ref" id="home-hoy-ref"></div>
-      <div class="hoy-scene-actions">
+      <div class="hoy-scene-actions" id="home-hoy-actions">
         <button onclick="event.stopPropagation(); shareVerse(document.getElementById('home-hoy-card').dataset.ref)">↗ Compartir</button>
         <button onclick="event.stopPropagation(); toggleSave(document.getElementById('home-hoy-card').dataset.ref); this.textContent = isSaved(document.getElementById('home-hoy-card').dataset.ref) ? '♥ Guardado' : '♡ Guardar';">♡ Guardar</button>
+      </div>
+      <div class="hoy-scene-actions" id="home-hoy-mood-actions" style="display:none;">
+        <button onclick="event.stopPropagation(); openPalabraFromRef(document.getElementById('home-hoy-card').dataset.ref)">📖 Leer más</button>
+        <button onclick="event.stopPropagation(); goHomeMoodListen()">🎧 Escuchar</button>
+        <button onclick="event.stopPropagation(); prefillOrar(document.getElementById('home-hoy-card').dataset.ref)">🙏 Orar</button>
       </div>
     </div>
 
@@ -2114,6 +2156,11 @@
     </div>
     <div id="musica-search-results"></div>
     <div id="musica-default-sections">
+
+    <!-- "Continuar escuchando": si hay algo reproducido recientemente, es lo
+         primero que se ve — reutiliza la misma tarjeta visual que "Continúa
+         tu plan" en el Home (.plan-continue), nada nuevo que aprender. -->
+    <div id="musica-continue" style="padding:0 24px; margin-bottom:4px; display:none;"></div>
 
     <!-- Destacado de la semana: lo primero que se ve, arriba de "Para este
          momento" — más grande y con vida, para que abra la pantalla. -->
@@ -2912,6 +2959,20 @@ const NECESITO_CATS = [
  {id:'nose2', label:'No sé qué siento', emoji:'💭', tag:'aleatorio'},
 ];
 
+/* categorías para la fila de ánimo del Home (tarjeta "palabra de hoy" personalizable) —
+   reutiliza los mismos tags que FEELINGS/NECESITO_CATS, no una taxonomía nueva.
+   'hoy' (tag:null) es el estado por defecto: el versículo fijo del día, como siempre. */
+const HOME_MOODS = [
+  {id:'hoy', label:'Hoy', emoji:'🕊️', tag:null},
+  {id:'cansado', label:'Cansado', emoji:'🌙', tag:'cansancio'},
+  {id:'miedo', label:'Con miedo', emoji:'🌊', tag:'miedo'},
+  {id:'ansiedad', label:'Ansioso', emoji:'🌫️', tag:'ansiedad'},
+  {id:'triste', label:'Triste', emoji:'🌧️', tag:'tristeza'},
+  {id:'agradecido', label:'Agradecido', emoji:'🤍', tag:'agradecido'},
+  {id:'paz', label:'Buscando paz', emoji:'✨', tag:'paz'},
+];
+let homeMoodSelected = 'hoy';
+
 /* ---------------- reflexión breve (capa mock — lista para conectarse a un modelo/IA real) ---------------- */
 const REFLEXION_MOCK = {
   cansancio:{ contexto:'Muchos de estos pasajes nacieron en medio del cansancio de personas que seguían caminando sin fuerzas visibles.', reflexion:'No tienes que producir descanso por tu cuenta; se te ofrece, no se te exige.' },
@@ -3515,6 +3576,7 @@ window.addEventListener('popstate', (e)=>{
 
 /* ---------------- onboarding ---------------- */
 const OB2 = ["Acercarme a Dios","Leer la Biblia","Encontrar paz","Fortalecer mi fe","Entender la Biblia","Crear un hábito","Encontrar esperanza"];
+const OB_RECEIVE = ["Leer","Escuchar","Orar","Todavía no lo sé"];
 const OB3 = ["Por la mañana","Durante el día","Antes de dormir","Cuando esté pasando por algo","Cuando necesite orar","Cuando quiera leer"];
 const OB4 = ["RVR1960","NVI","NTV","No estoy seguro"];
 
@@ -3536,16 +3598,28 @@ function buildOptions(containerId, items, store, multi){
 }
 const obStore = {};
 buildOptions('ob2-options', OB2, obStore, true);
+buildOptions('obReceive-options', OB_RECEIVE, obStore, false);
 buildOptions('ob3-options', OB3, obStore, true);
 buildOptions('ob4-options', OB4, obStore, false);
 
 function finishOnboarding(){
   prefs.goals = obStore['ob2-options'] || [];
+  prefs.receiveMode = (obStore['obReceive-options']||[])[0] || null;
   prefs.when = obStore['ob3-options'] || [];
   prefs.translation = (obStore['ob4-options']||[])[0] || 'No estoy seguro';
   save('here_prefs', prefs);
   save('here_onboarded', true);
   go('checkin');
+}
+// Desde Configuración (Perfil → Preferencias): deja repasar la introducción
+// sin perder nada — solo marca el onboarding como no completado (igual que
+// si fuera la primera vez) y lleva a la primera pantalla. here_prefs y el
+// resto de los datos del usuario no se tocan. Como los chips de ob-2/ob-3/
+// ob-4 conservan la marca "selected" de la última vez, esto también sirve
+// para revisar o ajustar esas respuestas, no solo para "volver a ver".
+function replayOnboarding(){
+  save('here_onboarded', false);
+  go('ob-1');
 }
 
 /* ---------------- feelings ---------------- */
@@ -3584,25 +3658,71 @@ const HOME_SUBLINES = [
   'Este es un espacio seguro para ti.',
   'No tienes que llegar con nada preparado.',
 ];
+/* ---------------- fila de ánimo del Home ---------------- */
+function renderHomeMoodRow(){
+  const c = document.getElementById('home-mood-row');
+  if(!c) return;
+  c.innerHTML = HOME_MOODS.map(m=>`<div class="home-mood-chip ${m.id===homeMoodSelected?'active':''}" data-id="${m.id}"><span class="e">${m.emoji}</span>${m.label}</div>`).join('');
+  c.querySelectorAll('.home-mood-chip').forEach(el=>{
+    el.onclick = ()=>pickHomeMood(el.dataset.id);
+  });
+}
+function pickHomeMood(id){
+  if(id === homeMoodSelected) return;
+  homeMoodSelected = id;
+  haptic(8);
+  renderHomeMoodRow();
+  const mood = HOME_MOODS.find(m=>m.id===id);
+  if(!mood || !mood.tag) applyHomeTodayVerse();
+  else applyHomeMoodVerse(mood);
+}
+// Actualiza la tarjeta existente in situ (mismos ids, misma tarjeta) — nunca
+// crea una pantalla nueva. isMood decide si tocar la tarjeta lleva a "Hoy"
+// (comportamiento de siempre) o abre el versículo elegido por ánimo.
+function setHomeHoyCard(v, eyebrow, tag, isMood){
+  document.getElementById('home-hoy-eyebrow').textContent = eyebrow;
+  document.getElementById('home-hoy-verse').textContent = `"${v.text}"`;
+  document.getElementById('home-hoy-ref').textContent = v.ref;
+  const hoyCard = document.getElementById('home-hoy-card');
+  hoyCard.className = 'feature-card hoy-scene ' + sceneForTag(tag || 'gratitud');
+  hoyCard.dataset.ref = v.ref;
+  hoyCard.onclick = isMood ? ()=>openPalabraFromRef(v.ref) : ()=>go('hoy');
+  document.getElementById('home-hoy-actions').style.display = isMood ? 'none' : '';
+  document.getElementById('home-hoy-mood-actions').style.display = isMood ? '' : 'none';
+  const saveBtn = hoyCard.querySelector('#home-hoy-actions button:last-child');
+  if(saveBtn) saveBtn.textContent = isSaved(v.ref) ? '♥ Guardado' : '♡ Guardar';
+  if(!v._rvr60){
+    resolveVerseText(v).then(()=>{
+      if(currentScreen==='home' && hoyCard.dataset.ref===v.ref){
+        document.getElementById('home-hoy-verse').textContent = `"${v.text}"`;
+      }
+    });
+  }
+}
+function applyHomeTodayVerse(){
+  const today = pickTodayVerse();
+  setHomeHoyCard(today, 'Tu palabra de hoy', (today.tags && today.tags[0]) || 'gratitud', false);
+}
+function applyHomeMoodVerse(mood){
+  saveLastMoodTag(mood.tag);
+  const v = verseForTag(mood.tag);
+  setHomeHoyCard(v, 'Para ti ahora', mood.tag, true);
+}
+function goHomeMoodListen(){
+  const mood = HOME_MOODS.find(m=>m.id===homeMoodSelected);
+  const lm = mood && mood.tag ? moodForTag(mood.tag) : null;
+  if(lm) openListenMoment(lm.id); else go('musica');
+}
+
 function renderHomeQuick(){
   const h = new Date().getHours();
   const greetEl = document.getElementById('home-greeting');
   greetEl.textContent = h<12 ? 'Buenos días.' : h<19 ? 'Buenas tardes.' : 'Buenas noches.';
   const subEl = document.getElementById('home-subline');
   if(subEl) subEl.textContent = HOME_SUBLINES[Math.floor(Math.random()*HOME_SUBLINES.length)];
-  const today = pickTodayVerse();
-  document.getElementById('home-hoy-verse').textContent = `"${today.text}"`;
-  document.getElementById('home-hoy-ref').textContent = today.ref;
-  const hoyCard = document.getElementById('home-hoy-card');
-  hoyCard.className = 'feature-card hoy-scene ' + sceneForTag((today.tags && today.tags[0]) || 'gratitud');
-  hoyCard.dataset.ref = today.ref;
-  const saveBtn = hoyCard.querySelector('.hoy-scene-actions button:last-child');
-  if(saveBtn) saveBtn.textContent = isSaved(today.ref) ? '♥ Guardado' : '♡ Guardar';
-  resolveVerseText(today).then(()=>{
-    if(currentScreen==='home'){
-      document.getElementById('home-hoy-verse').textContent = `"${today.text}"`;
-    }
-  });
+  homeMoodSelected = 'hoy';
+  renderHomeMoodRow();
+  applyHomeTodayVerse();
   const streak = updateStreak();
   const streakEl = document.getElementById('home-streak');
   if(streakEl) streakEl.textContent = `🕯️ ${streak}`;
@@ -5281,6 +5401,54 @@ async function openListenMoment(id){
   else rows.push(curatedMomentRow(findTrackById(mood.fallbackWord), '🎙️'));
   listEl.innerHTML = rows.filter(Boolean).join('');
 }
+/* ---------------- "Continuar escuchando" ----------------
+   Recuerda lo último reproducido (canción, predicación o podcast, venga de
+   donde venga: catálogo, búsqueda o "Para este momento") para poder
+   retomarlo desde la parte de arriba de Escuchar, sin tener que buscarlo
+   de nuevo. Guarda una foto simple del ítem — no una posición exacta en
+   segundos, porque el reproductor (iframe de YouTube) no expone eso aquí. */
+function saveLastListened(item){
+  if(!item) return;
+  try{
+    save('here_last_listened', {
+      id: item.id || null, name: item.name || '', role: item.role || item.s || '',
+      yt: item.yt || null, ytList: item.ytList || null, thumb: trackThumbUrl(item),
+      at: Date.now()
+    });
+  }catch(e){}
+}
+function lastListened(){
+  const item = load('here_last_listened', null);
+  if(!item || !item.at || !item.name) return null;
+  if((Date.now() - item.at) / 36e5 > 24*14) return null; // expira a las ~2 semanas
+  return item;
+}
+function renderContinueListening(){
+  const wrap = document.getElementById('musica-continue');
+  if(!wrap) return;
+  const item = lastListened();
+  if(!item || (currentPlayItem && currentPlayItem.name === item.name)){
+    // nada que retomar, o es justo lo que ya está sonando ahora mismo
+    wrap.style.display = 'none';
+    wrap.innerHTML = '';
+    return;
+  }
+  wrap.style.display = '';
+  wrap.innerHTML = `
+    <div class="plan-continue" onclick="resumeLastListened()">
+      ${item.thumb ? `<img src="${item.thumb}" alt="" style="width:46px; height:46px; border-radius:12px; object-fit:cover; flex:none;">` : `<span class="emoji">🎧</span>`}
+      <div style="flex:1; min-width:0;">
+        <div style="font-size:11.5px; color:var(--ink-soft); font-weight:600; letter-spacing:.2px;">Continuar escuchando</div>
+        <div style="font-size:14.5px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${item.name}</div>
+      </div>
+      <span style="color:var(--ink-soft); flex:none;">→</span>
+    </div>`;
+}
+function resumeLastListened(){
+  const item = lastListened();
+  if(!item) return;
+  playTrack({ id:item.id, name:item.name, role:item.role, yt:item.yt, ytList:item.ytList, thumb:item.thumb });
+}
 function musicSearchUrl(platform, q){
   const enc = encodeURIComponent(q);
   return platform==='spotify' ? `https://open.spotify.com/search/${enc}` : `https://www.youtube.com/results?search_query=${enc}`;
@@ -5295,6 +5463,7 @@ function renderMusica(){
   if(searchInput) searchInput.value = '';
   document.getElementById('musica-search-results').innerHTML = '';
   document.getElementById('musica-default-sections').style.display = '';
+  renderContinueListening();
   renderListenMoment();
   renderFeaturedCarousel();
   document.getElementById('musica-categorias').innerHTML = MUSIC_CATEGORIES.map(cat=>`
@@ -5926,6 +6095,7 @@ function playTrack(item, mode){
   haptic(10);
   const isNewTrack = !currentPlayItem || currentPlayItem.yt !== item.yt || currentPlayItem.ytList !== item.ytList;
   currentPlayItem = item;
+  saveLastListened(item);
   document.getElementById('player-title').textContent = item.name;
   document.getElementById('player-now-name').textContent = item.name;
   document.getElementById('player-now-role').textContent = item.role || item.s || '';
@@ -6747,6 +6917,10 @@ function renderPerfil(){
     <div class="list-card" style="margin-left:0; margin-right:0;" onclick="cycleThemeMode()">
       <div><div class="t">🌙 Modo noche</div><div class="s">Automático (según tu celular), o elígelo tú</div></div>
       <span style="font-size:12.5px; color:var(--ink-soft); font-weight:600;">${themeModeLabel()} →</span>
+    </div>
+    <div class="list-card" style="margin-left:0; margin-right:0;" onclick="replayOnboarding()">
+      <div><div class="t">🔄 Volver a ver la introducción</div><div class="s">Repite la bienvenida — tus datos y preferencias no se borran</div></div>
+      <span>→</span>
     </div>
     <button class="btn-text" style="padding-left:0; margin-top:16px;" onclick="clearData()">Borrar mis datos</button>
   `;
