@@ -1891,7 +1891,7 @@
 
   <!-- MOOD CHECK-IN (every app open) -->
   <section class="screen noNav" id="checkin" style="position:relative;">
-    <div class="close-x" onclick="go('home')">✕</div>
+    <div class="close-x" aria-label="Cerrar" onclick="go('home')">✕</div>
     <div class="container" style="padding-top:60px;">
       <h2 class="serif" style="font-size:23px;">¿Cómo te sientes hoy?</h2>
     </div>
@@ -1976,7 +1976,7 @@
 
   <!-- SENTIR -->
   <section class="screen" id="sentir">
-    <div class="topbar"><div class="backbtn" onclick="go('home')">←</div><h2>Estoy aquí contigo</h2></div>
+    <div class="topbar"><div class="backbtn" aria-label="Atrás" onclick="go('home')">←</div><h2>Estoy aquí contigo</h2></div>
     <div class="container" style="padding-top:0;">
       <p style="color:var(--ink-soft); font-size:14.5px;">Cuéntame qué estás viviendo.</p>
     </div>
@@ -1991,7 +1991,7 @@
   <!-- PALABRA INTRO: respira (transición contemplativa mientras se busca la palabra) -->
   <section class="screen noNav" id="palabraIntro">
     <div class="verse-stage scened scene-stars" style="justify-content:center; align-items:center;">
-      <div class="close-x" onclick="go('home')">✕</div>
+      <div class="close-x" aria-label="Cerrar" onclick="go('home')">✕</div>
       <p class="serif breathe-text">Respira.</p>
       <p class="ask-sub" style="margin-top:18px; animation:stageIn .6s .4s ease both;">Buscando lo que puede acompañarte…</p>
     </div>
@@ -2000,7 +2000,7 @@
   <!-- PALABRA ASK: entrada única — mirar el cielo, respirar, y decir qué se está viviendo -->
   <section class="screen noNav" id="palabraAsk">
     <div class="verse-stage scened scene-stars ask-stage">
-      <div class="close-x" onclick="go('home')">✕</div>
+      <div class="close-x" aria-label="Cerrar" onclick="go('home')">✕</div>
       <div class="ask-content">
         <p class="ask-hero serif">Mira el cielo<br>y respira.</p>
         <p class="ask-sub">¿Qué estás viviendo?</p>
@@ -2029,7 +2029,7 @@
   <!-- QUEDARME AQUI -->
   <section class="screen noNav" id="quedarme">
     <div class="verse-stage">
-      <div class="close-x" onclick="closeQuedarme()">✕</div>
+      <div class="close-x" aria-label="Cerrar" onclick="closeQuedarme()">✕</div>
       <p class="serif" style="font-size:22px; line-height:1.8;">Respira.<br>Lee esto una vez más.<br>No tienes que apresurarte.</p>
       <div class="breathe-wrap">
         <div class="breathe-circle"></div>
@@ -2056,7 +2056,7 @@
 
   <!-- CHAPTER PICKER -->
   <section class="screen noNav" id="chapterPicker">
-    <div class="topbar"><div class="backbtn" onclick="go('biblia')">←</div><h2 id="chapterPicker-title"></h2></div>
+    <div class="topbar"><div class="backbtn" aria-label="Atrás" onclick="go('biblia')">←</div><h2 id="chapterPicker-title"></h2></div>
     <p style="padding:0 24px; color:var(--ink-soft); font-size:13.5px;">Elige un capítulo</p>
     <div class="chapter-picker" id="chapterPicker-grid"></div>
     <div style="height:100px;"></div>
@@ -2064,7 +2064,7 @@
 
   <!-- HISTORIAL DE LECTURAS -->
   <section class="screen noNav" id="historialLecturas">
-    <div class="topbar"><div class="backbtn" onclick="go('perfil')">←</div><h2>Historial de lecturas</h2></div>
+    <div class="topbar"><div class="backbtn" aria-label="Atrás" onclick="go('perfil')">←</div><h2>Historial de lecturas</h2></div>
     <div class="stack container" id="historial-list" style="padding-top:0;"></div>
     <div style="height:60px;"></div>
   </section>
@@ -2073,14 +2073,14 @@
        en un solo lugar, reutilizando .music-track y playTrack() igual que el
        resto de Escuchar. -->
   <section class="screen noNav" id="musicaGuardado">
-    <div class="topbar"><div class="backbtn" onclick="go('perfil')">←</div><h2>Guardado</h2></div>
+    <div class="topbar"><div class="backbtn" aria-label="Atrás" onclick="go('perfil')">←</div><h2>Guardado</h2></div>
     <div class="stack container" id="musicaGuardado-list" style="padding-top:0;"></div>
     <div style="height:60px;"></div>
   </section>
 
   <!-- PLAN DETAIL -->
   <section class="screen noNav" id="planDetail">
-    <div class="topbar"><div class="backbtn" onclick="go('biblia')">←</div><h2 id="plan-title"></h2></div>
+    <div class="topbar"><div class="backbtn" aria-label="Atrás" onclick="go('biblia')">←</div><h2 id="plan-title"></h2></div>
     <div class="container" style="padding-top:0;">
       <p id="plan-subtitle" style="color:var(--ink-soft); font-size:14.5px; line-height:1.5; margin-bottom:6px;"></p>
       <div style="display:flex; align-items:center; gap:10px; margin:16px 0 22px;">
@@ -2094,7 +2094,7 @@
 
   <!-- PLAN DAY -->
   <section class="screen noNav" id="planDay">
-    <div class="topbar"><div class="backbtn" onclick="go('planDetail')">←</div><h2 id="plan-day-title"></h2></div>
+    <div class="topbar"><div class="backbtn" aria-label="Atrás" onclick="go('planDetail')">←</div><h2 id="plan-day-title"></h2></div>
     <div class="verse-stage" style="min-height:auto; padding:30px 34px 26px;" id="plan-day-stage"></div>
     <div class="container" style="padding-top:0;">
       <button class="btn btn-primary" style="width:100%;" id="plan-day-btn" onclick="completePlanDay()">Marcar como leído</button>
@@ -2147,7 +2147,7 @@
 
   <!-- ENTENDER -->
   <section class="screen noNav" id="entender">
-    <div class="topbar"><div class="backbtn" onclick="closeEntender()">←</div><h2>Entender</h2></div>
+    <div class="topbar"><div class="backbtn" aria-label="Atrás" onclick="closeEntender()">←</div><h2>Entender</h2></div>
     <div class="container">
       <p class="serif" style="font-style:italic; font-size:17px; line-height:1.6;" id="entender-verse"></p>
     </div>
@@ -2203,7 +2203,7 @@
   <!-- GUIDED PRAYER -->
   <section class="screen noNav" id="orarGuiada">
     <div class="verse-stage" id="guiada-stage">
-      <div class="close-x" onclick="exitGuidedPrayer()">✕</div>
+      <div class="close-x" aria-label="Cerrar" onclick="exitGuidedPrayer()">✕</div>
       <div class="guiada-dots" id="guiada-dots"></div>
       <div id="guiada-body"></div>
     </div>
@@ -2211,7 +2211,7 @@
 
   <!-- ORACIÓN EN COMUNIDAD -->
   <section class="screen noNav" id="comunidadOrar">
-    <div class="topbar"><div class="backbtn" onclick="go('orar')">←</div><h2>Orar en comunidad</h2></div>
+    <div class="topbar"><div class="backbtn" aria-label="Atrás" onclick="go('orar')">←</div><h2>Orar en comunidad</h2></div>
     <p style="padding:0 24px; margin-top:-6px; color:var(--ink-soft); font-size:13.5px; line-height:1.5;">Un espacio para pedir oración y orar por otros. Nunca compartas contraseñas, números de teléfono, correos o datos bancarios aquí.</p>
     <div class="container" id="comunidad-compose" style="padding-top:14px;"></div>
     <div class="section-title" style="margin-top:10px;">Peticiones de la comunidad</div>
@@ -2233,7 +2233,7 @@
 
   <!-- PASTORES QUE SIGUES -->
   <section class="screen noNav" id="misPastores">
-    <div class="topbar"><div class="backbtn" onclick="go('perfil')">←</div><h2>Pastores que sigues</h2></div>
+    <div class="topbar"><div class="backbtn" aria-label="Atrás" onclick="go('perfil')">←</div><h2>Pastores que sigues</h2></div>
     <div id="misPastores-list" class="container" style="padding-top:6px;"></div>
   </section>
 
@@ -2241,7 +2241,7 @@
   <section class="screen noNav" id="chat" style="padding-bottom:0;">
     <div class="topbar" style="flex-direction:column; align-items:flex-start; gap:2px;">
       <div style="display:flex; align-items:center; gap:14px; width:100%;">
-        <div class="backbtn" onclick="go('home')">←</div>
+        <div class="backbtn" aria-label="Atrás" onclick="go('home')">←</div>
         <h2>Estoy aquí contigo.</h2>
       </div>
       <p style="color:var(--ink-soft); font-size:13px; margin:2px 0 0 52px;">Cuéntame qué estás viviendo.</p>
@@ -2249,7 +2249,7 @@
     <div class="chat-body" id="chat-body"></div>
     <div class="chat-inputbar">
       <input type="text" id="chat-input" placeholder="Escribe lo que tienes en el corazón…" onkeydown="if(event.key==='Enter') sendChatMessage();">
-      <button class="chat-send" onclick="sendChatMessage()">↑</button>
+      <button class="chat-send" aria-label="Enviar" onclick="sendChatMessage()">↑</button>
     </div>
   </section>
 
@@ -2263,7 +2263,7 @@
       <div class="tag-tab" data-t="favoritos" onclick="diarioSetTab('favoritos')">Favoritos</div>
     </div>
     <div id="diario-list" class="ent-fade" style="padding-top:6px;"></div>
-    <button class="fab" id="diario-fab" onclick="openReflectionEditor('General','')">+</button>
+    <button class="fab" id="diario-fab" aria-label="Agregar una reflexión" onclick="openReflectionEditor('General','')">+</button>
   </section>
 
   <!-- MÚSICA, PODCASTS Y PREDICACIONES -->
@@ -2345,7 +2345,7 @@
 
   <!-- CATEGORÍA DE MÚSICA -->
   <section class="screen noNav" id="musicaCategoria">
-    <div class="topbar"><div class="backbtn" onclick="go('musica')">←</div><h2 id="musicaCategoria-title" style="flex:1;"></h2><span id="musicaCategoria-follow"></span></div>
+    <div class="topbar"><div class="backbtn" aria-label="Atrás" onclick="go('musica')">←</div><h2 id="musicaCategoria-title" style="flex:1;"></h2><span id="musicaCategoria-follow"></span></div>
     <p id="musicaCategoria-subtitle" style="padding:0 24px; margin-top:-4px; color:var(--ink-soft); font-size:13.5px; line-height:1.5;"></p>
     <div class="stack" id="musicaCategoria-list" style="padding:10px 24px 40px;"></div>
   </section>
@@ -2362,7 +2362,7 @@
 
   <!-- REPRODUCTOR: video o solo audio, dentro de la app -->
   <section class="screen noNav" id="reproductor" style="padding-bottom:0;">
-    <div class="topbar"><div class="backbtn" onclick="closePlayer()">←</div><h2 id="player-title"></h2></div>
+    <div class="topbar"><div class="backbtn" aria-label="Atrás" onclick="closePlayer()">←</div><h2 id="player-title"></h2></div>
     <div class="player-body">
       <div class="player-main">
         <div class="player-modes">
@@ -2393,7 +2393,7 @@
             <div class="player-time-row"><span id="player-time-current">0:00</span><span id="player-time-duration">0:00</span></div>
           </div>
           <div class="player-audio-controls">
-            <button class="player-audio-toggle" id="player-audio-toggle" onclick="togglePlayerPlayback()">
+            <button class="player-audio-toggle" id="player-audio-toggle" aria-label="Pausar" onclick="togglePlayerPlayback()">
               <svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect></svg>
             </button>
             <button class="player-skip-btn" aria-label="Siguiente" onclick="playNextRelated()">
@@ -4143,7 +4143,7 @@ function renderPalabra(){
   const altExcerpt = alt ? (alt.text.length > 78 ? alt.text.slice(0,78)+'…' : alt.text) : '';
   stage.innerHTML = `
     ${particlesHTML(8)}
-    <div class="close-x" onclick="go('home')">✕</div>
+    <div class="close-x" aria-label="Cerrar" onclick="go('home')">✕</div>
     <div class="eyebrow">Una palabra para ti</div>
     <p class="verse serif">"${v.text}"</p>
     <p class="ref">${v.ref}</p>
@@ -4191,7 +4191,7 @@ function renderSentirStage(){
   applyScene(stage, sceneForTag(cat.tag));
   stage.innerHTML = `
     ${particlesHTML(7)}
-    <div class="close-x" onclick="go('sentir')">✕</div>
+    <div class="close-x" aria-label="Cerrar" onclick="go('sentir')">✕</div>
     <div class="eyebrow">Estoy aquí contigo</div>
     <p class="serif" style="font-size:19px; line-height:1.7;">"${cat.line}"</p>
     <p class="verse serif" style="margin-top:26px;">"${v.text}"</p>
@@ -6623,10 +6623,11 @@ function miniPlayIcon(playing){
 }
 function onPlayerStateChange(e){
   const playing = e.data===1;
+  const label = playing ? 'Pausar' : 'Reproducir';
   const btn = document.getElementById('player-audio-toggle');
-  if(btn) btn.innerHTML = miniPlayIcon(playing);
+  if(btn){ btn.innerHTML = miniPlayIcon(playing); btn.setAttribute('aria-label', label); }
   const miniBtn = document.getElementById('mini-player-toggle');
-  if(miniBtn) miniBtn.innerHTML = miniPlayIcon(playing);
+  if(miniBtn){ miniBtn.innerHTML = miniPlayIcon(playing); miniBtn.setAttribute('aria-label', label); }
   const miniBar = document.getElementById('mini-player');
   if(miniBar) miniBar.classList.toggle('is-playing', playing);
   // 0 = YT.PlayerState.ENDED: el video terminó solo (no lo pausó la
@@ -7163,7 +7164,10 @@ async function runSearch(){
     others = r.verses.slice(1);
     matchedTags = r.matchedTags;
   }
-  if(!main){ results.innerHTML = ''; return; }
+  if(!main){
+    results.innerHTML = `<div class="container" style="padding-top:0;"><div class="empty"><div class="light-dot"></div>No encontramos nada para "${q.replace(/</g,'&lt;')}".<br>Prueba con otra palabra, o cuéntanos qué sientes en vez de qué buscas.</div></div>`;
+    return;
+  }
   await Promise.all([main, ...others].map(v=>resolveVerseText(v)));
   const why = whyRelevant(matchedTags);
   results.innerHTML = `
