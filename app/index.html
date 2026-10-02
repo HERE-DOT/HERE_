@@ -76,6 +76,10 @@
     color-scheme: dark;
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
+  /* El atributo [hidden] tiene la misma especificidad CSS que una regla de
+     clase propia (ej. .auth-google-btn{display:flex}), así que sin !important
+     una regla de autor puede ganarle y el elemento "oculto" se sigue viendo. */
+  [hidden]{ display:none !important; }
   html,body{height:100%;}
   body{
     margin:0; background:var(--bg); color:var(--ink);
@@ -261,6 +265,16 @@
   .btn-ghost{background:var(--card); color:var(--ink); border:1px solid var(--line); box-shadow:var(--shadow-sm);}
   .btn-text{background:none; border:none; color:var(--ink-soft); font-family:'Manrope'; font-size:14px; cursor:pointer;}
   .stack{display:flex; flex-direction:column; gap:12px;}
+  .stack input[type="email"], .stack input[type="password"], .stack input[type="text"]{
+    font-family:'Manrope', sans-serif; font-size:15px; color:var(--ink);
+    background:var(--card); border:1.5px solid var(--line); border-radius:12px;
+    padding:12px 14px; width:100%; transition:border-color .2s ease, box-shadow .2s ease;
+  }
+  .stack input::placeholder{ color:var(--ink-soft); opacity:.8; }
+  .stack input:focus-visible{
+    outline:none; border-color:var(--gold); box-shadow:0 0 0 3px rgba(173,132,47,0.16);
+  }
+  .stack input.invalid{ border-color:#b14545; }
   .stack-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
   .stack-grid .btn{font-size:13.5px; padding:13px 10px;}
   .chip{
@@ -723,6 +737,114 @@
   .account-benefits{list-style:none; margin:0 0 20px; padding:0; display:flex; flex-direction:column; gap:10px;}
   .account-benefits li{display:flex; align-items:flex-start; gap:10px; font-size:13.5px; color:var(--ink); line-height:1.4;}
   .account-benefits li .dot{flex:none; width:6px; height:6px; border-radius:50%; background:var(--gold); margin-top:6px;}
+
+  /* ---------- personaje acompañante de la hoja de cuenta ----------
+     Ilustración animada (ver <svg> en authSheetHTML) que reacciona al
+     foco del correo, a la escritura de la contraseña, a campos
+     incompletos y al éxito del registro/inicio de sesión. Colores de
+     la ilustración fijos (no siguen el tema claro/oscuro), igual que
+     cualquier dibujo con colores propios. */
+  .companion-zone{ display:flex; justify-content:center; margin:-4px 0 10px; }
+  .companion{ display:flex; justify-content:center; }
+  .companion svg{ height:150px; width:auto; overflow:visible; display:block; }
+
+  @keyframes authBreathe{
+    0%,100%{ transform:scaleY(1); }
+    50%{ transform:scaleY(1.014); }
+  }
+  .companion .robe{ animation:authBreathe 4.2s ease-in-out infinite; transform-origin:120px 285px; transform-box:fill-box; }
+
+  @keyframes authHeadSway{
+    0%,100%{ transform:rotate(0deg); }
+    50%{ transform:rotate(-1.6deg); }
+  }
+  .companion .head-sway{ animation:authHeadSway 5.6s ease-in-out infinite; transform-origin:120px 150px; }
+
+  @keyframes authHairSway{
+    0%,100%{ transform:rotate(0deg); }
+    50%{ transform:rotate(1.3deg); }
+  }
+  .companion .hair-back{ animation:authHairSway 3.6s ease-in-out infinite; transform-origin:120px 70px; transform-box:fill-box; }
+
+  @keyframes authBlink{
+    0%, 92%, 100%{ transform:scaleY(1); }
+    96%{ transform:scaleY(0.12); }
+  }
+  .companion .eyes-group{ animation:authBlink 5s ease-in-out infinite; transform-origin:120px 94px; transition:transform .45s ease; }
+
+  @keyframes authHandFloatA{
+    0%,100%{ transform:translateY(0) rotate(0deg); }
+    50%{ transform:translateY(-3px) rotate(-3deg); }
+  }
+  @keyframes authHandFloatB{
+    0%,100%{ transform:translateY(0) rotate(0deg); }
+    50%{ transform:translateY(-3.4px) rotate(3deg); }
+  }
+  .companion .hand-left{ animation:authHandFloatA 3.2s ease-in-out infinite; transform-origin:34px 178px; }
+  .companion .hand-right{ animation:authHandFloatB 3.6s ease-in-out .25s infinite; transform-origin:206px 178px; }
+
+  .companion .figure{ transform-origin:120px 285px; transition:transform .5s cubic-bezier(.22,.61,.36,1); }
+  .companion .head-group{ transform-origin:120px 150px; transition:transform .55s cubic-bezier(.22,.61,.36,1); }
+  .companion .eyebrows{ transform-origin:120px 80px; transition:transform .4s ease; }
+  .companion .arm-left{ transform-origin:86px 154px; transition:transform .5s cubic-bezier(.22,.61,.36,1); }
+  .companion .arm-right{ transform-origin:154px 154px; transition:transform .5s cubic-bezier(.22,.61,.36,1); }
+  .companion .mouth-calm, .companion .mouth-joy{ transition:opacity .35s ease; }
+  .companion .mouth-joy{ opacity:0; }
+
+  .companion.listening .head-group{ transform:rotate(5deg) translate(2px,-1px); }
+  .companion.listening .eyebrows{ transform:translateY(-1.4px); }
+  .companion.listening .eyes-group{ transform:translate(2.5px,0); }
+
+  .companion.veiling .head-group{ transform:rotate(-9deg) translate(-3px,1px); }
+  .companion.veiling .eyes-group{ transform:translate(-3px,2.5px); }
+
+  @keyframes authGentleAttention{
+    0%,100%{ transform:rotate(0deg); }
+    30%{ transform:rotate(-4deg); }
+    65%{ transform:rotate(3deg); }
+  }
+  @keyframes authBrowFlash{
+    0%,100%{ transform:translateY(0); }
+    50%{ transform:translateY(-2.2px); }
+  }
+  .companion.attention .head-group{ animation:authGentleAttention .55s ease-in-out; }
+  .companion.attention .eyebrows{ animation:authBrowFlash .55s ease-in-out; }
+
+  .companion.joyful .figure{ transform:rotate(3deg) translateY(2px); }
+  .companion.joyful .arm-left{ transform:rotate(-9deg) translate(-4px,-3px); }
+  .companion.joyful .arm-right{ transform:rotate(9deg) translate(4px,-3px); }
+  .companion.joyful .mouth-calm{ opacity:0; }
+  .companion.joyful .mouth-joy{ opacity:1; }
+  @keyframes authWelcomeWave{
+    0%{ transform:translateY(0) rotate(0deg); }
+    40%{ transform:translateY(-5px) rotate(-7deg); }
+    100%{ transform:translateY(0) rotate(0deg); }
+  }
+  @keyframes authWelcomeWaveR{
+    0%{ transform:translateY(0) rotate(0deg); }
+    40%{ transform:translateY(-5px) rotate(7deg); }
+    100%{ transform:translateY(0) rotate(0deg); }
+  }
+  .companion.joyful .hand-left{ animation:authWelcomeWave .7s ease-out; }
+  .companion.joyful .hand-right{ animation:authWelcomeWaveR .7s ease-out .08s; }
+
+  .auth-success{ text-align:center; padding:4px 4px 2px; opacity:0; transform:translateY(10px); transition:opacity .55s ease, transform .55s cubic-bezier(.22,.61,.36,1); }
+  .auth-success.show{ opacity:1; transform:translateY(0); }
+  .auth-success p{ font-family:'Fraunces', serif; font-size:18px; color:var(--sage-deep); margin:0; }
+
+  @media (prefers-reduced-motion: reduce){
+    .companion .robe, .companion .head-sway, .companion .hair-back, .companion .eyes-group,
+    .companion .hand-left, .companion .hand-right,
+    .companion.attention .head-group, .companion.attention .eyebrows,
+    .companion.joyful .hand-left, .companion.joyful .hand-right{
+      animation-duration:.01ms !important; animation-iteration-count:1 !important;
+    }
+    .companion .figure, .companion .head-group, .companion .eyebrows,
+    .companion .arm-left, .companion .arm-right,
+    .companion .mouth-calm, .companion .mouth-joy, .auth-success{
+      transition-duration:.01ms !important;
+    }
+  }
 
   /* ---------- Orar: "Guíame" como la puerta principal — más presencia que
      un list-card cualquiera, sin llegar a ser un CTA que grite. Un tinte
@@ -2309,32 +2431,177 @@ function openAccountSheet(){
   }
   authMode = 'signin';
   openSheet(authSheetHTML());
+  wireAuthCompanion();
+}
+// Personaje acompañante de la hoja de cuenta — misma ilustración e
+// interacciones (escucha al enfocar el correo, mira hacia otro lado al
+// escribir la contraseña, atención si faltan campos, alegría al terminar)
+// que se probaron primero en un prototipo aparte; ver wireAuthCompanion()
+// más abajo para cómo se conecta a los campos reales de este formulario.
+function authCompanionSVG(){
+  return `
+    <div class="companion-zone">
+      <div class="companion" id="authCompanion" aria-hidden="true">
+        <svg viewBox="0 0 240 300" xmlns="http://www.w3.org/2000/svg">
+          <g class="figure">
+            <path class="robe" fill="#F1E6D0" stroke="#5A301D" stroke-width="3.6" stroke-linejoin="round"
+              d="M80,158 C58,174 44,218 41,262 C39,274 43,282 51,285
+                 L189,285 C197,282 201,274 199,262
+                 C196,218 182,174 160,158
+                 C148,150 132,145 120,145 C108,145 92,150 80,158 Z"/>
+            <path d="M120,198 L121,281" fill="none" stroke="#5A301D" stroke-width="1.4" opacity=".28" stroke-linecap="round"/>
+            <path class="mantle" fill="#E3906B" stroke="#5A301D" stroke-width="3.2" stroke-linejoin="round"
+              d="M88,154 L120,166 L160,278 L136,288 L100,176 Z"/>
+            <path d="M91,157 L117,167" fill="none" stroke="#D9B25F" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+            <ellipse class="foot-left" cx="98" cy="280" rx="14" ry="9" fill="#F2B889" stroke="#5A301D" stroke-width="3"/>
+            <ellipse class="foot-right" cx="142" cy="280" rx="14" ry="9" fill="#F2B889" stroke="#5A301D" stroke-width="3"/>
+            <g class="arm-left" id="authArmLeft">
+              <path class="arm-left-sleeve" fill="#F1E6D0" stroke="#5A301D" stroke-width="3.4" stroke-linejoin="round"
+                d="M88,154 C64,158 42,168 33,187
+                   C45,198 66,196 82,182
+                   C92,172 94,162 88,154 Z"/>
+              <g class="hand-left">
+                <path d="M20,176 C18,168 24,161 33,161 C42,161 48,169 46,178
+                         C45,186 38,191 31,190 C24,189 21,183 20,176 Z"
+                  fill="#F2B889" stroke="#5A301D" stroke-width="2.6"/>
+                <path d="M32,164 C27,166 25,172 27,178" fill="none" stroke="#5A301D" stroke-width="1.6" opacity=".45" stroke-linecap="round"/>
+              </g>
+            </g>
+            <g class="arm-right" id="authArmRight">
+              <path class="arm-right-sleeve" fill="#F1E6D0" stroke="#5A301D" stroke-width="3.4" stroke-linejoin="round"
+                d="M152,154 C176,158 198,168 207,187
+                   C195,198 174,196 158,182
+                   C148,172 146,162 152,154 Z"/>
+              <g class="hand-right">
+                <path d="M220,176 C222,168 216,161 207,161 C198,161 192,169 194,178
+                         C195,186 202,191 209,190 C216,189 219,183 220,176 Z"
+                  fill="#F2B889" stroke="#5A301D" stroke-width="2.6"/>
+                <path d="M208,164 C213,166 215,172 213,178" fill="none" stroke="#5A301D" stroke-width="1.6" opacity=".45" stroke-linecap="round"/>
+              </g>
+            </g>
+            <rect class="neck" x="104" y="134" width="32" height="16" rx="7" fill="#F2B889" stroke="#5A301D" stroke-width="2.6"/>
+            <g class="head-sway">
+              <g class="head-group" id="authHeadGroup">
+                <path class="hair-back" fill="#5A301D"
+                  d="M120,14
+                     C154,14 180,38 182,74
+                     C184,104 180,132 186,158
+                     C191,180 185,198 172,204
+                     C161,209 152,202 150,188
+                     C148,172 150,156 148,144
+                     L92,144
+                     C90,156 92,172 90,188
+                     C88,202 79,209 68,204
+                     C55,198 49,180 54,158
+                     C60,132 56,104 58,74
+                     C60,38 86,14 120,14 Z"/>
+                <path class="bangs" fill="#5A301D"
+                  d="M94,44 C92,54 94,64 100,70 C96,60 97,50 102,42 Z
+                     M146,44 C148,54 146,64 140,70 C144,60 143,50 138,42 Z"/>
+                <ellipse class="face" cx="120" cy="90" rx="40" ry="46" fill="#F2B889" stroke="#5A301D" stroke-width="3.6"/>
+                <path class="beard" fill="#5A301D"
+                  d="M100,114 C106,110 114,109 120,112 C126,109 134,110 140,114
+                     C150,118 158,124 158,134 C158,144 150,152 138,156
+                     C130,158 110,158 102,156 C90,152 82,144 82,134
+                     C82,124 90,118 100,114 Z"/>
+                <ellipse class="mouth-gap" cx="120" cy="123" rx="9" ry="3.4" fill="#F2B889"/>
+                <g class="eyebrows" id="authEyebrows">
+                  <path d="M96,83 C101,78 110,77 115,80 C109,79 101,81 97,86 Z" fill="#5A301D"/>
+                  <path d="M144,83 C139,78 130,77 125,80 C131,79 139,81 143,86 Z" fill="#5A301D"/>
+                </g>
+                <g class="eyes-group" id="authEyesGroup">
+                  <ellipse class="eye-left" cx="108" cy="96" rx="5" ry="6" fill="#5A301D"/>
+                  <circle cx="109.6" cy="93.8" r="1.3" fill="#fff"/>
+                  <ellipse class="eye-right" cx="132" cy="96" rx="5" ry="6" fill="#5A301D"/>
+                  <circle cx="133.6" cy="93.8" r="1.3" fill="#fff"/>
+                </g>
+                <path class="nose" fill="#DE9F6B"
+                  d="M119,98 C117,104 117,108 121,110 C124,110.5 126,108 125,105
+                     C122,104 120,101 120,97 Z"/>
+                <path class="mouth-calm" fill="#5A301D" d="M114,123 Q120,126 126,123 Q120,124.5 114,123 Z"/>
+                <path class="mouth-joy" fill="#5A301D" d="M108,121 Q120,134 132,121 Q120,129 108,121 Z"/>
+              </g>
+            </g>
+          </g>
+        </svg>
+      </div>
+    </div>
+  `;
 }
 function authSheetHTML(){
   const isSignup = authMode === 'signup';
   return `
     <div class="handle"></div>
-    <p style="font-size:13px; color:var(--ink-soft); margin-bottom:2px; text-align:center;">Crea una cuenta gratis</p>
-    <p class="serif" style="font-size:18px; text-align:center; margin-bottom:16px;">No pierdas tu progreso</p>
-    <ul class="account-benefits">
-      <li><span class="dot"></span>Tus versículos resaltados, oraciones y reflexiones, a salvo aunque cambies de celular</li>
-      <li><span class="dot"></span>Tu racha de lectura no se pierde si reinstalas la app</li>
-      <li><span class="dot"></span>Entra con la misma cuenta desde cualquier dispositivo</li>
-    </ul>
-    <button class="btn btn-ghost auth-google-btn" onclick="hereSignInGoogle()">${ICON_GOOGLE} Continuar con Google</button>
-    <div class="auth-divider"><div class="line"></div><span>o con tu correo</span><div class="line"></div></div>
-    <div class="stack" style="gap:10px;">
-      <input type="email" id="auth-email" placeholder="Correo electrónico" autocomplete="email">
-      <input type="password" id="auth-password" placeholder="Contraseña (mínimo 6 caracteres)" autocomplete="${isSignup?'new-password':'current-password'}">
+    ${authCompanionSVG()}
+    <p class="serif" style="font-size:18px; text-align:center; margin-bottom:4px;">No pierdas tu progreso</p>
+    <p style="font-size:13px; color:var(--ink-soft); text-align:center; margin-bottom:18px;">Tus versículos, oraciones y tu racha, a salvo en cualquier celular donde inicies sesión.</p>
+    <div id="authFormArea">
+      <button type="button" class="btn btn-ghost auth-google-btn" id="authGoogleBtn" onclick="hereSignInGoogle()">${ICON_GOOGLE} Continuar con Google</button>
+      <div class="auth-divider" id="authDivider"><div class="line"></div><span>o con tu correo</span><div class="line"></div></div>
+      <div class="stack" style="gap:10px;">
+        <input type="email" id="auth-email" placeholder="Correo electrónico" autocomplete="email">
+        <input type="password" id="auth-password" placeholder="Contraseña (mínimo 6 caracteres)" autocomplete="${isSignup?'new-password':'current-password'}">
+      </div>
+      <p class="auth-error" id="auth-error"></p>
+      <button class="btn btn-primary" id="authSubmitBtn" onclick="submitAuthForm()">${isSignup ? 'Crear cuenta' : 'Iniciar sesión'}</button>
+      <p class="auth-switch">${isSignup ? '¿Ya tienes cuenta?' : '¿Primera vez en HERE?'} <b onclick="toggleAuthMode()">${isSignup ? 'Inicia sesión' : 'Crea una cuenta'}</b></p>
     </div>
-    <p class="auth-error" id="auth-error"></p>
-    <button class="btn btn-primary" onclick="submitAuthForm()">${isSignup ? 'Crear cuenta' : 'Iniciar sesión'}</button>
-    <p class="auth-switch">${isSignup ? '¿Ya tienes cuenta?' : '¿Primera vez en HERE?'} <b onclick="toggleAuthMode()">${isSignup ? 'Inicia sesión' : 'Crea una cuenta'}</b></p>
+    <div class="auth-success" id="authSuccess" hidden>
+      <p>Qué bueno que estás aquí.</p>
+    </div>
   `;
+}
+// Vuelve a conectar al personaje con los campos del formulario cada vez que
+// la hoja se regenera (openSheet reemplaza el HTML por completo, así que
+// los listeners anteriores ya no sirven y hay que ponerlos de nuevo).
+let authPasswordTimer = null;
+function wireAuthCompanion(){
+  const companion = document.getElementById('authCompanion');
+  const emailEl = document.getElementById('auth-email');
+  const passEl = document.getElementById('auth-password');
+  if(!companion || !emailEl || !passEl) return;
+  emailEl.addEventListener('focus', ()=>{ companion.classList.remove('veiling'); companion.classList.add('listening'); });
+  emailEl.addEventListener('blur', ()=>{ companion.classList.remove('listening'); });
+  passEl.addEventListener('input', ()=>{
+    companion.classList.remove('listening');
+    companion.classList.add('veiling');
+    clearTimeout(authPasswordTimer);
+    authPasswordTimer = setTimeout(()=>{ companion.classList.remove('veiling'); }, 650);
+  });
+  passEl.addEventListener('blur', ()=>{ clearTimeout(authPasswordTimer); companion.classList.remove('veiling'); });
 }
 function toggleAuthMode(){
   authMode = authMode === 'signin' ? 'signup' : 'signin';
   openSheet(authSheetHTML());
+  wireAuthCompanion();
+}
+// true mientras se muestra la bienvenida alegre del personaje tras un
+// registro/inicio de sesión por correo — mientras tanto, onAuthStateChange
+// no cierra la hoja de golpe, para que la animación alcance a verse.
+let authCelebrating = false;
+function triggerAuthAttention(){
+  const companion = document.getElementById('authCompanion');
+  if(!companion) return;
+  companion.classList.remove('attention');
+  void companion.offsetWidth;
+  companion.classList.add('attention');
+}
+function triggerAuthSuccess(){
+  const companion   = document.getElementById('authCompanion');
+  const formArea    = document.getElementById('authFormArea');
+  const successBlock= document.getElementById('authSuccess');
+  if(!companion || !formArea || !successBlock) return;
+  authCelebrating = true;
+  companion.classList.remove('veiling','listening','attention','joyful');
+  void companion.offsetWidth;
+  companion.classList.add('joyful');
+  formArea.hidden = true;
+  successBlock.hidden = false;
+  requestAnimationFrame(()=>{ successBlock.classList.add('show'); });
+  setTimeout(()=>{
+    authCelebrating = false;
+    closeSheet();
+  }, 1400);
 }
 async function submitAuthForm(){
   const emailEl = document.getElementById('auth-email');
@@ -2343,20 +2610,33 @@ async function submitAuthForm(){
   const email = (emailEl.value||'').trim();
   const password = passEl.value||'';
   errEl.style.color = ''; errEl.textContent = '';
-  if(!email || !password){ errEl.textContent = 'Escribe tu correo y tu contraseña.'; return; }
+  emailEl.classList.toggle('invalid', !email);
+  passEl.classList.toggle('invalid', !password);
+  if(!email || !password){
+    errEl.textContent = 'Escribe tu correo y tu contraseña.';
+    triggerAuthAttention();
+    return;
+  }
   const sb = getSupabase();
   if(!sb){ errEl.textContent = 'No se pudo conectar ahora mismo. Intenta de nuevo en un momento.'; return; }
   const { data, error } = authMode === 'signup'
     ? await sb.auth.signUp({ email, password })
     : await sb.auth.signInWithPassword({ email, password });
-  if(error){ errEl.textContent = translateAuthError(error.message); return; }
+  if(error){
+    errEl.textContent = translateAuthError(error.message);
+    triggerAuthAttention();
+    return;
+  }
   if(authMode === 'signup' && data && data.user && !data.session){
     errEl.style.color = 'var(--sage-deep)';
     errEl.textContent = 'Casi listo: revisa tu correo para confirmar la cuenta.';
     return;
   }
-  // si ya hay sesión, onAuthStateChange (más abajo) se encarga de cerrar
-  // la hoja, sincronizar y avisar con un toast.
+  // Ya hay sesión real: celebra aquí mismo (el personaje se alegra y
+  // muestra "Qué bueno que estás aquí.") antes de cerrar la hoja.
+  // onAuthStateChange (más abajo) sincroniza con la nube y actualiza el
+  // perfil, pero respeta authCelebrating para no cortar la animación.
+  triggerAuthSuccess();
 }
 function translateAuthError(msg){
   msg = msg || '';
@@ -2390,9 +2670,17 @@ function initHereAuth(){
     hereUser = (session && session.user) ? session.user : null;
     if(event === 'SIGNED_IN' && hereUser){
       pullCloudData();
-      closeSheet();
       renderPerfil();
-      if(wasLoggedOut) showHereToast('Sesión iniciada');
+      // Si el personaje de la hoja está celebrando un registro/inicio de
+      // sesión por correo (triggerAuthSuccess), deja que esa animación
+      // cierre la hoja ella misma en vez de cortarla de golpe aquí. Para
+      // Google (vuelve de una redirección) o una sesión ya existente al
+      // abrir la app, la hoja no está celebrando nada, así que se cierra
+      // y se avisa como siempre.
+      if(!authCelebrating){
+        closeSheet();
+        if(wasLoggedOut) showHereToast('Sesión iniciada');
+      }
     }else if(event === 'SIGNED_OUT'){
       renderPerfil();
     }
