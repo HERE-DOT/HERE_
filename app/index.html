@@ -311,6 +311,33 @@
     color:var(--ink); font-weight:600;
   }
   .home-mood-chip:active{ transform:scale(0.96); }
+  /* "Por tu día" en Escuchar — misma fila horizontal de chips que el Home,
+     reutilizada tal cual para no inventar un componente nuevo. */
+  .listen-dayrow{
+    display:flex; gap:8px; overflow-x:auto; padding:2px 24px 10px; margin:0;
+    -webkit-overflow-scrolling:touch; scrollbar-width:none;
+  }
+  .listen-dayrow::-webkit-scrollbar{ display:none; }
+  .listen-dayrow .chip{
+    flex:none; display:inline-flex; flex-direction:column; align-items:flex-start; gap:2px;
+    padding:10px 16px; border-radius:16px; border:1px solid var(--line); background:var(--card);
+    font-family:'Manrope', sans-serif; cursor:pointer; white-space:nowrap; box-shadow:var(--shadow-sm);
+  }
+  .listen-dayrow .chip:active{ transform:scale(0.96); }
+  .listen-dayrow .chip .e{ font-size:17px; }
+  .listen-dayrow .chip .l{ font-size:12.5px; font-weight:600; color:var(--ink); }
+  /* ícono + fondo sage-deep al guardar — mismo lenguaje visual que el botón
+     "Orando" de la comunidad (Sección 6): una cruz que se llena al activarse. */
+  .track-save-btn{
+    flex:none; width:32px; height:32px; border-radius:50%; display:flex; align-items:center;
+    justify-content:center; border:1px solid var(--line); background:var(--bg-warm);
+    color:var(--ink-soft); cursor:pointer; transition:all .15s ease;
+  }
+  .track-save-btn .x{ font-size:14px; line-height:1; }
+  .track-save-btn.active{ background:var(--sage-deep); border-color:var(--sage-deep); color:#fff; }
+  .track-save-btn:active{ transform:scale(0.9); }
+  .music-track > div:nth-child(2){ flex:1; min-width:0; }
+  .music-track .t, .music-track .s{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .dot{width:6px; height:6px; border-radius:50%; background:var(--gold); flex:none;}
   .progress-dots{display:flex; gap:6px; justify-content:center; margin:18px 0;}
   .progress-dots span{width:6px; height:6px; border-radius:50%; background:var(--line);}
@@ -696,6 +723,38 @@
     padding:9px 14px; border-radius:100px; cursor:pointer; text-align:left; box-shadow:var(--shadow-sm);
   }
   .chat-suggestions button:active{transform:scale(0.96);}
+  .chat-mode-hint{font-size:12px; color:var(--ink-soft); padding:0 4px 2px; align-self:flex-start;}
+  .bubble.crisis{
+    align-self:stretch; max-width:100%; background:linear-gradient(135deg, rgba(231,204,139,0.2), rgba(173,132,47,0.1));
+    border:1.5px solid var(--gold); box-shadow:var(--shadow-sm);
+  }
+  .bubble.crisis .crisis-title{font-weight:700; margin-bottom:8px;}
+  .bubble.crisis p{margin:0 0 8px;}
+  .bubble.crisis p:last-child{margin-bottom:0;}
+  .bubble.crisis a{color:var(--sage-deep); font-weight:700; text-decoration:underline;}
+  .crisis-emergency-btn{
+    display:block; width:100%; border:none; border-radius:14px; padding:14px 16px;
+    background:#c0392b; color:#fff; font-weight:700; font-size:14.5px; text-align:center;
+    cursor:pointer; box-shadow:0 2px 8px rgba(192,57,43,0.35); margin-bottom:6px;
+    animation: crisisPulse 1.6s ease-in-out 3;
+  }
+  .crisis-emergency-btn:active{transform:scale(0.98); background:#a93226;}
+  @keyframes crisisPulse{
+    0%, 100%{ box-shadow:0 2px 8px rgba(192,57,43,0.35); }
+    50%{ box-shadow:0 2px 8px rgba(192,57,43,0.35), 0 0 0 7px rgba(192,57,43,0.18); }
+  }
+  .crisis-emergency-note{font-size:11.5px; color:var(--ink-soft); margin-bottom:10px;}
+  .crisis-details{margin-bottom:4px;}
+  .crisis-details summary{font-size:12.5px; font-weight:700; color:var(--sage-deep); cursor:pointer; padding:4px 0;}
+  .crisis-tel-list{display:flex; flex-direction:column; gap:2px;}
+  .bubble.crisis a.crisis-tel-row{
+    display:flex; justify-content:space-between; align-items:center; gap:10px;
+    padding:8px 2px; border-bottom:1px solid var(--line); text-decoration:none;
+    color:var(--ink); font-weight:400; font-size:13px;
+  }
+  .crisis-tel-row .num{font-weight:700; text-align:right; white-space:nowrap; color:var(--sage-deep);}
+  .crisis-tel-row:active{background:rgba(0,0,0,0.04);}
+  .crisis-tel-row.emergency .num{color:#c0392b;}
   .chat-inputbar{display:flex; gap:10px; padding:12px 20px calc(14px + env(safe-area-inset-bottom)); border-top:1px solid var(--line); background:var(--bg);}
   .chat-inputbar input{flex:1; border-radius:100px; padding:13px 18px;}
   .chat-send{width:46px; height:46px; border-radius:50%; background:linear-gradient(135deg,var(--sage-deep),var(--sage-deeper)); color:#fff; border:none; flex:none; cursor:pointer; font-size:16px; box-shadow:0 6px 16px rgba(44,79,59,0.3);}
@@ -2010,6 +2069,15 @@
     <div style="height:60px;"></div>
   </section>
 
+  <!-- MÚSICA Y PREDICACIONES GUARDADAS: todo lo marcado con el ✝ en Escuchar,
+       en un solo lugar, reutilizando .music-track y playTrack() igual que el
+       resto de Escuchar. -->
+  <section class="screen noNav" id="musicaGuardado">
+    <div class="topbar"><div class="backbtn" onclick="go('perfil')">←</div><h2>Guardado</h2></div>
+    <div class="stack container" id="musicaGuardado-list" style="padding-top:0;"></div>
+    <div style="height:60px;"></div>
+  </section>
+
   <!-- PLAN DETAIL -->
   <section class="screen noNav" id="planDetail">
     <div class="topbar"><div class="backbtn" onclick="go('biblia')">←</div><h2 id="plan-title"></h2></div>
@@ -2233,6 +2301,17 @@
       <div class="listen-moment-list" id="listen-moment-list"></div>
     </div>
 
+    <!-- CAPA A2 — "Por tu día": a diferencia de "Para este momento" (humor),
+         esto organiza por lo que la persona está HACIENDO — empezar el día,
+         descansar, orar, caminar, dormir, o atravesar un momento difícil.
+         Mismo mecanismo que "Para este momento" (openMomentCatalog), solo
+         que lee de DAY_MOMENTS en vez de LISTEN_MOODS — nada nuevo que
+         mantener por separado. -->
+    <div class="listen-dayrow-wrap">
+      <div class="section-title" style="margin-top:4px;">Por tu día</div>
+      <div class="listen-dayrow" id="listen-dayrow"></div>
+    </div>
+
     <!-- CAPA B — "Explorar": la biblioteca, ahora secundaria a propósito.
          Etiqueta y tabs en la misma línea, con subrayado discreto. -->
     <div class="listen-explore-row">
@@ -2441,7 +2520,7 @@ const SUPABASE_ANON_KEY = 'sb_publishable_fwA5wuaJh0ksqfaVCxGjSg_CyYnokIo';
 // incluye ajustes propios del dispositivo (tamaño de letra, voz elegida,
 // tema, si el sonido está activado): esas tiene sentido que cada celular
 // las recuerde por su cuenta.
-const SYNC_SIMPLE_KEYS = ['here_prefs','here_saved','here_prayers','here_reflections','here_visited','here_highlights','here_streak','here_visit_log','here_onboarded','here_followed_pastores','here_verse_notes'];
+const SYNC_SIMPLE_KEYS = ['here_prefs','here_saved','here_prayers','here_reflections','here_visited','here_highlights','here_streak','here_visit_log','here_onboarded','here_followed_pastores','here_verse_notes','here_music_saved'];
 function isSyncedKey(key){ return SYNC_SIMPLE_KEYS.includes(key) || key.indexOf('here_plan_')===0; }
 
 let hereUser = null; // {id, email, ...} cuando hay sesión iniciada, si no null
@@ -2486,6 +2565,7 @@ function applyCloudData(data){
   highlightedVerses = load('here_highlights', []);
   followedPastores = load('here_followed_pastores', []);
   verseNotes = load('here_verse_notes', {});
+  savedTracks = load('here_music_saved', {});
   try{ renderPerfil(); }catch(e){}
   try{ if(currentScreen==='musica' || currentScreen==='musicaCategoria') renderMusica(); }catch(e){}
 }
@@ -3424,6 +3504,56 @@ function isHighlighted(ref){ return highlightedVerses.some(h=>h.ref===ref); }
    versículo, igual de sencillo que el resaltado, y sincronizado con la
    cuenta de la misma forma (vía SYNC_SIMPLE_KEYS). */
 let verseNotes = load('here_verse_notes', {});
+/* Música y predicaciones guardadas — objeto {sid: {id,name,role,thumb,yt,
+   ytList,savedAt}}, sincronizado con la cuenta igual que lo demás (vía
+   SYNC_SIMPLE_KEYS). sid es 'yt-'+id de YouTube para resultados de búsqueda,
+   o el id del catálogo para pistas curadas — así nunca chocan entre sí. */
+let savedTracks = load('here_music_saved', {});
+function escAttr(s){ return (s==null?'':String(s)).replace(/&/g,'&amp;').replace(/"/g,'&quot;'); }
+function trackSaveBtnHTML(norm){
+  const saved = !!savedTracks[norm.sid];
+  return `<button class="track-save-btn ${saved?'active':''}" data-sid="${escAttr(norm.sid)}" data-name="${escAttr(norm.name)}" data-role="${escAttr(norm.role)}" data-thumb="${escAttr(norm.thumb||'')}" data-yt="${escAttr(norm.yt||'')}" data-ytlist="${escAttr(norm.ytList||'')}" onclick="event.stopPropagation(); toggleSaveTrack(this);" aria-label="${saved?'Quitar de guardados':'Guardar'}">
+    <span class="x">✝</span>
+  </button>`;
+}
+function toggleSaveTrack(btnEl){
+  const d = btnEl.dataset;
+  const sid = d.sid;
+  if(!sid) return;
+  if(savedTracks[sid]){
+    delete savedTracks[sid];
+    btnEl.classList.remove('active');
+    btnEl.setAttribute('aria-label','Guardar');
+  }else{
+    savedTracks[sid] = { id:sid, name:d.name||'', role:d.role||'', thumb:d.thumb||'', yt:d.yt||null, ytList:d.ytlist||null, savedAt:Date.now() };
+    btnEl.classList.add('active');
+    btnEl.setAttribute('aria-label','Quitar de guardados');
+  }
+  haptic(10);
+  save('here_music_saved', savedTracks);
+  try{ if(currentScreen==='musicaGuardado') renderMusicaGuardado(); }catch(e){}
+}
+function playSavedTrack(sid){
+  const it = savedTracks[sid];
+  if(!it) return;
+  playTrack({ id: it.id, name: it.name, role: it.role, yt: it.yt, ytList: it.ytList, thumb: it.thumb });
+}
+function renderMusicaGuardado(){
+  const el = document.getElementById('musicaGuardado-list');
+  if(!el) return;
+  const items = Object.values(savedTracks).sort((a,b)=>(b.savedAt||0)-(a.savedAt||0));
+  if(!items.length){
+    el.innerHTML = `<p style="padding:24px 0; text-align:center; color:var(--ink-soft); font-size:13.5px; line-height:1.6;">Todavía no has guardado nada.<br>Toca el ✝ junto a una canción o predicación en Escuchar para guardarla aquí.</p>`;
+    return;
+  }
+  el.innerHTML = items.map(it=>`
+    <div class="music-track" onclick="playSavedTrack('${it.id.replace(/'/g,"\\'")}')">
+      ${it.thumb ? `<img class="music-track-thumb" src="${it.thumb}" alt="" loading="lazy">` : `<div class="music-track-icon" style="background:linear-gradient(135deg,var(--sage-deep),var(--sage-deeper));">🎵</div>`}
+      <div><div class="t">${it.name}</div><div class="s">${it.role||''}</div></div>
+      ${trackSaveBtnHTML({sid:it.id, name:it.name, role:it.role, thumb:it.thumb, yt:it.yt, ytList:it.ytList})}
+    </div>
+  `).join('');
+}
 function getVerseNote(ref){ return verseNotes[ref] || null; }
 function saveVerseNote(ref, text){
   text = (text||'').trim();
@@ -3614,6 +3744,7 @@ function go(id, opts){
   if(id==='chat' && !chatStarted) startChat();
   if(id==='biblia') { renderBooks(); renderPlanRow(); renderBibliaContinue(); document.getElementById('search-results').innerHTML=''; }
   if(id==='historialLecturas') renderHistorialLecturas();
+  if(id==='musicaGuardado') renderMusicaGuardado();
   if(id==='comunidadOrar') renderComunidadOrar();
   if(id==='orar'){
     renderOraciones();
@@ -5521,6 +5652,7 @@ function curatedMomentRow(item, icon){
   return `<div class="music-track" onclick="playTrackById('${item.id}')">
     ${thumb ? `<img class="music-track-thumb" src="${thumb}" alt="" loading="lazy">` : `<div class="music-track-icon" style="background:linear-gradient(135deg,var(--sage-deep),var(--sage-deeper));">${icon}</div>`}
     <div><div class="t">${item.name}</div><div class="s">${item.role||item.s||''}</div></div>
+    ${trackSaveBtnHTML({sid:item.id, name:item.name, role:item.role||item.s||'', thumb:thumb, yt:item.yt||null, ytList:item.ytList||null})}
   </div>`;
 }
 // Exactamente 3 filas, siempre — el humor reciente detectado en "Necesito
@@ -5549,8 +5681,11 @@ function renderListenMoment(){
 // Toca una de las 3 filas de "Para este momento": abre un catálogo curado
 // (canción + predicación/podcast) para ese momento, reutilizando la misma
 // pantalla de categoría que usa el resto de Escuchar.
-async function openListenMoment(id){
-  const mood = LISTEN_MOODS.find(m=>m.id===id);
+// Motor compartido: "Para este momento" (humor) y "Por tu día" (actividad)
+// son dos listas distintas (LISTEN_MOODS / DAY_MOMENTS) que alimentan el
+// mismo catálogo curado — una canción + una predicación/podcast — para no
+// mantener dos veces la misma lógica de búsqueda + respaldo.
+async function openMomentCatalog(mood){
   if(!mood) return;
   listenMoodActive = mood;
   document.getElementById('musicaCategoria-title').textContent = mood.promptLabel || mood.label;
@@ -5570,6 +5705,59 @@ async function openListenMoment(id){
   if(wordResults && wordResults.length) rows.push(...wordResults.map(v=>musicSearchResultRow(v)));
   else rows.push(curatedMomentRow(findTrackById(mood.fallbackWord), '🎙️'));
   listEl.innerHTML = rows.filter(Boolean).join('');
+}
+async function openListenMoment(id){
+  return openMomentCatalog(LISTEN_MOODS.find(m=>m.id===id));
+}
+// "Por tu día": organiza Escuchar por lo que la persona está HACIENDO, no
+// por su ánimo — empezar el día, descansar, orar, caminar, dormir, o
+// atravesar un momento difícil. Mismo mecanismo que "Para este momento"
+// (openMomentCatalog), misma pantalla musicaCategoria, mismo respaldo
+// curado — solo cambia la lista de origen.
+const DAY_MOMENTS = [
+  { id:'empezar', emoji:'🌄', label:'Para empezar el día', promptLabel:'Para empezar el día',
+    line:'Un momento con Él antes de que empiece todo lo demás.',
+    musicQ:'música cristiana de adoración para empezar el día con energía',
+    wordQ:'devocional cristiano corto para la mañana',
+    fallbackSong:'witt', fallbackWord:'bibleproject' },
+  { id:'descansar', emoji:'🌿', label:'Para descansar', promptLabel:'Para descansar',
+    line:'Un espacio para soltar el ritmo y respirar.',
+    musicQ:'música cristiana instrumental relajante para descansar',
+    wordQ:'predicación cristiana corta sobre el descanso',
+    fallbackSong:'daigle', fallbackWord:'cafedios' },
+  { id:'orar', emoji:'🙏', label:'Para orar', promptLabel:'Para orar',
+    line:'Música de fondo suave, para acompañar tu oración.',
+    musicQ:'música instrumental cristiana de fondo para orar',
+    wordQ:'predicación cristiana corta sobre la oración',
+    fallbackSong:'daigle', fallbackWord:'cafedios' },
+  { id:'caminar', emoji:'🚶', label:'Para caminar', promptLabel:'Para caminar',
+    line:'Algo con ritmo, para acompañar tus pasos.',
+    musicQ:'música cristiana animada para caminar o hacer ejercicio',
+    wordQ:'podcast cristiano corto para escuchar caminando',
+    fallbackSong:'tercercielo', fallbackWord:'danilo' },
+  { id:'dormir', emoji:'🌙', label:'Para dormir', promptLabel:'Para dormir',
+    line:'Algo tranquilo, para terminar el día en paz.',
+    musicQ:'música cristiana instrumental suave para dormir',
+    wordQ:'lectura cristiana relajante para antes de dormir',
+    fallbackSong:'daigle', fallbackWord:'corson' },
+  { id:'dificil', emoji:'💛', label:'Para un momento difícil', promptLabel:'Para un momento difícil',
+    line:'No tienes que atravesar esto solo(a).',
+    musicQ:'música cristiana de consuelo y fortaleza para momentos difíciles',
+    wordQ:'predicación cristiana corta de aliento para momentos difíciles',
+    fallbackSong:'dclario', fallbackWord:'corson' },
+];
+function renderListenDayrow(){
+  const el = document.getElementById('listen-dayrow');
+  if(!el) return;
+  el.innerHTML = DAY_MOMENTS.map(m=>`
+    <div class="chip" onclick="openDayMoment('${m.id}')">
+      <span class="e" aria-hidden="true">${m.emoji}</span>
+      <span class="l">${m.label}</span>
+    </div>
+  `).join('');
+}
+async function openDayMoment(id){
+  return openMomentCatalog(DAY_MOMENTS.find(m=>m.id===id));
 }
 /* ---------------- "Continuar escuchando" ----------------
    Recuerda lo último reproducido (canción, predicación o podcast, venga de
@@ -5635,6 +5823,7 @@ function renderMusica(){
   document.getElementById('musica-default-sections').style.display = '';
   renderContinueListening();
   renderListenMoment();
+  renderListenDayrow();
   renderFeaturedCarousel();
   document.getElementById('musica-categorias').innerHTML = MUSIC_CATEGORIES.map(cat=>`
     <div class="music-cat-item" style="background-image:url('${cat.img}');" onclick="openMusicCategory('${cat.id}')">
@@ -5709,6 +5898,7 @@ function renderCategoryTrackRow(it){
   return `<div class="music-track" onclick="playTrackById('${it.id}')">
     <div class="music-track-icon" style="background:linear-gradient(135deg,var(--sage-deep),var(--sage-deeper));">🎵</div>
     <div><div class="t">${it.name}</div><div class="s">${it.role}</div></div>
+    ${trackSaveBtnHTML({sid:it.id, name:it.name, role:it.role||'', thumb:'', yt:it.yt||null, ytList:it.ytList||null})}
   </div>`;
 }
 async function openMusicCategory(id){
@@ -6049,6 +6239,7 @@ function musicSearchResultRow(v){
   return `<div class="music-track" onclick="playAdhocVideo('${v.id}','${title.replace(/'/g,"\\'")}','${channel.replace(/'/g,"\\'")}')">
     ${v.thumb ? `<img class="music-track-thumb" src="${v.thumb}" alt="" loading="lazy">` : `<div class="music-track-icon" style="background:linear-gradient(135deg,var(--sage-deep),var(--sage-deeper));">🎵</div>`}
     <div><div class="t">${title}</div><div class="s">${channel}</div></div>
+    ${trackSaveBtnHTML({sid:'yt-'+v.id, name:v.title||'', role:v.channel||'', thumb:v.thumb||'', yt:v.id, ytList:null})}
   </div>`;
 }
 function playAdhocVideo(id, title, channel){
@@ -6656,9 +6847,149 @@ const CHAT_SUGGESTIONS = [
   'Necesito agradecer',
   'Quiero entender este versículo',
 ];
+// "¿Cómo quieres que te acompañe?" — un primer paso simple y opcional que
+// ajusta el tono de HERE para esa conversación (nunca obligatorio: si la
+// persona escribe directo, igual se le responde con normalidad).
+const CHAT_MODES = [
+  { id:'escuchar', label:'Solo escúchame', ack:'Aquí estoy, solo para escucharte. Cuéntame con calma, no hay prisa.',
+    note:'Esta vez la persona solo quiere ser escuchada: valida lo que siente primero, sin apurarte a dar consejos, versículos o soluciones a menos que los pida.' },
+  { id:'palabra', label:'Dame una palabra', ack:'Con gusto. Cuéntame qué estás viviendo, y busco algo que te hable.',
+    note:'Esta vez la persona busca aliento o una palabra que le hable a lo que está viviendo; puedes ofrecer un pasaje (de forma general, sin cita literal) cuando tenga sentido.' },
+  { id:'orar', label:'Ayúdame a orar', ack:'Hagámoslo juntos. Cuéntame qué quieres poner en oración.',
+    note:'Esta vez la persona quiere que la ayudes a poner esto en oración; puedes invitarla suavemente a orar contigo en el chat, o sugerirle "Orar" en la app si prefiere algo más guiado.' },
+  { id:'pensar', label:'Ayúdame a pensar', ack:'Pensemos juntos. Cuéntame qué tienes en mente.',
+    note:'Esta vez la persona quiere pensar en voz alta: haz preguntas suaves que la ayuden a reflexionar, en vez de darle solo respuestas cerradas.' },
+];
+let chatMode = null;
+function chatModeSelectorHTML(){
+  return `<div class="chat-mode-hint">¿Cómo quieres que te acompañe hoy?</div>
+    <div class="chat-suggestions">${CHAT_MODES.map(m=>`<button onclick="pickChatMode('${m.id}')">${m.label}</button>`).join('')}</div>`;
+}
+function pickChatMode(id){
+  const mode = CHAT_MODES.find(m=>m.id===id);
+  if(!mode) return;
+  chatMode = mode;
+  addChatBubble('here', mode.ack);
+}
+// Lenguaje que puede indicar una crisis seria (autolesión, suicidio). No
+// reemplaza el juicio de un profesional — es una red mínima para nunca
+// dejar pasar un mensaje así sin ofrecer ayuda real, pase lo que pase con
+// la respuesta de la IA en ese turno.
+// Deliberadamente solo frases en PRIMERA PERSONA ("suicidarme", "matarme",
+// "quiero morir"). Antes había /suicid/i y /autolesi/i sueltos, que
+// disparaban la tarjeta con solo mencionar el tema — "mi amigo se suicidó",
+// "un programa de prevención del suicidio", "mi hermana se autolesiona" —
+// aunque la persona no estuviera hablando de sí misma. Eso es justo lo que
+// no debe pasar: la tarjeta de emergencia es para la crisis DE la persona,
+// no para cualquier mención del tema. La gramática española ya distingue
+// esto de forma natural: "suicidarme"/"me suicido"/"quiero suicidarme" solo
+// tienen sentido en primera persona, mientras que "se suicidó" (tercera
+// persona, pasado) no las activa.
+const CRISIS_PATTERNS = [
+  /quitarme la vida/i, /matarme/i, /\bme mato\b/i,
+  /suicidarme/i, /me suicido/i, /me quiero suicidar/i, /quiero suicidarme/i,
+  /pienso en suicidarme/i, /pensando en suicidarme/i, /voy a suicidarme/i,
+  /tengo (ideas|pensamientos) suicidas/i,
+  /acabar con (mi vida|todo esto|mi existencia)/i, /no quiero (vivir|seguir viviendo|existir)/i,
+  /ya no (aguanto|puedo) mas/i, /\bhacerme dano\b/i, /\blastimarme\b/i, /\bcortarme\b/i,
+  /autolesionarme/i, /me autolesiono/i, /quiero autolesionarme/i, /me quiero autolesionar/i,
+  /quiero morir/i, /mejor(ia)? estar(ia)? muert[oa]/i, /no vale la pena vivir/i,
+];
+// Quita tildes antes de comparar: en el teclado del celular es muy común
+// escribir sin acentos ("mas", "dano"), y esto no puede depender de que la
+// persona los ponga bien en un momento así.
+function stripAccents(s){
+  return (s||'').normalize('NFD').replace(/[̀-ͯ]/g,'');
+}
+function detectsCrisisLanguage(text){
+  const norm = stripAccents(text);
+  return CRISIS_PATTERNS.some(re => re.test(norm));
+}
+// Líneas de ayuda por país — verificadas, pero cambian con el tiempo; si
+// alguna deja de funcionar, findahelpline.com queda como respaldo siempre
+// vigente. No se adivinó ningún número: cada uno viene de la línea oficial
+// o de un directorio de ayuda reconocido para ese país. "tel" es el número
+// limpio para marcar con un toque — cuando la línea tiene más de un número,
+// "tel" usa el que funciona en todo el país, y el resto queda en "line".
+const CRISIS_LINES_BY_COUNTRY = [
+  { code:'CO', flag:'🇨🇴', country:'Colombia', line:'106 (línea nacional de salud mental)', tel:'106' },
+  { code:'MX', flag:'🇲🇽', country:'México', line:'800 911 2000 (Línea de la Vida)', tel:'8009112000' },
+  { code:'AR', flag:'🇦🇷', country:'Argentina', line:'135 (CABA y GBA, gratis) o (011) 5275-1135 (todo el país)', tel:'+541152751135' },
+  { code:'CL', flag:'🇨🇱', country:'Chile', line:'*4141 o 600 360 7777 (Salud Responde)', tel:'*4141' },
+  { code:'PE', flag:'🇵🇪', country:'Perú', line:'113, opción salud mental (Minsa)', tel:'113' },
+  { code:'ES', flag:'🇪🇸', country:'España', line:'024', tel:'024' },
+  { code:'US', flag:'🇺🇸', country:'EE. UU. (también en español)', line:'988, por llamada o mensaje de texto', tel:'988' },
+];
+// Números de emergencia GENERALES (policía/ambulancia/bomberos) por país —
+// distintos de las líneas de salud mental de arriba. También verificados uno
+// por uno: Colombia usa 123 (no 911), Chile no tiene número único y 133
+// (Carabineros) es el más reconocido, Perú usa 105 (911 solo existe en
+// prueba piloto en Lima/Callao) — por eso ninguno de los dos se adivinó
+// igualando todo a "911".
+const EMERGENCY_NUMBERS_BY_COUNTRY = {
+  CO: { flag:'🇨🇴', country:'Colombia', label:'123 (Policía · Ambulancia · Bomberos)', tel:'123' },
+  MX: { flag:'🇲🇽', country:'México', label:'911', tel:'911' },
+  AR: { flag:'🇦🇷', country:'Argentina', label:'911', tel:'911' },
+  CL: { flag:'🇨🇱', country:'Chile', label:'133 (Carabineros)', tel:'133' },
+  PE: { flag:'🇵🇪', country:'Perú', label:'105 (Policía Nacional)', tel:'105' },
+  ES: { flag:'🇪🇸', country:'España', label:'112', tel:'112' },
+  US: { flag:'🇺🇸', country:'EE. UU.', label:'911', tel:'911' },
+};
+// Detecta el país solo por la zona horaria del teléfono (no pide permiso de
+// ubicación, no llama a ningún servicio externo). Si no reconoce la zona,
+// devuelve null — y en ese caso NO se adivina un número, se deja que la
+// persona elija el suyo en la lista de abajo.
+function detectCountryCodeByTimezone(){
+  try{
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+    if(tz === 'America/Bogota') return 'CO';
+    if(tz.startsWith('America/Argentina') || tz === 'America/Buenos_Aires') return 'AR';
+    if(['America/Mexico_City','America/Tijuana','America/Cancun','America/Merida','America/Monterrey','America/Chihuahua','America/Mazatlan','America/Hermosillo','America/Bahia_Banderas'].includes(tz)) return 'MX';
+    if(tz === 'America/Santiago' || tz === 'America/Punta_Arenas') return 'CL';
+    if(tz === 'America/Lima') return 'PE';
+    if(tz === 'Europe/Madrid' || tz === 'Atlantic/Canary') return 'ES';
+    if(['America/New_York','America/Chicago','America/Denver','America/Los_Angeles','America/Anchorage','America/Phoenix','America/Puerto_Rico','Pacific/Honolulu'].includes(tz)) return 'US';
+  }catch(e){}
+  return null;
+}
+function callTel(tel){
+  haptic(12);
+  window.location.href = 'tel:' + tel;
+}
+function emergencyButtonHTML(){
+  const code = detectCountryCodeByTimezone();
+  const e = code ? EMERGENCY_NUMBERS_BY_COUNTRY[code] : null;
+  if(e){
+    return `<button class="crisis-emergency-btn" onclick="callTel('${e.tel}')">🚨 Llamar a emergencias ahora — ${e.flag} ${e.label}</button>
+      <div class="crisis-emergency-note">Detectamos tu país por el reloj de tu teléfono. ¿No es correcto? Elige el tuyo abajo.</div>`;
+  }
+  return `<div class="crisis-emergency-note">Toca el número de emergencia de tu país abajo para llamar directo.</div>`;
+}
+function crisisResourceBubbleHTML(){
+  const rows = CRISIS_LINES_BY_COUNTRY.map(c=>
+    `<a href="tel:${c.tel}" onclick="haptic(10)" class="crisis-tel-row"><span>${c.flag} ${c.country}</span><span class="num">${c.line} 📞</span></a>`
+  ).join('');
+  const emergencyRows = Object.values(EMERGENCY_NUMBERS_BY_COUNTRY).map(e=>
+    `<a href="tel:${e.tel}" onclick="haptic(10)" class="crisis-tel-row emergency"><span>${e.flag} ${e.country}</span><span class="num">${e.label} 📞</span></a>`
+  ).join('');
+  return `<div class="bubble here crisis">
+    <div class="crisis-title">Esto importa, y no tienes que pasar por esto solo(a).</div>
+    <p>Si estás en peligro inmediato, contacta ahora a los servicios de emergencia de tu país.</p>
+    ${emergencyButtonHTML()}
+    <details class="crisis-details">
+      <summary>Ver todos los números de emergencia por país</summary>
+      <div class="crisis-tel-list">${emergencyRows}</div>
+    </details>
+    <p style="margin:12px 0 4px;">También puedes hablar con alguien ya mismo, sin que sea una emergencia:</p>
+    <div class="crisis-tel-list">${rows}</div>
+    <p>¿De otro país? <a href="https://findahelpline.com" target="_blank" rel="noopener">aquí puedes encontrar una línea de ayuda cerca de ti</a>.</p>
+    <p>Sigo aquí contigo — y también te animo a buscar a alguien de confianza, o a un pastor.</p>
+  </div>`;
+}
 function startChat(){
   chatStarted = true;
   chatHistory = [];
+  chatMode = null;
   renderChat();
   addChatBubble('here', 'Hola. Estoy aquí contigo. ¿Qué tienes en el corazón hoy?');
 }
@@ -6666,6 +6997,7 @@ function renderChat(){
   const body = document.getElementById('chat-body');
   const msgs = chatHistory.map((m,i)=>{
     if(m.role==='user') return `<div class="bubble me">${m.text.replace(/\n/g,'<br>')}</div>`;
+    if(m.role==='crisis') return crisisResourceBubbleHTML();
     // mientras "piensa", tres puntos respirando — no un "…" estático, para
     // que se sienta a alguien tomándose un momento, no una app cargando.
     if(m.text==='…') return `<div class="bubble here"><span class="loading-dot"></span> <span class="loading-dot" style="animation-delay:.15s;"></span> <span class="loading-dot" style="animation-delay:.3s;"></span></div>`;
@@ -6683,8 +7015,14 @@ function renderChat(){
       </div>`;
     return `<div class="bubble here">${m.text.replace(/\n/g,'<br>')}${actions}</div>`;
   }).join('');
-  const showSuggestions = chatHistory.length<=1;
-  body.innerHTML = msgs + (showSuggestions ? `
+  // El selector de "¿Cómo quieres que te acompañe?" aparece una sola vez,
+  // justo después del saludo; las sugerencias de tema aparecen después de
+  // elegir un modo (o si la persona escribe directo, igual se le responde).
+  const showModeSelector = chatMode===null && chatHistory.length<=1;
+  const showSuggestions = chatMode!==null && chatHistory.length<=2;
+  body.innerHTML = msgs
+    + (showModeSelector ? chatModeSelectorHTML() : '')
+    + (showSuggestions ? `
     <div class="chat-suggestions">
       ${CHAT_SUGGESTIONS.map((s,si)=>`<button onclick="sendChatSuggestion(CHAT_SUGGESTIONS[${si}])">${s}</button>`).join('')}
     </div>` : '');
@@ -6717,14 +7055,31 @@ async function sendChatMessage(retryText){
   if(retryText == null){
     input.value = '';
     addChatBubble('user', val);
+    // Red mínima de seguridad: esto no depende de que la IA lo note — si el
+    // mensaje tiene lenguaje de crisis, el recurso de ayuda aparece siempre,
+    // sin importar qué responda el modelo después.
+    if(detectsCrisisLanguage(val)){
+      chatHistory.push({role:'crisis'});
+      renderChat();
+      // Pone el botón de emergencia en pantalla de inmediato (sin esperar a
+      // que la persona baje) y usa un patrón de vibración distinto al normal
+      // para que se note — pero SIEMPRE requiere el toque de la persona
+      // antes de marcar. Nunca se llama sola: ver nota en crisisResourceBubbleHTML.
+      setTimeout(()=>{
+        const btn = document.querySelector('.crisis-emergency-btn') || document.querySelector('.bubble.crisis');
+        if(btn) btn.scrollIntoView({behavior:'smooth', block:'center'});
+        try{ if(navigator.vibrate) navigator.vibrate([40,60,40,60,80]); }catch(e){}
+      }, 80);
+    }
   }
   addChatBubble('here', '…');
   const thinkingIdx = chatHistory.length-1;
   let reply = null;
   if(claudeSample){
     try{
-      const convo = chatHistory.slice(0,-1).map(m=>`${m.role==='user'?'Usuario':'HERE'}: ${m.text}`).join('\n');
-      const prompt = `${CHAT_PERSONA}\n\n${convo}\n\nResponde al último mensaje del usuario.`;
+      const convo = chatHistory.slice(0,-1).filter(m=>m.role==='user'||m.role==='here').map(m=>`${m.role==='user'?'Usuario':'HERE'}: ${m.text}`).join('\n');
+      const modeInstruction = chatMode ? `\n${chatMode.note}` : '';
+      const prompt = `${CHAT_PERSONA}${modeInstruction}\n\n${convo}\n\nResponde al último mensaje del usuario.`;
       const res = await claudeSample(prompt, {modelTier:'default'});
       reply = res.text;
     }catch(e){ reply = null; }
@@ -7292,6 +7647,7 @@ function renderPerfil(){
       <div class="list-card" onclick="goVersiculosResaltados()"><div><div class="t">🖍 Ver versículos resaltados</div></div><span>→</span></div>
       <div class="list-card" onclick="go('historialLecturas')"><div><div class="t">📜 Historial de lecturas</div>${visited.length?`<div class="s">${visited.length} ${visited.length===1?'capítulo':'capítulos'}</div>`:''}</div><span>→</span></div>
       <div class="list-card" onclick="go('misPastores')"><div><div class="t">⭐ Pastores que sigues</div>${followedPastores.length?`<div class="s">${followedPastores.length} ${followedPastores.length===1?'pastor':'pastores'}</div>`:''}</div><span>→</span></div>
+      <div class="list-card" onclick="go('musicaGuardado')"><div><div class="t">✝ Música y predicaciones guardadas</div>${Object.keys(savedTracks).length?`<div class="s">${Object.keys(savedTracks).length} ${Object.keys(savedTracks).length===1?'guardado':'guardados'}</div>`:''}</div><span>→</span></div>
     </div>
     <div class="section-title" style="padding-left:0; margin-top:26px;">Cuenta</div>
     <div class="list-card" style="margin-left:0; margin-right:0;" onclick="openAccountSheet()">
