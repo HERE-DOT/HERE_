@@ -2662,6 +2662,11 @@ async function hereSignOut(){
   renderPerfil();
   showHereToast('Sesión cerrada — tus datos siguen en este dispositivo');
 }
+// Se resuelve cuando ya se sabe con certeza si hay o no una sesión iniciada
+// (tras revisar con Supabase al arrancar) — el arranque de la app espera
+// esto antes de decidir si muestra la hoja de cuenta automáticamente, para
+// no mostrársela un instante a alguien que sí tiene cuenta.
+let hereAuthReady = Promise.resolve();
 function initHereAuth(){
   const sb = getSupabase();
   if(!sb) return; // sin conexión al cargar, o el script de Supabase no cargó: la app sigue sin cuenta
@@ -2685,7 +2690,7 @@ function initHereAuth(){
       renderPerfil();
     }
   });
-  sb.auth.getSession().then(({data})=>{
+  hereAuthReady = sb.auth.getSession().then(({data})=>{
     if(data && data.session && data.session.user){
       hereUser = data.session.user;
       pullCloudData();
@@ -6857,6 +6862,19 @@ window.addEventListener('load', ()=>{
   const target = onboarded ? 'home' : 'ob-1';
   go(target, {fromPopstate:true});
 
+  // Invita a crear cuenta / iniciar sesión justo al abrir la app — pero
+  // solo a alguien que ya conoce HERE (llega a Inicio) y no tiene sesión
+  // iniciada; a quien recién instala la app no se le interrumpe el
+  // onboarding con esto. Se puede cerrar y seguir como invitado, igual
+  // que siempre. Espera a hereAuthReady para no mostrarla un instante a
+  // alguien que sí tiene cuenta (la sesión tarda un poco en confirmarse).
+  function maybeAutoShowAuth(){
+    if(target !== 'home') return;
+    hereAuthReady.then(()=>{
+      if(!hereUser) openAccountSheet();
+    });
+  }
+
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if(reduceMotion){
     // Sin animación: se queda quieta en la escena ya revelada ("HERE" y
@@ -6866,7 +6884,7 @@ window.addEventListener('load', ()=>{
     setTimeout(()=>{
       splash.style.transition = 'opacity 240ms ease';
       splash.style.opacity = '0';
-      setTimeout(()=>{ splash.style.display='none'; }, 260);
+      setTimeout(()=>{ splash.style.display='none'; maybeAutoShowAuth(); }, 260);
     }, 380);
     return;
   }
@@ -6877,7 +6895,7 @@ window.addEventListener('load', ()=>{
   const dismiss = ()=>{
     if(splash.classList.contains('fading')) return;
     splash.classList.add('fading');
-    setTimeout(()=>{ splash.style.display = 'none'; }, 550);
+    setTimeout(()=>{ splash.style.display = 'none'; maybeAutoShowAuth(); }, 550);
   };
   requestAnimationFrame(()=>{ splash.classList.add('playing'); });
   setTimeout(dismiss, 4050);
