@@ -1140,6 +1140,26 @@
     width:34px; height:34px; font-size:17px; background:var(--card); border:1px solid var(--line);
     box-shadow:none; margin-right:4px;
   }
+
+  /* ---------- oración en comunidad ---------- */
+  .comm-card{
+    padding:16px 18px; border-radius:18px; border:1px solid var(--line); background:var(--card);
+    box-shadow:var(--shadow-sm); display:flex; flex-direction:column; gap:10px;
+  }
+  .comm-card .meta{display:flex; align-items:center; gap:8px; font-size:12px; color:var(--ink-soft);}
+  .comm-card .cat-pill{color:var(--gold-deep); font-weight:700;}
+  .comm-card .txt{font-size:14.5px; line-height:1.6; color:var(--ink); white-space:pre-line;}
+  .comm-card .foot{display:flex; align-items:center; justify-content:space-between; margin-top:2px;}
+  .pray-btn{
+    appearance:none; display:inline-flex; align-items:center; gap:7px; cursor:pointer;
+    border:1px solid var(--line); background:var(--bg-warm); border-radius:100px;
+    padding:7px 14px; font-family:'Manrope', sans-serif; font-size:13px; font-weight:600; color:var(--ink-soft);
+    transition:all .15s ease;
+  }
+  .pray-btn .x{font-size:14px; line-height:1;}
+  .pray-btn.active{ background:var(--sage-deep); border-color:var(--sage-deep); color:#fff; }
+  .pray-btn:active{ transform:scale(0.96); }
+  .comm-card .report-link{font-size:12px; color:var(--ink-soft); opacity:.65; cursor:pointer; text-decoration:underline;}
   .follow-btn-header.following{ background:var(--sage-deep); border-color:var(--sage-deep); }
   /* ---------- Predicaciones por momento: no son fotos sino color y un
      ícono — para que se note de inmediato que es otra forma de explorar
@@ -2088,6 +2108,14 @@
         <span class="orar-primary-arrow">→</span>
       </div>
 
+      <div class="list-card" style="margin:14px 0 0;" onclick="go('comunidadOrar')">
+        <div style="display:flex; align-items:center; gap:14px;">
+          <span style="font-size:19px; flex:none;" aria-hidden="true">🤝</span>
+          <div><div class="t">Orar en comunidad</div><div class="s">Comparte una petición, o ora por las de otros</div></div>
+        </div>
+        <span style="color:var(--ink-soft); flex:none;">→</span>
+      </div>
+
       <p style="color:var(--ink-soft); font-size:13px; text-align:center; letter-spacing:.2px; margin-top:34px;">o, si prefieres, con tus propias palabras</p>
       <p class="serif" style="margin-top:22px; font-size:17px; line-height:1.5; text-align:center; color:var(--ink);">¿Qué quieres poner en manos de Dios?</p>
       <textarea id="orar-input" rows="5" placeholder="Escribe aquí, con calma…" style="margin-top:22px; padding:22px; line-height:1.7; box-shadow:none;"></textarea>
@@ -2111,6 +2139,16 @@
       <div class="guiada-dots" id="guiada-dots"></div>
       <div id="guiada-body"></div>
     </div>
+  </section>
+
+  <!-- ORACIÓN EN COMUNIDAD -->
+  <section class="screen noNav" id="comunidadOrar">
+    <div class="topbar"><div class="backbtn" onclick="go('orar')">←</div><h2>Orar en comunidad</h2></div>
+    <p style="padding:0 24px; margin-top:-6px; color:var(--ink-soft); font-size:13.5px; line-height:1.5;">Un espacio para pedir oración y orar por otros. Nunca compartas contraseñas, números de teléfono, correos o datos bancarios aquí.</p>
+    <div class="container" id="comunidad-compose" style="padding-top:14px;"></div>
+    <div class="section-title" style="margin-top:10px;">Peticiones de la comunidad</div>
+    <div class="stack container" id="comunidad-list" style="padding-top:0;"></div>
+    <div style="height:60px;"></div>
   </section>
 
   <!-- HOY -->
@@ -3576,6 +3614,7 @@ function go(id, opts){
   if(id==='chat' && !chatStarted) startChat();
   if(id==='biblia') { renderBooks(); renderPlanRow(); renderBibliaContinue(); document.getElementById('search-results').innerHTML=''; }
   if(id==='historialLecturas') renderHistorialLecturas();
+  if(id==='comunidadOrar') renderComunidadOrar();
   if(id==='orar'){
     renderOraciones();
     // el resultado de "ayúdame a orar" (o el aviso de que hace falta escribir
@@ -4926,7 +4965,7 @@ function renderDiario(){
     if(!prayers.length){ c.innerHTML = '<div class="empty"><div class="light-dot"></div>Las oraciones que guardes aparecerán aquí.</div>'; return; }
     c.innerHTML = prayers.map((p,idx)=>`
       <div class="diario-entry" onclick="openDiarioPrayer(${idx})">
-        <div class="ref">Oración</div>
+        <div class="ref">${p.category || 'Oración'}</div>
         <div class="note">${p.text.length>140? p.text.slice(0,140)+'…' : p.text}</div>
         <div class="date">${fmtDiarioDate(p.date)}</div>
       </div>`).join('');
@@ -6594,7 +6633,7 @@ function openDiarioPrayer(idx){
   const p = prayers[idx];
   openSheet(`
     <div class="handle"></div>
-    <p style="font-size:13px; color:var(--ink-soft); margin-bottom:10px;">${fmtDiarioDate(p.date)}</p>
+    <p style="font-size:13px; color:var(--ink-soft); margin-bottom:10px;">${fmtDiarioDate(p.date)}${p.category?` · <span style="color:var(--gold-deep); font-weight:600;">${p.category}</span>`:''}</p>
     <p style="font-size:14.5px; line-height:1.65; white-space:pre-line; margin-bottom:18px;">${p.text}</p>
     <button class="btn btn-ghost" onclick="deletePrayer(${idx})">Eliminar oración</button>
   `);
@@ -6765,14 +6804,47 @@ function prefillOrar(ref){
   go('orar');
   document.getElementById('orar-input').value = `Sobre esto que leí (${v.ref}): `;
 }
+// Categorías simples y opcionales para una oración guardada — solo para
+// poder mirar atrás y reconocerlas de un vistazo en "Mis oraciones", nunca
+// obligatorias.
+const PRAYER_CATEGORIES = ['Gratitud','Petición','Intercesión','Confesión','Entrega'];
+let pendingPrayerText = '';
 function orarConMisPalabras(){
   const val = document.getElementById('orar-input').value.trim();
   if(!val) return;
-  prayers.unshift({text:val, date:Date.now()});
+  pendingPrayerText = val;
+  const chips = PRAYER_CATEGORIES.map(cat=>
+    `<div class="chip" data-cat="${cat}" onclick="this.parentElement.querySelectorAll('.chip').forEach(c=>c.classList.remove('selected')); this.classList.toggle('selected');" style="padding:10px 14px; font-size:13.5px;"><span class="dot"></span>${cat}</div>`
+  ).join('');
+  openSheet(`
+    <div class="handle"></div>
+    <p class="serif" style="font-size:17px; text-align:center; margin-bottom:6px;">¿Quieres guardar lo que pusiste en manos de Dios?</p>
+    <p style="font-size:13px; color:var(--ink-soft); text-align:center; margin-bottom:18px;">Puedes elegir una categoría si quieres, o dejarlo así.</p>
+    <div class="stack" id="prayer-cat-chips" style="gap:8px; margin-bottom:18px;">${chips}</div>
+    <div class="stack">
+      <button class="btn btn-primary" onclick="confirmSavePrayer()">Sí, guardarla</button>
+      <button class="btn btn-ghost" onclick="declineSavePrayer()">No, gracias</button>
+    </div>
+  `);
+}
+function confirmSavePrayer(){
+  const selected = document.querySelector('#prayer-cat-chips .chip.selected');
+  const category = selected ? selected.dataset.cat : null;
+  const entry = {text:pendingPrayerText, date:Date.now()};
+  if(category) entry.category = category;
+  prayers.unshift(entry);
   save('here_prayers', prayers);
+  closeSheet();
   document.getElementById('orar-output').innerHTML = '<p style="color:var(--sage-deep); font-size:14px;">Tu oración quedó guardada.</p>';
   document.getElementById('orar-input').value='';
+  pendingPrayerText = '';
   renderOraciones();
+}
+function declineSavePrayer(){
+  closeSheet();
+  document.getElementById('orar-output').innerHTML = '<p style="color:var(--ink-soft); font-size:14px;">Está bien. Quedó en sus manos, no en la app.</p>';
+  document.getElementById('orar-input').value='';
+  pendingPrayerText = '';
 }
 async function ayudaOracion(){
   const val = document.getElementById('orar-input').value.trim();
@@ -6911,8 +6983,201 @@ function renderOraciones(){
   c.innerHTML = prayers.slice(0,10).map(p=>`
     <div class="list-card" style="flex-direction:column; align-items:flex-start; gap:4px; box-shadow:none; border-color:var(--line);">
       <div class="t" style="font-size:13.5px; font-weight:500; line-height:1.5; color:var(--ink-soft);">${p.text.length>140? p.text.slice(0,140)+'…' : p.text}</div>
-      <div class="s">${new Date(p.date).toLocaleDateString('es-ES',{day:'numeric',month:'short'})}</div>
+      <div class="s">${new Date(p.date).toLocaleDateString('es-ES',{day:'numeric',month:'short'})}${p.category?` · <span style="color:var(--gold-deep); font-weight:600;">${p.category}</span>`:''}</div>
     </div>`).join('');
+}
+
+/* ---------------- oración en comunidad ----------------
+   Visible para otras personas (a diferencia de "Mis oraciones", que es
+   privada), así que necesita cuenta iniciada — no se puede moderar ni
+   responsabilizar contenido verdaderamente anónimo a nivel de backend.
+   "Anónimo" aquí solo oculta el nombre EN PANTALLA; sigue vinculado a la
+   cuenta por dentro, para poder borrar lo propio y poder reportar abuso. */
+let communityAnon = true;
+let communityReported = load('here_community_reported', []); // ids ya reportados por este dispositivo
+const PRAYER_REQUEST_BLOCKERS = [
+  { re: /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/i, msg: 'Parece que incluiste un correo electrónico.' },
+  { re: /\b\d{9,}\b/, msg: 'Parece que incluiste un número largo (teléfono, tarjeta o cuenta).' },
+  { re: /(\+\d{1,3}[\s.-]?)?\(?\d{2,4}\)?[\s.-]\d{3,4}[\s.-]\d{3,4}\b/, msg: 'Parece que incluiste un número de teléfono.' },
+  { re: /\b(contraseñ\w*|clave\s*(de\s*acceso)?|password|pin)\b\s*[:=]?\s*\S+/i, msg: 'Parece que incluiste una contraseña o clave.' },
+];
+function validatePrayerRequestText(text){
+  for(const b of PRAYER_REQUEST_BLOCKERS){
+    if(b.re.test(text)) return { ok:false, reason: b.msg };
+  }
+  return { ok:true };
+}
+function renderComunidadOrar(){
+  renderComunidadCompose();
+  loadCommunityRequests();
+}
+function renderComunidadCompose(){
+  const wrap = document.getElementById('comunidad-compose');
+  if(!wrap) return;
+  if(!hereUser){
+    wrap.innerHTML = `
+      <div class="empty" style="padding:30px 10px;">
+        <div class="light-dot"></div>
+        Para publicar, orar por alguien o reportar algo aquí, necesitas una cuenta — así podemos cuidar este espacio.
+        <div style="margin-top:16px;"><button class="btn btn-primary" onclick="openAccountSheet()">Iniciar sesión o crear cuenta</button></div>
+      </div>`;
+    return;
+  }
+  const chips = PRAYER_CATEGORIES.map(cat=>
+    `<div class="chip" data-cat="${cat}" onclick="this.parentElement.querySelectorAll('.chip').forEach(c=>c.classList.remove('selected')); this.classList.toggle('selected');" style="padding:9px 13px; font-size:13px; flex:none;"><span class="dot"></span>${cat}</div>`
+  ).join('');
+  wrap.innerHTML = `
+    <textarea id="comunidad-input" rows="4" placeholder="¿Por qué quieres que oremos contigo?" style="padding:16px; line-height:1.6; box-shadow:none;"></textarea>
+    <div id="comunidad-cat-chips" style="display:flex; gap:8px; overflow-x:auto; padding:12px 0 0; scrollbar-width:none;">${chips}</div>
+    <label style="display:flex; align-items:center; gap:9px; margin-top:14px; font-size:13.5px; color:var(--ink-soft); cursor:pointer;">
+      <input type="checkbox" id="comunidad-anon-toggle" checked onchange="communityAnon=this.checked;" style="width:17px; height:17px; accent-color:var(--sage-deep);">
+      Publicar como anónimo
+    </label>
+    <p id="comunidad-error" style="font-size:12.5px; color:#b14545; margin-top:8px; display:none;"></p>
+    <button class="btn btn-primary" style="margin-top:14px;" onclick="submitCommunityRequest()">Publicar petición</button>
+  `;
+}
+async function submitCommunityRequest(){
+  const input = document.getElementById('comunidad-input');
+  const text = (input.value||'').trim();
+  const errEl = document.getElementById('comunidad-error');
+  errEl.style.display = 'none';
+  if(!text) return;
+  const check = validatePrayerRequestText(text);
+  if(!check.ok){
+    errEl.textContent = `${check.reason} Por tu seguridad, quítalo antes de publicar.`;
+    errEl.style.display = '';
+    return;
+  }
+  const selected = document.querySelector('#comunidad-cat-chips .chip.selected');
+  const category = selected ? selected.dataset.cat : null;
+  const sb = getSupabase();
+  if(!sb || !hereUser) return;
+  haptic(10);
+  try{
+    const { error } = await sb.from('prayer_requests').insert({
+      user_id: hereUser.id,
+      display_name: communityAnon ? null : (hereUser.email || '').split('@')[0],
+      is_anonymous: communityAnon,
+      category,
+      text,
+    });
+    if(error) throw error;
+    input.value = '';
+    if(selected) selected.classList.remove('selected');
+    loadCommunityRequests();
+  }catch(e){
+    errEl.textContent = 'No se pudo publicar ahora mismo. Intenta de nuevo en un momento.';
+    errEl.style.display = '';
+  }
+}
+async function loadCommunityRequests(){
+  const listEl = document.getElementById('comunidad-list');
+  if(!listEl) return;
+  if(!hereUser){
+    listEl.innerHTML = '<div class="empty"><div class="light-dot"></div>Inicia sesión para ver y orar por las peticiones de la comunidad.</div>';
+    return;
+  }
+  const sb = getSupabase();
+  if(!sb){ listEl.innerHTML = '<div class="empty"><div class="light-dot"></div>No se pudo conectar ahora mismo.</div>'; return; }
+  listEl.innerHTML = '<p style="padding:20px 0; text-align:center; color:var(--ink-soft);">Cargando <span class="loading-dot"></span></p>';
+  try{
+    const { data, error } = await sb
+      .from('prayer_requests')
+      .select('id, user_id, display_name, is_anonymous, category, text, praying_count, created_at')
+      .eq('hidden', false)
+      .order('created_at', { ascending:false })
+      .limit(30);
+    if(error) throw error;
+    const list = data || [];
+    // Para saber qué botones "orando por esto" deben verse ya activos,
+    // con una sola consulta aparte (no viene incluido en la de arriba).
+    if(list.length && hereUser){
+      try{
+        const ids = list.map(r=>r.id);
+        const { data: mine } = await sb.from('prayer_request_prayers').select('request_id').eq('user_id', hereUser.id).in('request_id', ids);
+        const mineIds = new Set((mine||[]).map(x=>x.request_id));
+        list.forEach(r=>{ r._prayingLocal = mineIds.has(r.id); });
+      }catch(e){}
+    }
+    renderComunidadList(list);
+  }catch(e){
+    // La tabla puede no existir todavía si no se corrió la migración —
+    // nunca rompemos la pantalla por eso, solo lo decimos con calma.
+    listEl.innerHTML = '<div class="empty"><div class="light-dot"></div>La comunidad aún no está disponible en este momento.</div>';
+  }
+}
+function renderComunidadList(list){
+  const listEl = document.getElementById('comunidad-list');
+  if(!list.length){
+    listEl.innerHTML = '<div class="empty"><div class="light-dot"></div>Todavía no hay peticiones. Sé la primera persona en compartir una.</div>';
+    return;
+  }
+  listEl.innerHTML = list.map(r=>{
+    const name = r.is_anonymous ? 'Alguien de la comunidad' : (r.display_name || 'Alguien de la comunidad');
+    const isOwn = hereUser && r.user_id === hereUser.id;
+    const reported = communityReported.includes(r.id);
+    return `
+    <div class="comm-card">
+      <div class="meta">
+        <span>${name}</span>
+        ${r.category ? `<span>·</span><span class="cat-pill">${r.category}</span>` : ''}
+        <span>·</span><span>${formatHistoryDate(new Date(r.created_at).getTime())}</span>
+      </div>
+      <div class="txt">${(r.text||'').replace(/</g,'&lt;')}</div>
+      <div class="foot">
+        <button class="pray-btn ${r._prayingLocal?'active':''}" onclick="togglePrayingFor('${r.id}', this)">
+          <span class="x">✝</span><span class="count">${r.praying_count||0}</span> orando
+        </button>
+        ${isOwn
+          ? `<span class="report-link" onclick="deleteCommunityRequest('${r.id}')">Eliminar</span>`
+          : (reported ? `<span style="font-size:12px; color:var(--ink-soft); opacity:.6;">Reportado</span>` : `<span class="report-link" onclick="reportCommunityRequest('${r.id}')">Reportar</span>`)
+        }
+      </div>
+    </div>`;
+  }).join('');
+}
+async function togglePrayingFor(id, btnEl){
+  const sb = getSupabase();
+  if(!sb || !hereUser) return;
+  haptic(10);
+  const nowActive = !btnEl.classList.contains('active');
+  btnEl.classList.toggle('active', nowActive);
+  const countEl = btnEl.querySelector('.count');
+  if(countEl) countEl.textContent = Math.max(0, parseInt(countEl.textContent||'0',10) + (nowActive?1:-1));
+  try{
+    if(nowActive){
+      await sb.from('prayer_request_prayers').insert({ request_id:id, user_id:hereUser.id });
+    } else {
+      await sb.from('prayer_request_prayers').delete().eq('request_id', id).eq('user_id', hereUser.id);
+    }
+  }catch(e){
+    // si el servidor y la pantalla quedaron desincronizados (por ejemplo,
+    // un doble toque muy rápido), volvemos a cargar la lista real.
+    loadCommunityRequests();
+  }
+}
+async function reportCommunityRequest(id){
+  const sb = getSupabase();
+  if(!sb || !hereUser) return;
+  if(!confirm('¿Reportar esta petición? La revisaremos.')) return;
+  haptic(10);
+  try{
+    await sb.from('prayer_request_reports').insert({ request_id:id, user_id:hereUser.id });
+  }catch(e){}
+  communityReported.push(id);
+  save('here_community_reported', communityReported);
+  loadCommunityRequests();
+}
+async function deleteCommunityRequest(id){
+  const sb = getSupabase();
+  if(!sb || !hereUser) return;
+  if(!confirm('¿Eliminar esta petición? No se puede deshacer.')) return;
+  haptic(10);
+  try{
+    await sb.from('prayer_requests').delete().eq('id', id).eq('user_id', hereUser.id);
+  }catch(e){}
+  loadCommunityRequests();
 }
 
 /* ---------------- hoy ---------------- */
