@@ -3609,6 +3609,43 @@ function renderWeekStreak(){
     </div>`).join('');
 }
 
+// Mensajes de progreso amables, para "Mi camino" en el perfil — a propósito
+// SIN lenguaje competitivo: nunca "rompiste tu racha", nunca comparación con
+// otros, nunca una meta que cumplir. Solo reconocer, con calma, el patrón
+// real de cuándo la persona ha vuelto (here_visit_log), reutilizando
+// updateStreak()/currentStreak que ya existían. Si no hay nada particular
+// que contar, se queda con la frase original de siempre.
+function gentleProgressMessage(){
+  updateStreak(); // idempotente: solo cambia algo si hoy aún no se había registrado
+  // OJO: toDateString() ("Thu Oct 01 2026") no se puede ordenar como texto —
+  // el día de la semana va primero, así que un sort() de strings mezcla el
+  // orden cronológico real. Se convierte a Date antes de ordenar.
+  const log = load('here_visit_log', []).map(s=>new Date(s)).filter(d=>!isNaN(d)).sort((a,b)=>a-b);
+  const visitDays = log.length;
+  const DEFAULT = 'Este es tu camino con HERE — no una lista de logros, solo un registro tranquilo de los momentos en que volviste.';
+  if(visitDays <= 1){
+    return 'Este es el comienzo de tu camino con HERE. No hay ritmo que cumplir — solo el que tú elijas.';
+  }
+  if(log.length >= 2){
+    const last = log[log.length-1];
+    const prev = log[log.length-2];
+    const gapDays = Math.round((last - prev) / 86400000);
+    if(gapDays >= 5){
+      return 'Volviste. Ha pasado un tiempo, y eso no borra nada de lo que ya caminaste.';
+    }
+  }
+  if(currentStreak >= 7){
+    return `Llevas ${currentStreak} días seguidos volviendo. No es una meta que cumplir — es que elegiste estar presente.`;
+  }
+  if(currentStreak >= 3){
+    return `Van ${currentStreak} días seguidos. Un paso a la vez, sin prisa.`;
+  }
+  if(visitDays >= 14){
+    return `Ya son ${visitDays} días que has vuelto a este espacio. Eso es un camino, no una carrera.`;
+  }
+  return DEFAULT;
+}
+
 /* ---------------- experience layer: particles, haptics, gentle sound ---------------- */
 function particlesHTML(n){
   n = n || 6;
@@ -7630,7 +7667,7 @@ function renderPerfil(){
   const c = document.getElementById('perfil-body');
   const visitDays = load('here_visit_log', []).length;
   c.innerHTML = `
-    <p class="camino-intro">Este es tu camino con HERE — no una lista de logros, solo un registro tranquilo de los momentos en que volviste.</p>
+    <p class="camino-intro">${gentleProgressMessage()}</p>
     <div class="camino-grid">${renderCaminoGrid()}</div>
     <div class="camino-stats">
       <div class="camino-stat"><div class="num">${visitDays}</div><div class="lbl">días que volviste</div></div>
