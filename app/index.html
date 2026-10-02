@@ -275,6 +275,13 @@
     outline:none; border-color:var(--gold); box-shadow:0 0 0 3px rgba(173,132,47,0.16);
   }
   .stack input.invalid{ border-color:#b14545; }
+  .stack textarea{
+    font-family:'Manrope', sans-serif; font-size:15px; color:var(--ink); line-height:1.5;
+    background:var(--card); border:1.5px solid var(--line); border-radius:12px;
+    padding:12px 14px; width:100%; resize:vertical; transition:border-color .2s ease, box-shadow .2s ease;
+  }
+  .stack textarea::placeholder{ color:var(--ink-soft); opacity:.8; }
+  .stack textarea:focus-visible{ outline:none; border-color:var(--gold); box-shadow:0 0 0 3px rgba(173,132,47,0.16); }
   .stack-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
   .stack-grid .btn{font-size:13.5px; padding:13px 10px;}
   .chip{
@@ -1961,6 +1968,7 @@
       <button class="btn btn-primary" style="margin-top:10px;" onclick="runSearch()">Buscar</button>
     </div>
     <div id="search-results"></div>
+    <div id="biblia-continue" style="padding:0 24px; margin:4px 0 2px; display:none;"></div>
     <div class="section-title" style="margin-top:8px;">Planes de lectura</div>
     <div class="plan-row" id="plan-row"></div>
     <div class="section-title">Libros</div>
@@ -1973,6 +1981,13 @@
     <p style="padding:0 24px; color:var(--ink-soft); font-size:13.5px;">Elige un capítulo</p>
     <div class="chapter-picker" id="chapterPicker-grid"></div>
     <div style="height:100px;"></div>
+  </section>
+
+  <!-- HISTORIAL DE LECTURAS -->
+  <section class="screen noNav" id="historialLecturas">
+    <div class="topbar"><div class="backbtn" onclick="go('perfil')">←</div><h2>Historial de lecturas</h2></div>
+    <div class="stack container" id="historial-list" style="padding-top:0;"></div>
+    <div style="height:60px;"></div>
   </section>
 
   <!-- PLAN DETAIL -->
@@ -2388,7 +2403,7 @@ const SUPABASE_ANON_KEY = 'sb_publishable_fwA5wuaJh0ksqfaVCxGjSg_CyYnokIo';
 // incluye ajustes propios del dispositivo (tamaño de letra, voz elegida,
 // tema, si el sonido está activado): esas tiene sentido que cada celular
 // las recuerde por su cuenta.
-const SYNC_SIMPLE_KEYS = ['here_prefs','here_saved','here_prayers','here_reflections','here_visited','here_highlights','here_streak','here_visit_log','here_onboarded','here_followed_pastores'];
+const SYNC_SIMPLE_KEYS = ['here_prefs','here_saved','here_prayers','here_reflections','here_visited','here_highlights','here_streak','here_visit_log','here_onboarded','here_followed_pastores','here_verse_notes'];
 function isSyncedKey(key){ return SYNC_SIMPLE_KEYS.includes(key) || key.indexOf('here_plan_')===0; }
 
 let hereUser = null; // {id, email, ...} cuando hay sesión iniciada, si no null
@@ -2432,6 +2447,7 @@ function applyCloudData(data){
   visited = load('here_visited', []);
   highlightedVerses = load('here_highlights', []);
   followedPastores = load('here_followed_pastores', []);
+  verseNotes = load('here_verse_notes', {});
   try{ renderPerfil(); }catch(e){}
   try{ if(currentScreen==='musica' || currentScreen==='musicaCategoria') renderMusica(); }catch(e){}
 }
@@ -2754,6 +2770,7 @@ let prefs = load('here_prefs', {goals:[], remind:null});
 let visited = load('here_visited', []);
 let followedPastores = load('here_followed_pastores', []);
 let readerFontSize = load('here_reader_fontsize', 17);
+let readerLineHeight = load('here_reader_lineheight', 2.15);
 
 /* ---------------- theme (light / dark) ----------------
    Por defecto ("auto") sigue el tema del sistema operativo del dispositivo
@@ -3364,6 +3381,22 @@ function sceneOverlaySVG(sceneClass){
 let highlightedVerses = load('here_highlights', []);
 function isHighlighted(ref){ return highlightedVerses.some(h=>h.ref===ref); }
 
+/* ---------------- notas personales por versículo ----------------
+   Objeto simple {ref: {text, date}} — una nota de texto libre por
+   versículo, igual de sencillo que el resaltado, y sincronizado con la
+   cuenta de la misma forma (vía SYNC_SIMPLE_KEYS). */
+let verseNotes = load('here_verse_notes', {});
+function getVerseNote(ref){ return verseNotes[ref] || null; }
+function saveVerseNote(ref, text){
+  text = (text||'').trim();
+  if(!text){ deleteVerseNote(ref); return; }
+  verseNotes[ref] = { text, date: Date.now() };
+  save('here_verse_notes', verseNotes);
+}
+function deleteVerseNote(ref){
+  if(verseNotes[ref]){ delete verseNotes[ref]; save('here_verse_notes', verseNotes); }
+}
+
 /* ---------------- streak (gentle, no shaming language) ---------------- */
 let currentStreak = 1;
 function updateStreak(){
@@ -3541,7 +3574,8 @@ function go(id, opts){
   if(id==='diario') renderDiario();
   if(id==='musica') renderMusica();
   if(id==='chat' && !chatStarted) startChat();
-  if(id==='biblia') { renderBooks(); renderPlanRow(); document.getElementById('search-results').innerHTML=''; }
+  if(id==='biblia') { renderBooks(); renderPlanRow(); renderBibliaContinue(); document.getElementById('search-results').innerHTML=''; }
+  if(id==='historialLecturas') renderHistorialLecturas();
   if(id==='orar'){
     renderOraciones();
     // el resultado de "ayúdame a orar" (o el aviso de que hace falta escribir
@@ -4253,8 +4287,71 @@ async function openChapter(book, chapterNum){
     return `<div><span class="vnum">${i+1}</span><span class="vtext${hl}" data-ref="${ref}"${hlColorAttr} onclick="verseTap(this)">${t}</span></div>`;
   }).join('') + credit;
   applyReaderFontSize();
+  applyReaderLineHeight();
   const chKey = `${book} ${chapterNum}`;
   if(!visited.includes(chKey)){ visited.push(chKey); save('here_visited', visited); }
+  saveLastChapter(book, chapterNum);
+  logReadingHistory(book, chapterNum);
+}
+/* ---------------- "continuar donde quedé" + historial de lecturas ----------------
+   saveLastChapter: recuerda el último capítulo abierto, para la tarjeta de
+   retomar lectura en "La Palabra". logReadingHistory: un registro simple
+   (los últimos 50) para la pantalla de historial — no reemplaza ni toca
+   `visited` (el conteo de "capítulos leídos" en Tu camino sigue igual). */
+function saveLastChapter(book, chapterNum){
+  try{ save('here_last_chapter', { book, chapter:chapterNum, at:Date.now() }); }catch(e){}
+}
+function lastChapterInfo(){
+  const v = load('here_last_chapter', null);
+  if(!v || !v.book || !v.chapter) return null;
+  return v;
+}
+function logReadingHistory(book, chapterNum){
+  try{
+    let log = load('here_reading_log', []);
+    log = log.filter(e=> !(e.book===book && e.chapter===chapterNum));
+    log.unshift({ book, chapter:chapterNum, at:Date.now() });
+    save('here_reading_log', log.slice(0,50));
+  }catch(e){}
+}
+function formatHistoryDate(ts){
+  const d = new Date(ts), now = new Date();
+  const sameDay = d.toDateString() === now.toDateString();
+  const yest = new Date(now); yest.setDate(yest.getDate()-1);
+  if(sameDay) return 'Hoy';
+  if(d.toDateString() === yest.toDateString()) return 'Ayer';
+  return d.toLocaleDateString('es', {day:'numeric', month:'short'});
+}
+function renderHistorialLecturas(){
+  const c = document.getElementById('historial-list');
+  if(!c) return;
+  const log = load('here_reading_log', []);
+  if(!log.length){
+    c.innerHTML = '<div class="empty"><div class="light-dot"></div>Los capítulos que leas aparecerán aquí.</div>';
+    return;
+  }
+  c.innerHTML = log.map(e=>`
+    <div class="list-card" onclick="openChapter('${e.book.replace(/'/g,"\\'")}', ${e.chapter})">
+      <div><div class="t">${e.book} ${e.chapter}</div><div class="s">${formatHistoryDate(e.at)}</div></div>
+      <span>→</span>
+    </div>`).join('');
+}
+function renderBibliaContinue(){
+  const wrap = document.getElementById('biblia-continue');
+  if(!wrap) return;
+  const info = lastChapterInfo();
+  if(!info){ wrap.style.display = 'none'; wrap.innerHTML = ''; return; }
+  wrap.style.display = '';
+  const bookEsc = info.book.replace(/'/g,"\\'");
+  wrap.innerHTML = `
+    <div class="plan-continue" onclick="openChapter('${bookEsc}', ${info.chapter})">
+      <span class="emoji">📖</span>
+      <div style="flex:1; min-width:0;">
+        <div style="font-size:11.5px; color:var(--ink-soft); font-weight:600; letter-spacing:.2px;">Continuar leyendo</div>
+        <div style="font-size:14.5px; font-weight:600;">${info.book} ${info.chapter}</div>
+      </div>
+      <span style="color:var(--ink-soft); flex:none;">→</span>
+    </div>`;
 }
 function openFontSizeSheet(){
   refreshSpanishVoices();
@@ -4265,6 +4362,12 @@ function openFontSizeSheet(){
       <button onclick="changeReaderFontSize(-1)" aria-label="Reducir texto">A-</button>
       <p class="serif" id="fontsize-preview" style="flex:1; text-align:center; font-style:italic; margin:0 6px;">Aa</p>
       <button onclick="changeReaderFontSize(1)" aria-label="Aumentar texto">A+</button>
+    </div>
+    <p style="font-size:12px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.4px; font-weight:700; margin-bottom:10px;">Espacio entre líneas</p>
+    <div class="fontsize-ctrl" style="margin-bottom:24px;">
+      <button onclick="changeReaderLineHeight(-1)" aria-label="Reducir espacio entre líneas">☰-</button>
+      <p style="flex:1; text-align:center; color:var(--ink-soft); font-size:13px;">Interlineado</p>
+      <button onclick="changeReaderLineHeight(1)" aria-label="Aumentar espacio entre líneas">☰+</button>
     </div>
     <p style="font-size:12px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.4px; font-weight:700; margin-bottom:10px;">Ritmo al escuchar</p>
     <div class="rate-ctrl" id="rate-ctrl" style="margin-bottom:24px;"></div>
@@ -4292,6 +4395,15 @@ function changeReaderFontSize(delta){
   save('here_reader_fontsize', readerFontSize);
   applyReaderFontSize();
   updateFontSizePreview();
+}
+function applyReaderLineHeight(){
+  const el = document.getElementById('reader-content');
+  if(el) el.style.lineHeight = readerLineHeight;
+}
+function changeReaderLineHeight(delta){
+  readerLineHeight = Math.round(Math.max(1.7, Math.min(2.7, readerLineHeight + delta*0.15)) * 100) / 100;
+  save('here_reader_lineheight', readerLineHeight);
+  applyReaderLineHeight();
 }
 function stepChapter(dir){
   if(!currentReaderBook) return;
@@ -4525,6 +4637,7 @@ function verseTap(el){
   const ref = el.dataset.ref;
   const text = el.textContent;
   const hlNow = isHighlighted(ref);
+  const noteNow = getVerseNote(ref);
   const refEsc = ref.replace(/'/g,"\\'");
   const textEsc = text.replace(/'/g,"\\'");
   const swatches = Object.keys(HIGHLIGHT_COLORS).map(key=>{
@@ -4541,6 +4654,7 @@ function verseTap(el){
       </div>
       <div class="vmenu-colors" id="vmenu-colors">${swatches}</div>
       <div class="vmenu-row" onclick="quickSave('${refEsc}','${textEsc}')"><span>Guardar</span><span class="vmenu-icon">♡</span></div>
+      <div class="vmenu-row" onclick="openVerseNoteSheet('${refEsc}','${textEsc}')"><span>${noteNow ? 'Editar nota' : 'Añadir nota'}</span><span class="vmenu-icon">📝</span></div>
       <div class="vmenu-row" onclick="copyVerse('${refEsc}','${textEsc}')"><span>Copiar</span><span class="vmenu-icon">⧉</span></div>
       <div class="vmenu-row" onclick="closeSheet(); openShareSheet('${refEsc}','${textEsc}')"><span>Compartir</span><span class="vmenu-icon">↗</span></div>
       <div class="vmenu-row" onclick="closeSheet(); goReflect('${refEsc}','${textEsc}')"><span>Reflexionar</span><span class="vmenu-icon">✎</span></div>
@@ -4548,6 +4662,23 @@ function verseTap(el){
       <div class="vmenu-row" onclick="closeSheet(); openEntenderRaw('${refEsc}','${textEsc}')"><span>Entender</span><span class="vmenu-icon">→</span></div>
     </div>
   `);
+}
+// Hoja simple de una nota personal por versículo — reutiliza openSheet() y
+// el mismo estilo .stack textarea que ya usan los formularios de la app.
+function openVerseNoteSheet(ref, text){
+  const existing = getVerseNote(ref);
+  const refEsc = ref.replace(/'/g,"\\'");
+  openSheet(`
+    <div class="handle"></div>
+    <p class="serif" style="font-style:italic; font-size:15px; margin-bottom:4px; color:var(--ink-soft); line-height:1.5;">"${text.length>90? text.slice(0,90)+'…' : text}"</p>
+    <p style="font-size:12px; color:var(--ink-soft); margin-bottom:14px;">${ref}</p>
+    <div class="stack">
+      <textarea id="verse-note-input" rows="4" placeholder="Escribe lo que esto significa para ti…">${existing ? existing.text.replace(/</g,'&lt;') : ''}</textarea>
+      <button class="btn btn-primary" onclick="saveVerseNote('${refEsc}', document.getElementById('verse-note-input').value); closeSheet();">Guardar nota</button>
+      ${existing ? `<button class="btn btn-ghost" onclick="deleteVerseNote('${refEsc}'); closeSheet();">Eliminar nota</button>` : ''}
+    </div>
+  `);
+  setTimeout(()=>{ const ta = document.getElementById('verse-note-input'); if(ta) ta.focus(); }, 50);
 }
 function toggleHighlightColors(){
   const el = document.getElementById('vmenu-colors');
@@ -6894,6 +7025,7 @@ function renderPerfil(){
       <div class="list-card" onclick="go('misPalabras')"><div><div class="t">Ver palabras guardadas</div></div><span>→</span></div>
       <div class="list-card" onclick="go('diario')"><div><div class="t">Ver reflexiones y oraciones</div></div><span>→</span></div>
       <div class="list-card" onclick="goVersiculosResaltados()"><div><div class="t">🖍 Ver versículos resaltados</div></div><span>→</span></div>
+      <div class="list-card" onclick="go('historialLecturas')"><div><div class="t">📜 Historial de lecturas</div>${visited.length?`<div class="s">${visited.length} ${visited.length===1?'capítulo':'capítulos'}</div>`:''}</div><span>→</span></div>
       <div class="list-card" onclick="go('misPastores')"><div><div class="t">⭐ Pastores que sigues</div>${followedPastores.length?`<div class="s">${followedPastores.length} ${followedPastores.length===1?'pastor':'pastores'}</div>`:''}</div><span>→</span></div>
     </div>
     <div class="section-title" style="padding-left:0; margin-top:26px;">Cuenta</div>
