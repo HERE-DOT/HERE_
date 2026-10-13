@@ -5625,12 +5625,18 @@ function pickArtistOfDay(){
   }
   return artists[daySeed() % artists.length];
 }
-// "Pastor del día": misma idea, rota cada día, tomado del mismo pool pero
-// filtrado a los que son pastor/enseñanza.
+// "Pastor del día": misma idea, rota cada día — pero el fondo es la lista
+// COMPLETA de MUSIC_PASTORES (los mismos pastores reales y verificados que
+// se pueden seguir en la pestaña "Pastores"), no solo los 2 que además
+// vivían en MUSIC_WEEKLY_POOL. Así hay variedad real en vez de alternar
+// siempre entre los mismos dos. Se normalizan los nombres de campo (s→blurb,
+// img→photo, type) sin tocar el objeto original — el id sigue siendo el
+// mismo, así que "Escuchar ahora" sigue encontrando su yt/ytList/q de
+// siempre a través de findTrackById.
 function pickPastorOfDay(){
-  const pastors = MUSIC_WEEKLY_POOL.filter(t=>t.type==='Pastor de la semana');
-  if(!pastors.length) return null;
-  return pastors[daySeed() % pastors.length];
+  if(!MUSIC_PASTORES.length) return null;
+  const p = MUSIC_PASTORES[daySeed() % MUSIC_PASTORES.length];
+  return Object.assign({}, p, { type:'Pastor de la semana', blurb:p.s, photo:p.img || p.photo });
 }
 // "Canción del día": a diferencia de Artista/Pastor del día (que abren el
 // perfil completo de la persona), esta muestra una canción concreta y
