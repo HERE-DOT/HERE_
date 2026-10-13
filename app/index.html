@@ -553,15 +553,40 @@
   .week-day.on .dot{ background:var(--gold-grad); border-color:transparent; box-shadow:0 5px 12px rgba(138,106,38,0.3); }
   .week-day.today .dot{ box-shadow:0 0 0 2.5px var(--sage-deep); }
 
-  /* ---------- "tu camino" (perfil) ---------- */
-  .camino-intro{font-size:13.5px; color:var(--ink-soft); line-height:1.6; margin-bottom:16px;}
-  .camino-grid{display:grid; grid-template-columns:repeat(10, 1fr); gap:6px; margin-bottom:22px;}
+  /* ---------- "tu camino" (perfil) ----------
+     El anillo retoma el motivo circular que ya usa el resto de la app (el
+     orbe del onboarding, el punto dorado antes de cada section-title, el
+     círculo de flecha de las feature-cards): la racha de días no se cuenta
+     con una cifra suelta, se dibuja como un camino que se va cerrando. */
+  .camino-hero{
+    display:flex; align-items:center; gap:18px; margin:4px 24px 24px;
+    padding:20px 22px; border-radius:24px; background:var(--card);
+    border:1px solid var(--line); box-shadow:var(--shadow-sm);
+  }
+  .camino-ring-wrap{position:relative; width:82px; height:82px; flex:none;}
+  .camino-ring-wrap svg{width:100%; height:100%; transform:rotate(-90deg); overflow:visible;}
+  .camino-ring-wrap .track{fill:none; stroke:var(--line); stroke-width:7;}
+  .camino-ring-wrap .fill{fill:none; stroke:url(#caminoRingGrad); stroke-width:7; stroke-linecap:round; transition:stroke-dashoffset .6s ease;}
+  .camino-ring-num{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;}
+  .camino-ring-num .n{font-family:'Fraunces'; font-size:25px; font-weight:500; color:var(--sage-deep); line-height:1;}
+  .camino-ring-num .l{font-size:9px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.5px; margin-top:3px;}
+  .camino-hero-text{flex:1; min-width:0;}
+  .camino-hero-text p{font-size:13.5px; color:var(--ink-soft); line-height:1.55; margin:0;}
+  .camino-grid{display:grid; grid-template-columns:repeat(10, 1fr); gap:6px; margin:0 24px 26px;}
   .camino-grid .cell{width:100%; aspect-ratio:1; border-radius:5px; background:var(--line);}
   .camino-grid .cell.on{background:var(--gold-grad);}
-  .camino-stats{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:24px;}
-  .camino-stat{padding:16px 16px; border-radius:18px; background:var(--card); border:1px solid var(--line); box-shadow:var(--shadow-sm);}
-  .camino-stat .num{font-family:'Fraunces'; font-size:24px; font-weight:500; color:var(--sage-deep);}
-  .camino-stat .lbl{font-size:12px; color:var(--ink-soft); margin-top:4px;}
+  .camino-stats-row{display:flex; gap:10px; overflow-x:auto; padding:2px 24px 6px; margin-bottom:8px; -ms-overflow-style:none; scrollbar-width:none;}
+  .camino-stats-row::-webkit-scrollbar{display:none;}
+  .camino-stat-chip{flex:none; min-width:94px; padding:14px 16px; border-radius:18px; background:var(--card); border:1px solid var(--line); box-shadow:var(--shadow-sm);}
+  .camino-stat-chip .num{font-family:'Fraunces'; font-size:21px; font-weight:500; color:var(--sage-deep); line-height:1;}
+  .camino-stat-chip .lbl{font-size:11px; color:var(--ink-soft); margin-top:5px; line-height:1.3;}
+  /* ícono circular a la izquierda de cada fila de "Tu camino" — mismo trazo
+     (stroke-width 1.6) que los íconos de la barra inferior, en vez de emoji,
+     para que esta pantalla se sienta tan cuidada como el resto. */
+  .camino-icon{width:40px; height:40px; border-radius:50%; flex:none; display:flex; align-items:center; justify-content:center; background:var(--beige); color:var(--gold-deep);}
+  .camino-icon svg{width:18px; height:18px;}
+  .camino-icon.sage{background:rgba(126,169,133,0.18); color:var(--sage-deep);}
+  .list-card .lc-left{display:flex; align-items:center; gap:14px; min-width:0;}
 
   /* ---------- verse-of-day home card with scene photo ----------
      Es el elemento con más peso visual del Home a propósito: mucho
@@ -7904,53 +7929,90 @@ function renderCaminoGrid(){
   }
   return days.map(on=>`<div class="cell ${on?'on':''}"></div>`).join('');
 }
+// Íconos de trazo (mismo stroke-width 1.6 que la barra inferior) para las
+// filas de "Tu camino" — reemplazan los emoji sueltos que tenía antes esta
+// pantalla, para que se sienta tan cuidada como el resto de HERE.
+const CAMINO_ICONS = {
+  bookmark: '<path d="M7 4h10v16l-5-4-5 4V4z"/>',
+  journal: '<path d="M4 5c3-1.5 6-1.5 8 0v14c-2-1.5-5-1.5-8 0V5zM20 5c-3-1.5-6-1.5-8 0v14c2-1.5 5-1.5 8 0V5z"/>',
+  highlighter: '<path d="M5 19l2.2-5.4L15.6 5.2a1.5 1.5 0 012.1 0l1.1 1.1a1.5 1.5 0 010 2.1l-8.4 8.4L5 19z"/><path d="M13.2 7.6l3.2 3.2"/>',
+  scroll: '<circle cx="12" cy="12" r="8.3"/><path d="M12 7.6v4.4l3 2"/>',
+  star: '<path d="M12 3.3l2.5 5.6 6 .6-4.6 4.1 1.3 6-5.2-3-5.2 3 1.3-6-4.6-4.1 6-.6L12 3.3z"/>',
+  music: '<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
+  user: '<circle cx="12" cy="8.2" r="4"/><path d="M4.5 20c0-4 3.5-6.4 7.5-6.4s7.5 2.4 7.5 6.4"/>',
+  cloud: '<path d="M7.2 18a4.1 4.1 0 01-.3-8.2 5.2 5.2 0 019.9-1.6 4.6 4.6 0 01-.6 9.8H7.2z"/>',
+  bell: '<path d="M12 3.2a5 5 0 00-5 5v2.6c0 1.6-.5 3-1.5 4.2h13c-1-1.2-1.5-2.6-1.5-4.2V8.2a5 5 0 00-5-5z"/><path d="M9.6 18.6a2.4 2.4 0 004.8 0"/>',
+  moon: '<path d="M20 14.6A8.6 8.6 0 119.4 4 7 7 0 0020 14.6z"/>',
+  refresh: '<path d="M4.5 12a7.5 7.5 0 0113-5M19.5 12a7.5 7.5 0 01-13 5"/><path d="M17.3 4.6v3.4h-3.4M6.7 19.4V16h3.4"/>',
+};
+function caminoIcon(name, tone){
+  return `<div class="camino-icon${tone==='sage'?' sage':''}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${CAMINO_ICONS[name]||''}</svg></div>`;
+}
 function renderPerfil(){
   const c = document.getElementById('perfil-body');
   const visitDays = load('here_visit_log', []).length;
+  const ringPct = Math.max(0, Math.min(1, currentStreak/30));
+  const ringCirc = 2*Math.PI*35;
   c.innerHTML = `
-    <p class="camino-intro">${gentleProgressMessage()}</p>
+    <div class="camino-hero">
+      <div class="camino-ring-wrap">
+        <svg viewBox="0 0 82 82">
+          <defs>
+            <linearGradient id="caminoRingGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" style="stop-color:var(--gold-light)"/>
+              <stop offset="1" style="stop-color:var(--gold)"/>
+            </linearGradient>
+          </defs>
+          <circle class="track" cx="41" cy="41" r="35"/>
+          <circle class="fill" cx="41" cy="41" r="35" stroke-dasharray="${ringCirc}" stroke-dashoffset="${ringCirc*(1-ringPct)}"/>
+        </svg>
+        <div class="camino-ring-num"><div class="n">${currentStreak}</div><div class="l">${currentStreak===1?'día':'días'}</div></div>
+      </div>
+      <div class="camino-hero-text"><p>${gentleProgressMessage()}</p></div>
+    </div>
+    <div class="section-title" style="padding-left:24px;">Tu mes</div>
     <div class="camino-grid">${renderCaminoGrid()}</div>
-    <div class="camino-stats">
-      <div class="camino-stat"><div class="num">${visitDays}</div><div class="lbl">días que volviste</div></div>
-      <div class="camino-stat"><div class="num">${visited.length}</div><div class="lbl">capítulos leídos</div></div>
-      <div class="camino-stat"><div class="num">${prayers.length}</div><div class="lbl">oraciones</div></div>
-      <div class="camino-stat"><div class="num">${reflections.length}</div><div class="lbl">reflexiones</div></div>
-      <div class="camino-stat"><div class="num">${savedWords.length}</div><div class="lbl">palabras guardadas</div></div>
-      <div class="camino-stat"><div class="num">${computeExploredTopics()}</div><div class="lbl">temas explorados</div></div>
-      <div class="camino-stat"><div class="num">${followedPastores.length}</div><div class="lbl">pastores que sigues</div></div>
+    <div class="camino-stats-row">
+      <div class="camino-stat-chip"><div class="num">${visitDays}</div><div class="lbl">días que volviste</div></div>
+      <div class="camino-stat-chip"><div class="num">${visited.length}</div><div class="lbl">capítulos leídos</div></div>
+      <div class="camino-stat-chip"><div class="num">${prayers.length}</div><div class="lbl">oraciones</div></div>
+      <div class="camino-stat-chip"><div class="num">${reflections.length}</div><div class="lbl">reflexiones</div></div>
+      <div class="camino-stat-chip"><div class="num">${savedWords.length}</div><div class="lbl">palabras guardadas</div></div>
+      <div class="camino-stat-chip"><div class="num">${computeExploredTopics()}</div><div class="lbl">temas explorados</div></div>
+      <div class="camino-stat-chip"><div class="num">${followedPastores.length}</div><div class="lbl">pastores que sigues</div></div>
     </div>
     <div class="stack">
-      <div class="list-card" onclick="go('misPalabras')"><div><div class="t">Ver palabras guardadas</div></div><span>→</span></div>
-      <div class="list-card" onclick="go('diario')"><div><div class="t">Ver reflexiones y oraciones</div></div><span>→</span></div>
-      <div class="list-card" onclick="goVersiculosResaltados()"><div><div class="t">🖍 Ver versículos resaltados</div></div><span>→</span></div>
-      <div class="list-card" onclick="go('historialLecturas')"><div><div class="t">📜 Historial de lecturas</div>${visited.length?`<div class="s">${visited.length} ${visited.length===1?'capítulo':'capítulos'}</div>`:''}</div><span>→</span></div>
-      <div class="list-card" onclick="go('misPastores')"><div><div class="t">⭐ Pastores que sigues</div>${followedPastores.length?`<div class="s">${followedPastores.length} ${followedPastores.length===1?'pastor':'pastores'}</div>`:''}</div><span>→</span></div>
-      <div class="list-card" onclick="go('musicaGuardado')"><div><div class="t">✝ Música y predicaciones guardadas</div>${Object.keys(savedTracks).length?`<div class="s">${Object.keys(savedTracks).length} ${Object.keys(savedTracks).length===1?'guardado':'guardados'}</div>`:''}</div><span>→</span></div>
+      <div class="list-card" onclick="go('misPalabras')"><div class="lc-left">${caminoIcon('bookmark')}<div><div class="t">Palabras guardadas</div></div></div><span>→</span></div>
+      <div class="list-card" onclick="go('diario')"><div class="lc-left">${caminoIcon('journal','sage')}<div><div class="t">Reflexiones y oraciones</div></div></div><span>→</span></div>
+      <div class="list-card" onclick="goVersiculosResaltados()"><div class="lc-left">${caminoIcon('highlighter')}<div><div class="t">Versículos resaltados</div></div></div><span>→</span></div>
+      <div class="list-card" onclick="go('historialLecturas')"><div class="lc-left">${caminoIcon('scroll','sage')}<div><div class="t">Historial de lecturas</div>${visited.length?`<div class="s">${visited.length} ${visited.length===1?'capítulo':'capítulos'}</div>`:''}</div></div><span>→</span></div>
+      <div class="list-card" onclick="go('misPastores')"><div class="lc-left">${caminoIcon('star')}<div><div class="t">Pastores que sigues</div>${followedPastores.length?`<div class="s">${followedPastores.length} ${followedPastores.length===1?'pastor':'pastores'}</div>`:''}</div></div><span>→</span></div>
+      <div class="list-card" onclick="go('musicaGuardado')"><div class="lc-left">${caminoIcon('music','sage')}<div><div class="t">Música y predicaciones guardadas</div>${Object.keys(savedTracks).length?`<div class="s">${Object.keys(savedTracks).length} ${Object.keys(savedTracks).length===1?'guardado':'guardados'}</div>`:''}</div></div><span>→</span></div>
     </div>
     <div class="section-title" style="padding-left:0; margin-top:26px;">Cuenta</div>
     <div class="list-card" style="margin-left:0; margin-right:0;" onclick="openAccountSheet()">
       ${hereUser
-        ? `<div><div class="t">👤 ${hereUser.email}</div><div class="s">Tu progreso se guarda en la nube</div></div><span style="font-size:12.5px; color:var(--ink-soft); font-weight:600;">→</span>`
-        : `<div><div class="t">☁️ Crea una cuenta gratis</div><div class="s">No pierdas tu progreso si cambias de celular</div></div><span>→</span>`}
+        ? `<div class="lc-left">${caminoIcon('user','sage')}<div><div class="t">${hereUser.email}</div><div class="s">Tu progreso se guarda en la nube</div></div></div><span style="font-size:12.5px; color:var(--ink-soft); font-weight:600;">→</span>`
+        : `<div class="lc-left">${caminoIcon('cloud')}<div><div class="t">Crea una cuenta gratis</div><div class="s">No pierdas tu progreso si cambias de celular</div></div></div><span>→</span>`}
     </div>
     <div class="section-title" style="padding-left:0; margin-top:26px;">Preferencias</div>
     <p style="font-size:13.5px; color:var(--ink-soft); margin-top:6px; margin-bottom:14px; line-height:1.6;">
       Buscas: ${(prefs.goals||[]).join(', ')||'—'}
     </p>
     <div class="list-card" style="margin-left:0; margin-right:0;" onclick="openTranslationSheet()">
-      <div><div class="t">📖 Traducción de la Biblia</div><div class="s">En qué versión leer</div></div>
+      <div class="lc-left">${caminoIcon('journal','sage')}<div><div class="t">Traducción de la Biblia</div><div class="s">En qué versión leer</div></div></div>
       <span style="font-size:12.5px; color:var(--ink-soft); font-weight:600;">${prefs.translation||'RVR1960'} →</span>
     </div>
     <div class="list-card" style="margin-left:0; margin-right:0;" onclick="toggleSound()">
-      <div><div class="t">🔔 Sonido suave</div><div class="s">Un tono breve al recibir una palabra</div></div>
+      <div class="lc-left">${caminoIcon('bell')}<div><div class="t">Sonido suave</div><div class="s">Un tono breve al recibir una palabra</div></div></div>
       <span>${soundOn?'Activado':'Desactivado'}</span>
     </div>
     <div class="list-card" style="margin-left:0; margin-right:0;" onclick="cycleThemeMode()">
-      <div><div class="t">🌙 Modo noche</div><div class="s">Automático (según tu celular), o elígelo tú</div></div>
+      <div class="lc-left">${caminoIcon('moon','sage')}<div><div class="t">Modo noche</div><div class="s">Automático (según tu celular), o elígelo tú</div></div></div>
       <span style="font-size:12.5px; color:var(--ink-soft); font-weight:600;">${themeModeLabel()} →</span>
     </div>
     <div class="list-card" style="margin-left:0; margin-right:0;" onclick="replayOnboarding()">
-      <div><div class="t">🔄 Volver a ver la introducción</div><div class="s">Repite la bienvenida — tus datos y preferencias no se borran</div></div>
+      <div class="lc-left">${caminoIcon('refresh')}<div><div class="t">Volver a ver la introducción</div><div class="s">Repite la bienvenida — tus datos y preferencias no se borran</div></div></div>
       <span>→</span>
     </div>
     <button class="btn-text" style="padding-left:0; margin-top:16px;" onclick="clearData()">Borrar mis datos</button>
