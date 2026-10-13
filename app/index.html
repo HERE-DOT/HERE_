@@ -5549,6 +5549,12 @@ const MUSIC_WEEKLY_POOL = [
   { id:'tercercielo', type:'Artista de la semana', name:'Tercer Cielo', role:'Pop cristiano', blurb:'Baladas y pop cristiano que han acompañado a generaciones.', yt:'BDwEyfgClF4', q:'tercer cielo',
     photo:'https://commons.wikimedia.org/wiki/Special:FilePath/Juan_Carlos_Rodr%C3%ADguez_(Tercer_Cielo)_(cropped).jpg?width=500',
     story:'Tercer Cielo es una banda puertorriqueña de pop cristiano, conocida por baladas que han acompañado momentos importantes — de duelo, de sanidad, de celebración — en la vida de fe de muchas personas.' },
+  { id:'jar', type:'Artista de la semana', name:'Jesús Adrián Romero', role:'Cantautor', blurb:'Uno de los cantautores más influyentes de la música cristiana en español.', yt:'I84aZZgPBlA', q:'jesús adrián romero',
+    story:'Jesús Adrián Romero es un cantautor mexicano, una de las voces más influyentes de la música cristiana en español desde los años 90, conocido por canciones que combinan una melodía sencilla con letras muy cercanas a la vida cotidiana de fe.' },
+  { id:'elevation', type:'Artista de la semana', name:'Elevation Worship', role:'Adoración', blurb:'El ministerio de adoración detrás de himnos como "Jireh", cantados en todo el mundo.', yt:'mC-zw0zCCtg', q:'elevation worship adoración',
+    story:'Elevation Worship es el equipo de adoración de Elevation Church, en Carolina del Norte (EE. UU.). Sus canciones, co-escritas muchas veces junto a Maverick City Music, se han vuelto himnos congregacionales en iglesias de todo el mundo.' },
+  { id:'bethelmusic', type:'Artista de la semana', name:'Bethel Music', role:'Adoración', blurb:'Adoración íntima nacida de la iglesia Bethel, en Redding, California.', yt:'IvSuGyJQ6oM', q:'bethel music adoración',
+    story:'Bethel Music es el colectivo de adoración de la iglesia Bethel, en Redding, California. Por él han pasado varios de los adoradores más escuchados de su generación, con canciones marcadas por la intimidad y la entrega.' },
 ];
 function findTrackById(id){
   return MUSIC_WEEKLY_POOL.find(t=>t.id===id) || MUSIC_PASTORES.find(t=>t.id===id) || MUSIC_PODCASTS.find(t=>t.id===id);
@@ -5724,12 +5730,16 @@ function songOfDayFallback(artist){
 // corta/mediana del artista elegido para hoy, y reemplaza la tarjeta de
 // respaldo por ella si la encuentra. Si no hay búsqueda disponible todavía
 // (sin clave, sin conexión, cupo agotado), la tarjeta de respaldo se queda.
+// Se restringe al canal oficial del artista (seedVideoId: el video insignia
+// ya curado en el catálogo) para que nunca salga un cover, una
+// reproducción no autorizada o un canal de fans — solo música original de
+// su propio canal.
 async function loadSongOfDay(){
   const artist = pickSongOfDayArtist();
   const slideEl = document.getElementById('song-of-day-slide');
   if(!artist || !slideEl) return;
   slideEl.innerHTML = songOfDaySlideHTML(songOfDayFallback(artist));
-  const result = await ytApiSearchSongs(artist.q || artist.name, 1);
+  const result = await ytApiSearchSongs(artist.q || artist.name, 1, {}, artist.yt ? { seedVideoId: artist.yt } : {});
   const song = result && result.items && result.items[0];
   const freshSlideEl = document.getElementById('song-of-day-slide');
   if(!song || !freshSlideEl) return;
@@ -6474,12 +6484,18 @@ async function ytApiSearch(q, maxResults, extra){
 // versiones "extendidas" de 8-20 minutos. tokens={shortToken,mediumToken}
 // permite pedir la página siguiente para el botón "Ver más".
 const SONG_MAX_DURATION_SECONDS = 7*60;
-async function ytApiSearchSongs(q, maxResults, tokens){
+// extra (opcional): se reenvía tal cual al servidor — hoy se usa para
+// { seedVideoId } (ver loadSongOfDay) o { channelId }, que restringen la
+// búsqueda al canal oficial exacto de un artista, en vez de cualquier
+// resultado que coincida con el texto buscado (covers, reproducciones no
+// oficiales, compilaciones de terceros).
+async function ytApiSearchSongs(q, maxResults, tokens, extra){
   tokens = tokens || {};
+  extra = extra || {};
   const half = Math.max(4, Math.ceil((maxResults||10)/2));
   const [shortRes, mediumRes] = await Promise.all([
-    ytApiSearchFull(q, half, { videoDuration:'short', maxDurationSeconds:SONG_MAX_DURATION_SECONDS, pageToken: tokens.shortToken || undefined }),
-    ytApiSearchFull(q, half, { videoDuration:'medium', maxDurationSeconds:SONG_MAX_DURATION_SECONDS, pageToken: tokens.mediumToken || undefined }),
+    ytApiSearchFull(q, half, Object.assign({ videoDuration:'short', maxDurationSeconds:SONG_MAX_DURATION_SECONDS, pageToken: tokens.shortToken || undefined }, extra)),
+    ytApiSearchFull(q, half, Object.assign({ videoDuration:'medium', maxDurationSeconds:SONG_MAX_DURATION_SECONDS, pageToken: tokens.mediumToken || undefined }, extra)),
   ]);
   const items = [...(shortRes ? shortRes.items : []), ...(mediumRes ? mediumRes.items : [])];
   return {
