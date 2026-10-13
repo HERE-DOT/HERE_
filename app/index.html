@@ -291,6 +291,48 @@
   }
   .chip.selected{border-color:var(--gold); background:linear-gradient(135deg, rgba(231,204,139,0.22), rgba(173,132,47,0.12)); box-shadow:var(--shadow-md);}
   .chip:active{transform:scale(0.98);}
+  .chip[disabled]{opacity:.45; cursor:not-allowed;}
+  .chip[disabled]:active{transform:none;}
+  button.backbtn, button.close-x{font:inherit; color:inherit;}
+
+  /* ---------- intro cinematográfica (onboarding) ----------
+     Reutiliza el mismo lenguaje visual que ya existía: el degradado dorado
+     del "orbe" de HERE en la barra inferior (misma receta, más grande), la
+     animación fadeIn que ya se usaba en otras pantallas, y las variables de
+     color/espaciado del sistema — nada inventado desde cero. */
+  .ob-orb{
+    width:64px; height:64px; border-radius:50%; margin:0 auto var(--sp-5);
+    background:radial-gradient(circle at 32% 28%, var(--gold-light), var(--gold) 55%, var(--gold-deep) 100%);
+    box-shadow:0 14px 34px rgba(138,106,38,0.38); position:relative;
+    animation:hereGlow 3.6s ease-in-out infinite;
+  }
+  .ob-orb::before{content:''; position:absolute; top:50%; left:50%; width:18px; height:18px; margin:-9px 0 0 -9px; border-radius:50%; background:rgba(255,255,255,0.85); filter:blur(1.5px);}
+  @media (prefers-reduced-motion: reduce){ .ob-orb{ animation:none; } }
+  .ob-fade{ opacity:0; animation:fadeIn .7s ease both; }
+  .ob-fade.d1{ animation-delay:.12s; }
+  .ob-fade.d2{ animation-delay:.28s; }
+  .ob-fade.d3{ animation-delay:.44s; }
+  @media (prefers-reduced-motion: reduce){ .ob-fade{ animation:none; opacity:1; } }
+  .ob-skip{
+    position:absolute; top:var(--sp-5); right:var(--sp-5); z-index:3; background:none; border:none;
+    font-family:'Manrope', sans-serif; font-size:13px; font-weight:600; color:var(--ink-soft); cursor:pointer;
+    padding:8px 10px; border-radius:10px;
+  }
+  .ob-skip:active{ opacity:.6; }
+  .ob-need-grid{ display:grid; grid-template-columns:1fr 1fr; gap:var(--sp-3); }
+  .ob-need-chip{
+    display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center;
+    padding:22px 14px; border-radius:20px; border:1px solid var(--line); background:var(--card);
+    font-family:'Manrope', sans-serif; font-size:14px; font-weight:600; color:var(--ink); cursor:pointer;
+    box-shadow:var(--shadow-sm); transition:all .18s ease;
+  }
+  .ob-need-chip svg{ width:26px; height:26px; stroke:var(--sage-deep); stroke-width:1.6; fill:none; }
+  .ob-need-chip.selected{
+    border-color:var(--sage); background:linear-gradient(135deg, rgba(126,169,133,0.22), rgba(44,79,59,0.08));
+    box-shadow:var(--shadow-md); transform:scale(1.02);
+  }
+  .ob-need-chip:active{ transform:scale(0.97); }
+  .ob-need-chip[disabled]{ opacity:.6; cursor:default; }
 
   /* fila compacta de ánimo del Home — a propósito más pequeña que .chip/.feel-item,
      que son para pantallas dedicadas (checkin/sentir); aquí es solo un detalle inline. */
@@ -1814,12 +1856,38 @@
   <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
 
   <!-- ONBOARDING -->
-  <section class="screen noNav" id="ob-1" style="justify-content:center; text-align:center;">
-    <div class="container" style="flex:1; display:flex; flex-direction:column; justify-content:center;">
-      <p class="serif" style="font-size:26px; line-height:1.5;">Un lugar para volver a Dios.</p>
+  <!-- PANTALLA 2 — "Promesa". La identidad (Pantalla 1: HERE + lema) ya la
+       muestra el splash justo antes de esta pantalla (ver #splash más abajo:
+       puerta de luz, "HERE", lema) — repetirla aquí sería la misma idea dos
+       veces seguidas, así que esta pantalla empieza en el segundo momento
+       del guión: "puedes respirar / no tienes que resolverlo todo ahora". -->
+  <section class="screen noNav" id="ob-1" style="justify-content:center; text-align:center; position:relative;">
+    <button class="ob-skip" onclick="exploreWithoutConfiguring()">Saltar</button>
+    <div class="container" style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center;">
+      <div class="ob-orb ob-fade"></div>
+      <p class="serif ob-fade d1" style="font-size:24px; line-height:1.5; max-width:320px;">No tienes que resolverlo todo ahora.</p>
+      <p class="ob-fade d2" style="color:var(--ink-soft); font-size:15.5px; line-height:2; margin-top:var(--sp-4);">Puedes leer.<br>Puedes orar.<br>Puedes quedarte un momento.</p>
     </div>
-    <div class="container">
-      <button class="btn btn-primary" onclick="go('ob-2')">Comenzar →</button>
+    <div class="container ob-fade d3">
+      <button class="btn btn-primary" onclick="go('ob-sentir')">Continuar →</button>
+    </div>
+  </section>
+
+  <!-- PANTALLA 3 — "Primera interacción emocional". A diferencia de ob-2
+       (que pregunta "¿qué buscas?" de forma más general/configuración),
+       esta pregunta es del momento presente y es deliberadamente la primera
+       vez que la persona TOCA algo en la app — antes de cualquier pregunta
+       de personalización. Reutiliza .ob-need-chip (arriba) y vuelve a
+       escena en sage, no en dorado, para distinguirla visualmente de los
+       chips de configuración que vienen después. */ -->
+  <section class="screen noNav" id="ob-sentir" style="position:relative;">
+    <button class="backbtn" aria-label="Atrás" onclick="go('ob-1')" style="position:absolute; top:var(--sp-5); left:var(--sp-5); z-index:3;">←</button>
+    <button class="ob-skip" onclick="exploreWithoutConfiguring()">Saltar</button>
+    <div class="container" style="padding-top:78px; text-align:center;">
+      <h2 class="serif ob-fade" style="font-size:22px;">¿Qué necesitas en este momento?</h2>
+    </div>
+    <div class="container ob-fade d1" style="margin-top:var(--sp-5);">
+      <div class="ob-need-grid" id="ob-need-grid"></div>
     </div>
   </section>
 
@@ -1832,6 +1900,7 @@
     <div class="stack container" id="ob2-options"></div>
     <div class="container" style="margin-top:auto;">
       <button class="btn btn-primary" onclick="go('ob-receive')">Continuar →</button>
+      <button class="btn-text" style="display:block; margin:14px auto 0; text-align:center;" onclick="exploreWithoutConfiguring()">Explorar sin configurar</button>
     </div>
   </section>
 
@@ -1862,7 +1931,7 @@
     <div class="container">
       <div class="progress-dots"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span></span></div>
       <h2 class="serif" style="font-size:22px;">Elige cómo quieres leer</h2>
-      <p style="color:var(--ink-soft); margin-top:8px; font-size:14px;">No afirmamos que una traducción sea superior a otra. Por ahora todo el contenido se muestra en Reina-Valera 1960; guardamos tu preferencia para cuando sumemos más traducciones.</p>
+      <p style="color:var(--ink-soft); margin-top:8px; font-size:14px;">Por ahora, toda la Biblia está en Reina-Valera 1960 — es la única disponible. Guardamos tu preferencia para cuando sumemos más traducciones.</p>
     </div>
     <div class="stack container" id="ob4-options"></div>
     <div class="container" style="margin-top:auto;">
@@ -1885,7 +1954,7 @@
     <div class="dot" style="width:10px; height:10px; margin-bottom:26px;"></div>
     <p class="serif" style="font-size:22px; line-height:1.6; padding:0 30px;">Todo listo.<br>HERE estará aquí <span class="script" style="font-size:26px;">cuando lo necesites.</span></p>
     <div class="container" style="width:100%; margin-top:40px;">
-      <button class="btn btn-primary" onclick="finishOnboarding()">Entrar →</button>
+      <button class="btn btn-primary" onclick="finishOnboarding()">Comenzar mi camino →</button>
     </div>
   </section>
 
@@ -3782,6 +3851,7 @@ function go(id, opts){
   if(id==='biblia') { renderBooks(); renderPlanRow(); renderBibliaContinue(); document.getElementById('search-results').innerHTML=''; }
   if(id==='historialLecturas') renderHistorialLecturas();
   if(id==='musicaGuardado') renderMusicaGuardado();
+  if(id==='ob-sentir') renderObNeedGrid();
   if(id==='comunidadOrar') renderComunidadOrar();
   if(id==='orar'){
     renderOraciones();
@@ -3821,9 +3891,13 @@ const OB_RECEIVE = ["Leer","Escuchar","Orar","Todavía no lo sé"];
 const OB3 = ["Por la mañana","Durante el día","Antes de dormir","Cuando esté pasando por algo","Cuando necesite orar","Cuando quiera leer"];
 const OB4 = ["RVR1960","NVI","NTV","No estoy seguro"];
 
+// <button> real en vez de <div onclick> — así cada opción es enfocable y
+// activable con teclado (Tab + Enter/Espacio) de forma nativa, sin tener que
+// simular nada a mano; el aro de foco ya existe de forma global (ver
+// "accesibilidad: foco visible" en el CSS) y se aplica solo con este cambio.
 function buildOptions(containerId, items, store, multi){
   const c = document.getElementById(containerId);
-  c.innerHTML = items.map(it=>`<div class="chip" data-v="${it}"><span class="dot"></span>${it}</div>`).join('');
+  c.innerHTML = items.map(it=>`<button type="button" class="chip" data-v="${it}"><span class="dot"></span>${it}</button>`).join('');
   c.querySelectorAll('.chip').forEach(chip=>{
     chip.onclick = ()=>{
       if(!multi){ c.querySelectorAll('.chip').forEach(x=>x.classList.remove('selected')); }
@@ -3842,15 +3916,91 @@ buildOptions('ob2-options', OB2, obStore, true);
 buildOptions('obReceive-options', OB_RECEIVE, obStore, false);
 buildOptions('ob3-options', OB3, obStore, true);
 buildOptions('ob4-options', OB4, obStore, false);
+// RVR1960 es la única traducción real hoy — NVI/NTV quedan en la lista para
+// cuando existan, pero deshabilitadas (atributo nativo "disabled", no solo
+// un estilo) para que nadie crea que ya puede leerlas, y RVR1960 queda
+// preseleccionada por defecto sin que haga falta tocar nada.
+(function decorateOb4Options(){
+  const c = document.getElementById('ob4-options');
+  if(!c) return;
+  c.querySelectorAll('.chip').forEach(chip=>{
+    const v = chip.dataset.v;
+    if(v === 'RVR1960'){
+      chip.classList.add('selected');
+      obStore['ob4-options'] = ['RVR1960'];
+    }else if(v === 'NVI' || v === 'NTV'){
+      chip.disabled = true;
+      chip.innerHTML = `<span class="dot"></span>${v} <span style="color:var(--ink-soft); font-weight:400;">· próximamente</span>`;
+    }
+  });
+})();
+
+// PANTALLA 3 del nuevo flujo — "¿Qué necesitas en este momento?". A
+// propósito NO usa buildOptions() (que es multi-selección y alimenta
+// obStore para el resto del onboarding): esta es la primera interacción,
+// de un solo toque, y solo sirve para dar una respuesta visual cálida antes
+// de pasar a las preguntas de personalización — por eso no se mezcla con
+// esa lógica ni se guarda como una preferencia más.
+const OB_NEEDS = [
+  { id:'palabra', label:'Una palabra', go:'palabra',
+    icon:'<path d="M6 4h9l5 5v11a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"/><path d="M14 4v5h5"/><path d="M9 13h6M9 16.5h4"/>' },
+  { id:'orar', label:'Orar', go:'orar',
+    icon:'<path d="M12 3c1.8 2.6 2.8 5 2.8 7.2a2.8 2.8 0 1 1-5.6 0C9.2 8 10.2 5.6 12 3z"/><path d="M5 21c1-4 3.5-6 7-6s6 2 7 6"/>' },
+  { id:'leer', label:'Leer', go:'biblia',
+    icon:'<path d="M12 6.5c-1.6-1.3-3.6-2-6.5-2v13c2.9 0 4.9.7 6.5 2 1.6-1.3 3.6-2 6.5-2v-13c-2.9 0-4.9.7-6.5 2z"/><path d="M12 6.5v13"/>' },
+  { id:'escuchado', label:'Ser escuchado', go:'chat',
+    icon:'<path d="M4 12a8 8 0 1 1 3.2 6.4L4 20l1.3-3.5A7.96 7.96 0 0 1 4 12z"/>' },
+];
+let obNeedPicked = null;
+function renderObNeedGrid(){
+  const el = document.getElementById('ob-need-grid');
+  if(!el) return;
+  obNeedPicked = null;
+  el.innerHTML = OB_NEEDS.map(n=>`
+    <button type="button" class="ob-need-chip" data-id="${n.id}" onclick="pickObNeed('${n.id}')" aria-label="${n.label}">
+      <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${n.icon}</svg>
+      <span>${n.label}</span>
+    </button>
+  `).join('');
+}
+// Respuesta visual suave (borde + fondo salvia + pequeño movimiento, todo ya
+// en .ob-need-chip.selected) y luego avanza sola — no hace falta un botón
+// "Continuar" aparte, la propia elección ES la acción. Guarda qué sintió
+// que necesitaba (prefs.firstNeed) por si en el futuro sirve para
+// personalizar algo en Inicio; hoy no cambia nada más por sí sola.
+function pickObNeed(id){
+  const el = document.getElementById('ob-need-grid');
+  if(!el || obNeedPicked) return; // evita doble toque mientras avanza
+  obNeedPicked = id;
+  el.querySelectorAll('.ob-need-chip').forEach(b=>{
+    b.disabled = true;
+    b.classList.toggle('selected', b.dataset.id === id);
+  });
+  haptic(10);
+  prefs.firstNeed = id;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  setTimeout(()=>{ go('ob-2'); }, reduceMotion ? 80 : 520);
+}
 
 function finishOnboarding(){
   prefs.goals = obStore['ob2-options'] || [];
   prefs.receiveMode = (obStore['obReceive-options']||[])[0] || null;
   prefs.when = obStore['ob3-options'] || [];
-  prefs.translation = (obStore['ob4-options']||[])[0] || 'No estoy seguro';
+  prefs.translation = (obStore['ob4-options']||[])[0] || 'RVR1960';
   save('here_prefs', prefs);
   save('here_onboarded', true);
   go('checkin');
+}
+// "Explorar sin configurar" / "Saltar" — disponible desde cualquier pantalla
+// de la intro nueva (ob-1, ob-sentir) y como acción secundaria discreta en
+// ob-2. Entra directo a Inicio (sin pasar por el check-in de ánimo, que es
+// en sí mismo una pregunta más) y deja las preferencias con sus valores por
+// defecto — la persona puede completarlas después desde Tu camino, igual
+// que si hubiera llegado hasta el final y no hubiera tocado nada.
+function exploreWithoutConfiguring(){
+  save('here_prefs', prefs); // conserva prefs.firstNeed si ya se tocó algo en ob-sentir
+  save('here_onboarded', true);
+  go('home');
 }
 // Desde Configuración (Perfil → Preferencias): deja repasar la introducción
 // sin perder nada — solo marca el onboarding como no completado (igual que
