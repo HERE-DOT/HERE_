@@ -37,6 +37,9 @@
     --card: #FFFFFF;
     --card-elevated: #FFFFFF;
     --glass-bg: rgba(255,255,255,0.7);
+    --sage-surface: #EEF3EC;
+    --sage-surface-line: rgba(44,79,59,0.16);
+    --sage-surface-ink: var(--sage-deep);
     --radius: 24px;
     --shadow-sm: 0 3px 14px rgba(33,31,26,0.05);
     --shadow-md: 0 14px 34px rgba(33,31,26,0.09);
@@ -70,6 +73,9 @@
     --card:#211C15;
     --card-elevated:#2E2819;
     --glass-bg: rgba(46,40,25,0.66);
+    --sage-surface:#1C2620;
+    --sage-surface-line: rgba(143,191,155,0.20);
+    --sage-surface-ink: #A9D4B2;
     --shadow-sm: 0 3px 14px rgba(0,0,0,0.38);
     --shadow-md: 0 14px 34px rgba(0,0,0,0.42);
     --shadow-lg: 0 24px 52px rgba(0,0,0,0.55);
@@ -527,20 +533,39 @@
     background:var(--gold-grad); font-size:12.5px; color:#fff; font-weight:700; white-space:nowrap;
     box-shadow:0 6px 16px rgba(138,106,38,0.28);
   }
-  /* Versión mínima, solo para la cabecera del Home: nada de fondo dorado
-     ni sombra — un detalle casi invisible, no un badge que compita con
-     el saludo. */
-  .streak-mini{
-    display:inline-flex; align-items:center; gap:3px; font-size:10.5px;
-    color:var(--ink-soft); font-weight:600; opacity:.55; white-space:nowrap;
+  /* ---------- tarjeta "Tu camino" (Inicio) ----------
+     Reemplaza el indicador aislado (vela + número, antes .streak-mini +
+     .profile-icon-btn) y el enlace de texto que quedaba al final de Inicio:
+     ahora es una sola superficie completa y accionable, con el mismo ancho
+     y radio que las demás tarjetas de Inicio. Fondo salvia muy claro propio
+     (--sage-surface) para distinguirla como "progreso personal" sin recurrir
+     a colores saturados; el dato principal va en serif y en verde profundo,
+     el resto en la misma escala sans-serif del resto de la app. */
+  .camino-home-card{
+    display:block; width:100%; min-height:122px; margin:0 0 16px; padding:20px 22px;
+    border-radius:22px; border:1px solid var(--sage-surface-line); background:var(--sage-surface);
+    box-shadow:var(--shadow-sm); cursor:pointer; text-align:left; font:inherit; color:inherit;
+    transition:transform .15s ease, box-shadow .15s ease;
   }
-  .profile-icon-btn{
-    width:25px; height:25px; border-radius:50%; background:none; border:none;
-    display:flex; align-items:center; justify-content:center; cursor:pointer; flex:none;
-    color:var(--ink-soft); opacity:.45; transition:transform .15s ease, opacity .15s ease;
+  .camino-home-card:hover{ box-shadow:var(--shadow-md); }
+  .camino-home-card:active{ transform:scale(0.985); }
+  .camino-home-card:focus-visible{ outline:2px solid var(--sage-deep); outline-offset:3px; }
+  .camino-home-top{ display:flex; align-items:center; gap:10px; }
+  .camino-home-icon{ display:flex; align-items:center; justify-content:center; width:26px; height:26px; flex:none; color:var(--sage-surface-ink); }
+  .camino-home-icon svg{ width:100%; height:100%; }
+  .camino-home-title{ flex:1; font-size:12px; font-weight:700; letter-spacing:.5px; text-transform:uppercase; color:var(--ink-soft); }
+  .camino-home-arrow{ flex:none; color:var(--gold-deep); font-weight:600; font-size:15px; }
+  .camino-home-main{ font-family:'Fraunces', serif; font-weight:500; font-size:19px; color:var(--sage-surface-ink); margin-top:14px; line-height:1.3; }
+  .camino-home-caption{ font-size:13px; color:var(--ink-soft); margin-top:4px; line-height:1.45; }
+  .camino-home-meta{ display:flex; gap:18px; margin-top:12px; flex-wrap:wrap; }
+  .camino-home-meta span{ font-size:12px; color:var(--ink-soft); }
+  .camino-home-meta b{ font-family:'Fraunces', serif; font-weight:500; color:var(--sage-surface-ink); font-size:14px; margin-right:4px; }
+  .camino-home-skel-line{ height:14px; border-radius:7px; background:var(--line); margin-top:14px; }
+  .camino-home-skel-line + .camino-home-skel-line{ height:12px; width:60%; margin-top:8px; }
+  @media (prefers-reduced-motion: no-preference){
+    .camino-home-card{ animation: caminoHomeIn .45s ease both; }
   }
-  .profile-icon-btn svg{width:13px; height:13px;}
-  .profile-icon-btn:active{transform:scale(0.92); opacity:.75;}
+  @keyframes caminoHomeIn{ from{ opacity:0; transform:translateY(8px);} to{ opacity:1; transform:none;} }
 
   /* ---------- weekly streak row (home) ---------- */
   .week-streak{display:flex; justify-content:space-between; gap:6px; padding:2px 24px 18px;}
@@ -932,6 +957,49 @@
   }
   @media (prefers-reduced-motion: reduce){ .navbtn-here .orb{ animation:none; } }
   .navbtn svg{width:22px; height:22px;}
+
+  /* Barra inferior en móvil: plana, ancho completo y cálida (crema un tono
+     más oscuro que el fondo), con íconos más sólidos en marrón suave. HERE
+     ya no es un orbe elevado: es un ícono minimalista (aro + punto de luz
+     dorado) del mismo tamaño que los demás. Las cinco pestañas (Inicio,
+     La Palabra, HERE, Orar, Escuchar) siguen igual. El escritorio (>=900px)
+     conserva su menú lateral: todo esto vive dentro del max-width. */
+  :root{ --nav-bg:#F5ECDD; --nav-ink:#7A6A55; --nav-ink-on:#2C4F3B; }
+  :root[data-theme="dark"]{ --nav-bg:#1D1913; --nav-ink:#A39A84; --nav-ink-on:#E9CD8E; }
+  @media (max-width:899px){
+    .navbar{
+      bottom:0; width:100%; max-width:480px; padding:12px 6px calc(12px + env(safe-area-inset-bottom));
+      border-radius:0; border-top:1px solid var(--line); background:var(--nav-bg); box-shadow:none;
+    }
+    .navbtn{ color:var(--nav-ink); padding:4px 10px; gap:5px; font-size:11.5px; font-weight:600; border-radius:12px; background:none; }
+    .navbtn.active{ color:var(--nav-ink-on); font-weight:700; background:none; }
+    .navbtn svg{ width:26px; height:26px; stroke-width:1.9; }
+    .navbtn-here{ top:0; gap:5px; }
+    .navbtn-here .orb{
+      width:26px; height:26px; border-radius:50%; background:none; box-shadow:none; animation:none;
+      border:2px solid currentColor; color:var(--nav-ink);
+    }
+    .navbtn-here .orb::before{ width:7px; height:7px; background:var(--gold); filter:none; }
+    .navbtn-here.active .orb{ color:var(--nav-ink-on); }
+    .navbtn-here span.lbl{ font-size:11.5px; font-weight:600; color:var(--nav-ink); }
+    .navbtn-here.active .lbl{ color:var(--nav-ink-on); font-weight:700; }
+  }
+
+  /* Inicio más limpio: una sola familia de tonos (crema + salvia + dorado
+     apagado), sin tarjetas blancas compitiendo con la tarjeta salvia. */
+  #home .home-mood-chip{ background:transparent; border-color:var(--sage-surface-line); color:var(--ink-soft); }
+  #home .home-mood-chip.active{ background:var(--sage-deep); border-color:var(--sage-deep); color:#FAF7F0; font-weight:600; }
+  #home .feature-card.hoy-scene{ margin-bottom:18px; }
+  #home .list-card.home-action{
+    margin-top:10px; margin-bottom:10px; justify-content:space-between; gap:14px; padding:16px 18px;
+    background:color-mix(in srgb, var(--bg-warm) 42%, var(--bg)); border-color:transparent; box-shadow:none;
+  }
+  #home .list-card.home-action:hover{ background:color-mix(in srgb, var(--bg-warm) 70%, var(--bg)); }
+  .home-action-ic{
+    width:38px; height:38px; border-radius:50%; flex:none; display:flex; align-items:center; justify-content:center;
+    background:var(--sage-surface); color:var(--sage-surface-ink);
+  }
+  .home-action-ic svg{ width:18px; height:18px; }
 
   /* ---------- textarea / inputs ---------- */
   textarea, input[type=text], input[type=email], input[type=password]{
@@ -2059,19 +2127,12 @@
 
   <!-- HOME -->
   <section class="screen" id="home">
-    <!-- Cabecera: el saludo es la única voz con peso aquí. Perfil y racha
-         quedan reducidos a un detalle casi invisible, no a controles. -->
-    <div class="top-greeting" style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
-      <div>
-        <div class="hello serif" id="home-greeting">Hola.</div>
-        <div class="sub" id="home-subline">Qué bueno que estás aquí.</div>
-      </div>
-      <div style="display:flex; align-items:center; gap:8px; flex:none; margin-top:5px;">
-        <div class="streak-mini" id="home-streak">🕯️ 1</div>
-        <button class="profile-icon-btn" onclick="go('perfil')" aria-label="Tu camino">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4.5 5-6 8-6s6.5 1.5 8 6"/></svg>
-        </button>
-      </div>
+    <!-- Cabecera: el saludo es la única voz con peso aquí. El progreso
+         personal ya no vive en un detalle diminuto del encabezado — tiene su
+         propia tarjeta, justo después de "Tu palabra de hoy" (ver más abajo). -->
+    <div class="top-greeting">
+      <div class="hello serif" id="home-greeting">Hola.</div>
+      <div class="sub" id="home-subline">Qué bueno que estás aquí.</div>
     </div>
 
     <div class="week-streak" id="home-week-streak" style="display:none;"></div>
@@ -2098,39 +2159,62 @@
       </div>
     </div>
 
+    <!-- Tu camino: progreso personal como continuidad espiritual, no como
+         métrica — reemplaza el indicador de vela+número del encabezado y el
+         enlace de texto que quedaba al final de Inicio. Único acceso a la
+         pantalla "Tu camino" desde aquí. Button nativo: foco, Enter/Espacio
+         y nombre accesible vienen gratis; el contenido de home-camino-body
+         (estado de carga, con datos, vacío o error) lo decide
+         renderHomeCamino(). -->
+    <div class="container" style="padding-top:0; padding-bottom:0;">
+      <button type="button" class="camino-home-card" id="home-camino-card" onclick="go('perfil')">
+        <div class="camino-home-top">
+          <span class="camino-home-icon" aria-hidden="true">
+            <svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 22c3.5-1 5.5-4 6.5-7s3-6.5 7-8"/>
+              <circle cx="19.5" cy="6" r="2.1" fill="var(--gold)" stroke="none"/>
+            </svg>
+          </span>
+          <span class="camino-home-title">Tu camino</span>
+          <span class="camino-home-arrow" aria-hidden="true">→</span>
+        </div>
+        <div id="home-camino-body">
+          <div class="camino-home-skel-line" style="width:42%;"></div>
+          <div class="camino-home-skel-line" style="width:68%;"></div>
+        </div>
+      </button>
+    </div>
+
     <!-- Solo tres puertas discretas, al mismo nivel — nada de tarjetas
          grandes ni fondos de color compitiendo entre sí. -->
     <div class="list-card home-action" onclick="startNecesitoPalabra()">
       <div style="display:flex; align-items:center; gap:14px;">
-        <span style="font-size:19px; flex:none;" aria-hidden="true">✨</span>
+        <span class="home-action-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l1.8 4.7 4.7 1.8-4.7 1.8L12 16.5l-1.8-4.7L5.5 10l4.7-1.8L12 3.5z"/><path d="M18.5 15.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7.7-1.8z"/></svg></span>
         <div><div class="t">Necesito una palabra</div><div class="s">Recibe un versículo para este momento</div></div>
       </div>
       <span style="color:var(--ink-soft); flex:none;">→</span>
     </div>
     <div class="list-card home-action" onclick="go('chat')">
       <div style="display:flex; align-items:center; gap:14px;">
-        <span style="font-size:19px; flex:none;" aria-hidden="true">💬</span>
+        <span class="home-action-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 6.5A2.5 2.5 0 017.5 4h9A2.5 2.5 0 0119 6.5v6a2.5 2.5 0 01-2.5 2.5H11l-4 3.5V15h-.5A2.5 2.5 0 014 12.5v-6z" transform="translate(.5 .5)"/></svg></span>
         <div><div class="t">Habla con HERE</div><div class="s">¿Qué tienes en el corazón?</div></div>
       </div>
       <span style="color:var(--ink-soft); flex:none;">→</span>
     </div>
     <div class="list-card home-action" onclick="startGuidedPrayer()">
       <div style="display:flex; align-items:center; gap:14px;">
-        <span style="font-size:19px; flex:none;" aria-hidden="true">🙏</span>
+        <span class="home-action-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.5-7-10a4 4 0 017-2.6A4 4 0 0119 11c0 5.5-7 10-7 10z"/></svg></span>
         <div><div class="t">Oración guiada</div><div class="s">Un momento para orar, paso a paso</div></div>
       </div>
       <span style="color:var(--ink-soft); flex:none;">→</span>
     </div>
 
     <!-- Todo lo demás queda al final, deliberadamente secundario: si hay un
-         plan en curso, aquí — y el acceso a "Tu camino" (donde vive también
-         el detalle de palabras guardadas), sin llamar la atención. -->
+         plan en curso, aquí. El acceso a "Tu camino" ya vive arriba, en su
+         propia tarjeta — no se repite aquí para no tener dos accesos al
+         mismo lugar. -->
     <div class="section-title" id="home-plan-title" style="display:none; margin-top:var(--sp-7);">Continúa tu plan</div>
     <div class="container" id="home-plan-continue" style="display:none; padding-top:0; padding-bottom:18px;"></div>
-
-    <div style="text-align:center; padding:var(--sp-6) 24px var(--sp-5);">
-      <span onclick="go('perfil')" style="font-size:13px; color:var(--ink-soft); opacity:.65; cursor:pointer;">Tu camino →</span>
-    </div>
   </section>
 
   <!-- SENTIR -->
@@ -4204,9 +4288,7 @@ function renderHomeQuick(){
   homeMoodSelected = 'hoy';
   renderHomeMoodRow();
   applyHomeTodayVerse();
-  const streak = updateStreak();
-  const streakEl = document.getElementById('home-streak');
-  if(streakEl) streakEl.textContent = `🕯️ ${streak}`;
+  renderHomeCamino();
   renderWeekStreak();
   renderHomePlanContinue();
   const savedTitle = document.getElementById('home-saved-title');
@@ -4220,6 +4302,43 @@ function renderHomeQuick(){
           <span>→</span>
         </div>`).join('');
     } else { savedTitle.style.display='none'; savedPrev.innerHTML=''; }
+  }
+}
+// Tarjeta "Tu camino" en Inicio — progreso como continuidad, no como
+// métrica. Reutiliza exactamente los mismos datos que ya calcula/guarda el
+// resto de la app (updateStreak(), here_visit_log, savedWords, prayers):
+// no hay una segunda fuente de verdad, solo una presentación distinta de
+// lo que "Tu camino" (perfil) ya muestra.
+//
+// Estados:
+//  - "vacío"  : primera vez (visitDays <= 1) — invita a empezar, sin cifras.
+//  - "datos"  : hay racha real — muestra el número real, nunca inventado.
+//  - "error"  : localStorage falló al leerse — texto amable, sin detalle
+//               técnico, y la tarjeta sigue siendo accionable igual.
+function renderHomeCamino(){
+  const card = document.getElementById('home-camino-card');
+  const body = document.getElementById('home-camino-body');
+  if(!card || !body) return;
+  try{
+    const streak = updateStreak(); // idempotente: solo cambia algo si hoy aún no se había registrado
+    const visitDays = load('here_visit_log', []).length;
+    if(visitDays <= 1){
+      body.innerHTML = `
+        <div class="camino-home-main">Comienza a construir tus momentos con HERE.</div>
+        <div class="camino-home-caption">Ver tu camino</div>`;
+      return;
+    }
+    const metaParts = [];
+    if(savedWords.length) metaParts.push(`<span><b>${savedWords.length}</b>${savedWords.length===1?'palabra guardada':'palabras guardadas'}</span>`);
+    if(prayers.length) metaParts.push(`<span><b>${prayers.length}</b>${prayers.length===1?'oración':'oraciones'}</span>`);
+    body.innerHTML = `
+      <div class="camino-home-main">${streak} ${streak===1?'día presente':'días presentes'}</div>
+      <div class="camino-home-caption">Sigue dando un paso hoy</div>
+      ${metaParts.length ? `<div class="camino-home-meta">${metaParts.join('')}</div>` : ''}`;
+  }catch(e){
+    body.innerHTML = `
+      <div class="camino-home-main">Sigue aquí cuando quieras volver.</div>
+      <div class="camino-home-caption">Abrir</div>`;
   }
 }
 function renderHomePlanContinue(){
