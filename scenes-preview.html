@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HERE · Revisar escenas</title>
+<style>
+  body{margin:0;padding:20px;font-family:system-ui,sans-serif;background:#FAF7F0;color:#211F1A}
+  h1{font-size:20px;margin:0 0 4px} p{margin:0 0 14px;color:#6E6A5D;font-size:14px}
+  .bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+  .bar button{border:1px solid #d9d2c0;background:#fff;border-radius:99px;padding:7px 13px;font-size:13px;cursor:pointer}
+  .bar button.on{background:#2C4F3B;color:#fff;border-color:#2C4F3B}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+  .card{background:#fff;border:2px solid transparent;border-radius:16px;overflow:hidden;box-shadow:0 3px 14px rgba(0,0,0,.06)}
+  .card.bad{border-color:#c0392b}
+  .card img{width:100%;height:150px;object-fit:cover;display:block;background:#ddd}
+  .meta{padding:10px 12px;font-size:12.5px;line-height:1.5}
+  .meta b{display:block;font-size:13.5px;margin-bottom:2px}
+  .tag{display:inline-block;background:#EEF3EC;border-radius:6px;padding:1px 7px;margin:2px 3px 0 0;font-size:11.5px}
+  .id{color:#8a8574;font-size:11px;word-break:break-all;margin-top:4px}
+  .err{color:#c0392b;font-weight:600}
+</style></head><body>
+<h1>Escenas de HERE</h1>
+<p>Todas las fotos de <code>scene-library.js</code>. Las que no cargan se marcan en rojo. Filtra por clima o momento del día para ver qué se mostraría.</p>
+<div class="bar" id="bar"></div>
+<div class="grid" id="grid"></div>
+<script src="scene-library.js"></script>
+<script>
+const W=[['clear','despejado'],['clouds','nublado'],['fog','niebla'],['rain','lluvia'],['storm','tormenta'],['snow','nieve']];
+const T=[['dawn','amanecer'],['day','día'],['dusk','atardecer'],['night','noche']];
+let fw=null, ft=null;
+const bar=document.getElementById('bar'), grid=document.getElementById('grid');
+function btn(label,onclick,on){ const b=document.createElement('button'); b.textContent=label; if(on) b.className='on'; b.onclick=onclick; return b; }
+function drawBar(){
+  bar.innerHTML='';
+  bar.append(btn('Todo',()=>{fw=ft=null;draw();},!fw&&!ft));
+  W.forEach(([k,l])=>bar.append(btn(l,()=>{fw=fw===k?null:k;draw();},fw===k)));
+  T.forEach(([k,l])=>bar.append(btn(l,()=>{ft=ft===k?null:k;draw();},ft===k)));
+}
+function draw(){
+  drawBar(); grid.innerHTML='';
+  (window.SCENE_LIBRARY||[]).filter(p=>(!fw||!p.w||p.w.includes(fw))&&(!ft||!p.t||p.t.includes(ft))).forEach(p=>{
+    const c=document.createElement('div'); c.className='card';
+    const url='https://images.unsplash.com/'+p.id+'?auto=format&fit=crop&w=600&q=60';
+    c.innerHTML='<img alt="" src="'+url+'"><div class="meta"><b>'+(p.note||'')+'</b>'
+      +(p.w||['cualquier clima']).map(x=>'<span class="tag">'+x+'</span>').join('')
+      +(p.t||['cualquier hora']).map(x=>'<span class="tag">'+x+'</span>').join('')
+      +'<br>'+(p.m||[]).map(x=>'<span class="tag">'+x+'</span>').join('')
+      +'<div class="id">'+p.id+'</div></div>';
+    c.querySelector('img').onerror=()=>{c.classList.add('bad'); c.querySelector('.id').insertAdjacentHTML('afterend','<div class="err">No carga: revisa o quita esta foto</div>');};
+    grid.append(c);
+  });
+}
+draw();
+</script></body></html>
