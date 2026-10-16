@@ -654,6 +654,64 @@
   .camino-icon.sage{background:rgba(126,169,133,0.18); color:var(--sage-deep);}
   .list-card .lc-left{display:flex; align-items:center; gap:14px; min-width:0;}
 
+  /* ---------- planes estilo biblioteca + detalle + momento de hoy ---------- */
+  .plans-tabs-row, #plans-filter.studio-row{ display:flex; gap:8px; overflow-x:auto; flex-wrap:nowrap; scrollbar-width:none; }
+  #plans-filter::-webkit-scrollbar{ display:none; }
+  .plans-tab{ flex:none; border:0; border-radius:999px; padding:10px 16px; font-size:14px; font-weight:600; font-family:inherit; background:var(--beige); color:var(--ink); cursor:pointer; }
+  .plans-tab.on{ background:var(--ink); color:var(--bg); }
+  .plans-sec-t{ font-family:'Fraunces',serif; font-size:22px; font-weight:500; margin:22px 0 10px; }
+  .plans-sec-h{ display:flex; align-items:baseline; justify-content:space-between; margin-top:18px; }
+  .plans-sec-h .plans-sec-t{ margin:8px 0; }
+  .plans-sec-h .sec-link{ font-size:13px; font-weight:600; color:var(--ink-soft); cursor:pointer; }
+  .plan-feat-row{ display:flex; gap:14px; overflow-x:auto; scrollbar-width:none; scroll-snap-type:x proximity; margin:4px 0 6px; padding:0; }
+  .plan-feat-row::-webkit-scrollbar{ display:none; }
+  .plan-feat{ flex:0 0 82%; max-width:420px; scroll-snap-align:start; cursor:pointer; }
+  .plan-feat-cover{ height:190px; border-radius:22px; display:flex; align-items:flex-end; padding:16px 18px; color:#fff; box-shadow:var(--shadow-md); }
+  .plan-feat-t{ font-size:22px; line-height:1.2; text-shadow:0 1px 10px rgba(0,0,0,.4); }
+  .plan-feat-m{ font-size:13px; color:var(--ink-soft); margin:8px 4px 0; }
+  .plan-cat-tiles{ display:flex; gap:8px; flex-wrap:wrap; margin:18px 0 4px; }
+  .plan-cat-tile{ border:0; border-radius:12px; padding:11px 16px; font-size:13px; font-weight:700; letter-spacing:.5px; text-transform:uppercase; font-family:inherit; color:#fff; background:var(--sage-deep); cursor:pointer; }
+  .plan-cat-tile:nth-child(3n+2){ background:var(--gold-deep); }
+  .plan-cat-tile:nth-child(3n){ background:#7A5A78; }
+  .plan-list-card{ margin-bottom:12px; }
+  .plan-list-card .m0{ font-size:12.5px; color:var(--ink-soft); margin-bottom:3px; }
+  .plan-list-card .pl-body{ flex:1; }
+  .plan-pill{ flex:none; border-radius:999px; padding:10px 18px; font-size:14px; font-weight:700; background:var(--beige); color:var(--ink); }
+  .plan-pill.on{ background:var(--sage-deep); color:#fff; }
+  .plan-mine{ display:flex; gap:14px; align-items:center; padding:12px; border-radius:20px; background:var(--card); border:1px solid var(--line); box-shadow:var(--shadow-sm); margin-bottom:12px; cursor:pointer; }
+  .plan-mine-cover{ flex:0 0 84px; width:84px; height:84px; border-radius:16px; min-height:0; padding:0; background-size:cover; }
+  .plan-mine-b{ flex:1; min-width:0; }
+  .plan-mine-b .t{ font-family:'Fraunces',serif; font-size:16.5px; font-weight:500; line-height:1.25; }
+  .plan-mine-b .s{ font-size:12.5px; color:var(--ink-soft); margin-top:3px; }
+  .plan-hero{ min-height:210px; border-radius:24px; display:flex; align-items:flex-end; padding:20px; color:#fff; box-shadow:var(--shadow-md); background-size:cover; width:auto; }
+  .plan-hero.plan-card{ width:auto; cursor:default; }
+  .plan-hero-in{ display:flex; flex-direction:column; gap:6px; }
+  .plan-hero-emoji{ font-size:30px; filter:drop-shadow(0 1px 5px rgba(0,0,0,.4)); }
+  .plan-hero-t{ font-size:24px; line-height:1.2; text-shadow:0 1px 12px rgba(0,0,0,.45); }
+  .plan-big-t{ font-size:28px; font-weight:500; line-height:1.2; margin:20px 0 4px; }
+  .plan-meta{ font-size:14px; color:var(--ink-soft); margin:0 0 16px; }
+  .plan-sec-btns{ display:flex; gap:10px; margin-top:12px; }
+  .plan-sec-btn{ flex:1; border:0; border-radius:999px; padding:11px 10px; font-size:13.5px; font-weight:700; font-family:inherit; background:var(--beige); color:var(--ink); cursor:pointer; }
+  .plan-sec-btn.on{ background:var(--sage-surface); color:var(--sage-surface-ink); }
+  .plan-desc{ font-size:15.5px; line-height:1.7; margin:20px 0 0; }
+  .today-card{ border-radius:24px; background:var(--card); border:1px solid var(--line); box-shadow:var(--shadow-sm); padding:14px; display:flex; flex-direction:column; gap:8px; }
+  .today-head{ display:flex; align-items:center; justify-content:space-between; padding:4px 6px 4px; font-family:'Fraunces',serif; font-size:19px; }
+  .today-head b{ font-family:'Manrope',sans-serif; font-size:13px; color:var(--sage-deep); }
+  .today-row, .today-devo{ border-radius:18px; background:var(--bg-warm); padding:15px 16px; }
+  .today-row{ display:flex; align-items:center; gap:12px; cursor:pointer; }
+  .today-row:active{ transform:scale(.99); }
+  .today-row svg, .today-devo-top svg{ width:24px; height:24px; flex:none; color:var(--ink); }
+  .ts-l{ flex:1; font-size:15.5px; font-weight:600; min-width:0; }
+  .ts-l.on{ color:var(--gold-deep); }
+  .ts-m{ font-size:12.5px; color:var(--ink-soft); font-weight:600; }
+  .ts-check{ flex:none; width:24px; height:24px; border-radius:50%; border:2px solid var(--line); display:inline-flex; align-items:center; justify-content:center; font-size:13px; color:#fff; }
+  .ts-check.on{ background:var(--sage-deep); border-color:var(--sage-deep); }
+  .today-devo-top{ display:flex; align-items:center; gap:12px; }
+  .today-devo-top svg{ color:var(--gold-deep); }
+  .today-devo-t{ font-size:21px; margin:12px 0 2px; line-height:1.25; }
+  .today-devo-r{ font-size:13px; color:var(--ink-soft); }
+  .today-devo-btns{ display:flex; gap:10px; margin-top:14px; }
+  .today-btn{ flex:1; border:0; border-radius:999px; padding:13px 10px; font-size:14px; font-weight:700; letter-spacing:.4px; font-family:inherit; background:var(--ink); color:var(--bg); cursor:pointer; }
   /* ---------- planes ampliados + devocionales ---------- */
   .section-title .sec-link{ margin-left:auto; font-size:12.5px; font-weight:600; letter-spacing:0; text-transform:none; color:var(--sage-deep); cursor:pointer; }
   .plan-card.plan-more{ background:var(--card); color:var(--ink); border:1.5px dashed var(--line); box-shadow:none; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; }
@@ -2446,7 +2504,7 @@
     </div>
     <div id="search-results"></div>
     <div id="biblia-continue" style="padding:0 24px; margin:4px 0 2px; display:none;"></div>
-    <div class="section-title" style="margin-top:8px;">Devocional de hoy <span class="sec-link" onclick="go('devocionales')">Ver todos</span></div>
+    <div class="section-title" style="margin-top:8px;">Hoy <span class="sec-link" onclick="go('devocionales')">Todos los devocionales</span></div>
     <div id="biblia-devo" style="padding:4px 24px 8px;"></div>
     <div class="section-title" style="margin-top:8px;">Planes de lectura <span class="sec-link" onclick="go('planesAll')">Ver todos</span></div>
     <div class="plan-row" id="plan-row"></div>
@@ -2480,15 +2538,26 @@
 
   <!-- PLAN DETAIL -->
   <section class="screen noNav" id="planDetail">
-    <div class="topbar"><div class="backbtn" aria-label="Atrás" onclick="go('biblia')">←</div><h2 id="plan-title"></h2></div>
+    <div class="topbar"><div class="backbtn" aria-label="Atrás" onclick="go(planBackTo||'biblia')">←</div><h2 id="plan-title"></h2>
+      <div class="reader-icon-btn" style="margin-left:auto;" onclick="sharePlan()" aria-label="Compartir plan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 10.5l6.8-4M8.6 13.5l6.8 4"/></svg></div></div>
     <div class="container" style="padding-top:0;">
-      <p id="plan-subtitle" style="color:var(--ink-soft); font-size:14.5px; line-height:1.5; margin-bottom:6px;"></p>
-      <button class="btn-text" style="padding-left:0;" onclick="sharePlan()">↗ Compartir este plan</button>
-      <div style="display:flex; align-items:center; gap:10px; margin:16px 0 22px;">
+      <div class="plan-hero" id="plan-hero"></div>
+      <h1 class="plan-big-t serif" id="plan-big-title"></h1>
+      <p class="plan-meta" id="plan-meta"></p>
+      <p id="plan-subtitle" style="display:none;"></p>
+      <button class="btn btn-primary" style="width:100%;" id="plan-start-btn" onclick="startPlan()">Iniciar plan</button>
+      <div class="plan-sec-btns">
+        <button type="button" class="plan-sec-btn" id="plan-save-btn" onclick="togglePlanSaved(currentPlanId)">Guardar para más tarde</button>
+        <button type="button" class="plan-sec-btn" onclick="openPlanDay(0)">Ver el día 1</button>
+      </div>
+      <p class="plan-desc" id="plan-desc"></p>
+      <div style="display:flex; align-items:center; gap:10px; margin:22px 0 14px;">
         <div class="plan-progress-track"><div class="plan-progress-fill" id="plan-progress-fill"></div></div>
         <span id="plan-progress-label" style="font-size:13px; color:var(--sage-deep); font-weight:700; white-space:nowrap;"></span>
       </div>
       <div id="plan-days"></div>
+      <h3 class="plans-sec-t" style="margin-top:26px;">Planes relacionados</h3>
+      <div class="plan-row" id="plan-related" style="padding-left:0;"></div>
     </div>
     <div style="height:100px;"></div>
   </section>
@@ -3701,6 +3770,56 @@ const EXTRA_VERSES = [{"ref":"Mateo 6:25-27","text":"Por tanto os digo: No os co
                  days: ep.days.map(d=>d.ref), info: ep.days });
   });
 })();
+const PLAN_DESC = {
+  paz:"Siete versículos para los días en que la ansiedad no te deja quieto. Cada día es una pausa breve para respirar y recordar que no estás solo.",
+  jesus:"Un recorrido corto por las palabras de Jesús: consuelo, perdón y presencia. Siete días para escucharlo con calma.",
+  salmos:"Siete salmos para volver a respirar. Poesía antigua que sigue sirviendo hoy para el miedo, la alegría y el cansancio.",
+  lejos:"Para las temporadas en que Dios parece distante. Siete recordatorios, pensados para quien necesita volver a sentir su cercanía.",
+  ansiedad:"Siete días para soltar, poco a poco, lo que te quita la paz. Cada reflexión te invita a entregar una preocupación a la vez.",
+  fe:"Aprende a confiar aun cuando no ves. Siete pasos sencillos para fortalecer tu fe, con tus dudas incluidas.",
+  gratitud:"Una semana para entrenar la mirada agradecida. Cada día te invita a notar lo bueno que ya tienes, incluso en medio de lo difícil.",
+  proposito:"¿Para qué estoy aquí? Siete días para escuchar lo que Dios dice sobre tu vida, tus dones y tus etapas.",
+  oracion:"Orar no tiene que ser complicado. Siete días para aprender a conversar con Dios con sencillez y confianza.",
+  familia:"Siete días para orar por tu hogar y cuidar a los tuyos: la unidad, el perdón, los hijos y la bendición de casa.",
+  amor:"Qué dice la Biblia sobre amar de verdad. Siete días para practicar el amor que se nota en lo pequeño.",
+  perdon:"Perdonar es un camino, no un solo paso. Siete días para soltar el peso del rencor y recibir el perdón de Dios.",
+  duelo:"Siete palabras de consuelo para quien atraviesa una pérdida. Sin prisa y sin exigencias: solo compañía.",
+  fortaleza:"Para los días en que no tienes fuerzas. Siete recordatorios de que no tienes que sostenerte solo.",
+  miedo:"El miedo es humano; la valentía es caminar acompañado. Siete días con la presencia de Dios frente a lo que te asusta.",
+  sanidad:"Consuelo y esperanza en medio de la enfermedad. Siete días para entregar tu salud y descansar en Dios.",
+  sabiduria:"Siete consejos de Proverbios para vivir con prudencia: el corazón, las palabras, la amistad y la generosidad.",
+  esperanza:"Cuando la esperanza se apaga, Dios la vuelve a encender. Siete días para aprender a esperar de nuevo.",
+  descanso:"Aprender a parar sin culpa. Siete días para descansar de verdad: el cuerpo, la mente y el alma.",
+  jovenes:"Para quienes empiezan a construir una fe propia. Siete días sobre identidad, decisiones y propósito.",
+  juan:"Conoce a Jesús a través del Evangelio de Juan. Diez días con sus palabras clave: la luz, el pan, el pastor, el camino.",
+  bienaventuranzas:"Las palabras con las que Jesús empieza el Sermón del Monte. Siete días con las bienaventuranzas, una por una."
+};
+function planDesc(p){ return PLAN_DESC[p.id] || p.subtitle; }
+// estado de cada plan: guardado, empezado, terminado
+function plansSavedList(){ return load('here_plans_saved', []) || []; }
+function planIsSaved(id){ return plansSavedList().includes(id); }
+function planStartedMap(){ return load('here_plan_started', {}) || {}; }
+function planStatus(p){
+  const n = getPlanProgress(p.id).done.length;
+  if(n >= p.days.length) return 'done';
+  if(n > 0 || planStartedMap()[p.id]) return 'active';
+  return 'new';
+}
+function togglePlanSaved(id){
+  let l = plansSavedList();
+  l = l.includes(id) ? l.filter(x=>x!==id) : l.concat(id);
+  save('here_plans_saved', l);
+  haptic(10);
+  if(currentScreen==='planDetail') renderPlanDetail();
+  if(currentScreen==='planesAll') renderPlansAll();
+}
+function startPlan(){
+  const p = findPlan(currentPlanId); if(!p) return;
+  const m = planStartedMap(); if(!m[p.id]){ m[p.id] = Date.now(); save('here_plan_started', m); }
+  const prog = getPlanProgress(p.id);
+  let i = 0; while(i < p.days.length && prog.done.includes(i)) i++;
+  openPlanDay(i >= p.days.length ? 0 : i);
+}
 function planDayInfo(p,i){ return (p && p.info && p.info[i]) || null; }
 function planCoverBg(p, top, bottom){
   if(!p || !p.cover) return '';
@@ -4437,6 +4556,9 @@ function go(id, opts){
   if(id==='biblia') { renderBooks(); renderPlanRow(); renderBibliaContinue(); renderBibliaDevo(); document.getElementById('search-results').innerHTML=''; }
   if(id==='historialLecturas') renderHistorialLecturas();
   if(id==='planesAll') renderPlansAll();
+  if(id==='planDetail') renderPlanDetail();
+  if(id==='hoy') markTodayStep('verse');
+  if(id!=='devocional') stopDevoListen();
   if(id==='devocionales') renderDevocionales();
   if(id==='musicaGuardado') renderMusicaGuardado();
   if(id==='ob-sentir') renderObNeedGrid();
@@ -5186,30 +5308,69 @@ function renderPlanRow(){
   c.innerHTML = plansSorted().slice(0,10).map(x=>planCardHTML(x.p, x.n)).join('')
     + `<div class="plan-card plan-more" onclick="go('planesAll')" role="button" tabindex="0"><div class="emoji">＋</div><div class="t">Ver todos los planes</div><div class="s">${PLANS.length} planes</div></div>`;
 }
-let plansCat = 'Todos';
+let plansTab = 'find', plansCatFocus = null;
+function planRowHTML(p){
+  const st = planStatus(p), n = getPlanProgress(p.id).done.length, total = p.days.length;
+  const thumb = p.cover ? `<div class="plan-thumb" style="${planCoverBg(p,.0,.25)}"></div>` : `<div class="plan-card pc-${p.id} plan-thumb"></div>`;
+  const pill = st==='done' ? 'Repasar' : (st==='active' ? 'Seguir' : 'Inicio');
+  return `<div class="plan-list-card" onclick="openPlan('${p.id}')" role="button" tabindex="0">
+    ${thumb}
+    <div class="pl-body"><div class="m0">${total} días${st==='active'?` · ${n}/${total}`:''}${st==='done'?' · Completado ✓':''}</div><div class="t">${p.title}</div></div>
+    <span class="plan-pill${st==='active'?' on':''}">${pill}</span>
+  </div>`;
+}
 function renderPlansAll(){
-  const f = document.getElementById('plans-filter'), c = document.getElementById('plans-all-list');
-  if(!f || !c) return;
-  const cats = ['Todos'].concat([...new Set(PLANS.map(p=>p.cat))]);
-  f.innerHTML = cats.map(k=>`<button type="button" class="studio-chip${k===plansCat?' on':''}" onclick="plansCat='${k}'; renderPlansAll();">${k}</button>`).join('');
-  c.innerHTML = plansSorted().filter(x=>plansCat==='Todos' || x.p.cat===plansCat).map(({p,n})=>{
-    const total = p.days.length, done = n>=total;
-    const thumb = p.cover ? `<div class="plan-thumb" style="${planCoverBg(p,.0,.25)}"></div>` : `<div class="plan-card pc-${p.id} plan-thumb"></div>`;
-    return `<div class="plan-list-card" onclick="openPlan('${p.id}')" role="button" tabindex="0">
-      ${thumb}
-      <div class="pl-body"><div class="t">${p.title}</div><div class="s">${p.subtitle}</div>
-      <div class="m">${total} días${n>0 ? ' · '+(done?'Completado ✓':n+'/'+total) : ''} · ${p.cat}</div></div>
-    </div>`;
-  }).join('');
+  const tabs = document.getElementById('plans-filter'), c = document.getElementById('plans-all-list');
+  if(!tabs || !c) return;
+  const T = [['mine','Mis planes'],['find','Encontrar planes'],['saved','Guardado'],['done','Completado']];
+  tabs.innerHTML = T.map(([k,l])=>`<button type="button" class="plans-tab${k===plansTab?' on':''}" onclick="plansTab='${k}'; plansCatFocus=null; renderPlansAll();">${l}</button>`).join('');
+  const empty = (msg, btn)=>`<div class="empty"><div class="light-dot"></div>${msg}${btn?`<div style="margin-top:14px;"><button class="btn btn-ghost" onclick="plansTab='find'; renderPlansAll();">Encontrar un plan</button></div>`:''}</div>`;
+  if(plansTab==='mine'){
+    const list = PLANS.filter(p=>planStatus(p)==='active').map(p=>({p,n:getPlanProgress(p.id).done.length})).sort((a,b)=>b.n/b.p.days.length - a.n/a.p.days.length);
+    c.innerHTML = list.length ? list.map(({p,n})=>{
+      const total=p.days.length, pct=Math.round(n/total*100);
+      return `<div class="plan-mine" onclick="openPlan('${p.id}')" role="button" tabindex="0">
+        <div class="plan-mine-cover ${p.cover?'':'plan-card pc-'+p.id}" style="${p.cover?planCoverBg(p,.0,.45):''}"></div>
+        <div class="plan-mine-b"><div class="t">${p.title}</div><div class="s">Día ${Math.min(n+1,total)} de ${total}</div>
+        <div class="journey-prog"><div class="bar"><div class="bar-fill" style="width:${pct}%;"></div></div></div></div></div>`;
+    }).join('') : empty('Todavía no has empezado ningún plan.', true);
+    return;
+  }
+  if(plansTab==='saved'){
+    const list = PLANS.filter(p=>planIsSaved(p.id));
+    c.innerHTML = list.length ? list.map(planRowHTML).join('') : empty('Guarda planes para leerlos más tarde con “Guardar para más tarde”.', true);
+    return;
+  }
+  if(plansTab==='done'){
+    const list = PLANS.filter(p=>planStatus(p)==='done');
+    c.innerHTML = list.length ? list.map(planRowHTML).join('') : empty('Aquí aparecerán los planes que termines.', true);
+    return;
+  }
+  // Encontrar planes
+  const cats = [...new Set(PLANS.map(p=>p.cat))];
+  if(plansCatFocus){
+    c.innerHTML = `<button class="btn-text" style="padding-left:0;" onclick="plansCatFocus=null; renderPlansAll();">← Todas las categorías</button>
+      <h3 class="plans-sec-t">${plansCatFocus}</h3>` + PLANS.filter(p=>p.cat===plansCatFocus).map(planRowHTML).join('');
+    return;
+  }
+  const day = dayNumber();
+  const feat = PLANS.filter(p=>p.cover).sort((a,b)=> ((hashStr(a.id)+day)%997) - ((hashStr(b.id)+day)%997)).slice(0,5);
+  c.innerHTML = `
+    <div class="plan-feat-row">${feat.map(p=>`<div class="plan-feat" onclick="openPlan('${p.id}')" role="button" tabindex="0">
+      <div class="plan-feat-cover" style="${planCoverBg(p,.0,.5)}"><div class="plan-feat-t serif">${p.title}</div></div>
+      <div class="plan-feat-m">${p.days.length} días · ${p.cat}</div></div>`).join('')}</div>
+    <div class="plan-cat-tiles">${cats.map(k=>`<button type="button" class="plan-cat-tile" onclick="plansCatFocus='${k}'; renderPlansAll();">${k}</button>`).join('')}</div>
+    ${cats.map(k=>`<div class="plans-sec-h"><h3 class="plans-sec-t">${k}</h3><span class="sec-link" onclick="plansCatFocus='${k}'; renderPlansAll();">Ver todo ›</span></div>`
+      + PLANS.filter(p=>p.cat===k).slice(0,3).map(planRowHTML).join('')).join('')}`;
 }
 let currentPlanId = null;
 let currentPlanDayIdx = null;
+let planBackTo = 'biblia';
 function openPlan(id){
-  currentPlanId = id;
   const p = findPlan(id);
   if(!p) return;
-  document.getElementById('plan-title').textContent = p.title;
-  document.getElementById('plan-subtitle').textContent = p.subtitle;
+  planBackTo = (currentScreen==='planesAll' || currentScreen==='biblia' || currentScreen==='home') ? currentScreen : 'biblia';
+  currentPlanId = id;
   renderPlanDetail();
   history_stack.push('biblia');
   go('planDetail');
@@ -5218,18 +5379,36 @@ function renderPlanDetail(){
   const p = findPlan(currentPlanId);
   if(!p) return;
   const prog = getPlanProgress(p.id);
-  const pct = Math.round((prog.done.length / p.days.length) * 100);
+  const total = p.days.length, n = prog.done.length, pct = Math.round((n/total)*100);
+  const st = planStatus(p);
+  document.getElementById('plan-title').textContent = p.title;
+  document.getElementById('plan-subtitle').textContent = p.subtitle;
+  document.getElementById('plan-big-title').textContent = p.title;
+  document.getElementById('plan-meta').textContent = `${total} días · ${p.cat}`;
+  document.getElementById('plan-desc').textContent = planDesc(p);
+  const hero = document.getElementById('plan-hero');
+  hero.className = 'plan-hero' + (p.cover ? '' : ' plan-card pc-'+p.id);
+  hero.style.cssText = p.cover ? planCoverBg(p,.0,.35) : '';
+  hero.innerHTML = `<div class="plan-hero-in"><span class="plan-hero-emoji">${p.emoji}</span><div class="plan-hero-t serif">${p.title}</div></div>`;
+  const sb = document.getElementById('plan-start-btn');
+  let i = 0; while(i<total && prog.done.includes(i)) i++;
+  sb.textContent = st==='done' ? 'Repasar desde el día 1' : (st==='active' ? `Continuar · Día ${Math.min(i+1,total)}` : 'Iniciar plan');
+  sb.onclick = st==='done' ? ()=>openPlanDay(0) : startPlan;
+  const sv = document.getElementById('plan-save-btn');
+  sv.textContent = planIsSaved(p.id) ? 'Guardado ✓' : 'Guardar para más tarde';
+  sv.classList.toggle('on', planIsSaved(p.id));
   document.getElementById('plan-progress-fill').style.width = pct+'%';
-  document.getElementById('plan-progress-label').textContent = `${prog.done.length}/${p.days.length}`;
-  const c = document.getElementById('plan-days');
-  c.innerHTML = p.days.map((ref,i)=>{
-    const done = prog.done.includes(i);
-    return `<div class="plan-day-item ${done?'done':''}" onclick="openPlanDay(${i})">
-      <div class="plan-day-num">${done?'✓':(i+1)}</div>
-      <div><div class="plan-day-ref">Día ${i+1}${planDayInfo(p,i)?' · '+planDayInfo(p,i).t:''}</div><div style="font-size:12.5px; color:var(--ink-soft); margin-top:2px;">${ref}</div></div>
+  document.getElementById('plan-progress-label').textContent = `${n}/${total}`;
+  document.getElementById('plan-days').innerHTML = p.days.map((ref,k)=>{
+    const done = prog.done.includes(k);
+    return `<div class="plan-day-item ${done?'done':''}" onclick="openPlanDay(${k})">
+      <div class="plan-day-num">${done?'✓':(k+1)}</div>
+      <div><div class="plan-day-ref">Día ${k+1}${planDayInfo(p,k)?' · '+planDayInfo(p,k).t:''}</div><div style="font-size:12.5px; color:var(--ink-soft); margin-top:2px;">${ref}</div></div>
       <div class="plan-day-check">${done?'':'›'}</div>
     </div>`;
   }).join('');
+  const rel = PLANS.filter(x=>x.cat===p.cat && x.id!==p.id).concat(PLANS.filter(x=>x.cat!==p.cat && x.id!==p.id)).slice(0,6);
+  document.getElementById('plan-related').innerHTML = rel.map(x=>planCardHTML(x, getPlanProgress(x.id).done.length)).join('');
 }
 function openPlanDay(i){
   currentPlanDayIdx = i;
@@ -5273,6 +5452,7 @@ function openPlanDay(i){
 }
 function completePlanDay(){
   const p = findPlan(currentPlanId);
+  { const m = planStartedMap(); if(!m[p.id]){ m[p.id] = Date.now(); save('here_plan_started', m); } }
   const prog = getPlanProgress(p.id);
   if(!prog.done.includes(currentPlanDayIdx)){
     prog.done.push(currentPlanDayIdx);
@@ -6206,14 +6386,102 @@ function devoDoneMap(){ return load('here_devos_done', {}) || {}; }
 function devoIsDone(id){ return !!devoDoneMap()[id]; }
 function devoDoneToday(id){ const t = devoDoneMap()[id]; return !!t && new Date(t).toDateString()===new Date().toDateString(); }
 function devoPhotoTags(d){ const v = findVerse(d.ref); return (v && v.tags) || []; }
+/* ---- "Tu momento de hoy": 4 pasos sencillos (palabra, pasaje, devocional, oración) ---- */
+function todayStepsState(){
+  const st = load('here_today_steps', null);
+  const today = new Date().toDateString();
+  return (st && st.d===today) ? st : { d:today, s:{} };
+}
+function markTodayStep(k){
+  try{
+    const st = todayStepsState();
+    if(st.s[k]) return;
+    st.s[k] = 1; save('here_today_steps', st);
+    if(currentScreen==='biblia') renderBibliaDevo();
+  }catch(e){}
+}
+function devoPassage(d){
+  const m = d.ref.match(/^(.*)\s(\d+):/);
+  return m && BOOK_ORDER.includes(m[1]) ? { book:m[1], ch:parseInt(m[2],10) } : null;
+}
+function todayOpenPassage(){
+  const d = todayDevo(), ps = devoPassage(d);
+  if(!ps) return;
+  markTodayStep('passage');
+  openChapter(ps.book, ps.ch);
+}
+function todayOpenPrayer(){
+  const d = todayDevo();
+  markTodayStep('prayer');
+  go('orar');
+  const el = document.getElementById('orar-input');
+  if(el) el.value = d.p;
+}
+function todayOpenVerse(){ go('hoy'); }
 function renderBibliaDevo(){
   const c = document.getElementById('biblia-devo');
   if(!c) return;
-  const d = todayDevo();
-  c.innerHTML = `<div class="devo-card" id="devo-card-today" onclick="openDevocional('${d.id}','biblia')" role="button" tabindex="0">
-    <div class="devo-card-in"><div class="devo-eyebrow">${d.theme}${devoDoneToday(d.id)?' · Hecho hoy ✓':''}</div>
-    <div class="devo-card-t">${d.title}</div><div class="devo-card-r">${d.ref}</div></div></div>`;
-  try{ applyScenePhoto(document.getElementById('devo-card-today'), devoPhotoTags(d)); }catch(e){}
+  const d = todayDevo(), st = todayStepsState().s;
+  if(devoDoneToday(d.id)) st.devo = 1;
+  const ck = k => st[k] ? '<span class="ts-check on" aria-label="Hecho">✓</span>' : '<span class="ts-check"></span>';
+  const ps = devoPassage(d);
+  const doneCount = ['verse','passage','devo','prayer'].filter(k=>st[k]).length;
+  const ic = {
+    verse:'<path d="M5 19c2-6 6-11 14-14-1 7-5 12-11 14"/><path d="M5 19l6-6"/>',
+    passage:'<path d="M4 5c3-1.5 6-1.5 8 0v14c-2-1.5-5-1.5-8 0V5zM20 5c-3-1.5-6-1.5-8 0v14c2-1.5 5-1.5 8 0V5z"/>',
+    devo:'<path d="M5 5h14a1.5 1.5 0 011.5 1.5v8A1.5 1.5 0 0119 16h-8l-4.5 3.5V16H5a1.5 1.5 0 01-1.5-1.5v-8A1.5 1.5 0 015 5z"/>',
+    prayer:'<path d="M12 20c-3.5-1-5.5-4-5.5-7.5 0-2.5 1.5-5 3.5-8 1 1.5 2 3.5 2 6V20z"/><path d="M12 20c3.5-1 5.5-4 5.5-7.5 0-2.5-1.5-5-3.5-8-1 1.5-2 3.5-2 6"/>'
+  };
+  const svg = k => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${ic[k]}</svg>`;
+  c.innerHTML = `
+    <div class="today-card">
+      <div class="today-head"><span>Tu momento de hoy</span><b>${doneCount}/4</b></div>
+      <div class="today-row" onclick="todayOpenVerse()" role="button" tabindex="0">${svg('verse')}<span class="ts-l">Palabra del día</span><span class="ts-m">1 min</span>${ck('verse')}</div>
+      <div class="today-row" onclick="todayOpenPassage()" role="button" tabindex="0">${svg('passage')}<span class="ts-l">Pasaje${ps?` · ${ps.book} ${ps.ch}`:''}</span><span class="ts-m">3 min</span>${ck('passage')}</div>
+      <div class="today-devo">
+        <div class="today-devo-top">${svg('devo')}<span class="ts-l on">Devocional · ${d.theme}</span><span class="ts-m">5 min</span>${ck('devo')}</div>
+        <div class="today-devo-t serif">${d.title}</div>
+        <div class="today-devo-r">${d.ref}</div>
+        <div class="today-devo-btns">
+          <button type="button" class="today-btn" onclick="openDevocional('${d.id}','biblia'); setTimeout(devoListen, 350)">▶ Escuchar</button>
+          <button type="button" class="today-btn" onclick="openDevocional('${d.id}','biblia')">Leer</button>
+        </div>
+      </div>
+      <div class="today-row" onclick="todayOpenPrayer()" role="button" tabindex="0">${svg('prayer')}<span class="ts-l">Oración</span><span class="ts-m">1 min</span>${ck('prayer')}</div>
+    </div>`;
+}
+/* ---- escuchar el devocional en voz alta (voz del dispositivo) ---- */
+let devoSpeaking = false, devoQueue = [], devoPos = 0;
+function stopDevoListen(){
+  if(!devoSpeaking && !devoQueue.length) return;
+  devoSpeaking = false; devoQueue = []; devoPos = 0;
+  try{ window.speechSynthesis.cancel(); }catch(e){}
+  const b = document.getElementById('devo-listen-btn'); if(b) b.textContent = '▶ Escuchar';
+}
+function devoSpeakNext(){
+  if(!devoSpeaking || devoPos >= devoQueue.length){ const fin = devoSpeaking; stopDevoListen(); return; }
+  const it = devoQueue[devoPos];
+  const voice = pickActiveVoice();
+  const u = new SpeechSynthesisUtterance(it.text);
+  u.lang = voice ? voice.lang : 'es-ES';
+  if(voice){ try{ u.voice = voice; }catch(e){} }
+  u.rate = readerVoiceRate; u.pitch = 1;
+  u.onend = ()=>{ devoPos++; if(devoSpeaking) setTimeout(devoSpeakNext, it.pause||0); };
+  u.onerror = ()=>stopDevoListen();
+  window.speechSynthesis.speak(u);
+}
+function devoListen(){
+  if(devoSpeaking){ stopDevoListen(); return; }
+  if(!('speechSynthesis' in window)){ showHereToast('Tu dispositivo no soporta lectura en voz alta'); return; }
+  const d = findDevo(currentDevoId); if(!d) return;
+  const v = findVerse(d.ref);
+  const parts = [d.title, v ? v.text : '', d.ref, d.r, 'Oración', d.p];
+  window.speechSynthesis.cancel();
+  devoQueue = []; parts.forEach(t=>{ if(t) splitIntoSpeechChunks(t).forEach(c=>devoQueue.push({text:c.text, pause:Math.max(c.pause,200)})); devoQueue.push({text:'.', pause:500}); });
+  devoQueue = devoQueue.filter(x=>x.text!=='.' || false);
+  devoPos = 0; devoSpeaking = true;
+  const b = document.getElementById('devo-listen-btn'); if(b) b.textContent = '❚❚ Pausar';
+  devoSpeakNext();
 }
 function openDevocional(id, from){
   const d = findDevo(id); if(!d) return;
@@ -6225,6 +6493,7 @@ function openDevocional(id, from){
     <p class="devo-verse serif" id="devo-verse">“${hereEsc(v.text)}”</p>
     <p class="devo-ref">${d.ref}</p></div>`;
   renderDevoBody();
+  stopDevoListen();
   go('devocional');
   try{ applyScenePhoto(stage, devoPhotoTags(d)); }catch(e){}
   if(v && !v._rvr60){ resolveVerseText(v).then(()=>{ const el = document.getElementById('devo-verse'); if(el && currentDevoId===id) el.textContent = '“'+v.text+'”'; }); }
@@ -6234,6 +6503,7 @@ function renderDevoBody(){
   const done = devoDoneToday(d.id);
   const refEsc = d.ref.replace(/'/g,"\\'");
   document.getElementById('devo-body').innerHTML = `
+    <button type="button" class="btn btn-ghost" id="devo-listen-btn" style="width:100%; margin:4px 0 0;" onclick="devoListen()">▶ Escuchar</button>
     <h3 class="devo-h">Reflexión</h3>
     <p class="devo-p">${d.r}</p>
     <h3 class="devo-h">Oración</h3>
@@ -6254,7 +6524,7 @@ function devoSaveVerse(){ const d = findDevo(currentDevoId); if(!d) return; togg
 function completeDevo(){
   const d = findDevo(currentDevoId); if(!d) return;
   const m = devoDoneMap(); m[d.id] = Date.now(); save('here_devos_done', m);
-  haptic(16); playChime(); renderDevoBody(); showHereToast('Un momento más con Dios 🕊️');
+  haptic(16); playChime(); markTodayStep('devo'); renderDevoBody(); showHereToast('Un momento más con Dios 🕊️');
 }
 function renderDevocionales(){
   const f = document.getElementById('devo-filter'), c = document.getElementById('devo-all-list');
