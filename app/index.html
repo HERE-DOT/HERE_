@@ -1001,6 +1001,57 @@
   }
   .home-action-ic svg{ width:18px; height:18px; }
 
+  /* Versículo del día: imagen arriba + panel crema debajo (frase que lo
+     explica y tres acciones), en una sola tarjeta redondeada. */
+  .hoy-block{ margin:14px 24px 18px; border-radius:26px; overflow:hidden; background:var(--card); border:1px solid var(--line); box-shadow:var(--shadow-sm); }
+  #home .hoy-block .feature-card.hoy-scene{ margin:0; border:none; border-radius:0; box-shadow:none; }
+  .hoy-panel{ padding:18px 18px 18px; }
+  .hoy-panel-summary{ margin:0 2px 14px; font-size:15px; line-height:1.55; color:var(--ink); }
+  .hoy-panel-summary:empty{ display:none; }
+  .hoy-panel-actions{ display:flex; gap:8px; }
+  .hoy-panel-actions button{
+    flex:1; min-width:0; display:flex; align-items:center; justify-content:center; gap:7px;
+    padding:13px 6px; border-radius:16px; border:1px solid var(--line); cursor:pointer;
+    background:color-mix(in srgb, var(--bg-warm) 45%, var(--card)); color:var(--ink);
+    font-family:'Manrope', sans-serif; font-size:13.5px; font-weight:600; transition:transform .15s ease, background .15s ease;
+  }
+  .hoy-panel-actions button:hover{ background:color-mix(in srgb, var(--bg-warm) 80%, var(--card)); }
+  .hoy-panel-actions button:active{ transform:scale(0.97); }
+  .hoy-panel-actions button:focus-visible{ outline:2px solid var(--sage-deep); outline-offset:2px; }
+  .hoy-panel-actions svg{ width:18px; height:18px; flex:none; color:var(--sage-surface-ink); }
+
+  /* Continúa tu recorrido */
+  .home-h2{ font-size:22px; font-weight:500; margin:30px 24px 14px; color:var(--ink); }
+  .journey-row{ display:flex; gap:14px; overflow-x:auto; padding:2px 24px 14px; scrollbar-width:none; -webkit-overflow-scrolling:touch; scroll-snap-type:x proximity; scroll-padding-left:24px; }
+  .journey-row::-webkit-scrollbar{ display:none; }
+  .journey-card{
+    flex:0 0 calc(50% - 7px); min-width:150px; scroll-snap-align:start; display:flex; flex-direction:column;
+    border-radius:22px; overflow:hidden; background:var(--card); border:1px solid var(--line);
+    box-shadow:var(--shadow-sm); cursor:pointer; transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .journey-card:hover{ box-shadow:var(--shadow-md); }
+  .journey-card:active{ transform:scale(0.98); }
+  .journey-card:focus-visible{ outline:2px solid var(--sage-deep); outline-offset:3px; }
+  .plan-card.journey-cover{ position:relative; width:100%; min-height:0; height:112px; padding:0; border-radius:0; box-shadow:none; cursor:inherit; flex:none; }
+  .plan-card.journey-cover:active{ transform:none; }
+  .journey-badge{
+    position:absolute; left:10px; bottom:10px; padding:4px 10px; border-radius:10px;
+    background:rgba(20,18,14,0.62); color:#fff; font-size:12px; font-weight:600; font-family:'Manrope', sans-serif;
+  }
+  .journey-body{ padding:14px 14px 16px; display:flex; flex-direction:column; gap:5px; flex:1; }
+  .journey-body .t{ font-family:'Fraunces', serif; font-size:16.5px; font-weight:500; line-height:1.25; color:var(--ink); }
+  .journey-body .s{ font-size:12.5px; line-height:1.4; color:var(--ink-soft); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .journey-prog{ margin-top:auto; padding-top:6px; }
+  .journey-prog .bar{ height:5px; border-radius:4px; background:var(--line); overflow:hidden; }
+  .journey-prog .bar-fill{ height:100%; background:var(--gold-grad); border-radius:4px; }
+  .journey-prog .lbl{ font-size:11.5px; color:var(--sage-surface-ink); font-weight:600; margin-top:6px; }
+  @media (min-width:900px){
+    .hoy-block, .journey-wrap{ width:100%; max-width:812px; margin-left:auto; margin-right:auto; }
+    .journey-wrap .home-h2{ margin-left:0; margin-right:0; }
+    .journey-row{ padding-left:0; padding-right:0; }
+    .journey-card{ flex:0 0 220px; }
+  }
+
   /* ---------- textarea / inputs ---------- */
   textarea, input[type=text], input[type=email], input[type=password]{
     width:100%; border-radius:16px; border:1px solid var(--line); background:var(--card);
@@ -2144,6 +2195,7 @@
 
     <!-- La palabra de hoy: el elemento con más peso visual de la pantalla,
          a propósito — lo primero que se lee después del saludo. -->
+    <div class="hoy-block">
     <div class="feature-card hoy-scene" id="home-hoy-card" style="align-items:flex-start; cursor:pointer;">
       <div class="hoy-scene-eyebrow" id="home-hoy-eyebrow">Tu palabra de hoy</div>
       <div class="hoy-scene-verse serif" id="home-hoy-verse"></div>
@@ -2157,6 +2209,13 @@
         <button onclick="event.stopPropagation(); goHomeMoodListen()">🎧 Escuchar</button>
         <button onclick="event.stopPropagation(); prefillOrar(document.getElementById('home-hoy-card').dataset.ref)">🙏 Orar</button>
       </div>
+    </div>
+    <!-- Panel bajo la imagen: una frase que explica el versículo en lenguaje
+         sencillo + tres acciones. Lo pinta setHomeHoyCard()/renderHomeHoyPanel(). -->
+    <div class="hoy-panel" id="home-hoy-panel">
+      <p class="hoy-panel-summary" id="home-hoy-summary"></p>
+      <div class="hoy-panel-actions" id="home-hoy-panel-actions"></div>
+    </div>
     </div>
 
     <!-- Tu camino: progreso personal como continuidad espiritual, no como
@@ -2185,6 +2244,13 @@
       </button>
     </div>
 
+    <!-- Continúa tu recorrido: los planes de lectura como tarjetas con portada.
+         Primero los que ya empezaste, luego los que no (renderHomePlanContinue). -->
+    <div class="journey-wrap">
+      <h2 class="home-h2 serif" id="home-journey-title">Continúa tu recorrido</h2>
+      <div class="journey-row" id="home-journey-row"></div>
+    </div>
+
     <!-- Solo tres puertas discretas, al mismo nivel — nada de tarjetas
          grandes ni fondos de color compitiendo entre sí. -->
     <div class="list-card home-action" onclick="startNecesitoPalabra()">
@@ -2209,12 +2275,6 @@
       <span style="color:var(--ink-soft); flex:none;">→</span>
     </div>
 
-    <!-- Todo lo demás queda al final, deliberadamente secundario: si hay un
-         plan en curso, aquí. El acceso a "Tu camino" ya vive arriba, en su
-         propia tarjeta — no se repite aquí para no tener dos accesos al
-         mismo lugar. -->
-    <div class="section-title" id="home-plan-title" style="display:none; margin-top:var(--sp-7);">Continúa tu plan</div>
-    <div class="container" id="home-plan-continue" style="display:none; padding-top:0; padding-bottom:18px;"></div>
   </section>
 
   <!-- SENTIR -->
@@ -4253,7 +4313,8 @@ function setHomeHoyCard(v, eyebrow, tag, isMood){
   hoyCard.dataset.ref = v.ref;
   hoyCard.onclick = isMood ? ()=>openPalabraFromRef(v.ref) : ()=>go('hoy');
   document.getElementById('home-hoy-actions').style.display = isMood ? 'none' : '';
-  document.getElementById('home-hoy-mood-actions').style.display = isMood ? '' : 'none';
+  document.getElementById('home-hoy-mood-actions').style.display = 'none'; // ahora viven en el panel de abajo
+  renderHomeHoyPanel(v, isMood);
   const saveBtn = hoyCard.querySelector('#home-hoy-actions button:last-child');
   if(saveBtn) saveBtn.textContent = isSaved(v.ref) ? '♥ Guardado' : '♡ Guardar';
   if(!v._rvr60){
@@ -4263,6 +4324,56 @@ function setHomeHoyCard(v, eyebrow, tag, isMood){
       }
     });
   }
+}
+/* ---- panel bajo "Tu palabra de hoy": frase que explica el versículo + acciones ---- */
+const HOME_PANEL_ICONS = {
+  reflexion:'<path d="M4 20h4L18.5 9.5a2.1 2.1 0 000-3l-1-1a2.1 2.1 0 00-3 0L4 16v4z"/><path d="M13 7l4 4"/>',
+  leer:'<path d="M4 5c3-1.5 6-1.5 8 0v14c-2-1.5-5-1.5-8 0V5zM20 5c-3-1.5-6-1.5-8 0v14c2-1.5 5-1.5 8 0V5z"/>',
+  explicar:'<path d="M12 3.5l1.8 4.7 4.7 1.8-4.7 1.8L12 16.5l-1.8-4.7L5.5 10l4.7-1.8L12 3.5z"/><path d="M18.5 15.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7.7-1.8z"/>',
+  escuchar:'<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
+  orar:'<path d="M12 21s-7-4.5-7-10a4 4 0 017-2.6A4 4 0 0119 11c0 5.5-7 10-7 10z"/>'
+};
+function homePanelBtn(action, label){
+  return `<button type="button" onclick="homeHoyAction('${action}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${HOME_PANEL_ICONS[action]}</svg>${label}</button>`;
+}
+function renderHomeHoyPanel(v, isMood){
+  const box = document.getElementById('home-hoy-panel-actions');
+  if(!box) return;
+  box.innerHTML = isMood
+    ? homePanelBtn('leer','Leer') + homePanelBtn('escuchar','Escuchar') + homePanelBtn('orar','Orar')
+    : homePanelBtn('reflexion','Reflexión') + homePanelBtn('leer','Leer') + homePanelBtn('explicar','Explicar');
+  renderHomeVerseSummary(v, isMood);
+}
+function homeHoyAction(action){
+  const ref = document.getElementById('home-hoy-card').dataset.ref;
+  const v = findVerse(ref);
+  if(action==='reflexion') openReflectionEditor(ref, (v && v.text) || '');
+  else if(action==='leer') openPalabraFromRef(ref);
+  else if(action==='explicar') openEntender(ref);
+  else if(action==='escuchar') goHomeMoodListen();
+  else if(action==='orar') prefillOrar(ref);
+}
+// La frase breve que explica el versículo la escribe la IA de HERE una vez
+// por versículo y se guarda en este dispositivo (here_verse_summaries). Si la
+// IA no está disponible, se queda con una línea neutra — nunca se inventa
+// una explicación por cuenta propia.
+const homeSummaryFailed = new Set();
+async function renderHomeVerseSummary(v, isMood){
+  const el = document.getElementById('home-hoy-summary');
+  if(!el) return;
+  const stored = load('here_verse_summaries', {});
+  if(stored[v.ref]){ el.textContent = stored[v.ref]; return; }
+  el.textContent = isMood ? 'Una palabra para este momento.' : 'Una palabra para acompañar tu día.';
+  if(homeSummaryFailed.has(v.ref)) return;
+  try{
+    const r = await claudeSample(`Resume en UNA sola frase corta (máximo 18 palabras), en español sencillo y cálido, lo que comunica este versículo. Sin comillas y sin citar la referencia.\n\n${v.ref}: ${v.text}`);
+    const t = (r.text||'').trim().replace(/^["“«]+|["”»]+$/g,'');
+    if(!t || t.length>220) throw new Error('resumen no válido');
+    const all = load('here_verse_summaries', {});
+    all[v.ref] = t; save('here_verse_summaries', all);
+    const card = document.getElementById('home-hoy-card');
+    if(card && card.dataset.ref===v.ref) el.textContent = t;
+  }catch(e){ homeSummaryFailed.add(v.ref); }
 }
 function applyHomeTodayVerse(){
   const today = pickTodayVerse();
@@ -4341,33 +4452,27 @@ function renderHomeCamino(){
       <div class="camino-home-caption">Abrir</div>`;
   }
 }
+// Continúa tu recorrido: planes de lectura como tarjetas con portada. Los
+// que ya empezaste van primero (más avanzados antes), luego los nuevos, y
+// los terminados al final. Reutiliza PLANS / getPlanProgress / openPlan.
 function renderHomePlanContinue(){
-  const wrap = document.getElementById('home-plan-continue');
-  const title = document.getElementById('home-plan-title');
-  if(!wrap || !title) return;
-  let best = null, bestPct = -1;
-  PLANS.forEach(p=>{
-    const prog = getPlanProgress(p.id);
-    if(prog.done.length > 0 && prog.done.length < p.days.length){
-      const pct = prog.done.length / p.days.length;
-      if(pct > bestPct){ bestPct = pct; best = {p, prog}; }
-    }
-  });
-  if(!best){ wrap.style.display='none'; title.style.display='none'; wrap.innerHTML=''; return; }
-  const { p, prog } = best;
-  const pct = Math.round((prog.done.length / p.days.length) * 100);
-  wrap.style.display = 'block';
-  title.style.display = 'block';
-  wrap.innerHTML = `
-    <div class="plan-continue" onclick="openPlan('${p.id}')">
-      <div class="emoji">${p.emoji}</div>
-      <div style="flex:1;">
-        <div class="t" style="font-size:15px; font-weight:600;">${p.title}</div>
-        <div class="s">Día ${prog.done.length + 1} de ${p.days.length}</div>
-        <div class="bar"><div class="bar-fill" style="width:${pct}%;"></div></div>
-      </div>
-      <div class="arrow-circle" style="background:var(--beige);">→</div>
+  const wrap = document.getElementById('home-journey-row');
+  if(!wrap) return;
+  const items = PLANS.map((p,idx)=>{
+    const n = getPlanProgress(p.id).done.length;
+    const total = p.days.length;
+    const rank = (n>0 && n<total) ? 0 : (n>=total ? 2 : 1);
+    return { p, n, total, rank, pct:Math.round(n/total*100), idx };
+  }).sort((a,b)=> a.rank-b.rank || (a.rank===0 ? b.pct-a.pct : a.idx-b.idx));
+  wrap.innerHTML = items.map(({p,n,total,rank,pct})=>{
+    const prog = rank===0
+      ? `<div class="journey-prog"><div class="bar"><div class="bar-fill" style="width:${pct}%;"></div></div><div class="lbl">Día ${n+1} de ${total}</div></div>`
+      : rank===2 ? `<div class="journey-prog"><div class="lbl">Completado ✓</div></div>` : '';
+    return `<div class="journey-card" onclick="openPlan('${p.id}')" aria-label="${p.title}${rank===0?`, día ${n+1} de ${total}`:''}">
+      <div class="plan-card pc-${p.id} journey-cover"><span class="journey-badge">${total} días</span></div>
+      <div class="journey-body"><div class="t">${p.title}</div><div class="s">${p.subtitle}</div>${prog}</div>
     </div>`;
+  }).join('');
 }
 function startHomeQuedarme(){
   currentPalabraVerse = pickTodayVerse();
