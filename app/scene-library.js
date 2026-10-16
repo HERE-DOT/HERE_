@@ -45,4 +45,53 @@ window.SCENE_LIBRARY = [
   { id:'photo-1418065460487-3e41a6c84dc5', w:['fog','clouds','rain'], m:['tristeza','duelo','soledad'], note:'bosque con niebla' },
   { id:'photo-1441829266145-5a7f74e46ca7', w:['clear'], t:['dawn','day'], m:['esperanza','fe','propósito'], note:'luz entre los árboles' },
   { id:'photo-1507525428034-b723cf961d3e', w:['clear'], t:['day'], m:['alegría','gratitud'], note:'playa' },
+  // --- por revisar (segunda tanda, de memoria) ---
+  // amaneceres y atardeceres
+  { id:'photo-1494548162494-384bba4ab999', w:['clear','clouds'], t:['dawn','dusk'], m:['esperanza','gratitud','paz'], note:'cielo al amanecer' },
+  { id:'photo-1507400492013-162706c8c05e', w:['clear','clouds'], t:['dusk','dawn'], m:['gratitud','paz','fe'], note:'atardecer en las montañas' },
+  { id:'photo-1490730141103-6cac27aaab94', w:['clear','clouds'], t:['dusk'], m:['gratitud','paz','descanso'], note:'atardecer en el campo' },
+  { id:'photo-1475924156734-496f6cac6ec1', w:['clear','clouds'], t:['dusk'], m:['gratitud','esperanza'], note:'atardecer sobre el mar' },
+  { id:'photo-1504701954957-2010ec3bcec1', w:['clear','clouds'], t:['dawn'], m:['esperanza','propósito','ánimo'], note:'amanecer en las montañas' },
+  { id:'photo-1500530855697-b586d89ba3ee', w:['clear','clouds'], t:['dusk','dawn'], m:['paz','gratitud','alegría'], note:'cielo dorado' },
+  // montañas y valles
+  { id:'photo-1506905925346-21bda4d32df4', w:['clear','clouds'], t:['day','dawn'], m:['fortaleza','dirección','fe'], note:'cumbres sobre las nubes' },
+  { id:'photo-1464822759023-fed622ff2c3b', w:['clear'], t:['day'], m:['fortaleza','propósito','ánimo'], note:'montaña imponente' },
+  { id:'photo-1472396961693-142e6e269027', w:['clear','clouds'], t:['day','dawn'], m:['paz','descanso','familia'], note:'venado en la pradera' },
+  { id:'photo-1470770841072-f978cf4d019e', w:['clear','clouds'], t:['day','dawn'], m:['paz','descanso','familia'], note:'lago y cabaña' },
+  { id:'photo-1426604966848-d7adac402bff', w:['clear','clouds'], t:['day'], m:['paz','esperanza','sanidad'], note:'lago y bosque' },
+  { id:'photo-1439066615861-d1af74d74000', w:['clear','clouds'], t:['day'], m:['paz','ansiedad','descanso'], note:'lago tranquilo' },
+  { id:'photo-1476610182048-b716b8518aae', w:['clear'], t:['day'], m:['dirección','fortaleza','fe'], note:'valle con montañas' },
+  // bosque y naturaleza
+  { id:'photo-1447752875215-b2761acb3c5d', w:['clear','clouds'], t:['day'], m:['dirección','esperanza','paz'], note:'camino en el bosque' },
+  { id:'photo-1448375240586-882707db888b', w:['clear'], t:['dawn','day'], m:['esperanza','fe','gratitud'], note:'rayos de luz en el bosque' },
+  { id:'photo-1473448912268-2022ce9509d8', w:['clear','clouds'], t:['day'], m:['paz','sanidad','descanso'], note:'bosque verde' },
+  { id:'photo-1502082553048-f009c37129b9', w:['clear','clouds'], t:['day'], m:['paz','esperanza','fortaleza'], note:'árboles altos' },
+  { id:'photo-1465146344425-f00d5f5c8f07', w:['clear','clouds'], t:['day'], m:['alegría','gratitud','sanidad'], note:'campo de flores' },
+  { id:'photo-1490750967868-88aa4486c946', w:['clear','clouds'], t:['day'], m:['alegría','sanidad','familia'], note:'flores' },
+  // mar y agua
+  { id:'photo-1507090960745-b32f65d3113a', w:['clear','clouds'], t:['day'], m:['paz','ansiedad','descanso'], note:'olas del mar' },
+  { id:'photo-1519046904884-53103b34b206', w:['clear'], t:['day'], m:['alegría','descanso','gratitud'], note:'playa tranquila' },
+  { id:'photo-1473116763249-2faaef81ccda', w:['clear'], t:['day'], m:['alegría','gratitud','descanso'], note:'costa y cielo' },
+  // lluvia y tormenta
+  { id:'photo-1428592953211-077101b2021b', w:['rain'], m:['tristeza','duelo','soledad','ansiedad'], note:'lluvia en la ventana' },
+  { id:'photo-1515694346937-94d85e41e6f0', w:['rain'], m:['tristeza','soledad','duelo'], note:'día de lluvia' },
+  { id:'photo-1503435824048-a799a3a84bf7', w:['rain','storm'], m:['miedo','ansiedad','fortaleza'], note:'cielo de tormenta' },
+  { id:'photo-1527482797697-8795b05a13fe', w:['storm'], m:['miedo','fortaleza','fe'], note:'tormenta con relámpagos' },
+  { id:'photo-1492011221367-f47e3ccd77a0', w:['storm'], t:['dusk','night'], m:['miedo','fortaleza','fe'], note:'relámpago en la noche' },
+  // niebla
+  { id:'photo-1477346611705-65d1883cee1e', w:['fog','clouds'], m:['paz','ansiedad','soledad'], note:'montañas con niebla' },
+  { id:'photo-1542273917363-3b1817f69a2d', w:['fog'], m:['paz','soledad','duelo'], note:'bosque con bruma' },
+  { id:'photo-1425913397330-cf8af2ff40a1', w:['fog','clouds'], m:['paz','descanso','tristeza'], note:'lago entre la niebla' },
+  { id:'photo-1511884642898-4c92249e20b6', w:['fog','clouds'], m:['paz','soledad','esperanza'], note:'montañas y lago en bruma' },
+  // nieve
+  { id:'photo-1483728642387-6c3bdd6c93e5', w:['snow'], m:['paz','descanso','fe'], note:'montaña nevada' },
+  { id:'photo-1418985991508-e47386d96a71', w:['snow'], m:['paz','soledad','descanso'], note:'bosque con nieve' },
+  { id:'photo-1477601263568-180e2c6d046e', w:['snow'], m:['paz','fe','esperanza'], note:'paisaje nevado' },
+  { id:'photo-1486870591958-9b9d0d1dda99', w:['snow'], m:['soledad','paz','descanso'], note:'invierno' },
+  // noche y estrellas
+  { id:'photo-1483977399921-6cf94f6fdc3a', w:['clear'], t:['night'], m:['miedo','soledad','fe','no puedo dormir'], note:'cielo estrellado' },
+  { id:'photo-1532978379173-523e16f371f2', w:['clear'], t:['night'], m:['fe','paz','soledad'], note:'estrellas' },
+  { id:'photo-1464802686167-b939a6910659', w:['clear'], t:['night'], m:['fe','adoración','paz'], note:'vía láctea' },
+  { id:'photo-1419242902214-272b3f66ee7a', w:['clear'], t:['night'], m:['fe','no puedo dormir','paz'], note:'noche de estrellas' },
+  { id:'photo-1444703686981-a3abbc4d4fe3', w:['clear'], t:['night'], m:['fe','adoración','esperanza'], note:'cielo nocturno' },
 ];
