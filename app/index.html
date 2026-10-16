@@ -16,7 +16,7 @@
 <meta name="apple-mobile-web-app-title" content="HERE">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400;1,9..144,500&family=Manrope:wght@400;500;600;700&family=Petit+Formal+Script&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400;1,9..144,500&family=Manrope:wght@400;500;600;700&family=Anton&family=Petit+Formal+Script&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg: #FAF7F0;
@@ -654,6 +654,56 @@
   .camino-icon.sage{background:rgba(126,169,133,0.18); color:var(--sage-deep);}
   .list-card .lc-left{display:flex; align-items:center; gap:14px; min-width:0;}
 
+  /* ---------- planes ampliados + devocionales ---------- */
+  .section-title .sec-link{ margin-left:auto; font-size:12.5px; font-weight:600; letter-spacing:0; text-transform:none; color:var(--sage-deep); cursor:pointer; }
+  .plan-card.plan-more{ background:var(--card); color:var(--ink); border:1.5px dashed var(--line); box-shadow:none; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; }
+  .plan-card.plan-more .emoji{ filter:none; color:var(--sage-deep); }
+  .plan-card.plan-more .t, .plan-card.plan-more .s{ text-shadow:none; }
+  .plan-list-card{ display:flex; gap:14px; align-items:center; padding:12px; border-radius:20px; background:var(--card); border:1px solid var(--line); box-shadow:var(--shadow-sm); cursor:pointer; }
+  .plan-list-card:active{ transform:scale(.985); }
+  .plan-thumb{ flex:0 0 84px; width:84px !important; min-height:84px !important; height:84px; border-radius:16px; padding:0 !important; box-shadow:none !important; background-size:cover; }
+  .plan-list-card .pl-body{ min-width:0; }
+  .plan-list-card .t{ font-family:'Fraunces',serif; font-size:16.5px; font-weight:500; line-height:1.25; }
+  .plan-list-card .s{ font-size:13px; color:var(--ink-soft); margin-top:3px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .plan-list-card .m{ font-size:12px; color:var(--sage-surface-ink); font-weight:600; margin-top:6px; }
+  .plan-extra{ margin:4px 0 16px; }
+  .plan-extra:empty{ display:none; }
+  .plan-x-t{ font-size:21px; font-weight:500; margin:18px 0 8px; }
+  .plan-x-r{ font-size:15.5px; line-height:1.7; color:var(--ink); margin:0; }
+  .plan-x-q{ margin-top:14px; padding:14px 16px; border-radius:16px; background:var(--sage-surface); border:1px solid var(--sage-surface-line); font-size:14.5px; line-height:1.5; color:var(--sage-surface-ink); }
+  .plan-x-q span{ display:block; font-size:11.5px; font-weight:700; letter-spacing:.5px; text-transform:uppercase; opacity:.75; margin-bottom:4px; }
+  .devo-card{ position:relative; min-height:150px; border-radius:24px; overflow:hidden; cursor:pointer; background:linear-gradient(160deg,#F1C9A0,#C98A7A 50%,#4D4668); box-shadow:var(--shadow-md); display:flex; align-items:flex-end; color:#fff; }
+  .devo-card::before{ content:''; position:absolute; inset:0; background:linear-gradient(180deg,rgba(15,12,8,.05),rgba(15,12,8,.72)); }
+  .devo-card-in{ position:relative; padding:18px 20px; }
+  .devo-eyebrow{ font-size:12px; font-weight:700; letter-spacing:.6px; text-transform:uppercase; opacity:.9; }
+  .devo-card-t{ font-family:'Fraunces',serif; font-size:23px; line-height:1.2; margin-top:6px; text-shadow:0 1px 10px rgba(0,0,0,.35); }
+  .devo-card-r{ font-size:13px; opacity:.9; margin-top:4px; }
+  .devo-stage{ position:relative; margin:4px 24px 0; min-height:270px; border-radius:26px; overflow:hidden; color:#fff; display:flex; align-items:flex-end; background:linear-gradient(160deg,#F1C9A0,#C98A7A 50%,#4D4668); box-shadow:var(--shadow-md); }
+  .devo-stage::before{ content:''; position:absolute; inset:0; background:linear-gradient(180deg,rgba(15,12,8,.2),rgba(15,12,8,.78)); }
+  .devo-stage-in{ position:relative; padding:26px 24px; }
+  .devo-title{ font-size:27px; font-weight:500; line-height:1.2; margin:6px 0 12px; text-shadow:0 1px 12px rgba(0,0,0,.4); }
+  .devo-verse{ font-size:17px; font-style:italic; line-height:1.55; margin:0; text-shadow:0 1px 10px rgba(0,0,0,.4); }
+  .devo-ref{ font-size:12.5px; letter-spacing:1.4px; text-transform:uppercase; opacity:.9; margin:10px 0 0; }
+  .devo-h{ font-size:12px; font-weight:700; letter-spacing:.6px; text-transform:uppercase; color:var(--ink-soft); margin:22px 0 8px; }
+  .devo-p{ font-size:16px; line-height:1.7; margin:0; }
+  .devo-prayer{ font-size:17px; font-style:italic; line-height:1.6; padding:16px 18px; border-radius:18px; background:var(--sage-surface); border:1px solid var(--sage-surface-line); color:var(--sage-surface-ink); }
+  .devo-actions{ display:flex; flex-wrap:wrap; gap:8px; margin-top:16px; }
+  .journey-cover.resume-devo{ background-image:linear-gradient(150deg,#F1C9A0,#C98A7A 60%,#7A5A78); }
+  @media (min-width:900px){ .devo-stage{ max-width:812px; margin-left:auto; margin-right:auto; width:calc(100% - 0px); } }
+
+  /* ---------- estudio de imágenes para compartir ---------- */
+  .studio-canvas{ display:block; width:auto; max-width:100%; max-height:38vh; margin:0 auto 14px; border-radius:16px; box-shadow:var(--shadow-md); background:var(--beige); }
+  .studio-lbl{ font-size:12px; font-weight:700; letter-spacing:.5px; text-transform:uppercase; color:var(--ink-soft); margin:12px 0 7px; }
+  .studio-row{ display:flex; gap:8px; flex-wrap:wrap; }
+  .studio-chip{ border:1px solid var(--line); background:var(--card); color:var(--ink); border-radius:999px; padding:8px 14px; font-size:13.5px; font-family:inherit; cursor:pointer; }
+  .studio-chip.on{ background:var(--sage-deep); color:#fff; border-color:var(--sage-deep); }
+  .studio-input{ width:100%; box-sizing:border-box; border:1px solid var(--line); background:var(--card); color:var(--ink); border-radius:14px; padding:11px 14px; font-size:15px; font-family:inherit; }
+  .studio-strip{ display:flex; gap:8px; overflow-x:auto; padding:2px 2px 8px; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
+  .studio-strip::-webkit-scrollbar{ display:none; }
+  .studio-th{ flex:0 0 68px; height:68px; border-radius:14px; border:2px solid transparent; background:var(--beige) center/cover no-repeat; cursor:pointer; padding:0; font-size:11px; color:var(--ink-soft); font-family:inherit; }
+  .studio-th.on{ border-color:var(--sage-deep); box-shadow:0 0 0 2px var(--bg) inset; }
+  .studio-th.none{ display:flex; align-items:center; justify-content:center; text-align:center; line-height:1.2; }
+
   /* ---------- verse-of-day home card with scene photo ----------
      Es el elemento con más peso visual del Home a propósito: mucho
      aire interno, tipografía editorial cómoda de leer, y los controles
@@ -1075,6 +1125,10 @@
   .journey-card:focus-visible{ outline:2px solid var(--sage-deep); outline-offset:3px; }
   .plan-card.journey-cover{ position:relative; width:100%; min-height:0; height:112px; padding:0; border-radius:0; box-shadow:none; cursor:inherit; flex:none; }
   .plan-card.journey-cover:active{ transform:none; }
+  .journey-cover.resume{ position:relative; width:100%; height:112px; flex:none; display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,.95); background-size:cover; background-position:center; }
+  .journey-cover.resume svg{ width:34px; height:34px; filter:drop-shadow(0 2px 6px rgba(0,0,0,.25)); }
+  .journey-cover.resume-read{ background-image:linear-gradient(150deg, var(--sage), var(--sage-deep)); }
+  .journey-cover.resume-listen{ background-image:linear-gradient(150deg, var(--gold-light), var(--gold-deep)); }
   .journey-badge{
     position:absolute; left:10px; bottom:10px; padding:4px 10px; border-radius:10px;
     background:rgba(20,18,14,0.62); color:#fff; font-size:12px; font-weight:600; font-family:'Manrope', sans-serif;
@@ -2392,7 +2446,9 @@
     </div>
     <div id="search-results"></div>
     <div id="biblia-continue" style="padding:0 24px; margin:4px 0 2px; display:none;"></div>
-    <div class="section-title" style="margin-top:8px;">Planes de lectura</div>
+    <div class="section-title" style="margin-top:8px;">Devocional de hoy <span class="sec-link" onclick="go('devocionales')">Ver todos</span></div>
+    <div id="biblia-devo" style="padding:4px 24px 8px;"></div>
+    <div class="section-title" style="margin-top:8px;">Planes de lectura <span class="sec-link" onclick="go('planesAll')">Ver todos</span></div>
     <div class="plan-row" id="plan-row"></div>
     <div class="section-title">Libros</div>
     <div class="book-grid" id="book-grid"></div>
@@ -2427,6 +2483,7 @@
     <div class="topbar"><div class="backbtn" aria-label="Atrás" onclick="go('biblia')">←</div><h2 id="plan-title"></h2></div>
     <div class="container" style="padding-top:0;">
       <p id="plan-subtitle" style="color:var(--ink-soft); font-size:14.5px; line-height:1.5; margin-bottom:6px;"></p>
+      <button class="btn-text" style="padding-left:0;" onclick="sharePlan()">↗ Compartir este plan</button>
       <div style="display:flex; align-items:center; gap:10px; margin:16px 0 22px;">
         <div class="plan-progress-track"><div class="plan-progress-fill" id="plan-progress-fill"></div></div>
         <span id="plan-progress-label" style="font-size:13px; color:var(--sage-deep); font-weight:700; white-space:nowrap;"></span>
@@ -2436,11 +2493,36 @@
     <div style="height:100px;"></div>
   </section>
 
+  <!-- TODOS LOS PLANES -->
+  <section class="screen noNav" id="planesAll">
+    <div class="topbar"><div class="backbtn" aria-label="Atrás" onclick="go('biblia')">←</div><h2>Planes de lectura</h2></div>
+    <div class="studio-row" id="plans-filter" style="padding:4px 24px 10px;"></div>
+    <div class="stack container" id="plans-all-list" style="padding-top:0;"></div>
+    <div style="height:100px;"></div>
+  </section>
+
+  <!-- DEVOCIONALES -->
+  <section class="screen noNav" id="devocionales">
+    <div class="topbar"><div class="backbtn" aria-label="Atrás" onclick="go('biblia')">←</div><h2>Devocionales</h2></div>
+    <div class="studio-row" id="devo-filter" style="padding:4px 24px 10px;"></div>
+    <div class="stack container" id="devo-all-list" style="padding-top:0;"></div>
+    <div style="height:100px;"></div>
+  </section>
+
+  <!-- DEVOCIONAL -->
+  <section class="screen noNav" id="devocional">
+    <div class="topbar"><div class="backbtn" aria-label="Atrás" onclick="go(devoFrom||'biblia')">←</div><h2>Devocional</h2></div>
+    <div class="devo-stage" id="devo-stage"></div>
+    <div class="container" id="devo-body" style="padding-top:6px;"></div>
+    <div style="height:100px;"></div>
+  </section>
+
   <!-- PLAN DAY -->
   <section class="screen noNav" id="planDay">
     <div class="topbar"><div class="backbtn" aria-label="Atrás" onclick="go('planDetail')">←</div><h2 id="plan-day-title"></h2></div>
     <div class="verse-stage" style="min-height:auto; padding:30px 34px 26px;" id="plan-day-stage"></div>
     <div class="container" style="padding-top:0;">
+      <div id="plan-day-extra" class="plan-extra"></div>
       <button class="btn btn-primary" style="width:100%;" id="plan-day-btn" onclick="completePlanDay()">Marcar como leído</button>
     </div>
     <div style="height:100px;"></div>
@@ -2722,6 +2804,9 @@
         <button class="player-float-btn" id="player-float-btn" onclick="openFloatingPlayer()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2.5"></rect><rect x="11" y="11" width="8" height="6" rx="1.5" fill="currentColor" stroke="none"></rect></svg>
           <span id="player-float-btn-label">Ventana flotante</span>
+        </button>
+        <button class="player-float-btn" onclick="shareCurrentTrack()" style="margin-top:8px;">
+          <span>↗ Compartir</span>
         </button>
         <div class="player-now">
           <div class="player-now-name" id="player-now-name"></div>
@@ -3598,6 +3683,30 @@ const PLANS = [
 function getPlanProgress(id){ return load('here_plan_'+id, {done:[]}); }
 function savePlanProgress(id, p){ save('here_plan_'+id, p); }
 function findPlan(id){ return PLANS.find(p=>p.id===id); }
+/* ---------------- contenido ampliado: planes, devocionales y sus versículos ----------------
+   Texto bíblico: Reina-Valera Antigua (1909, dominio público) como respaldo inmediato; igual que
+   el resto de la app, se actualiza a RVR1960 en cuanto llega (resolveVerseText). */
+const EXTRA_PLANS = [{"id":"ansiedad","emoji":"🌤️","cat":"Paz","cover":"photo-1501785888041-af3ef285b470","title":"Cuando todo te preocupa","subtitle":"Siete días para soltar la ansiedad poco a poco.","days":[{"ref":"Mateo 6:25-27","t":"Más que lo que te inquieta","r":"Jesús no minimiza tus preocupaciones: te recuerda cuánto vales. Si Dios cuida de las aves, ¿cómo no va a sostenerte a ti? Hoy, nombra una preocupación y ponla en sus manos.","q":"¿Qué preocupación necesitas entregarle hoy?"},{"ref":"Salmos 94:19","t":"Consuelo en medio del ruido","r":"Cuando los pensamientos se multiplican, el consuelo de Dios llega como una mano firme en la espalda. No tienes que callar la ansiedad por ti mismo; basta con pedirle que te acompañe dentro de ella.","q":"¿Dónde sientes más ruido por dentro?"},{"ref":"1 Pedro 5:7","t":"Echar toda tu ansiedad","r":"Echar es soltar con intención, como quien deja una mochila pesada en el suelo. No dice \"la parte pequeña\", dice toda. Y la razón es sencilla: Él tiene cuidado de ti.","q":"¿Qué carga sigues sosteniendo con las dos manos?"},{"ref":"Filipenses 4:6-7","t":"Oración en lugar de angustia","r":"Pablo propone un intercambio: presentar a Dios lo que te inquieta, con gratitud, y recibir una paz que no se explica. La paz no depende de que todo se resuelva, sino de a quién se lo entregas.","q":"¿Por qué puedes dar gracias aunque todo siga abierto?"},{"ref":"Salmos 55:22","t":"Él te sostendrá","r":"Echa tu carga sobre Jehová, y él te sustentará. La promesa no es que nunca la sentirás, sino que no la llevarás solo. Hoy, sostén una carga menos y déjate sostener un poco más.","q":"¿Quién o qué te está sosteniendo ahora mismo?"},{"ref":"Isaías 26:3","t":"Una mente en reposo","r":"La paz perfecta tiene una dirección: la mente puesta en Dios. No se trata de pensar en nada, sino de volver, una y otra vez, a una verdad firme. Hoy, repite este versículo cuando la mente se acelere.","q":"¿A qué verdad puedes volver cuando te inquietes?"},{"ref":"Salmos 46:10","t":"Estad quietos","r":"Quietud no es perfección: es detenerte lo suficiente para recordar quién es Dios. Él sigue siendo Dios aunque tú no puedas con todo. Cierra los ojos un minuto y respira despacio con este versículo.","q":"¿Qué cambia cuando recuerdas que Él tiene el control?"}]},{"id":"fe","emoji":"🌱","cat":"Fe","cover":"photo-1506905925346-21bda4d32df4","title":"Fortalece tu fe","subtitle":"Siete pasos para confiar aun cuando no ves.","days":[{"ref":"Hebreos 11:1","t":"Qué es la fe","r":"La fe no es ver todo claro: es estar seguro de lo que esperas aunque aún no lo veas. Es confianza, no certeza total. Puedes empezar hoy con una fe pequeña, pero sincera.","q":"¿En qué área necesitas confiar sin ver todavía?"},{"ref":"Romanos 10:17","t":"La fe nace de escuchar","r":"La fe crece cuando escuchas la Palabra de Dios, no cuando te exiges creer más. Cada versículo que lees es una semilla. Hoy, dedica unos minutos a escuchar sin prisa.","q":"¿Qué palabra de Dios has dejado de escuchar?"},{"ref":"Marcos 9:23-24","t":"Ayuda mi incredulidad","r":"Aquel padre dijo algo honesto: \"Creo; ayuda mi incredulidad\". Jesús no lo rechazó. Puedes llevar a Dios tu fe y tu duda juntas; Él trabaja con las dos.","q":"¿Qué duda quieres ponerle nombre delante de Dios?"},{"ref":"Mateo 17:20","t":"Fe como un grano de mostaza","r":"No necesitas una fe enorme, sino una fe viva. Lo pequeño, puesto en Dios, se mueve más de lo que imaginas. No midas tu fe por cómo te sientes hoy.","q":"¿Qué paso pequeño de fe puedes dar hoy?"},{"ref":"2 Corintios 5:7","t":"Caminar por fe","r":"Caminar por fe es dar el siguiente paso con la luz que tienes, no con la que quisieras. Dios suele alumbrar lo suficiente para hoy. Confía en el paso de hoy.","q":"¿Cuál es el siguiente paso que ya conoces?"},{"ref":"Salmos 37:5","t":"Encomienda tu camino","r":"Encomendar es poner en manos de otro lo que no puedes controlar. Y la promesa que sigue es sencilla: Él hará. Entrega hoy un plan, una decisión o una persona.","q":"¿Qué necesitas encomendar hoy?"},{"ref":"Hebreos 12:2","t":"Los ojos en Jesús","r":"La fe no se sostiene mirándote a ti, sino mirando a Jesús: el que comenzó tu fe y la perfecciona. Cuando te canses, levanta la mirada. Él ya recorrió el camino.","q":"¿Dónde has puesto la mirada últimamente?"}]},{"id":"gratitud","emoji":"🌼","cat":"Gratitud","cover":"photo-1500382017468-9049fed747ef","title":"Un corazón agradecido","subtitle":"Siete días para ver lo bueno que ya tienes.","days":[{"ref":"Salmos 100:4","t":"Entrar con gratitud","r":"La gratitud abre una puerta: entramos a su presencia dándole gracias. No esperes a tenerlo todo en orden. Empieza con una cosa pequeña por la que hoy puedas decir \"gracias\".","q":"¿Por qué cosa pequeña puedes dar gracias hoy?"},{"ref":"1 Tesalonicenses 5:18","t":"Gracias en todo","r":"No dice \"por todo\", sino \"en todo\": en medio de lo que sea, hay algo que agradecer, aunque no sea la situación misma. La gratitud no niega el dolor; lo acompaña.","q":"¿Qué hay de bueno incluso dentro de lo difícil?"},{"ref":"Salmos 103:2","t":"No olvides sus beneficios","r":"El salmista se habla a sí mismo: no olvides. La memoria agradecida protege el corazón de la queja. Recuerda hoy tres momentos donde Dios te sostuvo.","q":"¿Qué beneficio de Dios habías olvidado?"},{"ref":"Colosenses 3:15","t":"Una paz que agradece","r":"La paz de Cristo y un corazón agradecido caminan juntos. Cuanto más recuerdas lo recibido, menos te domina lo que falta. Hoy, agradece a alguien en voz alta.","q":"¿A quién le debes un \"gracias\"?"},{"ref":"Salmos 136:1","t":"Su misericordia es eterna","r":"Cada línea de este salmo repite lo mismo: para siempre es su misericordia. La repetición es intencional: nos entrena a recordar. Repite esta frase cuando algo te inquiete.","q":"¿Cómo has visto su misericordia este mes?"},{"ref":"Salmos 107:1","t":"Una bondad que permanece","r":"Dios es bueno, y su misericordia no tiene fecha de vencimiento. La gratitud empieza cuando dejamos de dar por hecho lo que recibimos cada día.","q":"¿Qué das por sentado y hoy podrías valorar?"},{"ref":"Santiago 1:17","t":"Toda buena dádiva","r":"Cada cosa buena de tu vida viene de arriba: lo grande y lo cotidiano. Hoy mira a tu alrededor como quien recibe regalos: un techo, una conversación, un respiro.","q":"¿Qué regalo cotidiano has pasado por alto?"}]},{"id":"proposito","emoji":"🧭","cat":"Propósito","cover":"photo-1469474968028-56623f02e42e","title":"Para qué estoy aquí","subtitle":"Siete días para escuchar el propósito de Dios.","days":[{"ref":"Jeremías 29:11","t":"Planes de paz","r":"Dios dijo estas palabras a un pueblo en el exilio. Aun allí, Él tenía planes de bienestar y esperanza. Tu situación actual no cancela su propósito para ti.","q":"¿Qué esperanza necesitas recuperar?"},{"ref":"Efesios 2:10","t":"Hechura suya","r":"No eres un accidente: eres obra de Dios, creado para buenas obras que Él preparó de antemano. Tu vida tiene un diseño. Hoy, piensa en lo que haces mejor y para quién podrías hacerlo.","q":"¿Qué don tienes que podrías ofrecer?"},{"ref":"Romanos 8:28","t":"Todo coopera para bien","r":"Dios no hace que todo sea bueno, pero sabe trabajar con todo, incluso lo que duele, para llevar algo bueno. Confía en que ninguna etapa se desperdicia.","q":"¿Qué etapa difícil podría estar preparándote?"},{"ref":"Proverbios 16:3","t":"Encomienda tus obras","r":"Encomendar tu trabajo a Dios ordena tus pensamientos. No quita el esfuerzo, pero cambia la ansiedad por confianza. Comienza el día entregándole lo que harás.","q":"¿Qué proyecto o tarea necesitas encomendar?"},{"ref":"Salmos 138:8","t":"Él cumplirá su propósito","r":"Jehová cumplirá su propósito en mí. La obra no depende de tu perfección, sino de su fidelidad. Puedes descansar: Él termina lo que empieza.","q":"¿Qué parte de tu camino es más difícil dejar en sus manos?"},{"ref":"Eclesiastés 3:1","t":"Hay un tiempo","r":"Cada cosa tiene su tiempo. Quizás hoy no es momento de respuestas, sino de preparación. Confiar en el tiempo de Dios es una forma de fe.","q":"¿Qué estación estás viviendo ahora?"},{"ref":"Colosenses 3:23","t":"Hazlo de corazón","r":"Lo ordinario también es sagrado: lo que haces, hazlo de corazón, como para el Señor. El propósito no está solo en lo grande, sino en la manera de vivir cada día.","q":"¿Qué tarea de hoy puedes hacer como para Dios?"}]},{"id":"oracion","emoji":"🙏","cat":"Oración","cover":"photo-1561212856-44e9bae482aa","title":"Aprende a orar","subtitle":"Siete días para conversar con Dios con sencillez.","days":[{"ref":"Mateo 6:6","t":"Un lugar sencillo","r":"Jesús enseñó que orar no necesita escenario: basta una puerta cerrada y un corazón abierto. Tu Padre te ve en lo secreto. Busca hoy cinco minutos de silencio.","q":"¿Dónde puedes apartar un rincón para orar?"},{"ref":"Mateo 6:9","t":"Empieza con \"Padre\"","r":"La oración que Jesús enseñó comienza con una relación: Padre nuestro. Antes de pedir, reconoces a quién le hablas. Hoy, di \"Padre\" despacio y quédate un momento.","q":"¿Qué significa para ti llamar a Dios Padre?"},{"ref":"Filipenses 4:6","t":"Pide con gratitud","r":"Puedes pedirle a Dios lo que necesitas, con confianza y con gracias. Orar no es informarle, es abrirle tu corazón. Hoy, escribe una petición y una gratitud.","q":"¿Qué quieres pedir hoy, y qué quieres agradecer?"},{"ref":"Salmos 145:18","t":"Cercano a los que le invocan","r":"Dios está cerca de todos los que le invocan de veras. No necesitas palabras elegantes, sino sinceridad. Háblale como hablarías con alguien que te escucha de verdad.","q":"¿Qué has callado que quisieras decirle?"},{"ref":"1 Tesalonicenses 5:17","t":"Orar sin cesar","r":"Orar sin cesar no es estar de rodillas todo el día, sino vivir conscientes de su presencia: una frase en el camino, un gracias, un \"ayúdame\". Hoy, ora en medio de lo cotidiano.","q":"¿En qué momento del día podrías hacer una oración breve?"},{"ref":"Lucas 11:9-10","t":"Pedid, buscad, llamad","r":"Jesús invita a persistir: pedir, buscar, llamar. La oración insistente no cansa a Dios; forma tu corazón. Hoy, vuelve a presentar esa petición que no has soltado.","q":"¿Qué petición sigues llevando delante de Dios?"},{"ref":"Hebreos 4:16","t":"Acércate con confianza","r":"El trono de Dios es un trono de gracia, no de miedo. Puedes acercarte confiadamente, tal como estás. Termina esta semana agradeciendo que la puerta siempre está abierta.","q":"¿Qué te impide acercarte con confianza?"}]},{"id":"familia","emoji":"🏡","cat":"Familia","cover":"photo-1472214103451-9374bd1c798e","title":"Mi familia en manos de Dios","subtitle":"Siete días para orar y cuidar a los tuyos.","days":[{"ref":"Josué 24:15","t":"Yo y mi casa","r":"Josué decidió: yo y mi casa serviremos a Jehová. La fe en casa empieza con una decisión, no con perfección. Hoy, piensa qué pequeño hábito podría llevar a Dios a tu hogar.","q":"¿Qué hábito sencillo podría unir a tu familia en la fe?"},{"ref":"Salmos 127:1","t":"Si Jehová no edifica la casa","r":"Sin Dios, el esfuerzo se desgasta; con Él, cada trabajo tiene sentido. Entrega hoy tu hogar en oración: las alegrías y también las tensiones.","q":"¿Qué parte de tu hogar necesitas entregarle?"},{"ref":"Proverbios 22:6","t":"Instruye al niño","r":"Educar con amor y ejemplo deja huellas que duran. No se trata de ser perfectos, sino de ser constantes y presentes. Hoy, comparte con alguien de tu familia algo que Dios te ha enseñado.","q":"¿Qué quieres que tu familia recuerde de ti?"},{"ref":"Efesios 6:4","t":"Sin provocar a ira","r":"Cuidar a los hijos incluye cuidar su ánimo: corregir sin herir, guiar con paciencia. La disciplina de Dios es amor; la nuestra también debe serlo.","q":"¿Cómo puedes hablar hoy con más ternura?"},{"ref":"Colosenses 3:13-14","t":"Soportarse y perdonar","r":"Toda familia necesita perdón. Soportarse, perdonarse y revestirse de amor es el pegamento del hogar. Hoy, pide perdón o perdona a alguien cercano.","q":"¿Con quién necesitas hacer las paces?"},{"ref":"Salmos 133:1","t":"Cuán bueno es habitar en unidad","r":"La unidad no es ausencia de diferencias, sino decisión de permanecer juntos con amor. Ora hoy por cada miembro de tu familia por su nombre.","q":"¿Por quién de tu familia quieres orar hoy?"},{"ref":"Números 6:24-26","t":"Una bendición para los tuyos","r":"Esta es una bendición que puedes decir sobre tu familia: Jehová te bendiga, te guarde, te muestre su rostro y te dé paz. Léela en voz alta pensando en cada persona.","q":"¿A quién quieres bendecir hoy con estas palabras?"}]},{"id":"amor","emoji":"💛","cat":"Relaciones","cover":"photo-1490730141103-6cac27aaab94","title":"El amor según la Biblia","subtitle":"Siete días para amar como Dios nos ama.","days":[{"ref":"1 Corintios 13:4-7","t":"Cómo es el amor","r":"Pablo no define el amor con un sentimiento, sino con acciones: paciencia, bondad, perdón. Lee cada frase y pregúntate dónde puedes practicarla hoy.","q":"¿Qué rasgo del amor te cuesta más?"},{"ref":"1 Juan 4:19","t":"Amamos porque Él nos amó","r":"El amor no empieza en nosotros: lo recibimos primero. Cuando te sabes amado por Dios, amar a otros deja de ser una carga y se vuelve respuesta.","q":"¿Cómo cambia tu forma de amar saberte amado?"},{"ref":"Juan 15:12","t":"Como yo os he amado","r":"Jesús puso la vara alta: amar como Él nos amó, con entrega y paciencia. No es un amor que espera algo a cambio. Hoy, haz un gesto de amor sin que nadie lo note.","q":"¿A quién puedes amar hoy con un gesto concreto?"},{"ref":"Romanos 12:10","t":"Honrar al otro","r":"Amar es poner al otro en primer lugar, honrándolo. Un elogio sincero, una escucha atenta, un lugar cedido: el amor se nota en lo pequeño.","q":"¿A quién podrías honrar hoy con tus palabras?"},{"ref":"Proverbios 17:17","t":"El amigo ama en todo tiempo","r":"Los buenos amigos permanecen en la adversidad. Sé tú ese amigo para alguien hoy. Un mensaje a tiempo puede sostener a quien está pasando una temporada difícil.","q":"¿Quién necesita saber que no está solo?"},{"ref":"Efesios 4:2","t":"Con paciencia","r":"Soportarse con amor es una forma de santidad cotidiana. La paciencia nos recuerda cuánta paciencia Dios ha tenido con nosotros. Hoy, respira antes de responder.","q":"¿Con quién necesitas más paciencia?"},{"ref":"Colosenses 3:14","t":"El vínculo perfecto","r":"Sobre todas las virtudes, el amor: el vínculo que mantiene todo unido. Termina la semana pidiéndole a Dios que su amor sea la base de tus relaciones.","q":"¿Qué relación quieres que el amor de Dios renueve?"}]},{"id":"perdon","emoji":"🕊️","cat":"Relaciones","cover":"photo-1473448912268-2022ce9509d8","title":"El camino del perdón","subtitle":"Siete días para soltar el peso del rencor.","days":[{"ref":"Efesios 4:32","t":"Perdonar como fuimos perdonados","r":"Perdonar no es decir que lo ocurrido no dolió, sino elegir no cargar con ello para siempre. Dios nos perdonó primero; ese perdón es la fuerza para perdonar a otros.","q":"¿Quién viene a tu mente al leer esto?"},{"ref":"Mateo 6:14-15","t":"El perdón que se recibe y se da","r":"Jesús conecta el perdón recibido con el perdón dado. No es un trato, sino un recordatorio: quien se sabe perdonado, perdona con más facilidad.","q":"¿Qué te cuesta soltar?"},{"ref":"Colosenses 3:13","t":"Soportándoos y perdonándoos","r":"Perdonar es un proceso, no un solo acto. Puede que tengas que decidir perdonar muchas veces antes de sentir alivio. Está bien: Dios camina contigo en ese proceso.","q":"¿Qué paso pequeño puedes dar hoy?"},{"ref":"Salmos 103:12","t":"Tan lejos como el oriente","r":"Cuando Dios perdona, lo hace por completo: aleja nuestras rebeliones como está lejos el oriente del occidente. Recíbelo hoy para ti, antes de ofrecerlo a otros.","q":"¿Hay algo por lo que aún no te has perdonado?"},{"ref":"1 Juan 1:9","t":"Confesar y ser limpiado","r":"Reconocer tu falta, sin excusas, abre la puerta a la limpieza. Dios es fiel y justo para perdonar. No tienes que cargar con culpa que Él ya quiere quitar.","q":"¿Qué necesitas confesarle hoy?"},{"ref":"Romanos 12:18","t":"En cuanto dependa de vosotros","r":"Hay relaciones que no puedes arreglar solo, pero puedes hacer tu parte. Procura la paz hasta donde dependa de ti, y deja el resto en manos de Dios.","q":"¿Cuál es tu parte en esta situación?"},{"ref":"Mateo 18:21-22","t":"Setenta veces siete","r":"Pedro quiso poner un límite; Jesús lo abrió. Perdonar muchas veces es reflejo de un corazón sanado, no de debilidad. Termina la semana pidiendo a Dios un corazón libre.","q":"¿Qué carga te sentirías libre de soltar?"}]},{"id":"duelo","emoji":"🕯️","cat":"Consuelo","cover":"photo-1418065460487-3e41a6c84dc5","title":"En tiempos de duelo","subtitle":"Siete palabras para quien está atravesando una pérdida.","days":[{"ref":"Salmos 34:18","t":"Cerca del quebrantado","r":"Dios no se aleja de quien sufre: se acerca. Tu dolor no lo incomoda ni lo asusta. Hoy no tienes que ser fuerte; basta con dejar que te acompañe.","q":"¿Qué sientes hoy que quisieras decirle a Dios?"},{"ref":"Mateo 5:4","t":"Bienaventurados los que lloran","r":"Jesús dijo que los que lloran serán consolados. Llorar no es falta de fe; es amor que no tiene a dónde ir. Permítete llorar sin prisa.","q":"¿Qué has guardado que necesita salir?"},{"ref":"Salmos 30:5","t":"La noche pasa","r":"El lloro dura la noche, y a la mañana vendrá la alegría. No promete que el día de mañana sea sin dolor, sino que la noche no tiene la última palabra.","q":"¿Qué pequeña luz ves en medio de la noche?"},{"ref":"Juan 11:25-26","t":"La resurrección y la vida","r":"Ante la tumba de Lázaro, Jesús lloró y también dijo: yo soy la resurrección. En el duelo, la esperanza cristiana no apaga las lágrimas, pero las acompaña con promesa.","q":"¿Qué esperanza necesitas escuchar hoy?"},{"ref":"2 Corintios 1:3-4","t":"El Dios de toda consolación","r":"Dios nos consuela para que luego podamos consolar a otros. Tu dolor, acompañado por Él, algún día podrá abrazar a alguien más. Hoy, solo recibe consuelo.","q":"¿Quién te ha consolado en este proceso?"},{"ref":"Apocalipsis 21:4","t":"Enjugará toda lágrima","r":"Llegará un día sin llanto ni dolor. Esa promesa no elimina lo que duele hoy, pero sostiene el horizonte. Dios mismo enjugará cada lágrima.","q":"¿Qué parte de esta promesa necesitas abrazar?"},{"ref":"Salmos 147:3","t":"Venda tus heridas","r":"Dios sana a los quebrantados de corazón y venda sus heridas. La sanidad es un proceso lento, y Él es paciente. Hoy, deja que cuide de ti.","q":"¿Qué herida le entregas hoy?"}]},{"id":"fortaleza","emoji":"🔥","cat":"Fe","cover":"photo-1464822759023-fed622ff2c3b","title":"Cuando no tienes fuerzas","subtitle":"Siete días para recibir fuerzas que no son tuyas.","days":[{"ref":"Isaías 40:29","t":"Da esfuerzo al cansado","r":"Dios da fuerzas al que no tiene ninguna. No necesitas llegar fuerte: basta con llegar cansado y honesto. Hoy, pide la fuerza que no tienes.","q":"¿Dónde sientes más cansancio?"},{"ref":"Isaías 40:31","t":"Alas como águilas","r":"Los que esperan en Jehová renuevan sus fuerzas. Esperar no es pasividad: es confiar mientras Él obra. Hoy, tu tarea es esperar con confianza.","q":"¿Qué estás esperando de Dios?"},{"ref":"2 Corintios 12:9","t":"Mi poder se perfecciona","r":"Cuando te sientes débil, es donde la gracia de Dios se nota más. No tienes que esconder tu fragilidad: ahí hay espacio para su poder.","q":"¿Qué debilidad quieres dejar de esconder?"},{"ref":"Filipenses 4:13","t":"Todo lo puedo","r":"Este versículo no promete éxito en todo, sino fuerza en toda circunstancia: abundancia o escasez. Hoy, pide fortaleza para lo que enfrentas, no para evitarlo.","q":"¿Qué situación necesita su fuerza?"},{"ref":"Salmos 73:26","t":"La roca de mi corazón","r":"Aunque mi cuerpo y corazón desfallezcan, Dios es la fortaleza de mi corazón. Cuando todo lo demás falla, Él permanece. Descansa en eso hoy.","q":"¿En quién o en qué te estás apoyando?"},{"ref":"Nehemías 8:10","t":"El gozo de Jehová","r":"El gozo de Jehová es tu fuerza. No un gozo forzado, sino el que viene de saberte amado. Hoy, busca un motivo sencillo de alegría y agradécelo.","q":"¿Qué te devuelve un poco de alegría?"},{"ref":"Salmos 28:7","t":"Mi escudo y mi fuerza","r":"En Él confió mi corazón, y fui ayudado. Termina la semana recordando las veces en que Dios te sostuvo cuando pensabas que no podrías.","q":"¿Cuándo te sostuvo Dios en el pasado?"}]},{"id":"miedo","emoji":"🛡️","cat":"Paz","cover":"photo-1470071459604-3b5ec3a7fe05","title":"Valiente en Dios","subtitle":"Siete días para enfrentar el miedo con su presencia.","days":[{"ref":"Josué 1:9","t":"No temas, yo estoy contigo","r":"La valentía no es ausencia de miedo, sino caminar acompañado. Dios no te pide que seas fuerte por ti mismo; te recuerda que Él va contigo.","q":"¿Qué miedo enfrentas hoy?"},{"ref":"Salmos 27:1","t":"Jehová es mi luz","r":"Si Dios es tu luz y tu salvación, ¿de quién temerás? Este salmo no niega los peligros: cambia el centro de la mirada. Hoy, pon tu atención en Él antes que en el miedo.","q":"¿Qué te asusta más y cómo lo ve Dios?"},{"ref":"Isaías 41:10","t":"Yo te esfuerzo","r":"No temas, porque yo estoy contigo. Dios promete fortalecer, ayudar y sostener. Tres verbos para tres necesidades. Lee el versículo en voz alta.","q":"¿Cuál de los tres verbos necesitas más hoy?"},{"ref":"2 Timoteo 1:7","t":"Espíritu de poder","r":"El temor paralizante no viene de Dios. Él da poder, amor y dominio propio. Hoy, pide valentía para dar un paso que has estado postergando.","q":"¿Qué paso has postergado por miedo?"},{"ref":"Salmos 56:3","t":"En el día que temo","r":"El salmista no dice \"nunca temo\", sino \"en el día que tema, yo en ti confiaré\". Confiar es la respuesta al miedo, no su negación.","q":"¿Cómo se ve confiar en tu situación?"},{"ref":"Deuteronomio 31:6","t":"Él no te dejará","r":"Esforzaos y cobrad ánimo: Jehová tu Dios va contigo, no te dejará ni te desamparará. Cada paso que das, Él ya lo está dando contigo.","q":"¿Qué cambia saber que no estás solo?"},{"ref":"Salmos 118:6","t":"Jehová está conmigo","r":"Jehová está conmigo; no temeré. Termina la semana repitiendo esta frase cuando sientas que el miedo regresa.","q":"¿Qué frase te ayudará a recordar su presencia?"}]},{"id":"sanidad","emoji":"🌿","cat":"Consuelo","cover":"photo-1433086966358-54859d0ed716","title":"Esperanza para sanar","subtitle":"Siete días de consuelo en medio de la enfermedad.","days":[{"ref":"Salmos 103:2-3","t":"No olvides sus beneficios","r":"Dios perdona y sana. Aun en medio de la enfermedad, puedes recordar que no estás solo ni olvidado. Hoy, agradece por lo que sigue en pie.","q":"¿Qué parte de tu salud o tu día puedes agradecer?"},{"ref":"Jeremías 17:14","t":"Sáname y seré sano","r":"Una oración sencilla y valiente: sáname, Señor, y seré sano. No tienes que escribir una oración larga; basta con pedirlo con honestidad.","q":"¿Qué quieres pedirle con sinceridad?"},{"ref":"Salmos 107:20","t":"Envió su palabra","r":"Dios envió su palabra y los sanó. Su palabra tiene poder para sostener, aun cuando el cuerpo está cansado. Lee este versículo con calma, tantas veces como necesites.","q":"¿Qué palabra de Dios te da descanso hoy?"},{"ref":"Isaías 53:5","t":"Por su llaga fuimos curados","r":"Jesús cargó con nuestro dolor. Esto significa que Él entiende lo que sientes y sufre contigo. No estás solo en el dolor.","q":"¿Cómo se siente saber que Jesús te entiende?"},{"ref":"Santiago 5:15","t":"La oración de fe","r":"La oración hecha con fe sostiene al enfermo. Pide a otros que oren por ti, y ora por quien conozcas que esté enfermo. La fe se fortalece en comunidad.","q":"¿Quién puede orar contigo?"},{"ref":"Salmos 41:3","t":"Sustentará en el lecho","r":"Jehová lo sustentará sobre el lecho del dolor. Incluso en los días de cama y espera, Él sostiene. Descansa sin culpa: descansar también es confiar.","q":"¿Qué necesitas soltar para descansar mejor?"},{"ref":"Éxodo 15:26","t":"Jehová, tu sanador","r":"Dios se presenta como sanador, un nombre que es promesa y relación. Termina esta semana agradeciendo a quienes te cuidan y entregando tu salud en sus manos.","q":"¿Qué parte de tu salud entregas hoy?"}]},{"id":"sabiduria","emoji":"🧠","cat":"Propósito","cover":"photo-1447752875215-b2761acb3c5d","title":"Sabiduría de Proverbios","subtitle":"Siete días de consejos para vivir con prudencia.","days":[{"ref":"Proverbios 3:5-6","t":"Confía de todo corazón","r":"La sabiduría empieza reconociendo que no lo sabemos todo. Confiar en Dios incluso cuando no entiendes es el primer paso para que Él enderece tus caminos.","q":"¿En qué decisión necesitas confiar más allá de tu lógica?"},{"ref":"Proverbios 4:23","t":"Guarda tu corazón","r":"De él mana la vida. Lo que permites entrar en tu mente y tu corazón moldea tus decisiones. Hoy, cuida lo que miras, escuchas y piensas.","q":"¿Qué necesitas dejar de permitir en tu corazón?"},{"ref":"Proverbios 15:1","t":"La blanda respuesta","r":"Una respuesta suave calma la ira; una palabra áspera la enciende. Antes de hablar hoy, haz una pausa. A veces la mejor sabiduría es esperar un segundo.","q":"¿Con quién puedes responder hoy con más suavidad?"},{"ref":"Proverbios 18:10","t":"Torre fuerte","r":"El nombre de Jehová es torre fuerte. Cuando te sientas expuesto o amenazado, corre a ella. Pronunciar su nombre en oración es refugiarte.","q":"¿Dónde sueles correr cuando tienes miedo?"},{"ref":"Proverbios 27:17","t":"Hierro con hierro","r":"Nos formamos en relación con otros. Busca personas que te inviten a crecer, y sé tú ese tipo de persona para alguien más.","q":"¿Quién te ayuda a ser mejor?"},{"ref":"Proverbios 11:25","t":"El alma generosa","r":"Quien bendice será bendecido. La generosidad abre el corazón y lo llena. Hoy, da algo de tu tiempo, tu atención o tus recursos.","q":"¿Qué puedes compartir hoy?"},{"ref":"Proverbios 19:21","t":"Los planes de Dios prevalecen","r":"Muchos son los planes del corazón, pero el consejo de Jehová permanecerá. Haz planes, pero con las manos abiertas. Termina esta semana entregándole los tuyos.","q":"¿Qué plan necesitas abrir a la dirección de Dios?"}]},{"id":"esperanza","emoji":"🌅","cat":"Fe","cover":"photo-1494548162494-384bba4ab999","title":"Esperanza que no falla","subtitle":"Siete días para volver a esperar.","days":[{"ref":"Romanos 15:13","t":"El Dios de esperanza","r":"Dios es la fuente de la esperanza: Él te llena de gozo y paz al creer. No tienes que fabricarla; basta con pedirla.","q":"¿Qué esperanza se ha apagado en ti?"},{"ref":"Salmos 42:11","t":"¿Por qué te abates?","r":"El salmista se habla a sí mismo: espera en Dios, aún lo he de alabar. Hablarte con la verdad cuando el ánimo cae es una forma de fe.","q":"¿Qué verdad le dirías hoy a tu propia alma?"},{"ref":"Lamentaciones 3:22-23","t":"Nuevas cada mañana","r":"Escrito en medio del dolor, este pasaje afirma que las misericordias de Dios son nuevas cada mañana. Hoy puedes empezar de nuevo.","q":"¿Qué necesitas comenzar de nuevo hoy?"},{"ref":"Romanos 5:3-5","t":"La esperanza no avergüenza","r":"Las pruebas producen paciencia, la paciencia, carácter, y el carácter, esperanza. Tu proceso no es en vano: Dios está formando algo en ti.","q":"¿Qué está formando Dios en ti?"},{"ref":"Hebreos 6:19","t":"Ancla del alma","r":"La esperanza en Dios es un ancla firme: no elimina la tormenta, pero evita que te lleve a la deriva. Hoy, recuerda a qué estás anclado.","q":"¿Qué te mantiene firme cuando todo se mueve?"},{"ref":"Salmos 130:5","t":"Espero en Jehová","r":"Esperar con el alma, y en su palabra tengo esperanza. La espera es parte del camino de fe. No es tiempo perdido, es tiempo de confianza.","q":"¿Qué estás esperando con paciencia?"},{"ref":"Isaías 40:31","t":"Los que esperan","r":"Los que esperan en Jehová tendrán nuevas fuerzas. Termina esta semana renovando tu esperanza en Él: Él nunca llega tarde a lo que ha prometido.","q":"¿Qué promesa quieres recordar hoy?"}]},{"id":"descanso","emoji":"🌙","cat":"Paz","cover":"photo-1439066615861-d1af74d74000","title":"Aprender a descansar","subtitle":"Siete días para parar sin culpa.","days":[{"ref":"Mateo 11:28-30","t":"Venid a mí","r":"Jesús invita a los cansados y cargados. Su yugo es fácil, su carga ligera. Hoy, no vengas con respuestas: ven cansado, tal como estás.","q":"¿Qué te tiene más cansado?"},{"ref":"Salmos 62:1","t":"Solamente en Dios","r":"En Dios solamente reposa mi alma. El descanso verdadero no está en las vacaciones, sino en la confianza. Hoy, pide una quietud que venga de Él.","q":"¿Dónde has buscado descanso que no llena?"},{"ref":"Salmos 127:2","t":"Él da a sus amados el sueño","r":"Dios da el sueño a sus amados. Dormir es un acto de confianza: reconoces que no eres tú quien sostiene el mundo. Esta noche, entrégale tus pendientes antes de dormir.","q":"¿Qué pendiente le dejas esta noche?"},{"ref":"Éxodo 33:14","t":"Mi presencia irá contigo","r":"Mi presencia irá contigo, y te daré descanso. El descanso viene de su compañía. No tienes que recorrer el camino con prisa ni con soledad.","q":"¿Cómo sería caminar hoy más despacio?"},{"ref":"Salmos 4:8","t":"En paz me acostaré","r":"Puedes acostarte y dormir en paz, porque Dios te hace vivir confiado. Termina el día con una oración corta de gratitud.","q":"¿Por qué puedes dar gracias antes de dormir?"},{"ref":"Isaías 30:15","t":"En quietud y confianza","r":"En quietud y en confianza será vuestra fortaleza. La fuerza no siempre está en hacer más; a veces está en detenerse y confiar.","q":"¿Qué podrías dejar de hacer para descansar mejor?"},{"ref":"Hebreos 4:9-10","t":"El reposo del pueblo de Dios","r":"Queda un reposo para el pueblo de Dios. Descansar es también una forma de adoración: reconocer que Él sostiene lo que nosotros no podemos.","q":"¿Qué significa para ti descansar en Dios?"}]},{"id":"jovenes","emoji":"⚡","cat":"Propósito","cover":"photo-1441829266145-5a7f74e46ca7","title":"Jóvenes que buscan a Dios","subtitle":"Siete días para construir una fe propia.","days":[{"ref":"1 Timoteo 4:12","t":"Ejemplo para todos","r":"Nadie te menosprecie por ser joven: sé ejemplo en palabra, conducta, amor, fe y pureza. Tu edad no limita lo que Dios puede hacer a través de ti.","q":"¿En qué área puedes ser ejemplo hoy?"},{"ref":"Salmos 119:9","t":"Un camino limpio","r":"¿Cómo limpiará el joven su camino? Guardando la palabra de Dios. No con esfuerzo en solitario, sino con una guía clara y constante.","q":"¿Qué guía necesitas en este momento de tu vida?"},{"ref":"Eclesiastés 12:1","t":"Acuérdate de tu Creador","r":"Acordarte de Dios en los días de tu juventud te da un fundamento firme para el resto de tu vida. Empezar ahora es un regalo para tu futuro.","q":"¿Qué lugar tiene Dios en tus prioridades hoy?"},{"ref":"Romanos 12:2","t":"No os conforméis","r":"Ser transformado es más importante que encajar. Renueva tu mente con lo que Dios dice, y descubrirás una identidad que no depende de la opinión de nadie.","q":"¿Dónde sientes más presión por encajar?"},{"ref":"Mateo 6:33","t":"Busca primero su reino","r":"Cuando Dios es la prioridad, lo demás encuentra su lugar. Estudios, relaciones, sueños: nada de eso se pierde al poner a Dios primero.","q":"¿Qué necesitas poner en orden?"},{"ref":"Salmos 119:105","t":"Lámpara a mis pies","r":"La Palabra no ilumina todo el camino, pero sí el siguiente paso. Si no sabes qué hacer con tu vida, empieza por obedecer lo que ya entiendes.","q":"¿Cuál es tu siguiente paso?"},{"ref":"Jeremías 1:7-8","t":"No digas: soy un niño","r":"Dios le dijo a Jeremías: no digas que eres joven; no temas, porque yo estoy contigo. Su compañía es mayor que tus inseguridades. Ve con confianza.","q":"¿Qué excusa necesitas soltar?"}]},{"id":"juan","emoji":"📜","cat":"Jesús","cover":"photo-1595661671412-e20c4a3e65cc","title":"Conoce a Jesús en Juan","subtitle":"Diez días con los \"Yo soy\" y las palabras clave del Evangelio.","days":[{"ref":"Juan 1:1-5","t":"El Verbo","r":"Juan empieza antes del tiempo: en el principio era el Verbo, y el Verbo era Dios. Jesús es la luz que brilla en la oscuridad, y la oscuridad no pudo apagarla.","q":"¿Qué oscuridad necesita su luz?"},{"ref":"Juan 1:14","t":"Habitó entre nosotros","r":"Dios no se quedó lejos: se hizo carne y habitó entre nosotros. Conoce tus alegrías y tus dolores desde adentro. Hoy, recuerda que Dios eligió acercarse.","q":"¿Qué significa que Dios se acercó a ti?"},{"ref":"Juan 3:16-17","t":"Tanto amó","r":"El corazón del Evangelio: Dios amó al mundo y dio a su Hijo, no para condenar sino para salvar. Esta no es una verdad lejana; es una declaración de amor.","q":"¿Cómo te hace sentir esta declaración?"},{"ref":"Juan 4:14","t":"Agua que no se acaba","r":"Jesús le ofreció a la samaritana un agua que sacia para siempre. Lo que buscamos en tantos lugares, Él lo ofrece gratis. Hoy, ven con tu sed.","q":"¿Qué sed has intentado saciar en otros lugares?"},{"ref":"Juan 6:35","t":"El pan de vida","r":"Yo soy el pan de vida: el que a mí viene, nunca tendrá hambre. Jesús no solo da cosas; se da a sí mismo. Hoy, aliméntate de su Palabra.","q":"¿De qué tienes hambre hoy?"},{"ref":"Juan 8:12","t":"La luz del mundo","r":"El que me sigue no andará en tinieblas. Seguir a Jesús es caminar con luz, aunque no veas el final del camino. Hoy, da un paso con esa luz.","q":"¿Qué parte de tu camino necesita luz?"},{"ref":"Juan 10:10-11","t":"El buen pastor","r":"Yo he venido para que tengan vida, y vida en abundancia. El buen pastor da su vida por las ovejas. Estás cuidado por alguien que te conoce por nombre.","q":"¿Cómo te cuida el Pastor hoy?"},{"ref":"Juan 11:25-26","t":"La resurrección y la vida","r":"Jesús dijo esto ante una tumba. Él es más fuerte que la muerte y que cualquier final. Si hay algo que parece perdido, Él sigue siendo la vida.","q":"¿Qué parte de ti necesita resurrección?"},{"ref":"Juan 14:6","t":"El camino, la verdad y la vida","r":"Yo soy el camino, la verdad y la vida. No te da una ruta; se ofrece a sí mismo como el camino. Cuando no sepas por dónde ir, vuelve a Él.","q":"¿Dónde necesitas dirección?"},{"ref":"Juan 15:5","t":"La vid y los pámpanos","r":"Yo soy la vid, vosotros los pámpanos: separados de mí nada podéis hacer. Permanecer es la clave: conexión constante, no esfuerzo solitario.","q":"¿Cómo puedes permanecer cerca hoy?"}]},{"id":"bienaventuranzas","emoji":"⛰️","cat":"Jesús","cover":"photo-1500964757637-c85e8a162699","title":"Las bienaventuranzas","subtitle":"Siete días con el Sermón del Monte.","days":[{"ref":"Mateo 5:3","t":"Los pobres en espíritu","r":"Bienaventurados los pobres en espíritu: los que reconocen que necesitan a Dios. La puerta del reino se abre desde la humildad, no desde la suficiencia.","q":"¿En qué necesitas reconocer tu necesidad de Dios?"},{"ref":"Mateo 5:4","t":"Los que lloran","r":"Jesús llama bienaventurados a los que lloran, porque serán consolados. Su consuelo es una promesa. No tienes que esconder tu dolor delante de Él.","q":"¿Qué dolor necesitas que Él consuele?"},{"ref":"Mateo 5:5","t":"Los mansos","r":"Los mansos heredarán la tierra. La mansedumbre no es debilidad, es fuerza bajo control. Hoy, elige responder con calma donde antes responderías con dureza.","q":"¿Dónde puedes elegir mansedumbre?"},{"ref":"Mateo 5:6","t":"Hambre de justicia","r":"Los que tienen hambre y sed de justicia serán saciados. Anhelar lo correcto y lo bueno es un deseo que Dios honra. Pide hoy que crezca ese deseo.","q":"¿Qué anhelas que sea justo y bueno?"},{"ref":"Mateo 5:7","t":"Los misericordiosos","r":"Los misericordiosos alcanzarán misericordia. Mostrar compasión abre el camino para recibirla. Hoy, sé misericordioso con alguien, incluso contigo mismo.","q":"¿A quién puedes mostrar misericordia?"},{"ref":"Mateo 5:8","t":"Los de limpio corazón","r":"Los de limpio corazón verán a Dios. La pureza no es perfección, sino sinceridad. Un corazón sin doble intención ve a Dios con más claridad.","q":"¿Qué necesitas limpiar de tu corazón?"},{"ref":"Mateo 5:9","t":"Los pacificadores","r":"Los pacificadores serán llamados hijos de Dios. Ser pacificador es más que evitar peleas: es activamente construir puentes. Termina la semana buscando reconciliación.","q":"¿Dónde puedes sembrar paz hoy?"}]}];
+const DEVOTIONALS = [{"id":"d1","theme":"Paz","title":"Nada me faltará","ref":"Salmos 23:1","r":"David escribió esto siendo pastor y conociendo a su Pastor. Decir \"nada me faltará\" no es negar las necesidades, sino confiar en quien las conoce todas. Hoy puedes descansar en que alguien cuida de ti con más ternura de la que imaginas.","p":"Señor, tú eres mi pastor. Hoy confío en que nada me faltará de lo que de verdad necesito. Guíame con calma.","q":"¿Qué necesidad pones hoy en las manos de tu Pastor?"},{"id":"d2","theme":"Paz","title":"La paz que no se explica","ref":"Filipenses 4:6-7","r":"Pablo no promete que desaparezcan las circunstancias, sino una paz que guarda el corazón en medio de ellas. El camino es sencillo: presentar a Dios lo que te inquieta, con gratitud. Hazlo hoy, una petición a la vez.","p":"Padre, te presento lo que me inquieta. Cambia mi ansiedad por tu paz y guarda mi corazón.","q":"¿Qué estás cargando que podrías presentarle a Dios ahora?"},{"id":"d3","theme":"Paz","title":"Mi paz os dejo","ref":"Juan 14:27","r":"Jesús habla de paz justo antes de enfrentar la cruz. Su paz no depende de que el día sea tranquilo, sino de su presencia. No es la paz que da el mundo: es una paz que sostiene aun en la tormenta.","p":"Jesús, gracias por tu paz. Que no se turbe mi corazón ni tenga miedo hoy.","q":"¿Dónde necesitas hoy una paz que no viene de las circunstancias?"},{"id":"d4","theme":"Fortaleza","title":"No temas, yo estoy contigo","ref":"Isaías 41:10","r":"Dios no promete que no habrá miedo, sino que no estarás solo. Y añade tres cosas: te esfuerzo, te ayudo, te sostengo. Si hoy sientes miedo, no lo escondas: cuéntaselo a quien está contigo.","p":"Señor, tengo miedo de algunas cosas. Sostenme con tu mano y recuérdame que estás conmigo.","q":"¿Qué miedo quieres hoy poner a su lado?"},{"id":"d5","theme":"Fortaleza","title":"Suficiente es mi gracia","ref":"2 Corintios 12:9","r":"Pablo pidió que Dios quitara una dificultad, y Dios respondió con algo distinto: su gracia. A veces la respuesta no es el cambio de la situación, sino la fuerza para atravesarla. Tu debilidad puede ser el lugar donde su poder se nota.","p":"Dios, reconozco mi debilidad. Que tu gracia sea suficiente para este día.","q":"¿Qué debilidad podrías dejar de esconder hoy?"},{"id":"d6","theme":"Fortaleza","title":"Esfuérzate y sé valiente","ref":"Josué 1:9","r":"Antes de ordenarle ser valiente, Dios le dijo a Josué que estaría con él dondequiera que fuera. La valentía no es ausencia de miedo, es avanzar acompañado. Hoy, da un paso con esa seguridad.","p":"Señor, dame valentía para hacer lo que debo hacer hoy, sabiendo que vas conmigo.","q":"¿Qué paso valiente puedes dar hoy?"},{"id":"d7","theme":"Esperanza","title":"Pensamientos de paz","ref":"Jeremías 29:11","r":"Estas palabras se dirigieron a personas en el exilio, lejos de casa. Aun allí, Dios tenía planes de bienestar y esperanza. No importa dónde estés hoy: tu historia no ha terminado.","p":"Dios, gracias porque tus planes para mí son de paz. Renueva mi esperanza.","q":"¿Qué esperanza quisieras ver renacer?"},{"id":"d8","theme":"Esperanza","title":"Nuevas cada mañana","ref":"Lamentaciones 3:22-23","r":"El autor escribe en medio de la ruina, y aun así recuerda que la misericordia de Dios no se acaba. Cada mañana es una oportunidad nueva, sin acumular los errores del ayer. Empieza hoy con esa certeza.","p":"Padre, gracias por tu misericordia que se renueva cada mañana. Hoy empiezo de nuevo contigo.","q":"¿Qué necesitas dejar atrás para comenzar hoy?"},{"id":"d9","theme":"Esperanza","title":"Rebosar de esperanza","ref":"Romanos 15:13","r":"Dios es el Dios de la esperanza, y quiere llenarte de gozo y paz. La esperanza no se fabrica con esfuerzo: se recibe al confiar. Pídela hoy, aunque sea con pocas palabras.","p":"Dios de esperanza, lléname de gozo y paz al confiar en ti. Que mi esperanza rebose.","q":"¿Qué parte de tu vida necesita más esperanza?"},{"id":"d10","theme":"Gratitud","title":"Entrad con acción de gracias","ref":"Salmos 100:4","r":"La gratitud es la puerta de entrada a la presencia de Dios. No hace falta tener todo resuelto: basta con empezar nombrando lo que ya se te ha dado. Hoy, agradece tres cosas en voz alta.","p":"Gracias, Señor, por lo que me has dado hoy. Que mi corazón se acostumbre a agradecer.","q":"¿Tres cosas por las que quieres dar gracias?"},{"id":"d11","theme":"Gratitud","title":"Dad gracias en todo","ref":"1 Tesalonicenses 5:18","r":"No dice \"por todo\", sino \"en todo\". Es posible agradecer a Dios en medio de lo difícil, no porque lo difícil sea bueno, sino porque Él sigue siendo bueno. La gratitud cambia la mirada, aunque no cambie el día.","p":"Padre, enséñame a agradecer incluso en lo difícil, porque tú sigues siendo bueno.","q":"¿Qué bien sigue presente en medio de tu situación?"},{"id":"d12","theme":"Gratitud","title":"No olvides sus beneficios","ref":"Salmos 103:2","r":"Es fácil olvidar lo bueno cuando lo difícil pesa. El salmista se recuerda a sí mismo: bendice a Jehová y no olvides ninguno de sus beneficios. Hoy, haz una pequeña lista de lo que Dios ha hecho por ti.","p":"Señor, que no olvide tus beneficios. Gracias por tu cuidado constante.","q":"¿Qué beneficio de Dios habías pasado por alto?"},{"id":"d13","theme":"Dirección","title":"Confía de todo corazón","ref":"Proverbios 3:5-6","r":"No te apoyes en tu propio entendimiento. Confiar no significa dejar de pensar, sino reconocer que Dios ve lo que tú no ves. Cuando no entiendas el camino, reconócelo a Él, y Él enderezará tus sendas.","p":"Señor, confío en ti aunque no lo entienda todo. Endereza mis pasos.","q":"¿En qué decisión necesitas confiar más en Dios que en tu lógica?"},{"id":"d14","theme":"Dirección","title":"Lámpara a mis pies","ref":"Salmos 119:105","r":"La Palabra de Dios no es un faro que ilumina todo el camino, sino una lámpara que alumbra el siguiente paso. A veces eso es suficiente. Dios suele darte la luz justa para hoy.","p":"Dios, alumbra mi siguiente paso. Dame sabiduría para obedecer lo que ya me has mostrado.","q":"¿Cuál es el siguiente paso que ya sabes que debes dar?"},{"id":"d15","theme":"Dirección","title":"Encomienda tu camino","ref":"Salmos 37:5","r":"Encomendar es entregar lo que no controlas a alguien que sí lo hace. La promesa es breve y firme: Él hará. Hoy, entrega una preocupación, una decisión, un proyecto.","p":"Señor, encomiendo mi camino en tus manos. Confío en que tú harás lo que yo no puedo.","q":"¿Qué necesitas encomendar hoy?"},{"id":"d16","theme":"Dirección","title":"Busca primero su reino","ref":"Mateo 6:33","r":"Jesús no dice que dejes de trabajar, sino que ordenes tus prioridades. Cuando Dios ocupa el primer lugar, lo demás encuentra su sitio. Empieza el día con unos minutos para Él.","p":"Padre, quiero buscarte primero. Pon cada cosa en su lugar.","q":"¿Qué lugar le has dado a Dios en tu día?"},{"id":"d17","theme":"Amor","title":"Tanto amó Dios","ref":"Juan 3:16","r":"El versículo más conocido es también una declaración de amor. No amó de lejos: dio a su Hijo. Tu valor no se mide por tu desempeño, sino por lo que Dios estuvo dispuesto a dar por ti.","p":"Gracias, Dios, por amarme tanto. Ayúdame a vivir sabiéndome amado.","q":"¿Cómo cambia tu día saber cuánto te ama Dios?"},{"id":"d18","theme":"Amor","title":"Nada nos separará","ref":"Romanos 8:38-39","r":"Ni la muerte, ni la vida, ni lo presente, ni lo por venir: nada puede separarte del amor de Dios. Ni tus errores ni tus miedos tienen ese poder. Su amor no depende de tu mejor día.","p":"Señor, gracias porque nada puede separarme de tu amor. Que esa certeza me sostenga hoy.","q":"¿Qué duda sobre el amor de Dios necesitas soltar?"},{"id":"d19","theme":"Amor","title":"El amor echa fuera el temor","ref":"1 Juan 4:18","r":"El amor perfecto de Dios echa fuera el temor. No porque el miedo desaparezca de golpe, sino porque, al sabernos amados, el miedo pierde fuerza. Hoy, deja que su amor sea más grande que lo que te asusta.","p":"Dios, que tu amor eche fuera mi temor. Quiero vivir confiado en ti.","q":"¿Qué temor podría disminuir si te recordaras amado?"},{"id":"d20","theme":"Perdón","title":"Perdonándoos unos a otros","ref":"Efesios 4:32","r":"Perdonar es una decisión, a menudo repetida. No significa que lo ocurrido no importe, sino que no dejarás que te siga atando. Perdonamos porque primero fuimos perdonados.","p":"Padre, ayúdame a perdonar como tú me has perdonado. Suelta el peso que llevo.","q":"¿Qué carga de resentimiento quieres entregar hoy?"},{"id":"d21","theme":"Perdón","title":"Tan lejos como el oriente","ref":"Salmos 103:12","r":"Cuando Dios perdona, no guarda una lista. Nuestras faltas quedan tan lejos como está el oriente del occidente. Hoy, recibe ese perdón y deja de repasar lo que Él ya soltó.","p":"Señor, gracias por tu perdón completo. Ayúdame a recibirlo y a vivir libre.","q":"¿Qué culpa sigues cargando que Dios ya perdonó?"},{"id":"d22","theme":"Descanso","title":"Venid a mí","ref":"Mateo 11:28","r":"Jesús no invita a los que ya tienen todo en orden, sino a los cansados y cargados. Hoy, no necesitas presentar una versión mejorada de ti: ven tal como estás, y descansa.","p":"Jesús, vengo cansado. Dame descanso para mi alma.","q":"¿Qué te tiene más agotado?"},{"id":"d23","theme":"Descanso","title":"Estad quietos","ref":"Salmos 46:10","r":"Hay momentos en los que lo más sabio es detenerse y recordar quién es Dios. Él sigue siendo Dios aunque tú no puedas con todo. Haz una pausa de un minuto, respira y repítelo.","p":"Dios, aquiéto mi corazón. Tú eres Dios y yo confío en ti.","q":"¿Qué cambiaría si te detuvieras un minuto a recordar quién es Dios?"},{"id":"d24","theme":"Fortaleza","title":"Alas como las águilas","ref":"Isaías 40:31","r":"Los que esperan en Jehová renuevan sus fuerzas. Esperar no es quedarse quieto sin hacer nada, sino seguir adelante confiando en que Él obra. Tu cansancio no es el final de la historia.","p":"Señor, renueva mis fuerzas. Enséñame a esperar en ti.","q":"¿Qué estás esperando que Dios haga?"},{"id":"d25","theme":"Esperanza","title":"Cercano a los quebrantados","ref":"Salmos 34:18","r":"Cuando el corazón está roto, Dios no se aleja: se acerca. No tienes que ocultar tu dolor ni fingir fortaleza. Hoy, deja que su cercanía sea tu consuelo.","p":"Señor, estoy herido. Acércate y sana mi corazón con tu presencia.","q":"¿Qué dolor quieres dejar que Dios toque?"},{"id":"d26","theme":"Dirección","title":"Mi socorro viene de Jehová","ref":"Salmos 121:1-2","r":"El salmista levanta los ojos y recuerda de dónde viene su ayuda. Cuando la mirada se llena de problemas, levantarla hacia Dios cambia la perspectiva. Hoy, levanta los ojos.","p":"Señor, levanto mis ojos a ti. Mi ayuda viene de ti.","q":"¿Dónde has estado buscando ayuda?"},{"id":"d27","theme":"Identidad","title":"Formidables y maravillosas","ref":"Salmos 139:13-14","r":"Dios te formó con cuidado: eres obra suya, maravillosamente hecho. Tu valor no depende de lo que haces ni de cómo te comparas, sino de quién te creó. Hoy, mírate con sus ojos.","p":"Gracias, Señor, por haberme hecho como soy. Ayúdame a verme con tu mirada.","q":"¿Qué parte de ti te cuesta aceptar y Dios ama?"},{"id":"d28","theme":"Identidad","title":"Hechura suya","ref":"Efesios 2:10","r":"Fuiste creado en Cristo para buenas obras que Dios preparó de antemano. Eso significa que tu vida tiene intención. No eres un accidente ni un error: hay propósito en ti.","p":"Dios, gracias por crearme con propósito. Muéstrame las obras que preparaste para mí.","q":"¿Qué don tuyo podrías usar hoy para bendecir a alguien?"},{"id":"d29","theme":"Identidad","title":"Examíname, oh Dios","ref":"Salmos 139:23-24","r":"Una oración valiente: pedirle a Dios que revise nuestro corazón y nos guíe por el camino eterno. No es para condenarnos, sino para sanarnos. Hoy, haz esa oración con sinceridad.","p":"Dios, examina mi corazón. Muéstrame lo que necesito soltar y guíame en tu camino.","q":"¿Qué quieres que Dios revise en ti?"},{"id":"d30","theme":"Fe","title":"La certeza de lo que no se ve","ref":"Hebreos 11:1","r":"La fe es estar seguros de lo que esperamos, aunque aún no lo veamos. Es confianza en quien promete. Tu fe no necesita ser perfecta: necesita estar puesta en alguien fiel.","p":"Señor, aumenta mi fe. Quiero confiar en ti aunque no lo vea todo.","q":"¿Qué esperas hoy con fe?"},{"id":"d31","theme":"Fe","title":"Ayuda mi incredulidad","ref":"Marcos 9:24","r":"Un padre le dijo a Jesús: creo, ayuda mi incredulidad. No fue rechazado: fue escuchado. Puedes llevar tu fe y tus dudas juntas. Dios sabe trabajar con las dos.","p":"Jesús, creo; ayuda mi incredulidad. Aquí está mi fe pequeña y mis dudas.","q":"¿Qué duda quieres ponerle nombre delante de Dios?"},{"id":"d32","theme":"Dirección","title":"Si alguno tiene falta de sabiduría","ref":"Santiago 1:5","r":"Si te falta sabiduría, pídela. Dios da generosamente y sin reproche. No tienes que fingir que sabes qué hacer. Presenta tu duda y espera con confianza su respuesta.","p":"Dios, necesito sabiduría. Dámela y ayúdame a reconocerla.","q":"¿En qué necesitas sabiduría hoy?"},{"id":"d33","theme":"Descanso","title":"Solamente en Dios","ref":"Salmos 62:1","r":"En Dios solamente reposa mi alma. El verdadero descanso no está en que desaparezcan las tareas, sino en saber a quién perteneces. Respira profundo y repite el versículo despacio.","p":"Señor, en ti descansa mi alma. Que mi descanso sea tu presencia.","q":"¿Dónde has buscado descanso fuera de Dios?"},{"id":"d34","theme":"Paz","title":"Echad toda vuestra ansiedad","ref":"1 Pedro 5:7","r":"Echar es soltar. No una parte, sino toda tu ansiedad, porque Él tiene cuidado de ti. Hoy, haz una lista breve de lo que te preocupa y entrégasela a Dios, una por una.","p":"Padre, te entrego mis preocupaciones. Gracias porque tienes cuidado de mí.","q":"¿Qué preocupación te resulta más difícil de soltar?"},{"id":"d35","theme":"Fortaleza","title":"Jehová es mi luz","ref":"Salmos 27:1","r":"Si Dios es mi luz y mi salvación, ¿de quién tendré miedo? El salmista no niega el peligro, sino que cambia dónde pone su mirada. Hoy, pon tu atención en Él antes que en lo que temes.","p":"Señor, tú eres mi luz y mi fortaleza. No temeré.","q":"¿Qué sombra necesita su luz en tu vida?"},{"id":"d36","theme":"Propósito","title":"Hacedlo de corazón","ref":"Colosenses 3:23","r":"Lo que haces cada día, por pequeño que parezca, puede hacerse como para el Señor. Eso da dignidad al trabajo cotidiano y sentido a lo ordinario. Hoy, hazlo con el corazón puesto en Él.","p":"Dios, ayúdame a hacer cada cosa de hoy con corazón y como para ti.","q":"¿Qué tarea de hoy puedes ofrecer a Dios?"},{"id":"d37","theme":"Propósito","title":"Lo que Jehová pide","ref":"Miqueas 6:8","r":"Hacer justicia, amar misericordia y caminar humildemente con Dios. Así de claro y sencillo. No necesitas buscar algo extraordinario: empieza con una acción justa, un gesto de misericordia, un momento de humildad.","p":"Señor, enséñame a vivir con justicia, misericordia y humildad delante de ti.","q":"¿Qué gesto de misericordia puedes tener hoy?"},{"id":"d38","theme":"Fortaleza","title":"No nos cansemos de hacer el bien","ref":"Gálatas 6:9","r":"Hacer el bien cansa. Pablo lo sabe y anima: a su tiempo segaremos, si no desmayamos. Tu esfuerzo no se pierde, aunque aún no veas el fruto. Sigue sembrando.","p":"Señor, no me dejes cansar de hacer el bien. Dame fuerzas para perseverar.","q":"¿Dónde necesitas perseverar aunque no veas resultados?"},{"id":"d39","theme":"Gratitud","title":"Su misericordia es eterna","ref":"Salmos 136:1","r":"Veintiséis veces se repite en este salmo que su misericordia es para siempre. La repetición es intencional: nos enseña a recordar. Repite hoy esa frase cada vez que algo te inquiete.","p":"Gracias, Señor, porque tu misericordia es para siempre.","q":"¿Cómo has visto su misericordia esta semana?"},{"id":"d40","theme":"Paz","title":"Jehová te bendiga","ref":"Números 6:24-26","r":"Esta antigua bendición sigue vigente: que Dios te bendiga, te guarde, haga resplandecer su rostro sobre ti y te dé paz. Léela en voz alta sobre ti hoy, y sobre alguien que quieras.","p":"Señor, bendícenos, guárdanos y danos tu paz. Amén.","q":"¿A quién quieres bendecir con estas palabras hoy?"},{"id":"d41","theme":"Esperanza","title":"Enjugará toda lágrima","ref":"Apocalipsis 21:4","r":"Llegará un día sin llanto, sin muerte, sin dolor. Esa promesa no quita el dolor de hoy, pero sostiene el horizonte. Dios mismo enjugará cada lágrima.","p":"Señor, sostén mi esperanza en tu promesa. Consuela a los que lloran.","q":"¿Qué promesa necesitas recordar en tu dolor?"},{"id":"d42","theme":"Paz","title":"Bajo la sombra del Omnipotente","ref":"Salmos 91:1-2","r":"Habitar bajo la sombra del Altísimo es vivir cerca de Dios, en su presencia. Él es refugio y fortaleza. No es una vida sin dificultades, sino una vida con refugio.","p":"Dios, quiero habitar en tu presencia. Tú eres mi refugio y mi fortaleza.","q":"¿A qué refugio sueles correr cuando tienes miedo?"},{"id":"d43","theme":"Fe","title":"Más abundantemente","ref":"Efesios 3:20","r":"Dios es poderoso para hacer más de lo que pedimos o entendemos. Eso invita a orar con más valentía y a esperar con más confianza. Hoy, pídele algo grande.","p":"Dios, tú puedes hacer más de lo que pido. Confío en tu poder y en tu amor.","q":"¿Qué le has dejado de pedir a Dios por creer que es demasiado?"},{"id":"d44","theme":"Esperanza","title":"Gozosos en la esperanza","ref":"Romanos 12:12","r":"Gozosos en la esperanza, sufridos en la tribulación, constantes en la oración. Tres actitudes para un mismo camino: la esperanza da gozo, la tribulación pide paciencia y la oración sostiene todo.","p":"Señor, ayúdame a vivir con esperanza, paciencia y constancia en la oración.","q":"¿Cuál de las tres actitudes necesitas hoy?"},{"id":"d45","theme":"Paz","title":"No te desampararé","ref":"Hebreos 13:5","r":"Nunca te dejaré ni te desampararé. Es una de las promesas más repetidas de la Biblia. Mientras otros pueden fallar, Dios permanece. Hoy, descansa en su compañía.","p":"Gracias, Señor, porque nunca me dejas. Quédate conmigo hoy.","q":"¿En qué momento sientes más su compañía?"},{"id":"d46","theme":"Gratitud","title":"En tu presencia hay plenitud","ref":"Salmos 16:11","r":"En la presencia de Dios hay plenitud de gozo. No en tener más, sino en estar con Él. Hoy, busca un momento de silencio para disfrutar de su compañía sin pedir nada.","p":"Señor, que mi mayor alegría sea estar contigo.","q":"¿Cuándo fue la última vez que disfrutaste de su presencia?"}];
+const EXTRA_VERSES = [{"ref":"Mateo 6:25-27","text":"Por tanto os digo: No os congojéis por vuestra vida, qué habéis de comer, o qué habéis de beber; ni por vuestro cuerpo, qué habéis de vestir. ¿La vida no es más que el alimento, y el cuerpo que el vestido? Mirád a las aves del cielo, que no siembran, ni siegan, ni allegan en alfolíes; y vuestro Padre celestial las alimenta. ¿No sois vosotros mucho mejores que ellas? ¿Mas quién de vosotros, por mucho que se congoje, podrá añadir a su estatura un codo?","tags":["paz"]},{"ref":"Salmos 94:19","text":"En la multitud de mis pensamientos dentro de mí, tus consolaciones alegraban mi alma.","tags":["paz"]},{"ref":"1 Pedro 5:7","text":"Echando toda vuestra solicitud en él; porque él tiene cuidado de vosotros.","tags":["paz"]},{"ref":"Filipenses 4:6-7","text":"De nada estéis solícitos; sino que en todo dénse a conocer vuestras peticiones delante de Dios por la oración, y el ruego, con hacimiento de gracias. Y la paz de Dios, que sobrepuja todo entendimiento, guardará vuestros corazones y vuestros entendimientos en Cristo Jesús.","tags":["paz"]},{"ref":"Salmos 55:22","text":"Echa sobre Jehová tu carga, y él te sustentará: no dará para siempre resbalo al justo.","tags":["paz"]},{"ref":"Isaías 26:3","text":"Sentencia firme: Que guardarás paz, paz; porque en ti se han confiado,","tags":["paz"]},{"ref":"Salmos 46:10","text":"Cesád, y conocéd que yo soy Dios: ensalzarme he en las naciones, ensalzarme he en la tierra.","tags":["paz"]},{"ref":"Hebreos 11:1","text":"Es pues la fe la sustancia de las cosas que se esperan, la demostración de las cosas que no se ven.","tags":["fe"]},{"ref":"Romanos 10:17","text":"Luego la fe es por el oír, y el oír por la palabra de Dios.","tags":["fe"]},{"ref":"Marcos 9:23-24","text":"Y Jesús le dijo: Si puedes creer esto, al que cree todo es posible. Y luego el padre del muchacho dijo, clamando con lágrimas: Creo, Señor: ayuda mi incredulidad.","tags":["fe"]},{"ref":"Mateo 17:20","text":"Y Jesús les dijo: Por vuestra infidelidad; porque de cierto os digo, que si tuviereis fe como un grano de mostaza, diréis a este monte: Pásate de aquí allá, y se pasará; y nada os será imposible.","tags":["fe"]},{"ref":"2 Corintios 5:7","text":"(Porque por fe andamos, no por vista:)","tags":["fe"]},{"ref":"Salmos 37:5","text":"Vuelve hacia Jehová tu camino: y espera en él, y él hará.","tags":["fe"]},{"ref":"Hebreos 12:2","text":"Puestos los ojos en el capitán y consumador de la fe, Jesús; el cual habiéndole sido propuesto gozo, sufrió la cruz, menospreciando la vergüenza, y se asentó a la diestra del trono de Dios.","tags":["fe"]},{"ref":"Salmos 100:4","text":"Entrád por sus puertas con confesión, por sus patios con alabanza: alabádle, bendecíd a su nombre.","tags":["gratitud"]},{"ref":"1 Tesalonicenses 5:18","text":"En todo dad gracias; porque esta es la voluntad de Dios en Cristo Jesús acerca de vosotros.","tags":["gratitud"]},{"ref":"Salmos 103:2","text":"Bendice, alma mía, a Jehová, y no te olvides de todos sus beneficios.","tags":["gratitud"]},{"ref":"Colosenses 3:15","text":"Y la paz de Dios reine en vuestros corazones: a la cual asimismo sois llamados en un mismo cuerpo; y sed agradecidos.","tags":["gratitud"]},{"ref":"Salmos 136:1","text":"Alabád a Jehová, porque es bueno; porque para siempre es su misericordia.","tags":["gratitud"]},{"ref":"Salmos 107:1","text":"Alabád a Jehová, porque es bueno; porque para siempre es su misericordia.","tags":["gratitud"]},{"ref":"Santiago 1:17","text":"Toda buena dádiva, y todo don perfecto es de lo alto, que desciende del Padre de las lumbres, en el cual no hay mudanza, ni sombra de variación.","tags":["gratitud"]},{"ref":"Jeremías 29:11","text":"Porque yo sé los pensamientos que yo pienso de vosotros, dijo Jehová, pensamientos de paz, y no de mal, para daros el fin que esperáis.","tags":["propósito"]},{"ref":"Efesios 2:10","text":"Porque hechura suya somos, creados en Cristo Jesús para buenas obras, las cuales Dios ordenó antes para que anduviésemos en ellas.","tags":["propósito"]},{"ref":"Romanos 8:28","text":"Y sabemos, que todas las cosas obran juntamente para el bien de los que a Dios aman, es a saber, a los que conforme a su propósito son llamados.","tags":["propósito"]},{"ref":"Proverbios 16:3","text":"Encomienda a Jehová tus obras; y tus pensamientos serán afirmados.","tags":["propósito"]},{"ref":"Salmos 138:8","text":"Jehová cumplirá por mí, Jehová, tu misericordia es para siempre; no dejarás la obra de tus manos.","tags":["propósito"]},{"ref":"Eclesiastés 3:1","text":"Para todas las cosas hay sazón; y todo lo que quisiereis debajo del cielo, tiene su tiempo determinado.","tags":["propósito"]},{"ref":"Colosenses 3:23","text":"Y todo lo que hiciereis hacéd lo de corazón, como mirando al Señor, y no a los hombres:","tags":["propósito"]},{"ref":"Mateo 6:6","text":"Mas tú, cuando orares, entra en tu cámara, y cerrada tu puerta, ora a tu Padre que está en lo escondido; y tu Padre, que ve en lo escondido, te recompensará en lo público.","tags":["oración"]},{"ref":"Mateo 6:9","text":"Vosotros, pues, oraréis así: Padre nuestro, que estás en los cielos: sea santificado tu nombre.","tags":["oración"]},{"ref":"Filipenses 4:6","text":"De nada estéis solícitos; sino que en todo dénse a conocer vuestras peticiones delante de Dios por la oración, y el ruego, con hacimiento de gracias.","tags":["oración"]},{"ref":"Salmos 145:18","text":"Cercano está Jehová a todos los que le invocan: a todos los que le invocan con verdad.","tags":["oración"]},{"ref":"1 Tesalonicenses 5:17","text":"Orád sin cesar.","tags":["oración"]},{"ref":"Lucas 11:9-10","text":"Y yo os digo: Pedíd, y se os dará: buscád, y hallaréis: tocád, y os será abierto. Porque todo aquel que pide, recibe; y el que busca, halla; y al que toca, es abierto.","tags":["oración"]},{"ref":"Hebreos 4:16","text":"Lleguémosnos, pues, confiadamente al trono de su gracia, a fin de alcanzar misericordia, y hallar gracia para el auxilio oportuno.","tags":["oración"]},{"ref":"Josué 24:15","text":"Y si mal os parece servir a Jehová, escogéos hoy a quien sirváis: o a los dioses, a quien sirvieron vuestros padres: cuando estuvieron de esotra parte del río, o a los dioses de los Amorreos, en cuya tierra habitáis: que yo y mi casa serviremos a Jehová.","tags":["familia"]},{"ref":"Salmos 127:1","text":"Si Jehová no edificare la casa, en vano trabajan los que la edifican: Si Jehová no guardare la ciudad, en vano vela la guarda.","tags":["familia"]},{"ref":"Proverbios 22:6","text":"Instruye al niño en su carrera: aun cuando fuere viejo no se apartará de ella.","tags":["familia"]},{"ref":"Efesios 6:4","text":"Y vosotros, padres, no provoquéis a ira a vuestros hijos; sino criádlos en la disciplina y amonestación del Señor.","tags":["familia"]},{"ref":"Colosenses 3:13-14","text":"Soportándoos los unos a los otros, y perdonándoos los unos a los otros, si alguno tuviere queja contra otro: a la manera que Cristo os perdonó, así también perdonád vosotros. Y sobre todas estas cosas vestíos de amor, el cual es el vínculo de la perfección.","tags":["familia"]},{"ref":"Salmos 133:1","text":"¡Mirád, cuán bueno, y cuán suave es habitar los hermanos también en uno!","tags":["familia"]},{"ref":"Números 6:24-26","text":"Jehová te bendiga, y te guarde: Haga resplandecer Jehová su rostro sobre ti, y haya de ti misericordia: Jehová alce a ti su rostro, y ponga en ti paz.","tags":["familia"]},{"ref":"1 Corintios 13:4-7","text":"La caridad es sufrida, es benigna: la caridad no tiene envidia: la caridad no es jactanciosa, no es hinchada, No se comporta indecorosamente, no busca lo que es suyo, no se irrita, no piensa mal, No se huelga en la injusticia, mas huélgase en la verdad: Todo lo sufre, todo lo cree, todo lo espera, todo lo soporta.","tags":["relaciones"]},{"ref":"1 Juan 4:19","text":"Nosotros le amamos a él, porque él primero nos amó.","tags":["relaciones"]},{"ref":"Juan 15:12","text":"Este es mi mandamiento: Que os améis los unos a los otros, como yo os amé.","tags":["relaciones"]},{"ref":"Romanos 12:10","text":"Amándoos los unos a los otros con amor de hermanos; en la honra prefiriéndoos los unos a los otros.","tags":["relaciones"]},{"ref":"Proverbios 17:17","text":"En todo tiempo ama el amigo: mas el hermano para la angustia es nacido.","tags":["relaciones"]},{"ref":"Efesios 4:2","text":"Con toda humildad y mansedumbre, con paciencia soportando los unos a los otros en amor,","tags":["relaciones"]},{"ref":"Colosenses 3:14","text":"Y sobre todas estas cosas vestíos de amor, el cual es el vínculo de la perfección.","tags":["relaciones"]},{"ref":"Efesios 4:32","text":"Mas sed los unos con los otros benignos, compasivos, perdonándoos los unos a los otros, como también Dios os perdonó en Cristo.","tags":["relaciones"]},{"ref":"Mateo 6:14-15","text":"Porque si perdonareis a los hombres sus ofensas, os perdonará también a vosotros vuestro Padre celestial. Mas si no perdonareis a los hombres sus ofensas, tampoco vuestro Padre os perdonará vuestras ofensas.","tags":["relaciones"]},{"ref":"Colosenses 3:13","text":"Soportándoos los unos a los otros, y perdonándoos los unos a los otros, si alguno tuviere queja contra otro: a la manera que Cristo os perdonó, así también perdonád vosotros.","tags":["relaciones"]},{"ref":"Salmos 103:12","text":"Cuanto está lejos el oriente del occidente, hizo alejar de nosotros nuestras rebeliones.","tags":["relaciones"]},{"ref":"1 Juan 1:9","text":"Si confesamos nuestros pecados, él es fiel y justo para que nos perdone nuestros pecados, y nos limpie de toda maldad.","tags":["relaciones"]},{"ref":"Romanos 12:18","text":"Si se puede hacer, en cuanto es en vosotros, tenéd paz con todos los hombres.","tags":["relaciones"]},{"ref":"Mateo 18:21-22","text":"Entonces Pedro llegándose a él, dijo: Señor, ¿cuántas veces perdonaré a mi hermano que pecare contra mí? ¿hasta siete? Jesús le dice: No te digo hasta siete, mas aun hasta setenta veces siete.","tags":["relaciones"]},{"ref":"Salmos 34:18","text":"Cercano está Jehová a los quebrantados de corazón: y a los molidos de espíritu salvará.","tags":["tristeza"]},{"ref":"Mateo 5:4","text":"Bienaventurados los tristes; porque ellos recibirán consolación.","tags":["tristeza"]},{"ref":"Salmos 30:5","text":"Porque un momento hay en su furor, mas vida en su voluntad: a la tarde reposará el lloro, y a la mañana vendrá la alegría.","tags":["tristeza"]},{"ref":"Juan 11:25-26","text":"Dícele Jesús: Yo soy la resurrección, y la vida: el que cree en mí, aunque esté muerto, vivirá; Y todo aquel que vive, y cree en mí no morirá eternamente. ¿Crees esto?","tags":["tristeza"]},{"ref":"2 Corintios 1:3-4","text":"Bendito sea el Dios y Padre de nuestro Señor Jesu Cristo, el Padre de misericordias, y el Dios de toda consolación. El que nos consuela en todas nuestras tribulaciones; para que podamos nosotros consolar a los que están en cualquiera angustia, con la consolación con que nosotros mismos somos consolados de Dios.","tags":["tristeza"]},{"ref":"Apocalipsis 21:4","text":"Y limpiará Dios toda lágrima de los ojos de ellos; y la muerte no será más; ni habrá más pesar, ni clamor, ni dolor; porque las primeras cosas son pasadas.","tags":["tristeza"]},{"ref":"Salmos 147:3","text":"El que sana a los quebrantados de corazón; y el que liga sus dolores.","tags":["tristeza"]},{"ref":"Isaías 40:29","text":"El da esfuerzo al cansado, y multiplica las fuerzas al que no tiene ningunas.","tags":["fe"]},{"ref":"Isaías 40:31","text":"Mas los que esperan a Jehová tendrán nuevas fuerzas, levantarán las alas como águilas, correrán y no se cansarán, caminarán y no se fatigarán.","tags":["fe"]},{"ref":"2 Corintios 12:9","text":"Y él me dijo: Bástate mi gracia; porque mi poder en la flaqueza se perfecciona. Por tanto de buena gana me gloriaré de mis flaquezas, porque habite en mí el poder de Cristo.","tags":["fe"]},{"ref":"Filipenses 4:13","text":"Todo lo puedo en Cristo que me fortalece.","tags":["fe"]},{"ref":"Salmos 73:26","text":"Desmáyase mi carne y mi corazón, ¡o roca de mi corazón! que mi porción es Dios para siempre.","tags":["fe"]},{"ref":"Nehemías 8:10","text":"Y díjoles: Id, coméd grosuras, y bebéd dulzaras, y enviád partes a los que no tienen aparejado, porque santo día es a nuestro Señor: y no os entristezcáis; porque el gozo de Jehová es vuestra fortaleza.","tags":["fe"]},{"ref":"Salmos 28:7","text":"Jehová es mi fortaleza, y mi escudo: en él esperó mi corazón, y yo fui ayudado: y gozóse mi corazón, y con mi canción le alabaré.","tags":["fe"]},{"ref":"Josué 1:9","text":"Mira que te mando que te esfuerces, y seas valiente: no temas ni desmayes; porque yo Jehová tu Dios soy contigo en donde quiera que fueres.","tags":["paz"]},{"ref":"Salmos 27:1","text":"Jehová es mi luz y mi salud, ¿de quién temeré? Jehová es la fortaleza de mi vida, ¿de quién me espavoreceré?","tags":["paz"]},{"ref":"Isaías 41:10","text":"No temas, que yo soy contigo: no desmayes, que yo soy tu Dios: que te esfuerzo: siempre te ayudaré, siempre te sustentaré con la diestra de mi justicia.","tags":["paz"]},{"ref":"2 Timoteo 1:7","text":"Porque no nos ha dado Dios el espíritu de temor, sino el de fortaleza, y de amor, y de cordura.","tags":["paz"]},{"ref":"Salmos 56:3","text":"De día temo: mas yo en ti confío.","tags":["paz"]},{"ref":"Deuteronomio 31:6","text":"Esforzáos y confortáos; no temáis ni hayáis miedo de ellos que Jehová tu Dios es el que va contigo: no te dejará, ni te desamparará.","tags":["paz"]},{"ref":"Salmos 118:6","text":"Jehová es por mí: no temeré lo que me haga el hombre.","tags":["paz"]},{"ref":"Salmos 103:2-3","text":"Bendice, alma mía, a Jehová, y no te olvides de todos sus beneficios. El que perdona todas tus iniquidades, el que sana todas tus enfermedades.","tags":["tristeza"]},{"ref":"Jeremías 17:14","text":"Sáname, o! Jehová, y seré sano: sálvame, y seré salvo; porque tú eres mi alabanza.","tags":["tristeza"]},{"ref":"Salmos 107:20","text":"Envió su palabra, y curólos; y escapólos de sus sepulturas.","tags":["tristeza"]},{"ref":"Isaías 53:5","text":"Mas él herido fue por nuestras rebeliones, molido por nuestros pecados: el castigo de nuestra paz sobre él; y por su llaga hubo cura para nosotros.","tags":["tristeza"]},{"ref":"Santiago 5:15","text":"Y la oración de fe hará salvo al enfermo, y el Señor le aliviará; y si estuviere en pecados, le serán perdonados.","tags":["tristeza"]},{"ref":"Salmos 41:3","text":"Jehová le sustentará sobre la cama de dolor; toda su cama revolviste en su enfermedad.","tags":["tristeza"]},{"ref":"Éxodo 15:26","text":"Y dijo: Si oyendo oyeres la voz de Jehová tu Dios, e hicieres lo recto delante de sus ojos, y escuchares a sus mandamientos, y guardares todos sus estatutos, ninguna enfermedad de las que envié a los Egipcios, te enviaré a ti; porque yo soy Jehová tu sanador.","tags":["tristeza"]},{"ref":"Proverbios 3:5-6","text":"Fíate de Jehová de todo tu corazón; y no estribes en tu prudencia. Reconócele en todos tus caminos; y él enderezará tus veredas.","tags":["propósito"]},{"ref":"Proverbios 4:23","text":"Sobre toda cosa guardada, guarda tu corazón; porque de él mana la vida.","tags":["propósito"]},{"ref":"Proverbios 15:1","text":"La blanda respuesta quita la ira: mas la palabra de dolor hace subir el furor.","tags":["propósito"]},{"ref":"Proverbios 18:10","text":"Torre fuerte es el nombre de Jehová: a él correrá el justo, y será levantado.","tags":["propósito"]},{"ref":"Proverbios 27:17","text":"Hierro con hierro se aguza; y el hombre aguza el rostro de su amigo.","tags":["propósito"]},{"ref":"Proverbios 11:25","text":"El alma liberal será engordada; y el que hartare, él también será harto.","tags":["propósito"]},{"ref":"Proverbios 19:21","text":"Muchos pensamientos están en el corazón del hombre: mas el consejo de Jehová permanecerá.","tags":["propósito"]},{"ref":"Romanos 15:13","text":"Y el Dios de esperanza os hincha de todo gozo y paz en el creer, para que abundéis en esperanza por la virtud del Espíritu Santo.","tags":["fe"]},{"ref":"Salmos 42:11","text":"¿Por qué te abates, o! alma mía: y por qué te enfureces contra mí? Espera a Dios, porque aun le tengo de alabar, salud de mi presencia, y Dios mío.","tags":["fe"]},{"ref":"Lamentaciones 3:22-23","text":"Misericordias de Jehová son, que no somos consumidos; porque sus misericordias nunca desfallecieron. Nuevas cada mañana: grande es tu fe.","tags":["fe"]},{"ref":"Romanos 5:3-5","text":"Y no solo esto, mas aun nos gloriamos en las tribulaciones, sabiendo que la tribulación obra paciencia; Y la paciencia, experiencia; y la experiencia, esperanza; Y la esperanza no nos avergüenza; porque el amor de Dios está derramado en nuestros corazones por el Espíritu Santo, que nos es dado.","tags":["fe"]},{"ref":"Hebreos 6:19","text":"La cual tenemos como áncora del alma, tan segura como firme, y que entra hasta del velo adentro:","tags":["fe"]},{"ref":"Salmos 130:5","text":"Yo esperé a Jehová, mi alma esperó: a su palabra he esperado.","tags":["fe"]},{"ref":"Mateo 11:28-30","text":"Veníd a mí, todos los que estáis trabajados, y cargados, que yo os haré descansar. Llevád mi yugo sobre vosotros, y aprendéd de mí, que soy manso y humilde de corazón; y hallaréis descanso para vuestras almas. Porque mi yugo es suave, y ligera mi carga.","tags":["paz"]},{"ref":"Salmos 62:1","text":"En Dios solamente está callada mi alma; de él es mi salud.","tags":["paz"]},{"ref":"Salmos 127:2","text":"Por demás os es el madrugar a levantaros, el veniros tarde a reposar, el comer pan de dolores: así dará a su amado el sueño.","tags":["paz"]},{"ref":"Éxodo 33:14","text":"Y él dijo: Mi faz irá contigo, y te haré descansar.","tags":["paz"]},{"ref":"Salmos 4:8","text":"En paz me acostaré, y asimismo dormiré: porque tú, Jehová, solo me harás estar confiado.","tags":["paz"]},{"ref":"Isaías 30:15","text":"Porque así dijo el Señor Jehová, el Santo de Israel: En descanso, y en reposo seréis salvos: en quietud, y en confianza, será vuestra fortaleza; y no quisisteis.","tags":["paz"]},{"ref":"Hebreos 4:9-10","text":"Así que queda el sabatismo para el pueblo de Dios. Porque el que ha entrado en el reposo de él, ha reposado también él mismo de sus propias obras, como Dios reposó de las suyas.","tags":["paz"]},{"ref":"1 Timoteo 4:12","text":"Ninguno tenga en poco tu juventud; mas sé ejemplo de los fieles en palabra, en conversación, en caridad, en espíritu, en fe, en pureza.","tags":["propósito"]},{"ref":"Salmos 119:9","text":"¿Con qué limpiará el mozo su camino? cuando guardare tu palabra.","tags":["propósito"]},{"ref":"Eclesiastés 12:1","text":"Y ten memoria de tu Criador en los días de tu juventud, antes que vengan los malos días, y lleguen los años, de los cuales digas: No tengo en ellos contentamiento.","tags":["propósito"]},{"ref":"Romanos 12:2","text":"Y no os conforméis a este siglo; mas transformáos por la renovación de vuestro entendimiento, para que experimentéis cual sea la voluntad de Dios, la buena, agradable y perfecta.","tags":["propósito"]},{"ref":"Mateo 6:33","text":"Mas buscád primeramente el reino de Dios, y su justicia; y todas estas cosas os serán añadidas.","tags":["propósito"]},{"ref":"Salmos 119:105","text":"Lámpara es a mis pies tu palabra, y lumbre a mi camino.","tags":["propósito"]},{"ref":"Jeremías 1:7-8","text":"Y díjome Jehová: No digas: Soy mozo; porque a todo lo que te enviaré irás, y todo lo que te mandaré, dirás. No temas delante de ellos; porque contigo soy para librarte, dijo Jehová.","tags":["propósito"]},{"ref":"Juan 1:1-5","text":"En el principio ya era el Verbo; y el Verbo era con Dios, y Dios era el Verbo. Éste era en el principio con Dios. Todas las cosas por éste fueron hechas; y sin él nada de lo que es hecho, fue hecho. En él estaba la vida, y la vida era la luz de los hombres. Y la luz en las tinieblas resplandece; y las tinieblas no la comprendieron.","tags":["fe"]},{"ref":"Juan 1:14","text":"Y el Verbo fue hecho carne, y habitó entre nosotros; y vimos su gloria, gloria como del unigénito del Padre, lleno de gracia y de verdad.","tags":["fe"]},{"ref":"Juan 3:16-17","text":"Porque de tal manera amó Dios al mundo, que haya dado a su Hijo unigénito; para que todo aquel que en él creyere, no se pierda, mas tenga vida eterna. Porque no envió Dios a su Hijo al mundo, para que condene al mundo; sino para que el mundo sea salvo por él.","tags":["fe"]},{"ref":"Juan 4:14","text":"Mas el que bebiere del agua que yo le daré, para siempre no tendrá sed; mas el agua que yo le daré, será en él pozo de agua, que salte para vida eterna.","tags":["fe"]},{"ref":"Juan 6:35","text":"Y Jesús les dijo: Yo soy el pan de vida: el que a mí viene, nunca tendrá hambre; y el que en mí cree, no tendrá sed jamás.","tags":["fe"]},{"ref":"Juan 8:12","text":"Y hablóles Jesús otra vez, diciendo: Yo soy la luz del mundo: el que me sigue, no andará en tinieblas; mas tendrá la luz de vida.","tags":["fe"]},{"ref":"Juan 10:10-11","text":"El ladrón no viene sino para hurtar, y matar, y destruir: yo he venido para que tengan vida, y para que la tengan en grande abundancia. Yo soy el buen pastor: el buen pastor su alma da por las ovejas.","tags":["fe"]},{"ref":"Juan 14:6","text":"Jesús le dice: Yo soy el camino, y la verdad, y la vida; nadie viene al Padre, sino por mí.","tags":["fe"]},{"ref":"Juan 15:5","text":"Yo soy la vid, vosotros los pámpanos: el que permanece en mí, y yo en él, éste lleva mucho fruto (porque sin mí nada podéis hacer.)","tags":["fe"]},{"ref":"Mateo 5:3","text":"Bienaventurados los pobres en espíritu; porque de ellos es el reino de los cielos.","tags":["fe"]},{"ref":"Mateo 5:5","text":"Bienaventurados los mansos; porque ellos recibirán la tierra por heredad.","tags":["fe"]},{"ref":"Mateo 5:6","text":"Bienaventurados los que tienen hambre y sed de justicia; porque ellos serán hartos.","tags":["fe"]},{"ref":"Mateo 5:7","text":"Bienaventurados los misericordiosos; porque ellos alcanzarán misericordia.","tags":["fe"]},{"ref":"Mateo 5:8","text":"Bienaventurados los de limpio corazón; porque ellos verán a Dios.","tags":["fe"]},{"ref":"Mateo 5:9","text":"Bienaventurados los pacificadores; porque ellos serán llamados hijos de Dios.","tags":["fe"]},{"ref":"Salmos 23:1","text":"Jehová es mi pastor; no me faltará.","tags":["paz"]},{"ref":"Juan 14:27","text":"La paz os dejo: mi paz os doy: no como el mundo la da, yo os la doy: no se turbe vuestro corazón, ni tenga miedo.","tags":["paz"]},{"ref":"Juan 3:16","text":"Porque de tal manera amó Dios al mundo, que haya dado a su Hijo unigénito; para que todo aquel que en él creyere, no se pierda, mas tenga vida eterna.","tags":["relaciones"]},{"ref":"Romanos 8:38-39","text":"Por que estoy cierto que ni la muerte, ni la vida, ni ángeles, ni principados, ni potestades, ni lo presente, ni lo por venir, Ni lo alto, ni lo bajo, ni ninguna otra criatura nos podrá apartar del amor de Dios, que es en Cristo Jesús, Señor nuestro.","tags":["relaciones"]},{"ref":"1 Juan 4:18","text":"En el amor no hay temor; mas el perfecto amor echa fuera el temor; porque el temor tiene castigo. De donde el que teme, no es perfecto en el amor.","tags":["relaciones"]},{"ref":"Mateo 11:28","text":"Veníd a mí, todos los que estáis trabajados, y cargados, que yo os haré descansar.","tags":["descanso"]},{"ref":"Salmos 121:1-2","text":"Alzaré mis ojos a los montes de donde vendrá mi socorro. Mi socorro es de parte de Jehová; que hizo los cielos y la tierra.","tags":["dirección"]},{"ref":"Salmos 139:13-14","text":"Porque tú poseiste mis riñones; cubrísteme en el vientre de mi madre. Confesarte he, porque terribles y maravillosas son tus obras: estoy maravillado, y mi alma lo conoce en gran manera.","tags":["propósito"]},{"ref":"Salmos 139:23-24","text":"Examíname, o! Dios, y conoce mi corazón: pruébame, y conoce mis pensamientos. Y ve si hay en mí camino de perversidad; y guíame en el camino del mundo.","tags":["propósito"]},{"ref":"Marcos 9:24","text":"Y luego el padre del muchacho dijo, clamando con lágrimas: Creo, Señor: ayuda mi incredulidad.","tags":["fe"]},{"ref":"Santiago 1:5","text":"Y si alguno de vosotros tiene falta de sabiduría, demánde la a Dios, (el cual da a todos dadivosamente, y no zahiere,) y serle ha dada.","tags":["dirección"]},{"ref":"Miqueas 6:8","text":"O! hombre, declarado te ha qué sea lo bueno, y qué pida de ti Jehová: Solamente hacer juicio, y amar misericordia, y humillarte para andar con tu Dios.","tags":["propósito"]},{"ref":"Gálatas 6:9","text":"Mas no nos cansemos de hacer bien, que a su tiempo segaremos, si no nos desmayamos.","tags":["fortaleza"]},{"ref":"Salmos 91:1-2","text":"El que habita en el escondedero del Altísimo, morará en la sombra del Omnipotente. Diré a Jehová: Esperanza mía y castillo mío: Dios mío: asegurarme he en él.","tags":["paz"]},{"ref":"Efesios 3:20","text":"A aquel, pues, que es poderoso para hacer todas las cosas mucho más abundantemente de lo que pedimos, o entendemos, conforme al poder que obra en nosotros,","tags":["fe"]},{"ref":"Romanos 12:12","text":"Gozosos en la esperanza: sufridos en la tribulación: constantes en la oración:","tags":["esperanza"]},{"ref":"Hebreos 13:5","text":"Sean las costumbres vuestras sin avaricia, contentos de lo presente; porque él mismo ha dicho: No te dejaré, ni tampoco te desampararé:","tags":["paz"]},{"ref":"Salmos 16:11","text":"Hacerme has saber la senda de la vida, hartura de alegrías hay con tu rostro: deleites en tu diestra para siempre.","tags":["gratitud"]}];
+
+// Planes: los 4 de siempre ganan categoría; los nuevos traen una portada (foto) y, por día,
+// título + reflexión + pregunta. "days" sigue siendo la lista de referencias, así que todo lo
+// que ya leía PLANS (progreso, tarjetas, etc.) sigue funcionando igual.
+(function mergePlans(){
+  const catOf = { paz:'Paz', jesus:'Jesús', salmos:'Paz', lejos:'Consuelo' };
+  PLANS.forEach(p=>{ if(!p.cat) p.cat = catOf[p.id] || 'Paz'; });
+  EXTRA_PLANS.forEach(ep=>{
+    PLANS.push({ id:ep.id, emoji:ep.emoji, title:ep.title, subtitle:ep.subtitle, cat:ep.cat, cover:ep.cover,
+                 days: ep.days.map(d=>d.ref), info: ep.days });
+  });
+})();
+function planDayInfo(p,i){ return (p && p.info && p.info[i]) || null; }
+function planCoverBg(p, top, bottom){
+  if(!p || !p.cover) return '';
+  return `background:linear-gradient(180deg,rgba(20,18,12,${top==null?.1:top}),rgba(10,8,6,${bottom==null?.78:bottom})), url('https://images.unsplash.com/${p.cover}?auto=format&fit=crop&w=700&q=65') center/cover no-repeat, linear-gradient(160deg,#6F8F7A,#2F4F3F);`;
+}
+
 
 // Biblia completa (RVA 1909, dominio público) — cargada de forma asíncrona desde data/bible-rva.json
 // para no inflar el arranque de la app. BIBLE_DATA: { "Génesis": [ [v1,v2,...], [cap2...], ... ], ... }
@@ -4317,6 +4426,7 @@ function go(id, opts){
   const showNav = NAV_SCREENS.includes(id);
   document.getElementById('navbar').style.display = showNav ? 'flex' : 'none';
   if(id==='home') renderHomeQuick();
+  if(id==='home' && splashDone && pendingOpenParams) setTimeout(runPendingOpen, 450);
   if(id==='perfil') renderPerfil();
   if(id==='misPalabras') renderMisPalabras();
   if(id==='misPastores') renderMisPastores();
@@ -4324,8 +4434,10 @@ function go(id, opts){
   if(id==='diario') renderDiario();
   if(id==='musica') renderMusica();
   if(id==='chat' && !chatStarted) startChat();
-  if(id==='biblia') { renderBooks(); renderPlanRow(); renderBibliaContinue(); document.getElementById('search-results').innerHTML=''; }
+  if(id==='biblia') { renderBooks(); renderPlanRow(); renderBibliaContinue(); renderBibliaDevo(); document.getElementById('search-results').innerHTML=''; }
   if(id==='historialLecturas') renderHistorialLecturas();
+  if(id==='planesAll') renderPlansAll();
+  if(id==='devocionales') renderDevocionales();
   if(id==='musicaGuardado') renderMusicaGuardado();
   if(id==='ob-sentir') renderObNeedGrid();
   if(id==='comunidadOrar') renderComunidadOrar();
@@ -4699,6 +4811,30 @@ function renderHomeCamino(){
 // Continúa tu recorrido: planes de lectura como tarjetas con portada. Los
 // que ya empezaste van primero (más avanzados antes), luego los nuevos, y
 // los terminados al final. Reutiliza PLANS / getPlanProgress / openPlan.
+// Tarjetas de "retomar": lo último que leíste y lo último que escuchaste.
+function homeResumeCards(){
+  let h = '';
+  try{
+    const lc = lastChapterInfo();
+    if(lc){
+      const bk = String(lc.book).replace(/'/g,"\\'");
+      h += `<div class="journey-card" onclick="openChapter('${bk}', ${lc.chapter})" role="button" tabindex="0" aria-label="Continúa leyendo ${lc.book} ${lc.chapter}">
+        <div class="journey-cover resume resume-read"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5c3-1.5 6-1.5 8 0v14c-2-1.5-5-1.5-8 0V5zM20 5c-3-1.5-6-1.5-8 0v14c2-1.5 5-1.5 8 0V5z"/></svg></div>
+        <div class="journey-body"><div class="t">Continúa leyendo</div><div class="s">${lc.book} ${lc.chapter} · ${formatHistoryDate(lc.at)}</div><div class="journey-prog"><div class="lbl">Retomar donde te quedaste</div></div></div>
+      </div>`;
+    }
+    const li = lastListened();
+    if(li){
+      const nm = String(li.name).replace(/</g,'&lt;');
+      const bg = li.thumb ? ` style="background-image:linear-gradient(rgba(20,16,10,.25),rgba(20,16,10,.25)), url('${li.thumb}')"` : '';
+      h += `<div class="journey-card" onclick="resumeLastListened()" role="button" tabindex="0" aria-label="Continúa escuchando ${nm}">
+        <div class="journey-cover resume resume-listen"${bg}><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z"/></svg></div>
+        <div class="journey-body"><div class="t">Continúa escuchando</div><div class="s">${nm}</div><div class="journey-prog"><div class="lbl">Seguir con esto</div></div></div>
+      </div>`;
+    }
+  }catch(e){}
+  return h;
+}
 function renderHomePlanContinue(){
   const wrap = document.getElementById('home-journey-row');
   if(!wrap) return;
@@ -4708,12 +4844,16 @@ function renderHomePlanContinue(){
     const rank = (n>0 && n<total) ? 0 : (n>=total ? 2 : 1);
     return { p, n, total, rank, pct:Math.round(n/total*100), idx };
   }).sort((a,b)=> a.rank-b.rank || (a.rank===0 ? b.pct-a.pct : a.idx-b.idx));
-  wrap.innerHTML = items.map(({p,n,total,rank,pct})=>{
+  // en Inicio solo van los planes empezados y unos pocos nuevos (los demás están en "Ver todos")
+  const started = items.filter(x=>x.rank===0), fresh = items.filter(x=>x.rank===1), done = items.filter(x=>x.rank===2);
+  const off = fresh.length ? dayNumber() % fresh.length : 0;
+  const pick = started.concat(fresh.slice(off).concat(fresh.slice(0,off)).slice(0,4)).concat(started.length+fresh.length<3 ? done.slice(0,2) : []);
+  wrap.innerHTML = homeResumeCards() + homeDevoCard() + pick.map(({p,n,total,rank,pct})=>{
     const prog = rank===0
       ? `<div class="journey-prog"><div class="bar"><div class="bar-fill" style="width:${pct}%;"></div></div><div class="lbl">Día ${n+1} de ${total}</div></div>`
       : rank===2 ? `<div class="journey-prog"><div class="lbl">Completado ✓</div></div>` : '';
     return `<div class="journey-card" onclick="openPlan('${p.id}')" aria-label="${p.title}${rank===0?`, día ${n+1} de ${total}`:''}">
-      <div class="plan-card pc-${p.id} journey-cover"><span class="journey-badge">${total} días</span></div>
+      <div class="plan-card${p.cover?'':' pc-'+p.id} journey-cover"${p.cover?` style="${planCoverBg(p,.05,.35)}"`:''}><span class="journey-badge">${total} días</span></div>
       <div class="journey-body"><div class="t">${p.title}</div><div class="s">${p.subtitle}</div>${prog}</div>
     </div>`;
   }).join('');
@@ -4929,7 +5069,7 @@ function openSentirResult(cat){
 
 /* ---------------- save / share ---------------- */
 function findVerse(ref){
-  return VERSES.find(v=>v.ref===ref) || DAILY_VERSES.find(v=>v.ref===ref) || savedWords.find(w=>w.ref===ref) || (highlightedVerses||[]).find(h=>h.ref===ref);
+  return VERSES.find(v=>v.ref===ref) || DAILY_VERSES.find(v=>v.ref===ref) || EXTRA_VERSES.find(v=>v.ref===ref) || savedWords.find(w=>w.ref===ref) || (highlightedVerses||[]).find(h=>h.ref===ref);
 }
 function isSaved(ref){ return savedWords.some(w=>w.ref===ref); }
 function toggleSave(ref){
@@ -4943,8 +5083,8 @@ function toggleSave(ref){
 }
 function shareVerse(ref){
   const v = findVerse(ref);
-  const text = `"${v.text}" — ${v.ref} (vía HERE)`;
-  shareOrCopy({text}, text);
+  if(!v) return;
+  openShareStudio(v.ref, v.text, v.tags);
 }
 
 /* ---------------- IA de HERE ----------------
@@ -5022,17 +5162,43 @@ async function loadEntTab(tab){
 
 /* ---------------- biblia: books & reading ---------------- */
 /* ---------------- reading plans ---------------- */
+function planCardHTML(p, n){
+  const total = p.days.length, pct = Math.round((n/total)*100);
+  const cls = p.cover ? '' : ' pc-'+p.id;
+  const st = p.cover ? ` style="${planCoverBg(p)}"` : '';
+  return `<div class="plan-card${cls}"${st} onclick="openPlan('${p.id}')">
+      <div class="emoji">${p.emoji}</div>
+      <div class="t">${p.title}</div>
+      <div class="s">${n}/${total} días</div>
+      <div class="bar"><div class="bar-fill" style="width:${pct}%;"></div></div>
+    </div>`;
+}
+function plansSorted(){
+  // empezados primero (más avanzados antes), luego los demás, rotando cada día para que no sea siempre lo mismo
+  const day = dayNumber();
+  return PLANS.map(p=>({p, n:getPlanProgress(p.id).done.length}))
+    .map(x=>({ ...x, rank:(x.n>0 && x.n<x.p.days.length)?0:(x.n>=x.p.days.length?2:1), pct:x.n/x.p.days.length, h:(hashStr(x.p.id)+day) % 997 }))
+    .sort((a,b)=> a.rank-b.rank || (a.rank===0 ? b.pct-a.pct : a.h-b.h));
+}
 function renderPlanRow(){
   const c = document.getElementById('plan-row');
   if(!c) return;
-  c.innerHTML = PLANS.map(p=>{
-    const prog = getPlanProgress(p.id);
-    const pct = Math.round((prog.done.length / p.days.length) * 100);
-    return `<div class="plan-card pc-${p.id}" onclick="openPlan('${p.id}')">
-      <div class="emoji">${p.emoji}</div>
-      <div class="t">${p.title}</div>
-      <div class="s">${prog.done.length}/${p.days.length} días</div>
-      <div class="bar"><div class="bar-fill" style="width:${pct}%;"></div></div>
+  c.innerHTML = plansSorted().slice(0,10).map(x=>planCardHTML(x.p, x.n)).join('')
+    + `<div class="plan-card plan-more" onclick="go('planesAll')" role="button" tabindex="0"><div class="emoji">＋</div><div class="t">Ver todos los planes</div><div class="s">${PLANS.length} planes</div></div>`;
+}
+let plansCat = 'Todos';
+function renderPlansAll(){
+  const f = document.getElementById('plans-filter'), c = document.getElementById('plans-all-list');
+  if(!f || !c) return;
+  const cats = ['Todos'].concat([...new Set(PLANS.map(p=>p.cat))]);
+  f.innerHTML = cats.map(k=>`<button type="button" class="studio-chip${k===plansCat?' on':''}" onclick="plansCat='${k}'; renderPlansAll();">${k}</button>`).join('');
+  c.innerHTML = plansSorted().filter(x=>plansCat==='Todos' || x.p.cat===plansCat).map(({p,n})=>{
+    const total = p.days.length, done = n>=total;
+    const thumb = p.cover ? `<div class="plan-thumb" style="${planCoverBg(p,.0,.25)}"></div>` : `<div class="plan-card pc-${p.id} plan-thumb"></div>`;
+    return `<div class="plan-list-card" onclick="openPlan('${p.id}')" role="button" tabindex="0">
+      ${thumb}
+      <div class="pl-body"><div class="t">${p.title}</div><div class="s">${p.subtitle}</div>
+      <div class="m">${total} días${n>0 ? ' · '+(done?'Completado ✓':n+'/'+total) : ''} · ${p.cat}</div></div>
     </div>`;
   }).join('');
 }
@@ -5060,7 +5226,7 @@ function renderPlanDetail(){
     const done = prog.done.includes(i);
     return `<div class="plan-day-item ${done?'done':''}" onclick="openPlanDay(${i})">
       <div class="plan-day-num">${done?'✓':(i+1)}</div>
-      <div><div class="plan-day-ref">Día ${i+1}</div><div style="font-size:12.5px; color:var(--ink-soft); margin-top:2px;">${ref}</div></div>
+      <div><div class="plan-day-ref">Día ${i+1}${planDayInfo(p,i)?' · '+planDayInfo(p,i).t:''}</div><div style="font-size:12.5px; color:var(--ink-soft); margin-top:2px;">${ref}</div></div>
       <div class="plan-day-check">${done?'':'›'}</div>
     </div>`;
   }).join('');
@@ -5080,6 +5246,15 @@ function openPlanDay(i){
     <p class="ref">${ref}</p>
   `;
   addSceneOverlay(stage);
+  const info = planDayInfo(p,i);
+  const extra = document.getElementById('plan-day-extra');
+  if(extra){
+    extra.innerHTML = info ? `
+      <h3 class="serif plan-x-t">${info.t}</h3>
+      <p class="plan-x-r">${info.r}</p>
+      <div class="plan-x-q"><span>Para pensar</span>${info.q}</div>
+      <button class="btn btn-ghost" style="margin-top:14px;" onclick="openReflectionEditor('${ref.replace(/'/g,"\\'")}', (findVerse('${ref.replace(/'/g,"\\'")}')||{}).text||'')">Escribir mi reflexión</button>` : '';
+  }
   const prog = getPlanProgress(p.id);
   const done = prog.done.includes(i);
   const btn = document.getElementById('plan-day-btn');
@@ -5750,22 +5925,7 @@ async function buildVerseImageCanvas(ref, text){
   return canvas;
 }
 let lastVerseImageBlob = null;
-async function createVerseImage(ref, text){
-  openSheet(`<div class="handle"></div><div class="vimg-loading">Creando una imagen hermosa <span class="loading-dot"></span></div>`);
-  const canvas = await buildVerseImageCanvas(ref, text);
-  canvas.toBlob((blob)=>{
-    lastVerseImageBlob = blob;
-    const url = URL.createObjectURL(blob);
-    openSheet(`
-      <div class="handle"></div>
-      <img src="${url}" class="vimg-preview" alt="Imagen del versículo ${ref}">
-      <div class="stack" style="margin-top:16px;">
-        <button class="btn btn-primary" onclick="downloadVerseImage('${url}')">Guardar imagen</button>
-        <button class="btn btn-ghost" onclick="shareVerseImage()">Compartir imagen</button>
-      </div>
-    `);
-  }, 'image/png');
-}
+function createVerseImage(ref, text){ openShareStudio(ref, text); }
 function downloadVerseImage(url){
   const a = document.createElement('a');
   a.href = url; a.download = 'here-versiculo.png';
@@ -5781,6 +5941,417 @@ async function shareVerseImage(){
   } else {
     showHereToast('Tu navegador no soporta compartir imágenes — usa "Guardar imagen"');
   }
+}
+
+/* ---------------- Estudio de imágenes para compartir ----------------
+   La persona elige un versículo (desde "Compartir" o "Crear imagen"), una
+   foto de la biblioteca de escenas, un estilo y un formato, y HERE dibuja la
+   imagen en un canvas con una pequeña marca de agua. Las fotos de Unsplash
+   permiten CORS, así que el canvas se puede exportar; si una foto no carga,
+   se usa un degradado de respaldo. */
+let studio = null, studioSeq = 0;
+const studioImgCache = {};
+const STUDIO_STYLES = [['impact','Impacto'],['classic','Clásico'],['calm','Sereno']];
+const STUDIO_GRADS = {
+  dawn:['#F1C9A0','#C98A7A','#4D4668'], day:['#CFE1F5','#7BA6D1','#3B5D82'],
+  dusk:['#F1B88A','#B8647A','#3A3158'], night:['#2B3654','#151B2C','#05070C']
+};
+function studioSplit(text){
+  const clean = text.replace(/[¡!¿?"“”«»]/g,'').replace(/\s+/g,' ').trim();
+  const parts = clean.split(/[,;:]\s*/).filter(Boolean);
+  if(parts.length > 1){
+    const last = parts[parts.length-1].replace(/[.]+$/,'').trim();
+    if(last.split(' ').length <= 4) return { lead: parts.slice(0,-1).join(', ')+',', big:last };
+  }
+  const words = clean.replace(/[.]+$/,'').split(' ');
+  if(words.length <= 4) return { lead:'', big:words.join(' ') };
+  return { lead: words.slice(0,-2).join(' '), big: words.slice(-2).join(' ') };
+}
+function openShareStudio(ref, text, tags){
+  const v = findVerse(ref);
+  tags = tags || (v && v.tags) || [];
+  const list = (window.SCENE_LIBRARY && window.SCENE_LIBRARY.length) ? pickScenePhotos(computeSceneContext(), tags) : [];
+  const sp = studioSplit(text);
+  const words = text.trim().split(/\s+/).length;
+  studio = { ref, text, style: words>30 ? 'classic' : 'impact', format:'square', tone:'light',
+             photoId: list[0] ? list[0].id : null, big:sp.big, lead:sp.lead, list };
+  const th = id => `${SCENE_PHOTO_BASE}${id}?auto=format&fit=crop&w=220&q=55`;
+  openSheet(`
+    <div class="handle"></div>
+    <canvas id="studio-canvas" class="studio-canvas" width="1080" height="1080"></canvas>
+    <div class="studio-lbl">Estilo</div>
+    <div class="studio-row" id="studio-styles">${STUDIO_STYLES.map(([k,l])=>`<button type="button" class="studio-chip" data-k="${k}" onclick="studioSet('style','${k}')">${l}</button>`).join('')}</div>
+    <div class="studio-lbl">Formato</div>
+    <div class="studio-row" id="studio-formats">
+      <button type="button" class="studio-chip" data-k="square" onclick="studioSet('format','square')">Cuadrada</button>
+      <button type="button" class="studio-chip" data-k="story" onclick="studioSet('format','story')">Historia</button>
+    </div>
+    <div id="studio-impact-opts">
+      <div class="studio-lbl">Texto</div>
+      <div class="studio-row" id="studio-tones">
+        <button type="button" class="studio-chip" data-k="light" onclick="studioSet('tone','light')">Oscuro sobre claro</button>
+        <button type="button" class="studio-chip" data-k="dark" onclick="studioSet('tone','dark')">Claro sobre oscuro</button>
+      </div>
+      <div class="studio-lbl">Palabras grandes</div>
+      <input id="studio-big" class="studio-input" type="text" maxlength="40" value="${sp.big.replace(/"/g,'&quot;')}" oninput="studioBigInput(this.value)">
+    </div>
+    <div class="studio-lbl">Foto</div>
+    <div class="studio-strip" id="studio-strip">
+      <button type="button" class="studio-th none" data-id="" onclick="studioPick('')">Sin foto</button>
+      ${list.map(p=>`<button type="button" class="studio-th" data-id="${p.id}" style="background-image:url('${th(p.id)}')" onclick="studioPick('${p.id}')" aria-label="${p.note||'Foto'}"></button>`).join('')}
+    </div>
+    <div class="stack" style="margin-top:14px;">
+      <button class="btn btn-primary" onclick="studioShare()">Compartir imagen</button>
+      <button class="btn btn-ghost" onclick="studioSave()">Guardar imagen</button>
+      <button class="btn-text" onclick="studioShareLink()">Compartir enlace con vista previa</button>
+      <button class="btn-text" onclick="closeSheet(); shareOrCopy({text:'\\u201C'+studio.text+'\\u201D \\u2014 '+studio.ref+' (v\\u00EDa HERE)'})">Compartir solo el texto</button>
+    </div>
+  `);
+  document.querySelectorAll('#studio-strip .studio-th').forEach(b=>{ b.onerror = null; });
+  studioSync(); studioDraw();
+}
+function studioSync(){
+  if(!studio) return;
+  const mark = (sel, key)=> document.querySelectorAll(sel+' [data-k]').forEach(b=>b.classList.toggle('on', b.dataset.k===studio[key]));
+  mark('#studio-styles','style'); mark('#studio-formats','format'); mark('#studio-tones','tone');
+  const io = document.getElementById('studio-impact-opts'); if(io) io.style.display = studio.style==='impact' ? '' : 'none';
+  document.querySelectorAll('#studio-strip .studio-th').forEach(b=>b.classList.toggle('on', (b.dataset.id||'')===(studio.photoId||'')));
+}
+function studioSet(k,v){ studio[k]=v; studioSync(); studioDraw(); }
+function studioPick(id){ studio.photoId = id || null; studioSync(); studioDraw(); }
+let studioBigTimer = null;
+function studioBigInput(v){
+  studio.big = v;
+  clearTimeout(studioBigTimer);
+  studioBigTimer = setTimeout(studioDraw, 250);
+}
+function studioLoadImg(id){
+  if(!id) return Promise.resolve(null);
+  if(studioImgCache[id]) return Promise.resolve(studioImgCache[id]);
+  return new Promise(res=>{
+    const im = new Image(); im.crossOrigin = 'anonymous';
+    im.onload = ()=>{ studioImgCache[id] = im; res(im); };
+    im.onerror = ()=>res(null);
+    im.src = `${SCENE_PHOTO_BASE}${id}?auto=format&fit=crop&w=1400&q=70`;
+  });
+}
+function studioFitLines(ctx, words, maxW, fontFor, maxSize, minSize){
+  // una sola línea si cabe con letra grande; si no, se reparte en dos líneas
+  const one = words.join(' ');
+  for(let sz=maxSize; sz>=minSize; sz-=6){ ctx.font = fontFor(sz); if(ctx.measureText(one).width <= maxW) return { lines:[one], size:sz }; }
+  if(words.length > 1){
+    const mid = Math.ceil(words.length/2);
+    const two = [words.slice(0,mid).join(' '), words.slice(mid).join(' ')];
+    for(let sz=maxSize; sz>=minSize; sz-=6){ ctx.font = fontFor(sz); if(Math.max(...two.map(l=>ctx.measureText(l).width)) <= maxW) return { lines:two, size:sz }; }
+  }
+  ctx.font = fontFor(minSize); return { lines:wrapCanvasText(ctx, one, maxW), size:minSize };
+}
+function studioWatermark(ctx, W, H, color, alpha, x, y, align){
+  ctx.save();
+  ctx.globalAlpha = alpha; ctx.fillStyle = color; ctx.strokeStyle = color; ctx.lineWidth = 2.5;
+  ctx.font = '600 34px Fraunces, Georgia, serif';
+  try{ ctx.letterSpacing = '10px'; }catch(e){}
+  ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  const w = ctx.measureText('HERE').width - 10; // sin el espacio final del letterSpacing
+  const left = align==='center' ? x - w/2 + 14 : (align==='right' ? x - w : x + 30);
+  ctx.fillText('HERE', left, y);
+  ctx.beginPath(); ctx.arc(left - 22, y - 12, 8, 0, Math.PI*2); ctx.stroke();
+  ctx.beginPath(); ctx.arc(left - 22, y - 12, 2.6, 0, Math.PI*2); ctx.fill();
+  ctx.restore();
+}
+async function studioDraw(){
+  const S = studio, my = ++studioSeq;
+  const canvas = document.getElementById('studio-canvas');
+  if(!S || !canvas) return;
+  const img = await studioLoadImg(S.photoId);
+  try{ await Promise.all([document.fonts.load('400 100px Anton'), document.fonts.load('italic 600 60px Fraunces'), document.fonts.load('600 34px Fraunces'), document.fonts.load('700 24px Manrope')]); }catch(e){}
+  if(my !== studioSeq || !document.getElementById('studio-canvas')) return;
+  const W = 1080, H = S.format==='story' ? 1920 : 1080;
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+  const ctxScene = computeSceneContext();
+  // --- fondo ---
+  if(img){
+    const r = Math.max(W/img.width, H/img.height), iw = img.width*r, ih = img.height*r;
+    ctx.drawImage(img, (W-iw)/2, (H-ih)/2, iw, ih);
+    if(S.style==='impact'){
+      try{
+        const d = ctx.getImageData(0,0,W,H), a = d.data;
+        for(let i=0;i<a.length;i+=4){ const g = a[i]*0.3 + a[i+1]*0.59 + a[i+2]*0.11; a[i]=a[i+1]=a[i+2]=g; }
+        ctx.putImageData(d,0,0);
+      }catch(e){}
+    }
+  } else {
+    const c = STUDIO_GRADS[ctxScene.period] || STUDIO_GRADS.dawn;
+    const g = ctx.createLinearGradient(0,0,W*0.3,H);
+    c.forEach((col,i)=>g.addColorStop(i/(c.length-1), col));
+    ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
+  }
+  const clean = S.text.replace(/\s+/g,' ').trim();
+  const refTxt = S.ref.toUpperCase();
+  ctx.textBaseline = 'alphabetic';
+  if(S.style === 'impact'){
+    const light = S.tone === 'light';
+    const veil = ctx.createLinearGradient(0,0,0,H);
+    if(light){ veil.addColorStop(0,'rgba(255,255,255,.55)'); veil.addColorStop(1,'rgba(255,255,255,.12)'); }
+    else { veil.addColorStop(0,'rgba(0,0,0,.45)'); veil.addColorStop(1,'rgba(0,0,0,.6)'); }
+    ctx.fillStyle = veil; ctx.fillRect(0,0,W,H);
+    const ink = light ? '#0c0c0c' : '#ffffff';
+    const bigWords = (S.big||'').replace(/[¡!¿?"“”]/g,'').trim().toUpperCase().split(/\s+/).filter(Boolean);
+    let leadTxt = S.lead || '';
+    if(!bigWords.length){ bigWords.push(...studioSplit(S.text).big.toUpperCase().split(' ')); leadTxt = studioSplit(S.text).lead; }
+    // texto de apoyo: lo que queda del versículo antes de las palabras grandes
+    const leadSize = S.format==='story' ? 36 : 30;
+    ctx.textAlign = 'center'; ctx.fillStyle = ink;
+    ctx.font = `700 ${leadSize}px Manrope, sans-serif`;
+    try{ ctx.letterSpacing = '5px'; }catch(e){}
+    const leadLines = leadTxt ? wrapCanvasText(ctx, leadTxt.toUpperCase(), W-220) : [];
+    try{ ctx.letterSpacing = '0px'; }catch(e){}
+    const big = studioFitLines(ctx, bigWords, W-130, sz=>`400 ${sz}px Anton, Impact, "Arial Narrow", sans-serif`, S.format==='story'?300:250, 90);
+    const leadLH = leadSize*1.7, bigLH = big.size*1.0;
+    const blockH = leadLines.length*leadLH + (leadLines.length?30:0) + big.lines.length*bigLH;
+    let y = (S.format==='story' ? H*0.46 : H*0.50) - blockH/2;
+    try{ ctx.letterSpacing = '5px'; }catch(e){}
+    ctx.font = `700 ${leadSize}px Manrope, sans-serif`;
+    leadLines.forEach(l=>{ y += leadLH; ctx.fillText(l, W/2, y - leadLH*0.28); });
+    try{ ctx.letterSpacing = '0px'; }catch(e){}
+    if(leadLines.length) y += 30;
+    ctx.font = `400 ${big.size}px Anton, Impact, "Arial Narrow", sans-serif`;
+    big.lines.forEach(l=>{ y += bigLH; ctx.fillText(l, W/2, y - bigLH*0.06); });
+    ctx.font = '600 26px Manrope, sans-serif';
+    try{ ctx.letterSpacing = '7px'; }catch(e){}
+    ctx.globalAlpha = .9; ctx.fillText(refTxt, W/2, H - 150); ctx.globalAlpha = 1;
+    try{ ctx.letterSpacing = '0px'; }catch(e){}
+    studioWatermark(ctx, W, H, ink, .75, W/2, H - 78, 'center');
+  } else if(S.style === 'classic'){
+    ctx.fillStyle = 'rgba(0,0,0,.4)'; ctx.fillRect(0,0,W,H);
+    const vig = ctx.createRadialGradient(W/2,H/2,H*0.3, W/2,H/2,H*0.78);
+    vig.addColorStop(0,'rgba(0,0,0,0)'); vig.addColorStop(1,'rgba(0,0,0,.4)');
+    ctx.fillStyle = vig; ctx.fillRect(0,0,W,H);
+    ctx.textAlign = 'center'; ctx.fillStyle = 'rgba(255,250,240,.97)';
+    ctx.shadowColor = 'rgba(0,0,0,.35)'; ctx.shadowBlur = 24; ctx.shadowOffsetY = 4;
+    const maxW = W-190, maxLines = S.format==='story' ? 13 : 8;
+    let fs = 60; ctx.font = `italic 600 ${fs}px Fraunces, Georgia, serif`;
+    let lines = wrapCanvasText(ctx, `“${clean}”`, maxW);
+    while(lines.length > maxLines && fs > 32){ fs -= 4; ctx.font = `italic 600 ${fs}px Fraunces, Georgia, serif`; lines = wrapCanvasText(ctx, `“${clean}”`, maxW); }
+    const lh = fs*1.5, y0 = H/2 - ((lines.length-1)*lh)/2 - 30;
+    lines.forEach((l,i)=>ctx.fillText(l, W/2, y0 + i*lh));
+    ctx.shadowBlur = 10;
+    ctx.font = '700 24px Manrope, sans-serif'; try{ ctx.letterSpacing = '5px'; }catch(e){}
+    ctx.fillStyle = 'rgba(255,250,240,.88)';
+    ctx.fillText(refTxt, W/2, y0 + (lines.length-1)*lh + 78);
+    try{ ctx.letterSpacing = '0px'; }catch(e){}
+    ctx.shadowBlur = 0;
+    studioWatermark(ctx, W, H, '#fff', .7, W/2, H - 78, 'center');
+  } else { // calm
+    const g = ctx.createLinearGradient(0,H*0.25,0,H);
+    g.addColorStop(0,'rgba(10,8,6,0)'); g.addColorStop(1,'rgba(10,8,6,.78)');
+    ctx.fillStyle = 'rgba(10,8,6,.12)'; ctx.fillRect(0,0,W,H);
+    ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
+    ctx.textAlign = 'left'; ctx.fillStyle = '#fff';
+    ctx.shadowColor = 'rgba(0,0,0,.3)'; ctx.shadowBlur = 16;
+    const maxW = W-190, maxLines = S.format==='story' ? 11 : 7;
+    let fs = 58; ctx.font = `500 ${fs}px Fraunces, Georgia, serif`;
+    let lines = wrapCanvasText(ctx, clean, maxW);
+    while(lines.length > maxLines && fs > 32){ fs -= 4; ctx.font = `500 ${fs}px Fraunces, Georgia, serif`; lines = wrapCanvasText(ctx, clean, maxW); }
+    const lh = fs*1.4, bottom = H - 230;
+    const y0 = bottom - (lines.length-1)*lh;
+    lines.forEach((l,i)=>ctx.fillText(l, 95, y0 + i*lh));
+    ctx.shadowBlur = 8;
+    ctx.font = '700 24px Manrope, sans-serif'; try{ ctx.letterSpacing = '5px'; }catch(e){}
+    ctx.fillStyle = '#F0D9A0';
+    ctx.fillText(refTxt, 95, bottom + 66);
+    try{ ctx.letterSpacing = '0px'; }catch(e){}
+    ctx.shadowBlur = 0;
+    studioWatermark(ctx, W, H, '#fff', .7, W-95, H - 78, 'right');
+  }
+  if(S.photoId && !img) showHereToast('Esa foto no cargó; usé un fondo de color');
+}
+function studioLink(){ return hereLink('verse', { ref:studio.ref, txt:studio.text.length>220 ? studio.text.slice(0,217)+'…' : studio.text, img:studio.photoId||'' }); }
+function studioShareLink(){ const u = studioLink(); shareOrCopy({ title:'HERE', text:`${studio.ref} — HERE`, url:u }, `${studio.ref} — HERE\n${u}`); }
+function studioBlob(){ return new Promise(r=>{ try{ document.getElementById('studio-canvas').toBlob(r,'image/png'); }catch(e){ r(null); } }); }
+async function studioSave(){
+  const b = await studioBlob();
+  if(!b){ showHereToast('No se pudo crear la imagen'); return; }
+  const url = URL.createObjectURL(b);
+  downloadVerseImage(url);
+  setTimeout(()=>URL.revokeObjectURL(url), 4000);
+  showHereToast('Imagen guardada');
+}
+async function studioShare(){
+  const b = await studioBlob();
+  if(!b){ showHereToast('No se pudo crear la imagen'); return; }
+  const file = new File([b], 'here-versiculo.png', {type:'image/png'});
+  if(navigator.canShare && navigator.canShare({files:[file]})){
+    try{
+      await Promise.race([navigator.share({files:[file], text: `${studio.ref} — HERE\n${studioLink()}`}), new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),15000))]);
+    }catch(e){
+      if(e && e.name==='AbortError') return;
+      studioSave();
+    }
+  } else { studioSave(); }
+}
+
+/* ---------------- devocionales ---------------- */
+let devoFrom = 'biblia', devoThemeFilter = 'Todos', currentDevoId = null;
+function hereEsc(s){ return String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+var _devoOrder = null;
+function devoOrder(){
+  if(!_devoOrder) _devoOrder = DEVOTIONALS.slice().sort((a,b)=> hashStr('devo:'+a.id) - hashStr('devo:'+b.id));
+  return _devoOrder;
+}
+function todayDevo(){ const o = devoOrder(); return o[dayNumber() % o.length]; }
+function findDevo(id){ return DEVOTIONALS.find(d=>d.id===id); }
+function devoDoneMap(){ return load('here_devos_done', {}) || {}; }
+function devoIsDone(id){ return !!devoDoneMap()[id]; }
+function devoDoneToday(id){ const t = devoDoneMap()[id]; return !!t && new Date(t).toDateString()===new Date().toDateString(); }
+function devoPhotoTags(d){ const v = findVerse(d.ref); return (v && v.tags) || []; }
+function renderBibliaDevo(){
+  const c = document.getElementById('biblia-devo');
+  if(!c) return;
+  const d = todayDevo();
+  c.innerHTML = `<div class="devo-card" id="devo-card-today" onclick="openDevocional('${d.id}','biblia')" role="button" tabindex="0">
+    <div class="devo-card-in"><div class="devo-eyebrow">${d.theme}${devoDoneToday(d.id)?' · Hecho hoy ✓':''}</div>
+    <div class="devo-card-t">${d.title}</div><div class="devo-card-r">${d.ref}</div></div></div>`;
+  try{ applyScenePhoto(document.getElementById('devo-card-today'), devoPhotoTags(d)); }catch(e){}
+}
+function openDevocional(id, from){
+  const d = findDevo(id); if(!d) return;
+  currentDevoId = id; devoFrom = from || 'biblia';
+  const v = findVerse(d.ref) || { ref:d.ref, text:'' };
+  const stage = document.getElementById('devo-stage');
+  stage.innerHTML = `<div class="devo-stage-in"><div class="devo-eyebrow">${d.theme}</div>
+    <h2 class="devo-title serif">${d.title}</h2>
+    <p class="devo-verse serif" id="devo-verse">“${hereEsc(v.text)}”</p>
+    <p class="devo-ref">${d.ref}</p></div>`;
+  renderDevoBody();
+  go('devocional');
+  try{ applyScenePhoto(stage, devoPhotoTags(d)); }catch(e){}
+  if(v && !v._rvr60){ resolveVerseText(v).then(()=>{ const el = document.getElementById('devo-verse'); if(el && currentDevoId===id) el.textContent = '“'+v.text+'”'; }); }
+}
+function renderDevoBody(){
+  const d = findDevo(currentDevoId); if(!d) return;
+  const done = devoDoneToday(d.id);
+  const refEsc = d.ref.replace(/'/g,"\\'");
+  document.getElementById('devo-body').innerHTML = `
+    <h3 class="devo-h">Reflexión</h3>
+    <p class="devo-p">${d.r}</p>
+    <h3 class="devo-h">Oración</h3>
+    <div class="devo-prayer serif">${d.p}</div>
+    <h3 class="devo-h">Para pensar</h3>
+    <p class="devo-p">${d.q}</p>
+    <button class="btn btn-ghost" style="margin-top:6px;" onclick="devoReflect()">Escribir mi reflexión</button>
+    <div class="devo-actions">
+      <button type="button" class="studio-chip" onclick="prefillOrar('${refEsc}')">Orar con esto</button>
+      <button type="button" class="studio-chip" onclick="devoSaveVerse()">${isSaved(d.ref)?'Guardado ✓':'Guardar versículo'}</button>
+      <button type="button" class="studio-chip" onclick="shareVerse('${refEsc}')">Imagen para compartir</button>
+      <button type="button" class="studio-chip" onclick="shareDevo()">Compartir enlace</button>
+    </div>
+    <button class="btn btn-primary" style="width:100%; margin-top:20px;" id="devo-done-btn" onclick="completeDevo()" ${done?'disabled style="width:100%; margin-top:20px; opacity:.6;"':''}>${done?'Hecho hoy ✓':'Marcar como hecho'}</button>`;
+}
+function devoReflect(){ const d = findDevo(currentDevoId); const v = findVerse(d.ref); openReflectionEditor(d.ref, (v && v.text) || ''); }
+function devoSaveVerse(){ const d = findDevo(currentDevoId); if(!d) return; toggleSave(d.ref); renderDevoBody(); }
+function completeDevo(){
+  const d = findDevo(currentDevoId); if(!d) return;
+  const m = devoDoneMap(); m[d.id] = Date.now(); save('here_devos_done', m);
+  haptic(16); playChime(); renderDevoBody(); showHereToast('Un momento más con Dios 🕊️');
+}
+function renderDevocionales(){
+  const f = document.getElementById('devo-filter'), c = document.getElementById('devo-all-list');
+  if(!f || !c) return;
+  const themes = ['Todos'].concat([...new Set(DEVOTIONALS.map(d=>d.theme))]);
+  f.innerHTML = themes.map(k=>`<button type="button" class="studio-chip${k===devoThemeFilter?' on':''}" onclick="devoThemeFilter='${k}'; renderDevocionales();">${k}</button>`).join('');
+  const today = todayDevo().id;
+  const list = DEVOTIONALS.filter(d=>devoThemeFilter==='Todos' || d.theme===devoThemeFilter)
+    .sort((a,b)=> (a.id===today?-1:0) - (b.id===today?-1:0));
+  c.innerHTML = list.map(d=>`<div class="list-card" style="margin:0;" onclick="openDevocional('${d.id}','devocionales')">
+      <div><div class="t">${d.title}</div><div class="s">${d.ref} · ${d.theme}${d.id===today?' · Hoy':''}</div></div>
+      <span>${devoIsDone(d.id)?'✓':'→'}</span></div>`).join('');
+}
+function homeDevoCard(){
+  const d = todayDevo();
+  let bg = '';
+  try{
+    const list = (window.SCENE_LIBRARY && window.SCENE_LIBRARY.length) ? pickScenePhotos(computeSceneContext(), devoPhotoTags(d)) : [];
+    if(list[0]) bg = ` style="background-image:linear-gradient(rgba(20,16,10,.28),rgba(20,16,10,.28)), url('${SCENE_PHOTO_BASE}${list[0].id}?auto=format&fit=crop&w=600&q=60')"`;
+  }catch(e){}
+  return `<div class="journey-card" onclick="openDevocional('${d.id}','home')" role="button" tabindex="0" aria-label="Devocional de hoy: ${d.title}">
+    <div class="journey-cover resume resume-devo"${bg}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.6"/><path d="M12 3v2.2M12 18.8V21M3 12h2.2M18.8 12H21M5.6 5.6l1.6 1.6M16.8 16.8l1.6 1.6M18.4 5.6l-1.6 1.6M7.2 16.8l-1.6 1.6"/></svg></div>
+    <div class="journey-body"><div class="t">Devocional de hoy</div><div class="s">${d.title}</div><div class="journey-prog"><div class="lbl">${devoDoneToday(d.id)?'Hecho hoy ✓':'Leer ahora'}</div></div></div>
+  </div>`;
+}
+
+/* ---------------- enlaces para compartir (se abren en HERE) ----------------
+   El enlace apunta a /api/share, que muestra una vista previa bonita (título, texto e imagen)
+   en WhatsApp, Instagram, etc. y redirige a la app (/app/?open=...). Con la app instalada en
+   Android, el enlace puede abrirse directo en ella. */
+function hereLink(type, params){
+  const q = new URLSearchParams(); q.set('t', type);
+  Object.keys(params||{}).forEach(k=>{ if(params[k]!=null && params[k]!=='') q.set(k, String(params[k]).slice(0, 300)); });
+  return location.origin + '/api/share?' + q.toString();
+}
+function shareHereLink(type, params, text){
+  const url = hereLink(type, params);
+  shareOrCopy({ title:'HERE', text, url }, text+'\n'+url);
+}
+function shareDevo(){
+  const d = findDevo(currentDevoId); if(!d) return;
+  shareHereLink('devo', { id:d.id, n:d.title, ref:d.ref }, `Devocional: ${d.title} (${d.ref}) — en HERE`);
+}
+function sharePlan(){
+  const p = findPlan(currentPlanId); if(!p) return;
+  shareHereLink('plan', { id:p.id, n:p.title, d:p.subtitle }, `${p.title} — un plan de lectura en HERE`);
+}
+function shareCurrentTrack(){
+  const it = currentPlayItem; if(!it){ showHereToast('No hay nada sonando'); return; }
+  shareHereLink('track', { yt:it.yt || '', l:it.ytList || '', n:it.name, r:it.role || it.s || '' }, `${it.name} — para escuchar en HERE`);
+}
+function shareChapterLink(){
+  if(!currentReaderBook) return;
+  shareHereLink('chapter', { b:currentReaderBook, c:currentReaderChapter }, `${currentReaderBook} ${currentReaderChapter} — para leer en HERE`);
+}
+let pendingOpenParams = null, splashDone = false;
+function runPendingOpen(){
+  const sp = pendingOpenParams; pendingOpenParams = null;
+  if(!sp) return false;
+  const t = sp.get('open');
+  try{ history.replaceState({hereScreen:currentScreen}, '', location.pathname); }catch(e){}
+  try{
+    if(t==='verse'){ openSharedVerse(sp.get('ref')||'', sp.get('txt')||''); return true; }
+    if(t==='devo'){ const d = findDevo(sp.get('id')); if(d){ openDevocional(d.id,'home'); return true; } }
+    if(t==='plan'){ const p = findPlan(sp.get('id')); if(p){ openPlan(p.id); return true; } }
+    if(t==='track'){ openSharedTrack(sp.get('yt'), sp.get('l'), sp.get('n'), sp.get('r')); return true; }
+    if(t==='chapter'){ const b = sp.get('b'), c = parseInt(sp.get('c'),10); if(b && c && BOOK_ORDER.includes(b)){ openChapter(b, c); return true; } }
+  }catch(e){ console.warn('enlace no válido', e); }
+  return false;
+}
+function openSharedVerse(ref, txt){
+  const known = findVerse(ref);
+  const text = txt || (known && known.text) || '';
+  if(!ref || !text) return;
+  const refEsc = ref.replace(/'/g,"\\'");
+  const m = ref.match(/^(.*)\s(\d+):/);
+  openSheet(`
+    <div class="handle"></div>
+    <p style="font-size:12.5px; color:var(--ink-soft); text-align:center; margin-bottom:10px;">Alguien compartió esto contigo desde HERE</p>
+    <p class="serif" style="font-size:19px; font-style:italic; line-height:1.5; text-align:center; margin:6px 0 10px;">“${hereEsc(text)}”</p>
+    <p style="text-align:center; font-size:13px; letter-spacing:1.5px; text-transform:uppercase; color:var(--ink-soft); margin-bottom:18px;">${hereEsc(ref)}</p>
+    <div class="stack">
+      ${m && BOOK_ORDER.includes(m[1]) ? `<button class="btn btn-primary" onclick="closeSheet(); openChapter('${m[1].replace(/'/g,"\\'")}', ${m[2]})">Leer el capítulo</button>` : ''}
+      <button class="btn btn-ghost" onclick="closeSheet(); prefillOrar('${refEsc}')">Orar con esto</button>
+      <button class="btn-text" onclick="closeSheet(); openShareStudio('${refEsc}', ${JSON.stringify(text).replace(/"/g,'&quot;')})">Crear una imagen</button>
+    </div>`);
+}
+function openSharedTrack(yt, list, name, role){
+  if(!yt && !list) return;
+  const item = { name: name || 'Para escuchar', role: role || '', yt: yt || null, ytList: list || null };
+  window.__sharedTrack = item;
+  openSheet(`
+    <div class="handle"></div>
+    <p style="font-size:12.5px; color:var(--ink-soft); text-align:center; margin-bottom:10px;">Alguien compartió esto contigo desde HERE</p>
+    <p class="serif" style="font-size:19px; text-align:center; line-height:1.4; margin:6px 0 4px;">${hereEsc(item.name)}</p>
+    ${item.role ? `<p style="text-align:center; color:var(--ink-soft); font-size:13.5px; margin-bottom:18px;">${hereEsc(item.role)}</p>` : '<div style="height:14px;"></div>'}
+    <button class="btn btn-primary" style="width:100%;" onclick="closeSheet(); playTrack(window.__sharedTrack)">Escuchar ahora</button>`);
 }
 function openEntenderRaw(ref, text){
   entContext = {ref, text, data:{}};
@@ -8639,6 +9210,7 @@ window.addEventListener('load', ()=>{
   // paso por una experiencia pensada para una persona, no para un bot.
   const bootParams = new URLSearchParams(location.search);
   const skipOnboarding = bootParams.get('skip_onboarding') === '1';
+  if(bootParams.get('open')) pendingOpenParams = bootParams;
   if(skipOnboarding){
     try{ save('here_onboarded', true); }catch(e){}
   }
@@ -8681,7 +9253,7 @@ window.addEventListener('load', ()=>{
     document.removeEventListener('keydown', onSplashKeydown);
     splash.classList.add('fading');
     const fadeMs = splash.classList.contains('reduced') ? 200 : 480;
-    setTimeout(()=>{ splash.style.display = 'none'; maybeAutoShowAuth(); }, fadeMs);
+    setTimeout(()=>{ splash.style.display = 'none'; splashDone = true; if(!(target==='home' && runPendingOpen())) maybeAutoShowAuth(); }, fadeMs);
   };
   function onSplashKeydown(e){
     if(e.key === 'Enter' || e.key === ' ' || e.key === 'Escape'){ dismiss(); }
