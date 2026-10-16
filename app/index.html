@@ -583,33 +583,50 @@
      orbe del onboarding, el punto dorado antes de cada section-title, el
      círculo de flecha de las feature-cards): la racha de días no se cuenta
      con una cifra suelta, se dibuja como un camino que se va cerrando. */
+  #perfil .topbar{display:block; padding:34px 24px 2px;}
+  #perfil .topbar h2{font-size:38px; font-weight:400; letter-spacing:-.4px; line-height:1.1;}
+  .camino-sub{font-size:14.5px; color:var(--ink-soft); margin:9px 0 0; line-height:1.5; letter-spacing:.1px;}
   .camino-hero{
-    display:flex; align-items:center; gap:18px; margin:4px 24px 24px;
-    padding:20px 22px; border-radius:24px; background:var(--card);
-    border:1px solid var(--line); box-shadow:var(--shadow-sm);
+    position:relative; margin:18px 0 26px; padding:26px 20px; border-radius:30px; overflow:hidden;
+    background:linear-gradient(160deg,#F1C9A0,#C98A7A 50%,#4D4668); box-shadow:var(--shadow-md);
+  }
+  .camino-hero-pill{
+    display:flex; align-items:center; gap:16px; padding:16px 20px 16px 16px; border-radius:44px;
+    background:color-mix(in srgb, var(--card) 64%, transparent);
+    -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+    border:1px solid color-mix(in srgb, #fff 55%, transparent);
   }
   .camino-ring-wrap{position:relative; width:82px; height:82px; flex:none;}
   .camino-ring-wrap svg{width:100%; height:100%; transform:rotate(-90deg); overflow:visible;}
-  .camino-ring-wrap .track{fill:none; stroke:var(--line); stroke-width:7;}
-  .camino-ring-wrap .fill{fill:none; stroke:url(#caminoRingGrad); stroke-width:7; stroke-linecap:round; transition:stroke-dashoffset .6s ease;}
+  .camino-ring-wrap .track{fill:none; stroke:color-mix(in srgb, var(--gold) 20%, transparent); stroke-width:6;}
+  .camino-ring-wrap .fill{fill:none; stroke:url(#caminoRingGrad); stroke-width:6; stroke-linecap:round; transition:stroke-dashoffset .6s ease;}
   .camino-ring-num{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;}
-  .camino-ring-num .n{font-family:'Fraunces'; font-size:25px; font-weight:500; color:var(--sage-deep); line-height:1;}
-  .camino-ring-num .l{font-size:9px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.5px; margin-top:3px;}
+  .camino-ring-num .n{font-family:'Fraunces'; font-size:30px; font-weight:400; color:var(--ink); line-height:1;}
+  .camino-ring-num .l{font-size:11px; color:var(--ink-soft); margin-top:3px;}
+  .camino-hero-sep{width:1px; align-self:stretch; margin:4px 0; background:color-mix(in srgb, var(--ink) 16%, transparent); flex:none;}
   .camino-hero-text{flex:1; min-width:0;}
-  .camino-hero-text p{font-size:13.5px; color:var(--ink-soft); line-height:1.55; margin:0;}
-  .camino-grid{display:grid; grid-template-columns:repeat(10, 1fr); gap:6px; margin:0 24px 26px;}
-  .camino-grid .cell{width:100%; aspect-ratio:1; border-radius:5px; background:var(--line);}
-  .camino-grid .cell.on{background:var(--gold-grad);}
-  .camino-stats-row{display:flex; gap:10px; overflow-x:auto; padding:2px 24px 6px; margin-bottom:8px; -ms-overflow-style:none; scrollbar-width:none;}
-  .camino-stats-row::-webkit-scrollbar{display:none;}
-  .camino-stat-chip{flex:none; min-width:94px; padding:14px 16px; border-radius:18px; background:var(--card); border:1px solid var(--line); box-shadow:var(--shadow-sm);}
-  .camino-stat-chip .num{font-family:'Fraunces'; font-size:21px; font-weight:500; color:var(--sage-deep); line-height:1;}
-  .camino-stat-chip .lbl{font-size:11px; color:var(--ink-soft); margin-top:5px; line-height:1.3;}
+  .camino-hero-text .ht{font-size:15px; font-weight:500; color:var(--ink); line-height:1.35; margin:0;}
+  .camino-hero-text .hc{font-size:13.5px; color:var(--ink-soft); line-height:1.45; margin:6px 0 0;}
+  .camino-grid{display:grid; grid-template-columns:repeat(15, 1fr); gap:5px; margin:10px 0 26px;}
+  .camino-grid .cell{width:100%; aspect-ratio:1; border-radius:6px; background:color-mix(in srgb, var(--gold) 13%, var(--bg-warm));}
+  .camino-grid .cell.on{background:var(--gold-grad); box-shadow:inset 0 1px 0 rgba(255,255,255,.35), 0 2px 4px rgba(138,106,38,.18);}
+  .camino-stats-row{display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin:0 0 24px;}
+  .camino-stat-chip{position:relative; padding:16px 12px 14px 16px; border-radius:18px; background:var(--card); border:1px solid var(--line); box-shadow:var(--shadow-sm);}
+  .camino-stat-chip .num{font-family:'Fraunces'; font-size:26px; font-weight:400; color:var(--ink); line-height:1;}
+  .camino-stat-chip .lbl{font-size:12px; color:var(--ink-soft); margin-top:8px; line-height:1.3;}
+  .camino-stat-ic{position:absolute; top:14px; right:12px; width:19px; height:19px; color:var(--gold-deep); opacity:.75;}
+  .camino-stat-ic svg{width:100%; height:100%;}
+  #perfil .list-card{padding:16px 18px; border-radius:22px;}
+  #perfil .stack .list-card{margin:0;}
+  @media (min-width:900px){ #perfil .topbar{width:100%; max-width:812px; padding:34px 0 2px; margin:0 auto;} }
+  #perfil .list-card .t{font-family:'Fraunces',serif; font-weight:500; font-size:16.5px; line-height:1.25;}
+  #perfil .list-card .s{font-size:13px; margin-top:4px;}
+  #perfil .list-card > span{color:var(--ink-soft); flex:none; margin-left:10px;}
   /* ícono circular a la izquierda de cada fila de "Tu camino" — mismo trazo
      (stroke-width 1.6) que los íconos de la barra inferior, en vez de emoji,
      para que esta pantalla se sienta tan cuidada como el resto. */
-  .camino-icon{width:40px; height:40px; border-radius:50%; flex:none; display:flex; align-items:center; justify-content:center; background:var(--beige); color:var(--gold-deep);}
-  .camino-icon svg{width:18px; height:18px;}
+  .camino-icon{width:46px; height:46px; border-radius:50%; flex:none; display:flex; align-items:center; justify-content:center; background:var(--beige); color:var(--gold-deep);}
+  .camino-icon svg{width:20px; height:20px;}
   .camino-icon.sage{background:rgba(126,169,133,0.18); color:var(--sage-deep);}
   .list-card .lc-left{display:flex; align-items:center; gap:14px; min-width:0;}
 
@@ -2725,7 +2742,7 @@
 
   <!-- PERFIL -->
   <section class="screen" id="perfil">
-    <div class="topbar"><h2>Tu camino</h2></div>
+    <div class="topbar"><h2>Tu camino</h2><p class="camino-sub">Dios tiene un plan para ti. Sigue explorando.</p></div>
     <div class="container" style="padding-top:6px;" id="perfil-body"></div>
   </section>
 
@@ -2778,6 +2795,7 @@
      (sin conexión, CDN bloqueado), getSupabase() devuelve null y toda la
      app sigue funcionando igual de bien solo con el dispositivo. -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="scene-library.js"></script>
 
 <script>
 /* ---------------- ruta base de la app ----------------
@@ -3353,6 +3371,52 @@ const DAILY_VERSES = [
  {ref:"Hechos 2:28", text:"Me hiciste conocer los caminos de la vida: henchirme has de gozo con tu presencia.", tags:["alegría"]},
  {ref:"1 Pedro 1:8", text:"Al cual no habiendo visto, le amáis: en el cual creyendo, aunque al presente no le veais, os alegráis con gozo inefable y lleno de gloria;", tags:["alegría","fe"]},
  {ref:"Salmos 66:1-2", text:"Dé alabanza a Dios toda la tierra. Cantád la gloria de su nombre: ponéd gloria en su alabanza.", tags:["alegría","adoración"]},
+ // --- versículos de otros temas (paz, fortaleza, esperanza, dirección, consuelo…), texto RVA 1909 de data/bible-rva.json ---
+ {ref:"Isaías 26:3", text:"Sentencia firme: Que guardarás paz, paz; porque en ti se han confiado,", tags:["paz", "fe"]},
+ {ref:"Salmos 55:22", text:"Echa sobre Jehová tu carga, y él te sustentará: no dará para siempre resbalo al justo.", tags:["ansiedad", "cansancio"]},
+ {ref:"Salmos 27:1", text:"Jehová es mi luz y mi salud, ¿de quién temeré? Jehová es la fortaleza de mi vida, ¿de quién me espavoreceré?", tags:["miedo", "fe"]},
+ {ref:"Salmos 46:10", text:"Cesád, y conocéd que yo soy Dios: ensalzarme he en las naciones, ensalzarme he en la tierra.", tags:["paz", "ansiedad"]},
+ {ref:"Salmos 62:1-2", text:"En Dios solamente está callada mi alma; de él es mi salud. El solamente es mi fuerte y mi salud: mi refugio, no resbalaré mucho.", tags:["paz", "descanso"]},
+ {ref:"Salmos 127:2", text:"Por demás os es el madrugar a levantaros, el veniros tarde a reposar, el comer pan de dolores: así dará a su amado el sueño.", tags:["no puedo dormir", "descanso"]},
+ {ref:"Isaías 43:2", text:"Cuando pasares por las aguas, yo seré contigo; y en los ríos, no te anegarán. Cuando pasares por el mismo fuego, no te quemarás, ni la llama arderá en ti.", tags:["miedo", "fe"]},
+ {ref:"Isaías 54:10", text:"Porque los montes se moverán, y los collados temblarán: mas mi misericordia no se apartará de ti, ni el concierto de mi paz vacilará, dijo Jehová, el que ha misericordia de ti.", tags:["esperanza", "paz"]},
+ {ref:"Salmos 42:11", text:"¿Por qué te abates, o! alma mía: y por qué te enfureces contra mí? Espera a Dios, porque aun le tengo de alabar, salud de mi presencia, y Dios mío.", tags:["tristeza", "esperanza"]},
+ {ref:"Salmos 73:26", text:"Desmáyase mi carne y mi corazón, ¡o roca de mi corazón! que mi porción es Dios para siempre.", tags:["fortaleza", "tristeza"]},
+ {ref:"Salmos 138:3", text:"El día que te llamé, me respondiste, esforzásteme, y diste en mi alma fortaleza.", tags:["ánimo", "fortaleza"]},
+ {ref:"Salmos 143:8", text:"Házme oír por la mañana tu misericordia, porque en ti he confiado: házme saber el camino por donde ande, porque a ti he alzado mi alma.", tags:["dirección", "fe"]},
+ {ref:"Salmos 37:4-5", text:"Y deléitate en Jehová: y él te dará las peticiones de tu corazón. Vuelve hacia Jehová tu camino: y espera en él, y él hará.", tags:["fe", "dirección"]},
+ {ref:"Salmos 37:7", text:"Calla a Jehová, y espera en él: no te enojes con el que prospera en su camino, con el hombre que hace maldades.", tags:["ansiedad", "paz"]},
+ {ref:"Salmos 103:12", text:"Cuanto está lejos el oriente del occidente, hizo alejar de nosotros nuestras rebeliones.", tags:["paz", "esperanza"]},
+ {ref:"Mateo 6:34", text:"Así que, no os congojéis por lo de mañana; que el mañana traerá su congoja: basta al día su aflicción.", tags:["ansiedad", "paz"]},
+ {ref:"Mateo 28:20", text:"Enseñándoles que guarden todas las cosas que os he mandado; y, he aquí, yo estoy con vosotros todos los días, hasta el fin del siglo. Amén.", tags:["soledad", "fe"]},
+ {ref:"Juan 14:1", text:"No se turbe vuestro corazón: creeis en Dios, creéd también en mí.", tags:["miedo", "fe"]},
+ {ref:"Juan 16:33", text:"Estas cosas os he hablado para que en mí tengáis paz: en el mundo tendréis apretura; mas confiád, yo he vencido al mundo.", tags:["ánimo", "paz"]},
+ {ref:"Romanos 8:28", text:"Y sabemos, que todas las cosas obran juntamente para el bien de los que a Dios aman, es a saber, a los que conforme a su propósito son llamados.", tags:["propósito", "fe"]},
+ {ref:"Romanos 5:8", text:"Mas Dios encarece su amor para con nosotros, en que siendo aun pecadores, Cristo murió por nosotros.", tags:["fe", "esperanza"]},
+ {ref:"1 Corintios 16:13-14", text:"Velád, estád firmes en la fe: portáos varonilmente, y esforzáos. Todas vuestras cosas sean hechas con caridad.", tags:["ánimo", "relaciones"]},
+ {ref:"2 Corintios 12:9", text:"Y él me dijo: Bástate mi gracia; porque mi poder en la flaqueza se perfecciona. Por tanto de buena gana me gloriaré de mis flaquezas, porque habite en mí el poder de Cristo.", tags:["fortaleza", "ánimo"]},
+ {ref:"Gálatas 6:9", text:"Mas no nos cansemos de hacer bien, que a su tiempo segaremos, si no nos desmayamos.", tags:["ánimo", "cansancio"]},
+ {ref:"Efesios 3:20", text:"A aquel, pues, que es poderoso para hacer todas las cosas mucho más abundantemente de lo que pedimos, o entendemos, conforme al poder que obra en nosotros,", tags:["fe", "esperanza"]},
+ {ref:"Efesios 6:10", text:"En fin, hermanos míos, sed fuertes en el Señor, y en el poder de su fortaleza.", tags:["fortaleza", "ánimo"]},
+ {ref:"Hebreos 11:1", text:"Es pues la fe la sustancia de las cosas que se esperan, la demostración de las cosas que no se ven.", tags:["fe"]},
+ {ref:"Hebreos 4:16", text:"Lleguémosnos, pues, confiadamente al trono de su gracia, a fin de alcanzar misericordia, y hallar gracia para el auxilio oportuno.", tags:["oración", "fe"]},
+ {ref:"Santiago 4:8", text:"Allegáos a Dios, y él se allegará a vosotros. Pecadores, limpiád las manos; y vosotros de doblado ánimo, purificád los corazones.", tags:["fe", "soledad"]},
+ {ref:"Salmos 56:3", text:"De día temo: mas yo en ti confío.", tags:["miedo", "fe"]},
+ {ref:"Salmos 126:5-6", text:"Los que sembraron con lágrimas, con regocijos segarán. Irá yendo y llorando el que lleva la preciosa simiente: mas viniendo, vendrá con regocijo trayendo sus gavillas.", tags:["tristeza", "esperanza"]},
+ {ref:"Salmos 94:19", text:"En la multitud de mis pensamientos dentro de mí, tus consolaciones alegraban mi alma.", tags:["ansiedad", "paz"]},
+ {ref:"Salmos 18:2", text:"Jehová, roca mía, y castillo mío, y escapador mío; Dios mío, fuerte mío: confiarme he en él: escudo mío, y el cuerno de mi salud; refugio mío.", tags:["fortaleza", "fe"]},
+ {ref:"Salmos 40:1-2", text:"Esperando esperé a Jehová, e inclinóse a mí, y oyó mi clamor. E hízome sacar de un aljibe sonoro, de un lodo cenagoso; y puso mis pies sobre peña, enderezó mis pasos.", tags:["esperanza", "fe"]},
+ {ref:"Proverbios 18:10", text:"Torre fuerte es el nombre de Jehová: a él correrá el justo, y será levantado.", tags:["fortaleza", "miedo"]},
+ {ref:"Eclesiastés 3:1", text:"Para todas las cosas hay sazón; y todo lo que quisiereis debajo del cielo, tiene su tiempo determinado.", tags:["propósito", "paz"]},
+ {ref:"Isaías 30:15", text:"Porque así dijo el Señor Jehová, el Santo de Israel: En descanso, y en reposo seréis salvos: en quietud, y en confianza, será vuestra fortaleza; y no quisisteis.", tags:["paz", "descanso"]},
+ {ref:"Isaías 58:11", text:"Y pastorearte ha Jehová siempre, y en las sequedades hartará tu alma, y engordará tus huesos; y serás como huerta de riego, y como manadero de aguas, cuyas aguas nunca faltan.", tags:["dirección", "fe"]},
+ {ref:"Sofonías 3:17", text:"Jehová está en medio de ti poderoso, él salvará: alegrarse ha sobre ti con alegría: callará de amor: regocijarse ha sobre ti con cantar.", tags:["alegría", "fe"]},
+ {ref:"Nahúm 1:7", text:"Bueno es Jehová para fortaleza en el día de la angustia; y que conoce a los que en él confían.", tags:["fortaleza", "fe"]},
+ {ref:"Éxodo 14:14", text:"Jehová peleará por vosotros, y vosotros callaréis.", tags:["ansiedad", "fe"]},
+ {ref:"Números 6:24-26", text:"Jehová te bendiga, y te guarde: Haga resplandecer Jehová su rostro sobre ti, y haya de ti misericordia: Jehová alce a ti su rostro, y ponga en ti paz.", tags:["paz", "familia"]},
+ {ref:"Salmos 41:3", text:"Jehová le sustentará sobre la cama de dolor; toda su cama revolviste en su enfermedad.", tags:["enfermedad", "sanidad"]},
+ {ref:"Salmos 107:20", text:"Envió su palabra, y curólos; y escapólos de sus sepulturas.", tags:["sanidad", "enfermedad"]},
+ {ref:"Jeremías 17:14", text:"Sáname, o! Jehová, y seré sano: sálvame, y seré salvo; porque tú eres mi alabanza.", tags:["sanidad", "enfermedad"]},
 ];
 
 const FEELINGS = [
@@ -3784,6 +3848,160 @@ function applyScene(stageEl, sceneClass){
   stageEl.className = 'verse-stage scened ' + sceneClass;
   stageEl.dataset.scene = sceneClass;
 }
+
+/* ---------------- escenas que se adaptan al clima y a la hora ----------------
+   La biblioteca de fotos vive en scene-library.js (window.SCENE_LIBRARY): cada
+   foto lleva etiquetas de clima (w), momento del día (t) y ánimo (m). Aquí se
+   elige la que mejor encaja con el clima real de la persona (Open-Meteo, solo si
+   lo permitió), la hora y el tema del versículo, y se rota día a día. Si algo
+   falla (sin biblioteca, sin permiso, sin red) se queda con las escenas de
+   siempre (.scene-*). */
+const SCENE_PHOTO_BASE = 'https://images.unsplash.com/';
+const SCENE_FALLBACK_BG = {
+  dawn:'linear-gradient(160deg,#F1C9A0,#C98A7A 50%,#4D4668)', day:'linear-gradient(160deg,#CFE1F5,#7BA6D1 58%,#3B5D82)',
+  dusk:'linear-gradient(160deg,#F1B88A,#B8647A 50%,#3A3158)', night:'linear-gradient(160deg,#2B3654,#151B2C 60%,#05070C)'
+};
+function hashStr(s){ let h=5381; for(let i=0;i<s.length;i++) h=((h<<5)+h+s.charCodeAt(i))|0; return h>>>0; }
+function dayNumber(){ const d=new Date(); return Math.floor(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/86400000); }
+function periodForHour(h){ if(h>=5 && h<8) return 'dawn'; if(h>=8 && h<17) return 'day'; if(h>=17 && h<20) return 'dusk'; return 'night'; }
+function weatherFromCode(c){
+  if(c===0 || c===1) return 'clear';
+  if(c===2 || c===3) return 'clouds';
+  if(c===45 || c===48) return 'fog';
+  if((c>=51 && c<=67) || (c>=80 && c<=82)) return 'rain';
+  if((c>=71 && c<=77) || c===85 || c===86) return 'snow';
+  if(c>=95) return 'storm';
+  return 'clouds';
+}
+const WEATHER_LABELS = { clear:'despejado', clouds:'nublado', fog:'con niebla', rain:'con lluvia', storm:'con tormenta', snow:'con nieve' };
+function weatherEnabled(){ return load('here_weather_pref', null) === 'on'; }
+function computeSceneContext(){
+  const w = load('here_weather', null);
+  const fresh = w && (Date.now() - w.at) < 3*60*60*1000;
+  return { weather: (weatherEnabled() && fresh) ? w.w : 'unknown', period: periodForHour(new Date().getHours()) };
+}
+function pickScenePhotos(ctx, tags){
+  const lib = window.SCENE_LIBRARY || [];
+  if(!lib.length) return [];
+  const tagList = [].concat(tags || []).filter(Boolean);
+  const scored = lib.map(p=>{
+    let sc = 0;
+    if(ctx.weather !== 'unknown' && p.w) sc += p.w.includes(ctx.weather) ? 3 : -6;
+    if(p.t) sc += p.t.includes(ctx.period) ? 3 : -4;
+    if(p.m && tagList.some(t=>p.m.includes(t))) sc += 2;
+    return { p, sc, h:hashStr(p.id) };
+  }).sort((a,b)=> b.sc - a.sc || a.h - b.h);
+  const best = scored[0].sc;
+  const pool = scored.filter(x=>x.sc >= best-2).slice(0, 8);
+  const start = (dayNumber() + hashStr(String(tagList[0] || ''))) % pool.length;
+  const ordered = pool.map((_,i)=>pool[(start+i) % pool.length].p);
+  return ordered.concat(scored.filter(x=>!pool.includes(x)).map(x=>x.p));
+}
+function sceneTintLayer(ctx){
+  if(ctx.period === 'night') return 'linear-gradient(rgba(8,12,30,.28),rgba(8,12,30,.28))';
+  if(ctx.weather==='rain' || ctx.weather==='storm' || ctx.weather==='fog') return 'linear-gradient(rgba(38,52,68,.18),rgba(38,52,68,.18))';
+  if(ctx.period==='dawn' || ctx.period==='dusk') return 'linear-gradient(rgba(120,70,40,.08),rgba(120,70,40,.08))';
+  return null;
+}
+function applyScenePhoto(el, tags){
+  if(!el) return;
+  const ctx = computeSceneContext();
+  const list = pickScenePhotos(ctx, tags);
+  if(!list.length) return;
+  const tok = String(Date.now()) + Math.random();
+  el.dataset.sceneTok = tok;
+  const tint = sceneTintLayer(ctx);
+  const urlOf = p => `${SCENE_PHOTO_BASE}${p.id}?auto=format&fit=crop&w=1400&q=65`;
+  const tryAt = i=>{
+    if(i >= Math.min(list.length, 6) || el.dataset.sceneTok !== tok) return;
+    const u = urlOf(list[i]);
+    el.style.background = (tint ? tint+', ' : '') + `url('${u}') center/cover no-repeat, ${SCENE_FALLBACK_BG[ctx.period]}`;
+    const probe = new Image();
+    probe.onerror = ()=>tryAt(i+1); // foto caída o ID incorrecto: pasa a la siguiente
+    probe.src = u;
+  };
+  tryAt(0);
+}
+function applyHomeScenePhoto(){
+  const card = document.getElementById('home-hoy-card');
+  if(!card || !card.dataset.ref) return;
+  const v = findVerse(card.dataset.ref);
+  applyScenePhoto(card, (v && v.tags) || []);
+}
+/* ---- clima: permiso, ubicación aproximada y consulta a Open-Meteo ----
+   Todo queda en este dispositivo (here_weather_pref / here_geo / here_weather;
+   ninguna se sube a la nube). La ubicación se redondea a ~10 km. */
+function getGeo(){
+  return new Promise(res=>{
+    if(!navigator.geolocation) return res(null);
+    navigator.geolocation.getCurrentPosition(
+      p=>res({ lat:+p.coords.latitude.toFixed(1), lon:+p.coords.longitude.toFixed(1), at:Date.now() }),
+      e=>res({ error:e.code }),
+      { timeout:8000, maximumAge:3600000, enableHighAccuracy:false }
+    );
+  });
+}
+async function fetchWeather(geo){
+  try{
+    const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${geo.lat}&longitude=${geo.lon}&current=weather_code,is_day&timezone=auto`);
+    if(!r.ok) return null;
+    const j = await r.json();
+    if(!j.current) return null;
+    return { w:weatherFromCode(j.current.weather_code), isDay:j.current.is_day, at:Date.now() };
+  }catch(e){ return null; }
+}
+let weatherRefreshing = false;
+async function refreshWeather(){
+  if(!weatherEnabled() || weatherRefreshing) return false;
+  const cur = load('here_weather', null);
+  if(cur && Date.now() - cur.at < 45*60*1000) return false;
+  weatherRefreshing = true;
+  try{
+    let geo = load('here_geo', null);
+    if(!geo || geo.lat == null || Date.now() - geo.at > 12*3600*1000){
+      const g = await getGeo();
+      if(g && g.lat != null){ geo = g; save('here_geo', g); }
+      else if(g && g.error === 1){ save('here_weather_pref', 'off'); return false; } // permiso denegado
+    }
+    if(!geo || geo.lat == null) return false;
+    const w = await fetchWeather(geo);
+    if(!w) return false;
+    const changed = !cur || cur.w !== w.w;
+    save('here_weather', w);
+    return changed;
+  } finally { weatherRefreshing = false; }
+}
+let weatherAskPending = false;
+function maybeAskWeather(){
+  if(load('here_weather_pref', null) !== null) return;
+  if(currentScreen !== 'home') return;
+  openSheet(`
+    <div class="handle"></div>
+    <p class="serif" style="font-size:19px; text-align:center; margin-bottom:8px;">Que el cielo de HERE acompañe el tuyo</p>
+    <p style="font-size:13.5px; color:var(--ink-soft); text-align:center; margin-bottom:22px; line-height:1.6;">Si quieres, HERE adapta las imágenes al clima y a la hora de donde estás. Usa tu ubicación aproximada solo en este dispositivo: no se guarda en tu cuenta ni se comparte.</p>
+    <button class="btn btn-primary" onclick="answerWeather(true)">Permitir ubicación aproximada</button>
+    <button class="btn-text" style="width:100%; margin-top:10px; padding:10px;" onclick="answerWeather(false)">Ahora no</button>
+  `);
+}
+function answerWeather(yes){
+  save('here_weather_pref', yes ? 'on' : 'off');
+  weatherAskPending = false;
+  closeSheet();
+  if(yes) refreshWeather().then(ch=>{ if(currentScreen==='home') applyHomeScenePhoto(); renderPerfilIfOpen(); });
+}
+function toggleWeatherPref(){
+  if(weatherEnabled()){
+    save('here_weather_pref', 'off');
+    showHereToast('Las escenas ya no usan el clima');
+    renderPerfil(); if(currentScreen==='home') applyHomeScenePhoto();
+  } else {
+    save('here_weather_pref', 'on');
+    showHereToast('Buscando el clima de tu zona…');
+    refreshWeather().then(()=>{ renderPerfilIfOpen(); });
+    renderPerfil();
+  }
+}
+function renderPerfilIfOpen(){ if(currentScreen==='perfil') renderPerfil(); }
 function addSceneOverlay(stageEl){
   if(!stageEl) return;
   const old = stageEl.querySelector('.scene-svg'); if(old) old.remove();
@@ -4311,6 +4529,7 @@ function setHomeHoyCard(v, eyebrow, tag, isMood){
   const hoyCard = document.getElementById('home-hoy-card');
   hoyCard.className = 'feature-card hoy-scene ' + sceneForTag(tag || 'gratitud');
   hoyCard.dataset.ref = v.ref;
+  applyScenePhoto(hoyCard, [tag].concat(v.tags || []));
   hoyCard.onclick = isMood ? ()=>openPalabraFromRef(v.ref) : ()=>go('hoy');
   document.getElementById('home-hoy-actions').style.display = isMood ? 'none' : '';
   document.getElementById('home-hoy-mood-actions').style.display = 'none'; // ahora viven en el panel de abajo
@@ -4399,6 +4618,7 @@ function renderHomeQuick(){
   homeMoodSelected = 'hoy';
   renderHomeMoodRow();
   applyHomeTodayVerse();
+  refreshWeather().then(ch=>{ if(ch && currentScreen==='home') applyHomeScenePhoto(); });
   renderHomeCamino();
   renderWeekStreak();
   renderHomePlanContinue();
@@ -4497,10 +4717,15 @@ function versesForTag(tag, n, excludeRefs){
   const shuffled = [...pool].sort(()=>Math.random()-0.5);
   return shuffled.slice(0, n);
 }
+// Un versículo por día, estable durante todo el día. El orden de la lista se
+// "baraja" de forma fija (por un hash de la referencia) para que días seguidos
+// no traigan temas parecidos, y recorre todos los versículos antes de repetir.
+var _dailyOrder = null;
 function pickTodayVerse(){
-  const d = new Date();
-  const seed = d.getFullYear()*372 + d.getMonth()*31 + d.getDate();
-  return DAILY_VERSES[seed % DAILY_VERSES.length];
+  if(!_dailyOrder || _dailyOrder.length !== DAILY_VERSES.length){
+    _dailyOrder = DAILY_VERSES.slice().sort((a,b)=> hashStr('here:'+a.ref) - hashStr('here:'+b.ref));
+  }
+  return _dailyOrder[dayNumber() % _dailyOrder.length];
 }
 
 /* ---------------- "necesito una palabra" ----------------
@@ -8070,6 +8295,7 @@ function renderHoy(){
   const v = pickTodayVerse();
   const stage = document.getElementById('hoy-stage');
   applyScene(stage, sceneForNow());
+  applyScenePhoto(stage, v.tags || []);
   stage.style.minHeight = 'auto';
   stage.style.padding = '38px 34px 46px';
   stage.style.borderRadius = '26px';
@@ -8087,7 +8313,7 @@ function renderHoy(){
       <div class="action-pill" onclick="prefillOrar('${v.ref}')">Orar</div>
     </div>
   `;
-  addSceneOverlay(stage);
+  if(!(window.SCENE_LIBRARY||[]).length) addSceneOverlay(stage); // con foto real, sin las formas decorativas
   if(!v._rvr60){
     // Actualiza solo el texto in-place cuando llegue el RVR1960 real — nunca vuelve a
     // llamarse a sí misma, así que un fallo de red (o estar sin conexión) no deja esto
@@ -8167,8 +8393,22 @@ const CAMINO_ICONS = {
   cloud: '<path d="M7.2 18a4.1 4.1 0 01-.3-8.2 5.2 5.2 0 019.9-1.6 4.6 4.6 0 01-.6 9.8H7.2z"/>',
   bell: '<path d="M12 3.2a5 5 0 00-5 5v2.6c0 1.6-.5 3-1.5 4.2h13c-1-1.2-1.5-2.6-1.5-4.2V8.2a5 5 0 00-5-5z"/><path d="M9.6 18.6a2.4 2.4 0 004.8 0"/>',
   moon: '<path d="M20 14.6A8.6 8.6 0 119.4 4 7 7 0 0020 14.6z"/>',
+  sun: '<circle cx="12" cy="12" r="3.8"/><path d="M12 3v2.2M12 18.8V21M3 12h2.2M18.8 12H21M5.6 5.6l1.6 1.6M16.8 16.8l1.6 1.6M18.4 5.6l-1.6 1.6M7.2 16.8l-1.6 1.6"/>',
+  calendar: '<rect x="4" y="5.5" width="16" height="14.5" rx="2.5"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/>',
+  hands: '<path d="M12 20c-3.5-1-5.5-4-5.5-7.5 0-2.5 1.5-5 3.5-8 1 1.5 2 3.5 2 6V20z"/><path d="M12 20c3.5-1 5.5-4 5.5-7.5 0-2.5-1.5-5-3.5-8-1 1.5-2 3.5-2 6"/>',
   refresh: '<path d="M4.5 12a7.5 7.5 0 0113-5M19.5 12a7.5 7.5 0 01-13 5"/><path d="M17.3 4.6v3.4h-3.4M6.7 19.4V16h3.4"/>',
 };
+function caminoSvg(name){
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${CAMINO_ICONS[name]||''}</svg>`;
+}
+// Parte el mensaje tranquilo de gentleProgressMessage() en título + frase de
+// apoyo (misma lógica y mismos textos de siempre, solo presentados en dos líneas).
+function caminoHeroCopy(){
+  const msg = gentleProgressMessage();
+  const m = msg.match(/^(.+?\.)\s+(.+)$/);
+  if(m) return { t:m[1], c:m[2] };
+  return { t:'Tu camino con HERE', c:'Un registro tranquilo de los momentos en que volviste.' };
+}
 function caminoIcon(name, tone){
   return `<div class="camino-icon${tone==='sage'?' sage':''}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${CAMINO_ICONS[name]||''}</svg></div>`;
 }
@@ -8176,42 +8416,42 @@ function renderPerfil(){
   const c = document.getElementById('perfil-body');
   const visitDays = load('here_visit_log', []).length;
   const ringPct = Math.max(0, Math.min(1, currentStreak/30));
-  const ringCirc = 2*Math.PI*35;
+  const ringCirc = 2*Math.PI*36;
+  const hero = caminoHeroCopy();
   c.innerHTML = `
-    <div class="camino-hero">
-      <div class="camino-ring-wrap">
-        <svg viewBox="0 0 82 82">
-          <defs>
-            <linearGradient id="caminoRingGrad" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" style="stop-color:var(--gold-light)"/>
-              <stop offset="1" style="stop-color:var(--gold)"/>
-            </linearGradient>
-          </defs>
-          <circle class="track" cx="41" cy="41" r="35"/>
-          <circle class="fill" cx="41" cy="41" r="35" stroke-dasharray="${ringCirc}" stroke-dashoffset="${ringCirc*(1-ringPct)}"/>
-        </svg>
-        <div class="camino-ring-num"><div class="n">${currentStreak}</div><div class="l">${currentStreak===1?'día':'días'}</div></div>
+    <div class="camino-hero" id="camino-hero">
+      <div class="camino-hero-pill">
+        <div class="camino-ring-wrap">
+          <svg viewBox="0 0 82 82">
+            <defs>
+              <linearGradient id="caminoRingGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" style="stop-color:var(--gold-light)"/>
+                <stop offset="1" style="stop-color:var(--gold)"/>
+              </linearGradient>
+            </defs>
+            <circle class="track" cx="41" cy="41" r="36"/>
+            <circle class="fill" cx="41" cy="41" r="36" stroke-dasharray="${ringCirc}" stroke-dashoffset="${ringCirc*(1-ringPct)}"/>
+          </svg>
+          <div class="camino-ring-num"><div class="n">${currentStreak}</div><div class="l">${currentStreak===1?'día':'días'}</div></div>
+        </div>
+        <div class="camino-hero-sep"></div>
+        <div class="camino-hero-text"><p class="ht">${hero.t}</p><p class="hc">${hero.c}</p></div>
       </div>
-      <div class="camino-hero-text"><p>${gentleProgressMessage()}</p></div>
     </div>
-    <div class="section-title" style="padding-left:24px;">Tu mes</div>
+    <div class="section-title" style="padding-left:0;">Tu mes</div>
     <div class="camino-grid">${renderCaminoGrid()}</div>
     <div class="camino-stats-row">
-      <div class="camino-stat-chip"><div class="num">${visitDays}</div><div class="lbl">días que volviste</div></div>
-      <div class="camino-stat-chip"><div class="num">${visited.length}</div><div class="lbl">capítulos leídos</div></div>
-      <div class="camino-stat-chip"><div class="num">${prayers.length}</div><div class="lbl">oraciones</div></div>
-      <div class="camino-stat-chip"><div class="num">${reflections.length}</div><div class="lbl">reflexiones</div></div>
-      <div class="camino-stat-chip"><div class="num">${savedWords.length}</div><div class="lbl">palabras guardadas</div></div>
-      <div class="camino-stat-chip"><div class="num">${computeExploredTopics()}</div><div class="lbl">temas explorados</div></div>
-      <div class="camino-stat-chip"><div class="num">${followedPastores.length}</div><div class="lbl">pastores que sigues</div></div>
+      <div class="camino-stat-chip"><div class="camino-stat-ic">${caminoSvg('calendar')}</div><div class="num">${visitDays}</div><div class="lbl">Días que volviste</div></div>
+      <div class="camino-stat-chip"><div class="camino-stat-ic">${caminoSvg('journal')}</div><div class="num">${visited.length}</div><div class="lbl">Capítulos leídos</div></div>
+      <div class="camino-stat-chip"><div class="camino-stat-ic">${caminoSvg('hands')}</div><div class="num">${prayers.length}</div><div class="lbl">Oraciones</div></div>
     </div>
     <div class="stack">
-      <div class="list-card" onclick="go('misPalabras')"><div class="lc-left">${caminoIcon('bookmark')}<div><div class="t">Palabras guardadas</div></div></div><span>→</span></div>
-      <div class="list-card" onclick="go('diario')"><div class="lc-left">${caminoIcon('journal','sage')}<div><div class="t">Reflexiones y oraciones</div></div></div><span>→</span></div>
-      <div class="list-card" onclick="goVersiculosResaltados()"><div class="lc-left">${caminoIcon('highlighter')}<div><div class="t">Versículos resaltados</div></div></div><span>→</span></div>
-      <div class="list-card" onclick="go('historialLecturas')"><div class="lc-left">${caminoIcon('scroll','sage')}<div><div class="t">Historial de lecturas</div>${visited.length?`<div class="s">${visited.length} ${visited.length===1?'capítulo':'capítulos'}</div>`:''}</div></div><span>→</span></div>
-      <div class="list-card" onclick="go('misPastores')"><div class="lc-left">${caminoIcon('star')}<div><div class="t">Pastores que sigues</div>${followedPastores.length?`<div class="s">${followedPastores.length} ${followedPastores.length===1?'pastor':'pastores'}</div>`:''}</div></div><span>→</span></div>
-      <div class="list-card" onclick="go('musicaGuardado')"><div class="lc-left">${caminoIcon('music','sage')}<div><div class="t">Música y predicaciones guardadas</div>${Object.keys(savedTracks).length?`<div class="s">${Object.keys(savedTracks).length} ${Object.keys(savedTracks).length===1?'guardado':'guardados'}</div>`:''}</div></div><span>→</span></div>
+      <div class="list-card" onclick="go('misPalabras')"><div class="lc-left">${caminoIcon('bookmark')}<div><div class="t">Palabras guardadas</div><div class="s">Tu colección de versículos y notas</div></div></div><span>→</span></div>
+      <div class="list-card" onclick="go('diario')"><div class="lc-left">${caminoIcon('journal','sage')}<div><div class="t">Reflexiones y oraciones</div><div class="s">Encuentra paz y guía en su Palabra</div></div></div><span>→</span></div>
+      <div class="list-card" onclick="goVersiculosResaltados()"><div class="lc-left">${caminoIcon('highlighter')}<div><div class="t">Versículos resaltados</div><div class="s">Lo que más te ha impactado</div></div></div><span>→</span></div>
+      <div class="list-card" onclick="go('historialLecturas')"><div class="lc-left">${caminoIcon('scroll','sage')}<div><div class="t">Historial de lecturas</div><div class="s">${visited.length?`${visited.length} ${visited.length===1?'capítulo':'capítulos'}`:'Los capítulos que has leído'}</div></div></div><span>→</span></div>
+      <div class="list-card" onclick="go('misPastores')"><div class="lc-left">${caminoIcon('star')}<div><div class="t">Pastores que sigues</div><div class="s">${followedPastores.length?`${followedPastores.length} ${followedPastores.length===1?'pastor':'pastores'} · `:''}Mensajes que te inspiran</div></div></div><span>→</span></div>
+      <div class="list-card" onclick="go('musicaGuardado')"><div class="lc-left">${caminoIcon('music','sage')}<div><div class="t">Música y predicaciones guardadas</div><div class="s">${Object.keys(savedTracks).length?`${Object.keys(savedTracks).length} ${Object.keys(savedTracks).length===1?'guardado':'guardados'} · `:''}Lleva la Palabra contigo</div></div></div><span>→</span></div>
     </div>
     <div class="section-title" style="padding-left:0; margin-top:26px;">Cuenta</div>
     <div class="list-card" style="margin-left:0; margin-right:0;" onclick="openAccountSheet()">
@@ -8231,6 +8471,10 @@ function renderPerfil(){
       <div class="lc-left">${caminoIcon('bell')}<div><div class="t">Sonido suave</div><div class="s">Un tono breve al recibir una palabra</div></div></div>
       <span>${soundOn?'Activado':'Desactivado'}</span>
     </div>
+    <div class="list-card" style="margin-left:0; margin-right:0;" onclick="toggleWeatherPref()">
+      <div class="lc-left">${caminoIcon('sun')}<div><div class="t">Escenas según el clima</div><div class="s">${weatherEnabled() ? ((load('here_weather',null)&&WEATHER_LABELS[load('here_weather',null).w]) ? 'Hoy en tu zona: '+WEATHER_LABELS[load('here_weather',null).w] : 'Buscando el clima de tu zona…') : 'Adapta las imágenes al clima y la hora, con tu ubicación aproximada'}</div></div></div>
+      <span>${weatherEnabled()?'Activado':'Desactivado'}</span>
+    </div>
     <div class="list-card" style="margin-left:0; margin-right:0;" onclick="cycleThemeMode()">
       <div class="lc-left">${caminoIcon('moon','sage')}<div><div class="t">Modo noche</div><div class="s">Automático (según tu celular), o elígelo tú</div></div></div>
       <span style="font-size:12.5px; color:var(--ink-soft); font-weight:600;">${themeModeLabel()} →</span>
@@ -8241,6 +8485,7 @@ function renderPerfil(){
     </div>
     <button class="btn-text" style="padding-left:0; margin-top:16px;" onclick="clearData()">Borrar mis datos</button>
   `;
+  try{ applyScenePhoto(document.getElementById('camino-hero'), ['esperanza','paz']); }catch(e){}
 }
 // Hoja para elegir la traducción de la Biblia: RVR1960 siempre está, y las
 // demás (NVI, NTV, y lo que la cuenta de API.Bible tenga disponible) se
@@ -8294,7 +8539,11 @@ function clearData(){
 
 /* ---------------- sheet ---------------- */
 function openSheet(html){ document.getElementById('sheet-content').innerHTML = html; document.getElementById('sheet-backdrop').classList.add('show'); }
-function closeSheet(){ document.getElementById('sheet-backdrop').classList.remove('show'); }
+function closeSheet(){
+  document.getElementById('sheet-backdrop').classList.remove('show');
+  // si lo primero que se abrió fue la hoja de cuenta, la pregunta del clima va justo después
+  if(weatherAskPending){ weatherAskPending = false; setTimeout(maybeAskWeather, 450); }
+}
 
 /* ---------------- accesibilidad: hace foco-able por teclado cualquier elemento
    "clicable" que no lo sea de forma nativa (muchas tarjetas y pastillas de la
@@ -8384,7 +8633,8 @@ window.addEventListener('load', ()=>{
   function maybeAutoShowAuth(){
     if(target !== 'home') return;
     hereAuthReady.then(()=>{
-      if(!hereUser) openAccountSheet();
+      if(!hereUser){ weatherAskPending = true; openAccountSheet(); }
+      else maybeAskWeather();
     });
   }
 
