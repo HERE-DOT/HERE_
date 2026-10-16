@@ -587,29 +587,53 @@
   #perfil .topbar h2{font-size:38px; font-weight:400; letter-spacing:-.4px; line-height:1.1;}
   .camino-sub{font-size:14.5px; color:var(--ink-soft); margin:9px 0 0; line-height:1.5; letter-spacing:.1px;}
   .camino-hero{
-    position:relative; margin:18px 0 26px; padding:26px 20px; border-radius:30px; overflow:hidden;
-    background:linear-gradient(160deg,#F1C9A0,#C98A7A 50%,#4D4668); box-shadow:var(--shadow-md);
+    position:relative; margin:18px 0 26px; padding:30px 0 30px 20px; border-radius:30px; overflow:hidden;
+    background:
+      linear-gradient(rgba(255,240,215,.10), rgba(255,240,215,.10)),
+      url('https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?auto=format&fit=crop&w=1200&q=65') center 62%/cover no-repeat,
+      url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 800 320%22 preserveAspectRatio=%22xMidYMid slice%22%3E%3Cdefs%3E%3ClinearGradient id=%22s%22 x1=%220%22 y1=%220%22 x2=%220%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23F4E6D0%22/%3E%3Cstop offset=%22.55%22 stop-color=%22%23F3D2A8%22/%3E%3Cstop offset=%221%22 stop-color=%22%23EDBB8E%22/%3E%3C/linearGradient%3E%3CradialGradient id=%22g%22 cx=%22640%22 cy=%22120%22 r=%22260%22 gradientUnits=%22userSpaceOnUse%22%3E%3Cstop offset=%220%22 stop-color=%22%23FFF6DC%22 stop-opacity=%22.95%22/%3E%3Cstop offset=%22.35%22 stop-color=%22%23FFE3A8%22 stop-opacity=%22.55%22/%3E%3Cstop offset=%221%22 stop-color=%22%23FFE3A8%22 stop-opacity=%220%22/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect width=%22800%22 height=%22320%22 fill=%22url%28%23s%29%22/%3E%3Crect width=%22800%22 height=%22320%22 fill=%22url%28%23g%29%22/%3E%3Ccircle cx=%22640%22 cy=%22120%22 r=%2216%22 fill=%22%23FFF8E6%22/%3E%3Cpath d=%22M0 190 Q120 140 240 175 T470 160 T800 150 V320 H0z%22 fill=%22%23E4B993%22 opacity=%22.75%22/%3E%3Cpath d=%22M0 220 Q150 170 300 205 T560 190 T800 185 V320 H0z%22 fill=%22%23C99A78%22 opacity=%22.85%22/%3E%3Cpath d=%22M0 255 Q180 215 360 245 T800 230 V320 H0z%22 fill=%22%23A87C5E%22/%3E%3Cpath d=%22M0 290 Q220 262 420 282 T800 272 V320 H0z%22 fill=%22%237E5C45%22/%3E%3Cpath d=%22M330 320 Q420 285 470 262 T600 232%22 fill=%22none%22 stroke=%22%23E9CFA9%22 stroke-width=%229%22 stroke-linecap=%22round%22 opacity=%22.8%22/%3E%3C/svg%3E") center/cover no-repeat,
+      linear-gradient(160deg,#F6E7CE,#EBC9A4 55%,#D3A58E);
+    box-shadow:var(--shadow-md);
   }
-  .camino-hero-pill{
-    display:flex; align-items:center; gap:16px; padding:16px 20px 16px 16px; border-radius:44px;
-    background:color-mix(in srgb, var(--card) 64%, transparent);
-    -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
-    border:1px solid color-mix(in srgb, #fff 55%, transparent);
+  /* el cristal esmerilado se desvanece hacia la derecha y deja ver el paisaje */
+  .camino-hero-pill{ position:relative; display:flex; align-items:center; gap:16px; padding:16px 26px 16px 16px; }
+  .camino-hero-pill::before{
+    content:''; position:absolute; inset:0; border-radius:44px; z-index:0;
+    background:linear-gradient(90deg, color-mix(in srgb, var(--card) 72%, transparent), color-mix(in srgb, var(--card) 50%, transparent) 55%, color-mix(in srgb, var(--card) 8%, transparent));
+    -webkit-backdrop-filter:blur(5px); backdrop-filter:blur(5px);
+    -webkit-mask-image:linear-gradient(90deg,#000 74%,transparent 100%); mask-image:linear-gradient(90deg,#000 74%,transparent 100%);
   }
+  .camino-hero-pill > *{ position:relative; z-index:1; }
+  :root[data-theme="dark"] .camino-hero{
+    background:
+      linear-gradient(rgba(18,14,8,.55), rgba(18,14,8,.55)),
+      url('https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?auto=format&fit=crop&w=1200&q=65') center 62%/cover no-repeat,
+      url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 800 320%22 preserveAspectRatio=%22xMidYMid slice%22%3E%3Cdefs%3E%3ClinearGradient id=%22s%22 x1=%220%22 y1=%220%22 x2=%220%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23F4E6D0%22/%3E%3Cstop offset=%22.55%22 stop-color=%22%23F3D2A8%22/%3E%3Cstop offset=%221%22 stop-color=%22%23EDBB8E%22/%3E%3C/linearGradient%3E%3CradialGradient id=%22g%22 cx=%22640%22 cy=%22120%22 r=%22260%22 gradientUnits=%22userSpaceOnUse%22%3E%3Cstop offset=%220%22 stop-color=%22%23FFF6DC%22 stop-opacity=%22.95%22/%3E%3Cstop offset=%22.35%22 stop-color=%22%23FFE3A8%22 stop-opacity=%22.55%22/%3E%3Cstop offset=%221%22 stop-color=%22%23FFE3A8%22 stop-opacity=%220%22/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect width=%22800%22 height=%22320%22 fill=%22url%28%23s%29%22/%3E%3Crect width=%22800%22 height=%22320%22 fill=%22url%28%23g%29%22/%3E%3Ccircle cx=%22640%22 cy=%22120%22 r=%2216%22 fill=%22%23FFF8E6%22/%3E%3Cpath d=%22M0 190 Q120 140 240 175 T470 160 T800 150 V320 H0z%22 fill=%22%23E4B993%22 opacity=%22.75%22/%3E%3Cpath d=%22M0 220 Q150 170 300 205 T560 190 T800 185 V320 H0z%22 fill=%22%23C99A78%22 opacity=%22.85%22/%3E%3Cpath d=%22M0 255 Q180 215 360 245 T800 230 V320 H0z%22 fill=%22%23A87C5E%22/%3E%3Cpath d=%22M0 290 Q220 262 420 282 T800 272 V320 H0z%22 fill=%22%237E5C45%22/%3E%3Cpath d=%22M330 320 Q420 285 470 262 T600 232%22 fill=%22none%22 stroke=%22%23E9CFA9%22 stroke-width=%229%22 stroke-linecap=%22round%22 opacity=%22.8%22/%3E%3C/svg%3E") center/cover no-repeat,
+      linear-gradient(160deg,#3A3026,#2A221B 60%,#1B1612);
+  }
+  :root[data-theme="dark"] .camino-hero-pill::before{ -webkit-mask-image:linear-gradient(90deg,#000 88%,transparent 100%); mask-image:linear-gradient(90deg,#000 88%,transparent 100%); }
   .camino-ring-wrap{position:relative; width:82px; height:82px; flex:none;}
   .camino-ring-wrap svg{width:100%; height:100%; transform:rotate(-90deg); overflow:visible;}
-  .camino-ring-wrap .track{fill:none; stroke:color-mix(in srgb, var(--gold) 20%, transparent); stroke-width:6;}
-  .camino-ring-wrap .fill{fill:none; stroke:url(#caminoRingGrad); stroke-width:6; stroke-linecap:round; transition:stroke-dashoffset .6s ease;}
+  .camino-ring-wrap .track{fill:none; stroke:color-mix(in srgb, var(--gold) 16%, transparent); stroke-width:5;}
+  .camino-ring-wrap .fill{fill:none; stroke:url(#caminoRingGrad); stroke-width:5; stroke-linecap:round; transition:stroke-dashoffset .6s ease;}
   .camino-ring-num{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;}
   .camino-ring-num .n{font-family:'Fraunces'; font-size:30px; font-weight:400; color:var(--ink); line-height:1;}
   .camino-ring-num .l{font-size:11px; color:var(--ink-soft); margin-top:3px;}
-  .camino-hero-sep{width:1px; align-self:stretch; margin:4px 0; background:color-mix(in srgb, var(--ink) 16%, transparent); flex:none;}
+  .camino-hero-sep{width:1px; align-self:stretch; margin:4px 0; background:linear-gradient(transparent, color-mix(in srgb, var(--gold) 55%, transparent), transparent); flex:none;}
   .camino-hero-text{flex:1; min-width:0;}
   .camino-hero-text .ht{font-size:15px; font-weight:500; color:var(--ink); line-height:1.35; margin:0;}
   .camino-hero-text .hc{font-size:13.5px; color:var(--ink-soft); line-height:1.45; margin:6px 0 0;}
-  .camino-grid{display:grid; grid-template-columns:repeat(15, 1fr); gap:5px; margin:10px 0 26px;}
-  .camino-grid .cell{width:100%; aspect-ratio:1; border-radius:6px; background:color-mix(in srgb, var(--gold) 13%, var(--bg-warm));}
-  .camino-grid .cell.on{background:var(--gold-grad); box-shadow:inset 0 1px 0 rgba(255,255,255,.35), 0 2px 4px rgba(138,106,38,.18);}
+  .camino-grid{display:grid; grid-template-columns:repeat(7, minmax(0,1fr)); grid-auto-rows:min-content; align-content:start; align-items:center; row-gap:14px; margin:10px 0 0; flex:none; height:auto;}
+  .cal-dow{text-align:center; font-size:13px; color:var(--ink-soft); padding-bottom:4px;}
+  .cal-cell{display:flex; align-items:center; justify-content:center; gap:7px; font-size:12.5px; color:var(--ink-soft); min-height:22px;}
+  .cal-cell.future{opacity:.45;}
+  .cal-cell.today .cal-n{color:var(--ink); font-weight:700;}
+  .cal-cell.today .cal-dot{box-shadow:0 0 0 2px var(--bg), 0 0 0 3.5px var(--gold);}
+  .cal-dot{display:inline-block; width:15px; height:15px; border-radius:50%; background:color-mix(in srgb, var(--ink) 11%, var(--bg-warm)); flex:none;}
+  .cal-dot.on{background:var(--gold-grad); box-shadow:0 2px 4px rgba(138,106,38,.22);}
+  .cal-cell.today .cal-dot.on{box-shadow:0 0 0 2px var(--bg), 0 0 0 3.5px var(--gold);}
+  .cal-legend{display:flex; gap:22px; margin:16px 0 26px; font-size:13px; color:var(--ink);}
+  .cal-legend span{display:flex; align-items:center; gap:8px;}
   .camino-stats-row{display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin:0 0 24px;}
   .camino-stat-chip{position:relative; padding:16px 12px 14px 16px; border-radius:18px; background:var(--card); border:1px solid var(--line); box-shadow:var(--shadow-sm);}
   .camino-stat-chip .num{font-family:'Fraunces'; font-size:26px; font-weight:400; color:var(--ink); line-height:1;}
@@ -8371,13 +8395,20 @@ function computeExploredTopics(){
 }
 function renderCaminoGrid(){
   const log = load('here_visit_log', []);
-  const days = [];
   const today = new Date();
-  for(let i=29; i>=0; i--){
-    const d = new Date(today); d.setDate(d.getDate()-i);
-    days.push(log.includes(d.toDateString()));
+  const y = today.getFullYear(), m = today.getMonth();
+  const daysInMonth = new Date(y, m+1, 0).getDate();
+  const lead = (new Date(y, m, 1).getDay() + 6) % 7; // semana que empieza en lunes
+  let h = ['L','M','M','J','V','S','D'].map(l=>`<div class="cal-dow">${l}</div>`).join('');
+  for(let i=0;i<lead;i++) h += '<div class="cal-cell blank"></div>';
+  for(let d=1; d<=daysInMonth; d++){
+    const dt = new Date(y, m, d);
+    const future = dt > today && dt.toDateString() !== today.toDateString();
+    const on = log.includes(dt.toDateString());
+    const isToday = dt.toDateString() === today.toDateString();
+    h += `<div class="cal-cell${future?' future':''}${isToday?' today':''}"><span class="cal-n">${d}</span>${future?'':`<span class="cal-dot${on?' on':''}"></span>`}</div>`;
   }
-  return days.map(on=>`<div class="cell ${on?'on':''}"></div>`).join('');
+  return h + '</div><div class="cal-legend"><span><i class="cal-dot on"></i>Día de lectura</span><span><i class="cal-dot"></i>Descanso</span>';
 }
 // Íconos de trazo (mismo stroke-width 1.6 que la barra inferior) para las
 // filas de "Tu camino" — reemplazan los emoji sueltos que tenía antes esta
@@ -8485,7 +8516,6 @@ function renderPerfil(){
     </div>
     <button class="btn-text" style="padding-left:0; margin-top:16px;" onclick="clearData()">Borrar mis datos</button>
   `;
-  try{ applyScenePhoto(document.getElementById('camino-hero'), ['esperanza','paz']); }catch(e){}
 }
 // Hoja para elegir la traducción de la Biblia: RVR1960 siempre está, y las
 // demás (NVI, NTV, y lo que la cuenta de API.Bible tenga disponible) se
