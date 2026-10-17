@@ -134,13 +134,13 @@
   /* ---------- Splash: intro de HERE (paisaje, luz, logo, línea y lema) ----------
      Una pausa breve antes de entrar: paisaje estilizado en CSS (sin fotos),
      luz que respira, "HERE", una línea fina y "Un lugar para volver a Dios.".
-     Día = tema claro; noche = tema oscuro (estrellas, luna y montañas).
+     Día o noche según la hora del dispositivo (19:00–05:59 = noche) (estrellas, luna y montañas).
      Dura ~4.5 s, se puede saltar y respeta "reducir movimiento". */
   #splash{
     position:fixed; inset:0; z-index:999; background:#fff8ef; color:#fffaf2;
     max-width:480px; margin:0 auto; overflow:hidden; isolation:isolate;
   }
-  :root[data-theme="dark"] #splash{ background:#1b2928; }
+  #splash.time-night{ background:#1b2928; }
   .intro-scene{
     position:absolute; inset:0; overflow:hidden;
     background:linear-gradient(180deg,#a9c6b3 0%,#e6c28d 43%,#f7d9a5 72%,#f4e3c4 100%);
@@ -169,7 +169,7 @@
   #splash.playing .intro-haze{ animation:introHazeIn 2s ease both; }
 
   /* noche: mismo paisaje, otra atmósfera */
-  :root[data-theme="dark"] .intro-scene{
+  #splash.time-night .intro-scene{
     background-image:
       radial-gradient(circle at 8% 15%, rgba(255,244,205,.9) 0 1px, transparent 1.7px),
       radial-gradient(circle at 18% 28%, rgba(255,255,235,.8) 0 1px, transparent 1.7px),
@@ -186,19 +186,19 @@
       linear-gradient(180deg, #102a35 0%, #1c3b43 43%, #3e5a55 72%, #203b3b 100%);
     background-size:100% 100%; background-position:center; background-repeat:no-repeat;
   }
-  :root[data-theme="dark"] .intro-scene::before{
+  #splash.time-night .intro-scene::before{
     filter:blur(.5px);
     background:
       radial-gradient(circle at 73% 30%, rgba(255,237,184,.96) 0 7px, rgba(255,211,135,.28) 8px 25px, transparent 45px),
       radial-gradient(circle at 51% 68%, rgba(255,211,135,.28) 0 3%, rgba(244,183,99,.1) 10%, transparent 27%),
       linear-gradient(180deg, rgba(10,28,40,.04), transparent 56%, rgba(6,18,22,.18));
   }
-  :root[data-theme="dark"] .intro-scene::after{
+  #splash.time-night .intro-scene::after{
     background:
       linear-gradient(160deg, transparent 0 13%, rgba(13,39,39,.62) 14% 32%, transparent 33%),
       linear-gradient(25deg, #102b30 0 28%, #1e4141 29% 51%, #31534e 52% 70%, #1b3738 71%);
   }
-  :root[data-theme="dark"] .intro-haze{ background:linear-gradient(180deg, transparent, rgba(255,215,154,.13)); }
+  #splash.time-night .intro-haze{ background:linear-gradient(180deg, transparent, rgba(255,215,154,.13)); }
 
   .intro-copy{
     position:absolute; inset:0; z-index:2; display:flex; flex-direction:column;
@@ -218,7 +218,7 @@
     text-shadow:0 1px 14px rgba(0,0,0,.18);
   }
   #splash.playing .intro-tagline{ animation:introRiseSmall .7s ease 2.5s forwards; }
-  :root[data-theme="dark"] .intro-tagline{ color:rgba(255,246,220,.9); }
+  #splash.time-night .intro-tagline{ color:rgba(255,246,220,.9); }
 
   .intro-skip{
     position:absolute; right:22px; bottom:max(20px, env(safe-area-inset-bottom)); z-index:5;
@@ -226,7 +226,7 @@
     background:rgba(60,48,30,.28); font:inherit; font-size:12px; letter-spacing:.02em; cursor:pointer;
     opacity:0; -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
   }
-  :root[data-theme="dark"] .intro-skip{ background:rgba(255,255,255,.12); color:rgba(255,246,220,.88); }
+  #splash.time-night .intro-skip{ background:rgba(255,255,255,.12); color:rgba(255,246,220,.88); }
   #splash.playing .intro-skip{ animation:introSkipIn .45s ease .65s forwards; }
   .intro-skip:focus-visible{ outline:2px solid #f4d69a; outline-offset:4px; }
 
@@ -2278,6 +2278,7 @@
   </div>
   <button type="button" class="intro-skip" id="introSkip" aria-label="Saltar la introducción">Saltar</button>
 </div>
+<script>(function(){ var h=new Date().getHours(); document.getElementById("splash").classList.add((h>=19||h<6)?"time-night":"time-day"); })();</script>
 
 <div id="app">
   <!-- Solo se ven/activan en pantallas anchas (CSS); en el teléfono no aparecen. -->
@@ -10196,7 +10197,7 @@ initHereAuth();
 window.addEventListener('load', ()=>{
   const splash = document.getElementById('splash');
 
-  // La intro usa el tema de la app (claro = día, oscuro = noche): se resuelve solo por CSS con data-theme.
+  // Día o noche de la intro: ya se decidió arriba con la hora del dispositivo (19:00–05:59 = noche), independiente del tema de la app.
 
   // Atajo para revisores/herramientas externas (ej. compartir el link con
   // una IA para que analice la app): ?skip_onboarding=1 en la URL salta
