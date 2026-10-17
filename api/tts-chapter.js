@@ -65,8 +65,15 @@ async function upload(base, serviceKey, path, body, type) {
   if (!r.ok) throw new Error('supabase-' + r.status);
 }
 
+function cleanRegion(v) {
+  v = String(v || '').trim().toLowerCase();
+  const m = v.match(/^(?:https?:\/\/)?([a-z0-9]+)\.(?:api\.cognitive|tts\.speech|stt\.speech)/);   // por si pegaron el "extremo" completo
+  if (m) return m[1];
+  return v.replace(/["'\s]/g, '');
+}
+
 module.exports = async function handler(req, res) {
-  const azKey = String(process.env.AZURE_SPEECH_KEY || '').trim(), region = String(process.env.AZURE_SPEECH_REGION || '').trim().replace(/["'\s]/g, '').toLowerCase();
+  const azKey = String(process.env.AZURE_SPEECH_KEY || '').trim(), region = cleanRegion(process.env.AZURE_SPEECH_REGION);
   const base = (process.env.SUPABASE_URL || '').replace(/\/$/, '');
   const sKey = process.env.SUPABASE_SERVICE_KEY;
   if (req.method !== 'POST') return res.status(405).end();

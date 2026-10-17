@@ -33,9 +33,16 @@ function esc(s) {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
+function cleanRegion(v) {
+  v = String(v || '').trim().toLowerCase();
+  const m = v.match(/^(?:https?:\/\/)?([a-z0-9]+)\.(?:api\.cognitive|tts\.speech|stt\.speech)/);   // por si pegaron el "extremo" completo
+  if (m) return m[1];
+  return v.replace(/["'\s]/g, '');
+}
+
 module.exports = async function handler(req, res) {
   const key = String(process.env.AZURE_SPEECH_KEY || '').trim();
-  const region = String(process.env.AZURE_SPEECH_REGION || '').trim().replace(/["'\s]/g, '').toLowerCase();
+  const region = cleanRegion(process.env.AZURE_SPEECH_REGION);
   const q = req.query || {};
 
   if (q.ping) {
