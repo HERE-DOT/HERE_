@@ -654,6 +654,15 @@
   .camino-icon.sage{background:rgba(126,169,133,0.18); color:var(--sage-deep);}
   .list-card .lc-left{display:flex; align-items:center; gap:14px; min-width:0;}
 
+  .vhelp{ margin:0 0 18px; border:1px solid var(--line); border-radius:16px; background:var(--card); padding:2px 14px; }
+  .vhelp > summary{ cursor:pointer; padding:13px 0; font-size:14px; font-weight:600; color:var(--sage-deep); list-style:none; }
+  .vhelp > summary::-webkit-details-marker{ display:none; }
+  .vhelp-intro{ font-size:13px; color:var(--ink-soft); line-height:1.55; margin:0 0 10px; }
+  .vhelp-item{ border-top:1px solid var(--line); padding:2px 0; }
+  .vhelp-item > summary{ cursor:pointer; padding:10px 0; font-size:13.5px; font-weight:600; }
+  .vhelp-item div{ font-size:13px; line-height:1.6; color:var(--ink-soft); padding:0 0 10px; }
+  .prep-box{ border:1px dashed var(--gold); border-radius:16px; padding:14px; margin:0 0 18px; }
+  .prep-box select{ width:100%; margin-top:8px; padding:10px; border-radius:12px; border:1px solid var(--line); background:var(--card); color:var(--ink); font-family:inherit; }
   /* ---------- planes estilo biblioteca + detalle + momento de hoy ---------- */
   .plans-tabs-row, #plans-filter.studio-row{ display:flex; gap:8px; overflow-x:auto; flex-wrap:nowrap; scrollbar-width:none; }
   #plans-filter::-webkit-scrollbar{ display:none; }
@@ -5740,8 +5749,10 @@ function openFontSizeSheet(){
     </div>
     <p style="font-size:12px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.4px; font-weight:700; margin-bottom:10px;">Ritmo al escuchar</p>
     <div class="rate-ctrl" id="rate-ctrl" style="margin-bottom:24px;"></div>
-    <p style="font-size:12px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.4px; font-weight:700; margin-bottom:10px;">Voz</p>
-    <div class="vmenu" id="voice-options" style="margin-bottom:22px;"></div>
+    <p style="font-size:12px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.4px; font-weight:700; margin-bottom:10px;" onclick="prepTap()">Voz</p>
+    <div class="vmenu" id="voice-options" style="margin-bottom:14px;"></div>
+    ${voiceHelpHTML()}
+    <div id="prep-tool" style="display:none;"></div>
     <button class="btn btn-primary" onclick="closeSheet()" aria-label="Guardar y cerrar">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="width:16px; height:16px;"><polyline points="20 6 9 17 4 12"></polyline></svg>
       Listo
@@ -5883,6 +5894,71 @@ function pingNeural(){
   }).catch(()=>{});
 }
 setTimeout(pingNeural, 1200);
+/* ---- guía para mejorar la voz del dispositivo + herramienta oculta para preparar audio ---- */
+function voiceHelpHTML(){
+  const ua = navigator.userAgent || '';
+  const mine = /Android/i.test(ua) ? 'android' : (/iPhone|iPad|iPod/i.test(ua) ? 'ios' : (/Windows/i.test(ua) ? 'win' : (/Mac/i.test(ua) ? 'mac' : '')));
+  const row = (k, name, steps) => `<details class="vhelp-item"${mine===k?' open':''}><summary>${name}${mine===k?' · tu dispositivo':''}</summary><div>${steps}</div></details>`;
+  return `<details class="vhelp"><summary>¿Se oye robótica? Mejora la voz de tu dispositivo</summary>
+    <p class="vhelp-intro">La lectura usa las voces que ya trae tu teléfono o computador. Si instalas una voz de mayor calidad en español, la lectura suena mucho más natural.</p>
+    ${row('android','Android','Ajustes → Sistema (o Administración general) → Idioma → <b>Texto a voz</b> → motor de Google → <b>Instalar datos de voz</b> → Español. Elige una voz de mejor calidad y vuelve aquí.')}
+    ${row('ios','iPhone / iPad','Ajustes → Accesibilidad → <b>Contenido hablado</b> → Voces → Español → descarga una voz <b>Mejorada</b> o <b>Premium</b> (por ejemplo Paulina o Mónica).')}
+    ${row('win','Windows','Ajustes → Hora e idioma → <b>Voz</b> → Administrar voces → Agregar voces → busca “Español”. Las voces “Natural” de Edge suenan mejor.')}
+    ${row('mac','Mac','Ajustes del Sistema → Accesibilidad → Contenido hablado → Voz del sistema → Administrar voces → descarga una voz de calidad Mejorada o Premium en español.')}
+    <p class="vhelp-intro" style="margin-top:8px;">Después de instalarla, cierra y vuelve a abrir HERE y elígela en la lista de arriba.</p>
+  </details>`;
+}
+let prepTaps = 0, prepRunning = false, prepStop = false;
+function prepTap(){
+  prepTaps++;
+  clearTimeout(prepTap._t); prepTap._t = setTimeout(()=>{ prepTaps = 0; }, 2500);
+  if(prepTaps >= 5){ prepTaps = 0; renderPrepTool(); }
+}
+function renderPrepTool(){
+  const box = document.getElementById('prep-tool'); if(!box) return;
+  if(!neuralChapters || !neuralVoices.length){
+    box.style.display = 'block';
+    box.innerHTML = '<p class="vhelp-intro">La voz HERE con capítulos guardados no está activa en este servidor.</p>';
+    return;
+  }
+  box.style.display = 'block';
+  box.innerHTML = `<div class="prep-box">
+    <b>Preparar audio de la Biblia</b>
+    <p class="vhelp-intro">Genera y guarda los capítulos de un libro para que todos los escuchen sin esperas. Usa cuota de Azure.</p>
+    <select id="prep-book">${BOOK_ORDER.map(b=>`<option>${b}</option>`).join('')}</select>
+    <select id="prep-voice">${neuralVoices.map(v=>`<option value="${v.id}">${v.label}</option>`).join('')}</select>
+    <div style="display:flex; gap:8px; margin-top:8px;">
+      <button class="btn btn-ghost" style="flex:1;" onclick="prepRun()">Preparar libro</button>
+      <button class="btn btn-ghost" style="flex:none;" onclick="prepStop=true">Parar</button>
+    </div>
+    <p class="vhelp-intro" id="prep-status" style="margin-top:8px;"></p>
+  </div>`;
+}
+async function prepRun(){
+  if(prepRunning) return;
+  const book = document.getElementById('prep-book').value;
+  const voice = document.getElementById('prep-voice').value;
+  const status = document.getElementById('prep-status');
+  prepRunning = true; prepStop = false;
+  await loadBible();
+  const total = (BIBLE_DATA[book] || []).length;
+  let ok = 0, fails = 0;
+  for(let ch = 1; ch <= total && !prepStop; ch++){
+    status.textContent = `${book} ${ch} de ${total}… (${ok} listos)`;
+    try{
+      const r = await fetchLiveChapter(book, ch);
+      if(!r.live || !r.verses || !r.verses.length){ status.textContent = 'Sin conexión con el texto RVR1960; se detiene para no guardar otro texto.'; break; }
+      await chapterRequest({book, chapter:ch, verses:r.verses}, false, voice);
+      ok++; fails = 0;
+    }catch(e){
+      fails++;
+      if(fails >= 3){ status.textContent = `Se detuvo en ${book} ${ch}: ${e.message}. Revisa la cuota de Azure o de Supabase.`; break; }
+      ch--;   // reintenta el mismo capítulo
+    }
+  }
+  if(!prepStop && fails < 3 && status.textContent.indexOf('Se detuvo')<0 && status.textContent.indexOf('Sin conexión')<0) status.textContent = `Listo: ${ok} capítulos de ${book} guardados.`;
+  prepRunning = false;
+}
 function renderVoiceOptions(){
   const c = document.getElementById('voice-options');
   if(!c) return;
@@ -6018,8 +6094,8 @@ function toggleListen(startVerse){
   setAudiobarProgress(0);
   speakNext();
 }
-async function chapterRequest(ctx, check){
-  const id = neuralVoiceId();
+async function chapterRequest(ctx, check, voiceOverride){
+  const id = voiceOverride || neuralVoiceId();
   const r = await fetch('/api/tts-chapter', {
     method:'POST', headers:{'Content-Type':'application/json'},
     body: JSON.stringify({ v:id, book:ctx.book, chapter:ctx.chapter, verses:ctx.verses, check:!!check })
