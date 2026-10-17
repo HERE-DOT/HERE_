@@ -2007,6 +2007,26 @@
   .mini-player-btn svg{width:15px; height:15px;}
   .mini-player-btn:active{transform:scale(0.9);}
 
+
+  /* mini reproductor: nueva versión (carátula cuadrada, barra con tiempos, play suave y cerrar) */
+  .mini-player{ background:var(--card); -webkit-backdrop-filter:none; backdrop-filter:none; border-radius:34px; border:1px solid var(--line); box-shadow:0 10px 34px rgba(33,31,26,.16); max-width:480px; }
+  .mini-player-progress-track{ display:none; }
+  .mini-player-row{ gap:14px; padding:12px 14px 12px 12px; }
+  .mini-player-thumb{ width:58px; height:58px; border-radius:18px; }
+  .mini-player-thumb svg{ width:24px; height:24px; }
+  .mini-player-thumb::after{ width:13px; height:13px; right:-3px; bottom:-3px; background:color-mix(in srgb, var(--sage-deep) 70%, #8fb09a); border:2.5px solid var(--card); }
+  .mini-player-info .t{ font-size:18px; font-weight:600; letter-spacing:-.005em; }
+  .mini-player-info .s{ font-size:13.5px; margin-top:2px; }
+  .mp-bar{ margin-top:9px; }
+  .mp-track{ position:relative; height:4px; border-radius:100px; background:var(--line); }
+  .mp-fill{ height:100%; width:0%; border-radius:100px; background:var(--sage-deep); transition:width .4s linear; }
+  .mp-knob{ position:absolute; top:50%; left:0%; width:11px; height:11px; margin:-5.5px 0 0 -5.5px; border-radius:50%; background:var(--sage-deep); transition:left .4s linear; }
+  .mp-times{ display:flex; justify-content:space-between; font-size:12px; color:var(--ink-soft); margin-top:6px; font-variant-numeric:tabular-nums; }
+  .mini-player-controls{ gap:6px; }
+  .mini-player-btn{ width:52px; height:52px; background:color-mix(in srgb, var(--sage-deep) 14%, var(--card)); color:var(--sage-deeper); box-shadow:none; }
+  .mini-player-btn svg{ width:22px; height:22px; }
+  .mini-player-btn.mp-x{ width:40px; height:40px; background:transparent; color:var(--ink); }
+  .mini-player-btn.mp-x svg{ width:20px; height:20px; }
   /* ---------- bible ---------- */
   .book-grid{padding:8px 24px 24px; display:flex; flex-direction:column; gap:22px;}
   .book-group h3{font-size:12.5px; color:var(--ink-soft); margin-bottom:10px; font-weight:700; text-transform:uppercase; letter-spacing:.4px;}
@@ -2895,12 +2915,7 @@
     <!-- Destacado de la semana: lo primero que se ve, arriba de "Para este
          momento" — más grande y con vida, para que abra la pantalla. -->
     <div id="musica-featured"></div>
-    <div class="abib-entry" onclick="openAudioBiblia()">
-      <div class="abib-cover"></div>
-      <div><div class="abib-entry-t">Audio Biblia</div><div class="abib-entry-s">Escucha un capítulo completo, con voz natural y en segundo plano</div></div>
-      <span class="abib-entry-go">›</span>
-    </div>
-
+    
     <!-- CAPA A — "Para este momento": con más peso visual y emocional que la
          biblioteca de abajo. Exactamente 3 caminos simples y suaves, sin
          selector de humor. -->
@@ -3090,9 +3105,11 @@
       <div class="mini-player-info">
         <div class="t" id="mini-player-title"></div>
         <div class="s" id="mini-player-role"></div>
+        <div class="mp-bar"><div class="mp-track"><div class="mp-fill" id="mp-fill"></div><div class="mp-knob" id="mp-knob"></div></div><div class="mp-times"><span id="mp-cur">0:00</span><span id="mp-dur"></span></div></div>
       </div>
       <div class="mini-player-controls">
         <button class="mini-player-btn" id="mini-player-toggle" aria-label="Pausar" onclick="event.stopPropagation(); togglePlayerPlayback();"></button>
+        <button class="mini-player-btn mp-x" aria-label="Cerrar" onclick="event.stopPropagation(); stopPlayback();"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
       </div>
     </div>
   </div>
@@ -3103,10 +3120,12 @@
     <div class="mini-player-progress-track"><div class="mini-player-progress-fill" id="bible-mini-progress"></div></div>
     <div class="mini-player-row">
       <div class="mini-player-thumb" style="background:var(--sage-deep); color:#EBD9A8;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5c3-1.5 6-1.5 8 0v14c-2-1.5-5-1.5-8 0V5zM20 5c-3-1.5-6-1.5-8 0v14c2-1.5 5-1.5 8 0V5z"/></svg></div>
-      <div class="mini-player-info"><div class="t" id="bible-mini-title"></div><div class="s">Leyendo la Biblia</div></div>
+      <div class="mini-player-info"><div class="t" id="bible-mini-title"></div><div class="s">La Biblia · RVR1960</div>
+        <div class="mp-bar"><div class="mp-track"><div class="mp-fill" id="bm-fill"></div><div class="mp-knob" id="bm-knob"></div></div><div class="mp-times"><span id="bm-cur">0:00</span><span id="bm-dur"></span></div></div>
+      </div>
       <div class="mini-player-controls">
         <button class="mini-player-btn" id="bible-mini-toggle" aria-label="Pausar" onclick="event.stopPropagation(); toggleListen();"></button>
-        <button class="mini-player-btn" style="background:var(--beige); color:var(--ink); box-shadow:none;" aria-label="Detener" onclick="event.stopPropagation(); stopListen();"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+        <button class="mini-player-btn mp-x" aria-label="Cerrar" onclick="event.stopPropagation(); stopListen();"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
       </div>
     </div>
   </div>
@@ -6212,8 +6231,16 @@ async function startNeural(from){
   updateMediaSession();
   if(neuralChapters && audioCtx.verses.length <= 180){
     try{
-      const info = await chapterRequest(audioCtx, true);
+      let info = await chapterRequest(audioCtx, true);
       if(my !== audioToken || !isListening) return;
+      if(!(info && info.ready) && abibPrefer){
+        // en Audio Biblia se espera a tener el capítulo completo: un solo archivo sigue sonando con la pantalla bloqueada
+        abibLoading = true; abibSync();
+        showHereToast('Preparando el capítulo para escucharlo con la pantalla apagada…');
+        try{ info = await chapterRequest(audioCtx, false); }catch(e){ info = null; }
+        abibLoading = false;
+        if(my !== audioToken || !isListening) return;
+      }
       if(info && info.ready){ playChapterAudio(info, from); return; }
       // todavía no existe: se lee versículo a versículo ya, y se prepara el capítulo para la próxima vez
       const ctx = audioCtx;
@@ -6223,6 +6250,19 @@ async function startNeural(from){
   chapterMode = false;
   neuralQueue = audioCtx.verses; neuralPos = from;
   playNeuralVerse();
+}
+// deja listo el capítulo siguiente mientras suena este, para que el cambio no tenga pausa (clave con la pantalla bloqueada)
+async function prefetchNextChapter(tok){
+  try{
+    if(!audioCtx || !neuralChapters) return;
+    await loadBible();
+    let book = audioCtx.book, ch = audioCtx.chapter + 1;
+    if(ch > (BIBLE_DATA[book]||[]).length){ const i = BOOK_ORDER.indexOf(book)+1; if(i >= BOOK_ORDER.length) return; book = BOOK_ORDER[i]; ch = 1; }
+    let v = null; try{ const r = await fetchLiveChapter(book, ch); v = r.verses; }catch(e){}
+    if(!v || !v.length) v = (BIBLE_DATA[book]||[])[ch-1];
+    if(!v || !v.length || v.length > 180 || tok !== audioToken) return;
+    await chapterRequest({book, chapter:ch, verses:v}, false);
+  }catch(e){}
 }
 function playChapterAudio(info, from){
   const a = neuralAudio;
@@ -6241,6 +6281,7 @@ function playChapterAudio(info, from){
     if(from && chapterMarks[from] != null){ try{ a.currentTime = chapterMarks[from]; }catch(e){} }
   };
   a.volume = readerVolume;
+  const myTok = audioToken; setTimeout(()=>{ if(myTok===audioToken) prefetchNextChapter(myTok); }, 4000);
   a.src = info.url;
   a.playbackRate = Math.min(1.25, Math.max(0.8, readerVoiceRate / 0.97));
   const pr = a.play(); if(pr && pr.catch) pr.catch(()=>{ stopListen(); });
@@ -6336,6 +6377,7 @@ function speakNext(){
   updateBibleMini();
 }
 function stopListen(){
+  abibPrefer = false; abibLoading = false;
   isListening = false; audioPaused = false; chapterMode = false;
   audioToken++;
   listenPos = 0;
@@ -6380,6 +6422,7 @@ function abibScreenOff(){
     <p style="font-size:12.5px; color:var(--ink-soft); line-height:1.55; margin-top:10px;">Empieza la lectura; luego bloquea el teléfono con su botón. En iPhone funciona mejor si instalaste HERE en tu pantalla de inicio.</p>`);
 }
 function abibEnsurePlaying(){
+  abibPrefer = true;
   if(!isListening){ if((currentReaderVerses||[]).length) toggleListen(0); }
   else if(audioPaused) toggleListen();
   abibSync();
@@ -6404,6 +6447,7 @@ document.addEventListener('visibilitychange', async ()=>{
 });
 /* ================= Audio Biblia: pantalla de reproductor ================= */
 let readerVolume = load('here_reader_volume', 1);
+let abibPrefer = false, abibLoading = false;
 let abibSkipping = false, abibSleepEnd = false, abibSleepMode = null, abibSleepTimer = null;
 const ABIB_PLAY = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.2v13.6c0 .8.9 1.3 1.6.9l10.6-6.8c.6-.4.6-1.3 0-1.7L9.6 4.3C8.9 3.9 8 4.4 8 5.2z"/></svg>';
 const ABIB_PAUSE = '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4.2" height="14" rx="1.3"/><rect x="13.8" y="5" width="4.2" height="14" rx="1.3"/></svg>';
@@ -6420,7 +6464,7 @@ function abibSync(){
     document.getElementById('abib-title').textContent = `${c.book} ${c.chapter}`;
     const dmt = document.getElementById('dm-title'); if(dmt) dmt.textContent = `${c.book} ${c.chapter}`;
     paintAbibCovers();
-    document.getElementById('abib-sub').textContent = c.n ? `${c.book} ${c.chapter}:1-${c.n} · Reina Valera 1960` : 'Reina Valera 1960';
+    document.getElementById('abib-sub').textContent = abibLoading ? 'Preparando el capítulo…' : c.n ? `${c.book} ${c.chapter}:1-${c.n} · Reina Valera 1960` : 'Reina Valera 1960';
   }
   let d = new Date().toLocaleDateString('es-CO',{ month:'long', day:'numeric', year:'numeric' });
   document.getElementById('abib-date').textContent = d;
@@ -6434,9 +6478,19 @@ function abibSync(){
   const prev = document.getElementById('abib-prev'), next = document.getElementById('abib-next');
   if(prev && c.book){ prev.disabled = (BOOK_ORDER.indexOf(c.book)===0 && c.chapter<=1); }
 }
+function miniBar(k, f, cur, dur){
+  const fl = document.getElementById(k+'-fill'); if(!fl) return;
+  fl.style.width = (f*100)+'%'; document.getElementById(k+'-knob').style.left = (f*100)+'%';
+  document.getElementById(k+'-cur').textContent = cur; document.getElementById(k+'-dur').textContent = dur;
+}
 function abibProgress(f){
-  const fill = document.getElementById('abib-fill'); if(!fill) return;
   f = Math.max(0, Math.min(1, f||0));
+  if(isListening && chapterMode && neuralAudio && neuralAudio.duration){
+    miniBar('bm', f, abibFmt(neuralAudio.currentTime), abibFmt(neuralAudio.duration / Math.max(0.8,(neuralAudio.playbackRate||1))));
+  } else if(isListening){
+    const c0 = abibCur(); miniBar('bm', f, c0.n ? `Versículo ${Math.min(c0.n, Math.round(f*c0.n)+1)} de ${c0.n}` : '', '');
+  } else miniBar('bm', 0, '0:00', '');
+  const fill = document.getElementById('abib-fill'); if(!fill) return;
   fill.style.width = (f*100)+'%';
   document.getElementById('abib-knob').style.left = (f*100)+'%';
   if(isListening && chapterMode && neuralAudio && neuralAudio.duration){
@@ -6466,6 +6520,7 @@ async function abibLoad(book, ch){
 }
 function abibToggle(){
   haptic(10);
+  abibPrefer = true;
   if(isListening){ toggleListen(); abibSync(); return; }
   if(!(currentReaderVerses||[]).length) return;
   toggleListen(0); abibSync();
@@ -6596,6 +6651,8 @@ function updateMediaSession(){
     set('play',  ()=>{ if(isListening && audioPaused) toggleListen(); });
     set('pause', ()=>{ if(isListening && !audioPaused) toggleListen(); });
     set('stop',  ()=>stopListen());
+    set('seekbackward', ()=>audioAdvance(-1));
+    set('seekforward', ()=>audioAdvance(1));
     set('nexttrack',     ()=>audioAdvance(1));
     set('previoustrack', ()=>audioAdvance(-1));
   }catch(e){}
@@ -8945,6 +9002,7 @@ function updateMiniProgress(){
     const dur = ytPlayer.getDuration() || 0;
     const cur = ytPlayer.getCurrentTime() || 0;
     fill.style.width = (dur > 0 ? Math.min(100, (cur/dur)*100) : 0) + '%';
+    miniBar('mp', dur > 0 ? Math.min(1, cur/dur) : 0, formatPlayerTime(cur), formatPlayerTime(dur));
   }catch(e){}
 }
 // Barra de progreso + tiempos del reproductor grande (modo "solo escuchar").
