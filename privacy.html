@@ -27,6 +27,9 @@
   ul{ margin:0 0 14px; padding-left:20px; }
   a{ color:var(--sage); }
   .card{ background:var(--card); border:1px solid var(--line); border-radius:16px; padding:20px 22px; margin-bottom:14px; }
+  .nav{ margin-top:48px; padding-top:20px; border-top:1px solid var(--line); font-size:14px; color:var(--ink-soft); }
+  .nav a{ margin-right:16px; }
+  .note{ background:var(--card); border:1px solid var(--line); border-left:4px solid var(--sage); border-radius:12px; padding:14px 18px; margin:0 0 18px; font-size:14.5px; }
   .back{ display:inline-block; margin-bottom:28px; color:var(--ink-soft); text-decoration:none; font-size:14px; }
 </style>
 </head>
@@ -34,44 +37,75 @@
 <div class="wrap">
   <a class="back" href="/">&larr; Volver a HERE</a>
   <h1>Política de Privacidad</h1>
-  <div class="updated">Última actualización: 1 de octubre de 2026</div>
+  <div class="updated">Última actualización: 17 de octubre de 2026</div>
 
-  <p>HERE ("la app", "nosotros") es una aplicación de acompañamiento espiritual cristiano. Esta política explica qué información recopilamos, cómo la usamos y qué control tienes sobre ella.</p>
+  <p>HERE ("la app", "nosotros") es una aplicación de acompañamiento espiritual cristiano: lectura y audio de la Biblia, oración, reflexión, música y predicaciones. Esta política explica qué datos tratamos, para qué, con quién los compartimos y qué control tienes. Está escrita conforme a la Ley 1581 de 2012 de Colombia (protección de datos personales) y sus normas reglamentarias, y busca cumplir también con los requisitos de las tiendas de aplicaciones.</p>
 
-  <h2>1. Uso sin cuenta</h2>
-  <p>Puedes usar HERE por completo sin crear una cuenta. En ese caso, tu progreso (capítulos leídos, versículos resaltados, oraciones, reflexiones, preferencias) se guarda únicamente en el almacenamiento local de tu propio dispositivo y nunca sale de él.</p>
+  <div class="note"><b>En resumen:</b> puedes usar HERE sin cuenta y sin que ningún dato personal salga de tu dispositivo. No vendemos tus datos, no mostramos publicidad y no usamos herramientas de analítica o seguimiento.</div>
 
-  <h2>2. Información que recopilamos si creas una cuenta</h2>
-  <p>Crear una cuenta es opcional y sirve para sincronizar tu progreso entre dispositivos. Si decides crear una cuenta, recopilamos:</p>
+  <h2>1. Responsable del tratamiento</h2>
+  <p>El responsable es el equipo de HERE. Puedes contactarnos en <a href="mailto:sebastian1013mar@gmail.com">sebastian1013mar@gmail.com</a> para cualquier consulta, solicitud o reclamo sobre tus datos.</p>
+
+  <h2>2. Uso sin cuenta</h2>
+  <p>HERE funciona completo sin registrarte. En ese caso, tu progreso (capítulos leídos, versículos resaltados, notas, oraciones, reflexiones, racha y preferencias) se guarda solo en el almacenamiento local de tu dispositivo. Si borras los datos del navegador o desinstalas la app, se pierden.</p>
+
+  <h2>3. Datos que tratamos si creas una cuenta</h2>
+  <p>La cuenta es opcional y sirve para sincronizar tu progreso entre dispositivos. Si la creas, tratamos:</p>
   <ul>
-    <li>Tu dirección de correo electrónico (si te registras con correo y contraseña, o la que entregue tu cuenta de Google si inicias sesión con Google).</li>
-    <li>Tu nombre y foto de perfil, si inician sesión con Google y esos datos están disponibles públicamente en tu cuenta de Google.</li>
-    <li>Tus datos de uso dentro de la app: capítulos leídos, versículos resaltados, oraciones y reflexiones guardadas, racha de días, y preferencias (como la traducción bíblica o el tamaño de letra que prefieres).</li>
+    <li>Tu correo electrónico (si te registras con correo y contraseña, o el que entregue Google si inicias sesión con Google).</li>
+    <li>Tu nombre y foto de perfil de Google, si los autorizas.</li>
+    <li>Tu contenido dentro de la app: capítulos leídos, versículos resaltados y notas, oraciones, reflexiones, planes, canciones guardadas, racha y preferencias.</li>
   </ul>
+  <p><b>Datos sensibles.</b> Tus oraciones y reflexiones pueden revelar tus convicciones religiosas o tu estado emocional, que son datos sensibles según la ley colombiana. Solo los tratamos para guardarlos y sincronizarlos para ti, con tu autorización, que das al decidir escribirlos y, en su caso, crear la cuenta. Nunca estás obligado a entregarlos, y puedes borrarlos cuando quieras.</p>
 
-  <h2>3. Cómo usamos esta información</h2>
-  <p>Usamos esta información únicamente para brindarte el servicio: permitir que tu progreso espiritual se sincronice entre tus dispositivos y esté disponible si cambias de celular o reinstalas la app. No usamos tus datos con fines publicitarios y no los vendemos ni los compartimos con terceros para fines comerciales.</p>
+  <h2>4. Oración en comunidad</h2>
+  <p>Si decides publicar una petición en "Orar en comunidad", su texto será visible para otras personas con sesión iniciada. Puedes publicarla de forma anónima o con tu nombre visible. Otros usuarios pueden marcar que oran por ti o reportar un contenido, y las peticiones reportadas pueden ocultarse. Te recomendamos no incluir en ellas datos que te identifiquen, teléfonos, direcciones ni información de salud de terceros. Puedes pedir que se elimine una petición escribiéndonos.</p>
 
-  <h2>4. Dónde se almacenan tus datos</h2>
-  <p>Los datos de tu cuenta se almacenan de forma segura usando <strong>Supabase</strong>, un proveedor de infraestructura en la nube, con acceso restringido únicamente a tu propia cuenta mediante reglas de seguridad a nivel de base de datos.</p>
-
-  <h2>5. Servicios de terceros</h2>
-  <p>HERE utiliza los siguientes servicios externos para funcionar:</p>
+  <h2>5. Para qué usamos los datos</h2>
   <ul>
-    <li><strong>Google Sign-In</strong> — si eliges iniciar sesión con Google, Google procesa tu autenticación según su propia política de privacidad.</li>
-    <li><strong>Supabase</strong> — almacenamiento de cuentas y datos sincronizados.</li>
-    <li><strong>YouTube Data API</strong> — para mostrarte videos de predicaciones de pastores públicos.</li>
-    <li><strong>API.Bible</strong> — para obtener el texto bíblico en distintas traducciones de dominio público o licencia abierta.</li>
+    <li>Sincronizar tu progreso y que no lo pierdas al cambiar de teléfono.</li>
+    <li>Ofrecer las funciones que pides (lectura, audio, recomendaciones, ayuda a orar).</li>
+    <li>Mantener la seguridad del servicio y evitar abusos en la comunidad.</li>
   </ul>
+  <p>No usamos tus datos para publicidad, no los vendemos y no elaboramos perfiles comerciales.</p>
 
-  <h2>6. Tus derechos</h2>
-  <p>Puedes cerrar sesión en cualquier momento sin perder tus datos locales. Si deseas eliminar permanentemente tu cuenta y los datos asociados en la nube, puedes solicitarlo escribiendo a <a href="mailto:sebastian1013mar@gmail.com">sebastian1013mar@gmail.com</a>.</p>
+  <h2>6. Servicios de terceros</h2>
+  <p>Para funcionar, HERE usa proveedores que procesan datos por encargo nuestro. Cada uno tiene su propia política.</p>
+  <ul>
+    <li><b>Supabase</b>: autenticación y almacenamiento de las cuentas, los datos sincronizados y las peticiones de comunidad. También guarda los archivos de audio de la lectura bíblica.</li>
+    <li><b>Vercel</b>: alojamiento de la app y de sus funciones de servidor. Puede registrar datos técnicos de conexión, como la dirección IP, por seguridad.</li>
+    <li><b>Microsoft Azure (voz neuronal)</b>: cuando eliges la voz HERE, el texto del versículo o capítulo que se va a leer se envía a Azure para convertirlo en audio. No enviamos tu nombre, correo ni ningún dato de tu cuenta. El audio resultante puede guardarse para reutilizarlo con otras personas.</li>
+    <li><b>Google Gemini (inteligencia artificial)</b>: si usas funciones como "ayúdame a orar" o "explicar", el texto que escribes y el pasaje relacionado se envían a Gemini para generar la respuesta. HERE no guarda ese texto en sus servidores. No escribas datos que no quieras compartir; las respuestas de IA pueden contener errores y no sustituyen a un pastor ni a un profesional.</li>
+    <li><b>Google Sign-In</b>: si inicias sesión con Google, Google procesa tu autenticación.</li>
+    <li><b>YouTube</b>: las predicaciones y la música se muestran con el reproductor y la API de YouTube. Al reproducirlos, YouTube/Google puede recopilar datos según su política y sus Condiciones de Servicio.</li>
+    <li><b>API.Bible</b>: proveedor del texto bíblico.</li>
+    <li><b>Open-Meteo</b>: solo si activas la opción del clima, se consulta el clima con tu ubicación aproximada. Esa ubicación se guarda únicamente en tu dispositivo.</li>
+    <li><b>Google Fonts</b>: las tipografías se cargan desde Google, lo que implica que tu dirección IP llegue a sus servidores.</li>
+  </ul>
+  <p>Algunos de estos proveedores están en otros países, por lo que tus datos pueden tratarse fuera de Colombia con medidas de seguridad contractuales de cada proveedor.</p>
 
-  <h2>7. Cambios a esta política</h2>
-  <p>Podemos actualizar esta política de privacidad ocasionalmente. Cualquier cambio será reflejado en esta misma página con su fecha de actualización.</p>
+  <h2>7. Almacenamiento en tu dispositivo, cookies y permisos</h2>
+  <p>HERE usa el almacenamiento local de tu dispositivo (localStorage) y un service worker para recordar tus ajustes, funcionar con mala conexión y guardar tu progreso. No usamos cookies publicitarias ni de seguimiento propias. Los servicios incrustados, como YouTube, pueden usar las suyas. La app solo pide permisos cuando una función lo necesita, por ejemplo la ubicación aproximada para el clima, y puedes negarlos o retirarlos en los ajustes de tu dispositivo.</p>
 
-  <h2>8. Contacto</h2>
-  <p>Si tienes preguntas sobre esta política, escríbenos a <a href="mailto:sebastian1013mar@gmail.com">sebastian1013mar@gmail.com</a>.</p>
+  <h2>8. Conservación</h2>
+  <p>Conservamos los datos de tu cuenta mientras la mantengas. Si la eliminas, borramos tus datos asociados en un plazo máximo de 30 días, salvo lo que debamos conservar por obligación legal. Los datos que solo están en tu dispositivo los controlas tú.</p>
+
+  <h2>9. Tus derechos</h2>
+  <p>Como titular de los datos puedes conocer, actualizar y rectificar tus datos, pedir prueba de la autorización, ser informado del uso que se les da, revocar tu autorización, pedir la supresión de tus datos y presentar quejas ante la Superintendencia de Industria y Comercio. Para ejercerlos, escríbenos a <a href="mailto:sebastian1013mar@gmail.com">sebastian1013mar@gmail.com</a> o usa la página <a href="/eliminar-cuenta.html">Eliminar mi cuenta</a>. Responderemos en los plazos que fija la ley, que son de 10 días hábiles para consultas y 15 días hábiles para reclamos.</p>
+
+  <h2>10. Menores de edad</h2>
+  <p>HERE no está dirigida a menores de 14 años y no pedimos intencionalmente sus datos. Si eres menor de 18 años, usa la app con autorización de tus padres o tutores. Si crees que un menor nos entregó datos sin autorización, escríbenos y los eliminaremos.</p>
+
+  <h2>11. Seguridad</h2>
+  <p>Usamos conexiones cifradas (HTTPS) y reglas de seguridad a nivel de base de datos para que cada persona solo acceda a su propia información. Ningún sistema es completamente infalible, por lo que no podemos garantizar una seguridad absoluta.</p>
+
+  <h2>12. Cambios a esta política</h2>
+  <p>Podemos actualizarla ocasionalmente. Publicaremos la versión vigente en esta página con su fecha. Si el cambio es importante, te avisaremos dentro de la app.</p>
+
+  <h2>13. Contacto</h2>
+  <p>Escríbenos a <a href="mailto:sebastian1013mar@gmail.com">sebastian1013mar@gmail.com</a>.</p>
+
+  <div class="nav"><a href="/privacy.html">Política de privacidad</a><a href="/terms.html">Condiciones de uso</a><a href="/eliminar-cuenta.html">Eliminar mi cuenta</a></div>
 </div>
 </body>
 </html>
