@@ -3868,10 +3868,41 @@ function startPlan(){
   openPlanDay(i >= p.days.length ? 0 : i);
 }
 function planDayInfo(p,i){ return (p && p.info && p.info[i]) || null; }
+const SAFE_COVERS = ['photo-1470252649378-9c29740c9fa8','photo-1518837695005-2083093ee35b','photo-1603437873662-dc1f44901825','photo-1470432581262-e7880e8fe79a','photo-1595104615356-cbe9c4364513','photo-1595661671412-e20c4a3e65cc','photo-1500964757637-c85e8a162699','photo-1534796636912-3b95b3ab5986','photo-1561212856-44e9bae482aa'];
+let badCovers = new Set(load('here_bad_covers', []) || []);
+function planCoverId(p){
+  if(!p || !p.cover) return '';
+  if(!badCovers.has(p.cover)) return p.cover;
+  return SAFE_COVERS[hashStr(p.id) % SAFE_COVERS.length];
+}
 function planCoverBg(p, top, bottom){
   if(!p || !p.cover) return '';
-  return `background:linear-gradient(180deg,rgba(20,18,12,${top==null?.1:top}),rgba(10,8,6,${bottom==null?.78:bottom})), url('https://images.unsplash.com/${p.cover}?auto=format&fit=crop&w=700&q=65') center/cover no-repeat, linear-gradient(160deg,#6F8F7A,#2F4F3F);`;
+  return `background:linear-gradient(180deg,rgba(20,18,12,${top==null?.1:top}),rgba(10,8,6,${bottom==null?.78:bottom})), url('https://images.unsplash.com/${planCoverId(p)}?auto=format&fit=crop&w=700&q=65') center/cover no-repeat, linear-gradient(160deg,#6F8F7A,#2F4F3F);`;
 }
+// Comprueba en segundo plano que cada portada cargue; si alguna falla, la cambia por una foto segura.
+let coversProbed = false;
+function probePlanCovers(){
+  if(coversProbed) return; coversProbed = true;
+  const ids = [...new Set(PLANS.map(p=>p.cover).filter(Boolean))].filter(id=>!SAFE_COVERS.includes(id) && !badCovers.has(id));
+  let changed = false, pending = ids.length;
+  if(!pending) return;
+  ids.forEach(id=>{
+    const im = new Image();
+    im.onload = ()=>{ if(!--pending && changed) refreshPlanViews(); };
+    im.onerror = ()=>{ badCovers.add(id); changed = true; save('here_bad_covers', [...badCovers]); if(!--pending) refreshPlanViews(); };
+    im.src = `https://images.unsplash.com/${id}?auto=format&fit=crop&w=700&q=65`;
+  });
+}
+function refreshPlanViews(){
+  try{
+    if(typeof renderPlanRow==='function') renderPlanRow();
+    if(typeof renderHomePlanContinue==='function') renderHomePlanContinue();
+    if(currentScreen==='planesAll') renderPlansAll();
+    if(currentScreen==='planDetail') renderPlanDetail();
+    if(currentScreen==='biblia') renderBibliaDevo();
+  }catch(e){}
+}
+setTimeout(probePlanCovers, 2500);
 
 
 // Biblia completa (RVA 1909, dominio público) — cargada de forma asíncrona desde data/bible-rva.json
