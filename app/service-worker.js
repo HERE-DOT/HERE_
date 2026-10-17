@@ -18,7 +18,7 @@
  * siguen sirviéndose desde caché primero, porque cambian poco y así la app
  * carga más rápido.
  */
-const CACHE_VERSION = 'here-v4';
+const CACHE_VERSION = 'here-v5';
 const APP_SHELL = [
   './',
   './index.html',
@@ -50,6 +50,10 @@ self.addEventListener('fetch', (event) => {
   // Solo maneja peticiones al mismo origen (el propio sitio). Todo lo demás
   // (Biblia.com, IA, Google Fonts) pasa directo a la red sin interceptarse.
   if (url.origin !== self.location.origin) return;
+
+  // Las funciones del servidor (/api/…, p. ej. la voz natural) nunca se interceptan:
+  // llevan su propia caché HTTP y no deben volver a pedirse en segundo plano.
+  if (url.pathname.startsWith('/api/')) return;
 
   // El documento HTML principal: red primero, para que las actualizaciones
   // se vean de inmediato en cuanto hay conexión. Si falla (sin internet),

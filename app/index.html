@@ -5832,6 +5832,7 @@ function pickActiveVoice(){
 function setReaderVoice(voiceURI){
   readerVoiceURI = voiceURI || null;
   save('here_reader_voice_uri', readerVoiceURI);
+  readerNeural = 'device'; save('here_reader_neural', 'device');
   haptic(10);
   renderVoiceOptions();
 }
@@ -5845,18 +5846,49 @@ function friendlyVoiceName(v){
   else if(/^es[-_]?ar/i.test(v.lang)) n += ' · Argentina';
   return n;
 }
+/* ---- voz natural (Azure, vía /api/tts): se activa sola si el servidor la tiene configurada ---- */
+let neuralVoices = [];
+let readerNeural = load('here_reader_neural', null);   // id de voz HERE, 'device' o null (= la primera disponible)
+let neuralAudio = null, neuralFailed = false, neuralQueue = [], neuralPos = 0;
+function neuralVoiceId(){
+  if(!neuralVoices.length || readerNeural==='device') return null;
+  const hit = neuralVoices.find(v=>v.id===readerNeural);
+  return (hit || neuralVoices[0]).id;
+}
+function neuralActive(){ return !!neuralVoiceId() && !neuralFailed; }
+function neuralUrl(id, text){ return '/api/tts?v=' + encodeURIComponent(id) + '&t=' + encodeURIComponent(text); }
+function setNeuralVoice(id){
+  readerNeural = id; save('here_reader_neural', id); neuralFailed = false;
+  haptic(10); renderVoiceOptions();
+  if(isListening){ const was = Math.max(0, neuralPos); stopListen(); toggleListen(was); }
+}
+function pingNeural(){
+  if(location.protocol==='file:') return;
+  fetch('/api/tts?ping=1').then(r=>r.ok?r.json():null).then(d=>{
+    if(d && d.ok && Array.isArray(d.voices) && d.voices.length){ neuralVoices = d.voices; renderVoiceOptions(); }
+  }).catch(()=>{});
+}
+setTimeout(pingNeural, 1200);
 function renderVoiceOptions(){
   const c = document.getElementById('voice-options');
   if(!c) return;
-  if(!('speechSynthesis' in window) || !spanishVoices.length){
-    c.innerHTML = `<p class="voice-hint">Tu dispositivo aún no tiene voces en español instaladas — revisa los ajustes de accesibilidad o "texto a voz" de tu teléfono para agregar más.</p>`;
-    return;
+  const nid = neuralVoiceId();
+  let html = '';
+  if(neuralVoices.length){
+    html += `<p class="voice-hint" style="margin:0 0 6px;">Voces HERE (naturales)</p>` + neuralVoices.map(v=>
+      `<div class="vmenu-row" onclick="setNeuralVoice('${v.id}')"><span>${v.label} · ${v.desc}</span><span class="vmenu-icon">${nid===v.id?'✓':''}</span></div>`).join('');
+    html += `<p class="voice-hint" style="margin:14px 0 6px;">Voz de tu dispositivo</p>`;
   }
-  const active = pickActiveVoice();
-  c.innerHTML = spanishVoices.map(v=>{
+  if(!('speechSynthesis' in window) || !spanishVoices.length){
+    html += `<p class="voice-hint">Tu dispositivo aún no tiene voces en español instaladas — revisa los ajustes de accesibilidad o "texto a voz" de tu teléfono para agregar más.</p>`;
+    c.innerHTML = html; return;
+  }
+  const active = nid ? null : pickActiveVoice();
+  html += spanishVoices.map(v=>{
     const isOn = active && active.voiceURI===v.voiceURI;
     return `<div class="vmenu-row" onclick="setReaderVoice('${v.voiceURI.replace(/'/g,"\\'")}')"><span>${friendlyVoiceName(v)}</span><span class="vmenu-icon">${isOn?'✓':''}</span></div>`;
   }).join('');
+  c.innerHTML = html;
 }
 
 const READER_RATES = [ {v:0.85, label:'Lenta'}, {v:0.97, label:'Natural'}, {v:1.1, label:'Ágil'} ];
@@ -5918,20 +5950,70 @@ function buildListenQueue(verses){
   });
   return queue;
 }
-function toggleListen(){
+function highlightListenVerse(vi){
+  document.querySelectorAll('#reader-content .vtext').forEach(v=>v.classList.remove('speaking'));
+  const els = document.querySelectorAll('#reader-content .vtext');
+  if(els[vi]){
+    els[vi].classList.add('speaking');
+    els[vi].scrollIntoView({behavior:'smooth', block:'center'});
+  }
+}
+function toggleListen(startVerse){
   if(isListening){ stopListen(); return; }
+  const verses = currentReaderVerses;
+  if(!verses || !verses.length) return;
+  neuralFailed = false;
+  const from = (typeof startVerse==='number') ? startVerse : 0;
+  if(neuralActive()){
+    if(!neuralAudio) neuralAudio = new Audio();   // se crea dentro del toque: así los móviles lo permiten
+    try{ window.speechSynthesis && window.speechSynthesis.cancel(); }catch(e){}
+    neuralQueue = verses; neuralPos = from;
+    isListening = true;
+    setListenBtn('pause'); setAudiobarProgress(0);
+    playNeuralVerse();
+    return;
+  }
   if(!('speechSynthesis' in window)){
     alert('Tu dispositivo no soporta lectura en voz alta.');
     return;
   }
-  const verses = currentReaderVerses;
-  if(!verses || !verses.length) return;
   window.speechSynthesis.cancel();
-  listenQueue = buildListenQueue(verses);
+  listenQueue = buildListenQueue(verses).filter(q=>q.verseIndex>=from);
   listenPos = 0;
   isListening = true;
   setListenBtn('pause');
   setAudiobarProgress(0);
+  speakNext();
+}
+function playNeuralVerse(){
+  if(!isListening) return;
+  if(neuralPos >= neuralQueue.length){
+    stopListen();
+    stepChapter(1);                 // igual que con la voz del dispositivo: pasa al siguiente capítulo
+    return;
+  }
+  const id = neuralVoiceId();
+  if(!id){ neuralFallback(); return; }
+  setAudiobarProgress(neuralQueue.length ? neuralPos/neuralQueue.length : 0);
+  highlightListenVerse(neuralPos);
+  const a = neuralAudio;
+  a.onended = ()=>{ neuralPos++; if(isListening) setTimeout(playNeuralVerse, 260); };
+  a.onerror = ()=>{ neuralFailed = true; neuralFallback(); };
+  a.src = neuralUrl(id, neuralQueue[neuralPos]);
+  a.playbackRate = Math.min(1.25, Math.max(0.8, readerVoiceRate / 0.97));
+  const pr = a.play();
+  if(pr && pr.catch) pr.catch(()=>{ neuralFailed = true; neuralFallback(); });
+  // adelanta los 2 versículos siguientes para que no haya silencios entre uno y otro
+  [1,2].forEach(k=>{ const t = neuralQueue[neuralPos+k]; if(t) fetch(neuralUrl(id, t)).catch(()=>{}); });
+}
+// si la voz natural falla (sin internet, cuota agotada…), sigue desde ese versículo con la voz del dispositivo
+function neuralFallback(){
+  if(!isListening) return;
+  const from = neuralPos;
+  try{ neuralAudio && neuralAudio.pause(); }catch(e){}
+  if(!('speechSynthesis' in window)){ stopListen(); return; }
+  listenQueue = buildListenQueue(currentReaderVerses).filter(q=>q.verseIndex>=from);
+  listenPos = 0;
   speakNext();
 }
 function speakNext(){
@@ -5945,14 +6027,7 @@ function speakNext(){
   setAudiobarProgress(listenQueue.length ? listenPos/listenQueue.length : 0);
   const item = listenQueue[listenPos];
   const prevItem = listenQueue[listenPos-1];
-  if(!prevItem || prevItem.verseIndex !== item.verseIndex){
-    document.querySelectorAll('#reader-content .vtext').forEach(v=>v.classList.remove('speaking'));
-    const els = document.querySelectorAll('#reader-content .vtext');
-    if(els[item.verseIndex]){
-      els[item.verseIndex].classList.add('speaking');
-      els[item.verseIndex].scrollIntoView({behavior:'smooth', block:'center'});
-    }
-  }
+  if(!prevItem || prevItem.verseIndex !== item.verseIndex) highlightListenVerse(item.verseIndex);
   const voice = pickActiveVoice();
   const u = new SpeechSynthesisUtterance(item.text);
   u.lang = voice ? voice.lang : 'es-ES';
@@ -5970,6 +6045,8 @@ function stopListen(){
   isListening = false;
   listenPos = 0;
   listenQueue = [];
+  neuralQueue = [];
+  try{ if(neuralAudio){ neuralAudio.onended = null; neuralAudio.onerror = null; neuralAudio.pause(); } }catch(e){}
   if('speechSynthesis' in window) window.speechSynthesis.cancel();
   document.querySelectorAll('#reader-content .vtext').forEach(v=>v.classList.remove('speaking'));
   setListenBtn('play');
