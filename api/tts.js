@@ -34,8 +34,8 @@ function esc(s) {
 }
 
 module.exports = async function handler(req, res) {
-  const key = process.env.AZURE_SPEECH_KEY;
-  const region = process.env.AZURE_SPEECH_REGION;
+  const key = String(process.env.AZURE_SPEECH_KEY || '').trim();
+  const region = String(process.env.AZURE_SPEECH_REGION || '').trim().replace(/["'\s]/g, '').toLowerCase();
   const q = req.query || {};
 
   if (q.ping) {
@@ -89,6 +89,6 @@ module.exports = async function handler(req, res) {
     res.setHeader('Cache-Control', 'public, max-age=31536000, s-maxage=31536000, immutable');
     return res.status(200).send(buf);
   } catch (e) {
-    return res.status(502).json({ error: 'tts-failed' });
+    return res.status(502).json({ error: 'tts-failed', region, message: String((e && (e.cause && e.cause.message || e.message)) || e).slice(0, 200) });
   }
 };

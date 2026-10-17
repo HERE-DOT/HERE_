@@ -66,7 +66,7 @@ async function upload(base, serviceKey, path, body, type) {
 }
 
 module.exports = async function handler(req, res) {
-  const azKey = process.env.AZURE_SPEECH_KEY, region = process.env.AZURE_SPEECH_REGION;
+  const azKey = String(process.env.AZURE_SPEECH_KEY || '').trim(), region = String(process.env.AZURE_SPEECH_REGION || '').trim().replace(/["'\s]/g, '').toLowerCase();
   const base = (process.env.SUPABASE_URL || '').replace(/\/$/, '');
   const sKey = process.env.SUPABASE_SERVICE_KEY;
   if (req.method !== 'POST') return res.status(405).end();
