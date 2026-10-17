@@ -6086,6 +6086,7 @@ function playNeuralVerse(){
 // si la voz natural falla (sin internet, cuota agotada…), sigue desde ese versículo con la voz del dispositivo
 function neuralFallback(){
   if(!isListening) return;
+  showHereToast('La voz HERE no respondió; sigo con la voz de tu dispositivo');
   const from = neuralPos;
   try{ neuralAudio && neuralAudio.pause(); }catch(e){}
   neuralQueue = []; chapterMode = false;
