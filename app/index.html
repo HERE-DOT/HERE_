@@ -2656,7 +2656,7 @@
   <!-- CHAPTER READER -->
   <section class="screen noNav" id="reader">
     <div class="topbar reader-topbar">
-      <div class="reader-icon-btn" onclick="stopListen(); go('biblia')" aria-label="Atrás">
+      <div class="reader-icon-btn" onclick="go('biblia')" aria-label="Atrás">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
       </div>
       <div style="display:flex; align-items:center; gap:8px;">
@@ -2984,6 +2984,19 @@
       </div>
       <div class="mini-player-controls">
         <button class="mini-player-btn" id="mini-player-toggle" aria-label="Pausar" onclick="event.stopPropagation(); togglePlayerPlayback();"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MINI REPRODUCTOR DE LA BIBLIA: la lectura sigue aunque salgas del lector -->
+  <div class="mini-player above-nav" id="bible-mini" onclick="openBibleFromMini()">
+    <div class="mini-player-progress-track"><div class="mini-player-progress-fill" id="bible-mini-progress"></div></div>
+    <div class="mini-player-row">
+      <div class="mini-player-thumb" style="background:var(--sage-deep); color:#EBD9A8;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5c3-1.5 6-1.5 8 0v14c-2-1.5-5-1.5-8 0V5zM20 5c-3-1.5-6-1.5-8 0v14c2-1.5 5-1.5 8 0V5z"/></svg></div>
+      <div class="mini-player-info"><div class="t" id="bible-mini-title"></div><div class="s">Leyendo la Biblia</div></div>
+      <div class="mini-player-controls">
+        <button class="mini-player-btn" id="bible-mini-toggle" aria-label="Pausar" onclick="event.stopPropagation(); toggleListen();"></button>
+        <button class="mini-player-btn" style="background:var(--beige); color:var(--ink); box-shadow:none;" aria-label="Detener" onclick="event.stopPropagation(); stopListen();"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
       </div>
     </div>
   </div>
@@ -4651,7 +4664,7 @@ function go(id, opts){
     const orarOut = document.getElementById('orar-output');
     if(orarOut) orarOut.innerHTML = '';
   }
-  if(id!=='reader') stopListen();
+  updateBibleMini();
   if(id!=='musica' && id!=='musicaCategoria') stopFeaturedAuto();
   // la música/predicación NO se pausa al salir del reproductor — sigue sonando
   // de fondo mientras exploras otra pantalla, y el mini reproductor la controla.
@@ -5593,11 +5606,12 @@ async function openChapterFor(book){
 let currentReaderBook = null;
 let currentReaderChapter = null;
 let currentReaderVerses = [];
-async function openChapter(book, chapterNum){
+async function openChapter(book, chapterNum, opts){
+  opts = opts || {};
   await loadBible();
   const chapters = BIBLE_DATA[book];
   if(!chapters || !chapters[chapterNum-1]){ alert('No se pudo cargar ese capítulo.'); return; }
-  stopListen();
+  if(!opts.keepAudio) stopListen();
   currentReaderBook = book;
   currentReaderChapter = chapterNum;
   document.getElementById('reader-title').textContent = `${book} ${chapterNum}`;
@@ -5865,7 +5879,7 @@ function setNeuralVoice(id){
 function pingNeural(){
   if(location.protocol==='file:') return;
   fetch('/api/tts?ping=1').then(r=>r.ok?r.json():null).then(d=>{
-    if(d && d.ok && Array.isArray(d.voices) && d.voices.length){ neuralVoices = d.voices; renderVoiceOptions(); }
+    if(d && d.ok && Array.isArray(d.voices) && d.voices.length){ neuralVoices = d.voices; neuralChapters = !!d.chapters; renderVoiceOptions(); }
   }).catch(()=>{});
 }
 setTimeout(pingNeural, 1200);
@@ -5895,6 +5909,7 @@ const READER_RATES = [ {v:0.85, label:'Lenta'}, {v:0.97, label:'Natural'}, {v:1.
 let readerVoiceRate = load('here_reader_rate', 0.97);
 function setReaderRate(rate){
   readerVoiceRate = rate;
+  try{ if(neuralAudio && !neuralAudio.paused) neuralAudio.playbackRate = Math.min(1.25, Math.max(0.8, rate/0.97)); }catch(e){}
   save('here_reader_rate', rate);
   haptic(10);
   renderRateOptions();
@@ -5950,27 +5965,45 @@ function buildListenQueue(verses){
   });
   return queue;
 }
+/* ================= audio de la Biblia (continúa fuera del lector y, con voz natural, fuera de la app) ================= */
+let audioCtx = null;            // capítulo que suena: {book, chapter, verses}
+let audioPaused = false, audioToken = 0, chapterMode = false, chapterMarks = null, curMarkIdx = -1;
+let neuralChapters = false;     // el servidor puede guardar capítulos completos
+const SILENT_WAV = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAAAA=';
 function highlightListenVerse(vi){
   document.querySelectorAll('#reader-content .vtext').forEach(v=>v.classList.remove('speaking'));
+  if(currentScreen!=='reader' || !audioCtx || currentReaderBook!==audioCtx.book || currentReaderChapter!==audioCtx.chapter) return;
   const els = document.querySelectorAll('#reader-content .vtext');
   if(els[vi]){
     els[vi].classList.add('speaking');
     els[vi].scrollIntoView({behavior:'smooth', block:'center'});
   }
 }
+function audioIsNeural(){ return !!(neuralAudio && (chapterMode || neuralQueue.length)); }
 function toggleListen(startVerse){
+  // con voz natural, el botón pausa y reanuda (sin perder el sitio); con la voz del dispositivo, detiene
+  if(isListening && audioIsNeural()){
+    if(audioPaused){ audioPaused = false; try{ neuralAudio.play(); }catch(e){} }
+    else { audioPaused = true; try{ neuralAudio.pause(); }catch(e){} }
+    setListenBtn(audioPaused ? 'play' : 'pause');
+    syncMediaState();
+    return;
+  }
   if(isListening){ stopListen(); return; }
   const verses = currentReaderVerses;
   if(!verses || !verses.length) return;
-  neuralFailed = false;
+  neuralFailed = false; audioPaused = false;
+  audioCtx = { book: currentReaderBook, chapter: currentReaderChapter, verses };
   const from = (typeof startVerse==='number') ? startVerse : 0;
   if(neuralActive()){
-    if(!neuralAudio) neuralAudio = new Audio();   // se crea dentro del toque: así los móviles lo permiten
+    if(!neuralAudio){ neuralAudio = new Audio(); neuralAudio.preload = 'auto'; }
+    // dentro del toque: desbloquea el reproductor para que el móvil permita seguir solo después
+    try{ neuralAudio.src = SILENT_WAV; const pr = neuralAudio.play(); if(pr && pr.catch) pr.catch(()=>{}); }catch(e){}
     try{ window.speechSynthesis && window.speechSynthesis.cancel(); }catch(e){}
-    neuralQueue = verses; neuralPos = from;
+    try{ if(ytPlayer && ytPlayer.pauseVideo) ytPlayer.pauseVideo(); }catch(e){}
     isListening = true;
     setListenBtn('pause'); setAudiobarProgress(0);
-    playNeuralVerse();
+    startNeural(from);
     return;
   }
   if(!('speechSynthesis' in window)){
@@ -5985,43 +6018,118 @@ function toggleListen(startVerse){
   setAudiobarProgress(0);
   speakNext();
 }
+async function chapterRequest(ctx, check){
+  const id = neuralVoiceId();
+  const r = await fetch('/api/tts-chapter', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ v:id, book:ctx.book, chapter:ctx.chapter, verses:ctx.verses, check:!!check })
+  });
+  if(!r.ok) throw new Error('chapter-'+r.status);
+  return r.json();
+}
+async function startNeural(from){
+  const my = ++audioToken;
+  updateMediaSession();
+  if(neuralChapters && audioCtx.verses.length <= 180){
+    try{
+      const info = await chapterRequest(audioCtx, true);
+      if(my !== audioToken || !isListening) return;
+      if(info && info.ready){ playChapterAudio(info, from); return; }
+      // todavía no existe: se lee versículo a versículo ya, y se prepara el capítulo para la próxima vez
+      const ctx = audioCtx;
+      chapterRequest(ctx, false).catch(()=>{});
+    }catch(e){ if(my !== audioToken || !isListening) return; }
+  }
+  chapterMode = false;
+  neuralQueue = audioCtx.verses; neuralPos = from;
+  playNeuralVerse();
+}
+function playChapterAudio(info, from){
+  const a = neuralAudio;
+  chapterMode = true; chapterMarks = info.marks || []; curMarkIdx = -1;
+  neuralQueue = []; neuralPos = from || 0;
+  a.onended = ()=>{ audioAdvance(1); };
+  a.onerror = ()=>{ if(!isListening) return; chapterMode = false; neuralQueue = audioCtx.verses; neuralPos = Math.max(0, curMarkIdx); playNeuralVerse(); };
+  a.ontimeupdate = ()=>{
+    if(!chapterMarks.length) return;
+    const t = a.currentTime;
+    let i = 0; while(i+1 < chapterMarks.length && chapterMarks[i+1] <= t) i++;
+    if(i !== curMarkIdx){ curMarkIdx = i; neuralPos = i; highlightListenVerse(i); }
+    if(a.duration) setAudiobarProgress(t / a.duration);
+  };
+  a.onloadedmetadata = ()=>{
+    if(from && chapterMarks[from] != null){ try{ a.currentTime = chapterMarks[from]; }catch(e){} }
+  };
+  a.src = info.url;
+  a.playbackRate = Math.min(1.25, Math.max(0.8, readerVoiceRate / 0.97));
+  const pr = a.play(); if(pr && pr.catch) pr.catch(()=>{ stopListen(); });
+  updateBibleMini(); syncMediaState();
+}
 function playNeuralVerse(){
   if(!isListening) return;
-  if(neuralPos >= neuralQueue.length){
-    stopListen();
-    stepChapter(1);                 // igual que con la voz del dispositivo: pasa al siguiente capítulo
-    return;
-  }
+  if(neuralPos >= neuralQueue.length){ audioAdvance(1); return; }   // sin esperas: el siguiente arranca de inmediato
   const id = neuralVoiceId();
   if(!id){ neuralFallback(); return; }
   setAudiobarProgress(neuralQueue.length ? neuralPos/neuralQueue.length : 0);
   highlightListenVerse(neuralPos);
   const a = neuralAudio;
-  a.onended = ()=>{ neuralPos++; if(isListening) setTimeout(playNeuralVerse, 260); };
+  a.ontimeupdate = null; a.onloadedmetadata = null;
+  a.onended = ()=>{ neuralPos++; if(isListening) playNeuralVerse(); };
   a.onerror = ()=>{ neuralFailed = true; neuralFallback(); };
   a.src = neuralUrl(id, neuralQueue[neuralPos]);
   a.playbackRate = Math.min(1.25, Math.max(0.8, readerVoiceRate / 0.97));
   const pr = a.play();
   if(pr && pr.catch) pr.catch(()=>{ neuralFailed = true; neuralFallback(); });
-  // adelanta los 2 versículos siguientes para que no haya silencios entre uno y otro
   [1,2].forEach(k=>{ const t = neuralQueue[neuralPos+k]; if(t) fetch(neuralUrl(id, t)).catch(()=>{}); });
+  updateBibleMini(); syncMediaState();
 }
 // si la voz natural falla (sin internet, cuota agotada…), sigue desde ese versículo con la voz del dispositivo
 function neuralFallback(){
   if(!isListening) return;
   const from = neuralPos;
   try{ neuralAudio && neuralAudio.pause(); }catch(e){}
+  neuralQueue = []; chapterMode = false;
   if(!('speechSynthesis' in window)){ stopListen(); return; }
-  listenQueue = buildListenQueue(currentReaderVerses).filter(q=>q.verseIndex>=from);
+  listenQueue = buildListenQueue(audioCtx.verses).filter(q=>q.verseIndex>=from);
   listenPos = 0;
   speakNext();
+}
+// pasa al capítulo siguiente (o anterior) sin tocar la pantalla: sirve con la app en segundo plano
+async function audioAdvance(dir){
+  if(!audioCtx || !isListening){ return; }
+  await loadBible();
+  let book = audioCtx.book, ch = audioCtx.chapter + dir;
+  const chapters = BIBLE_DATA[book] || [];
+  if(ch < 1 || ch > chapters.length){
+    const idx = BOOK_ORDER.indexOf(book) + dir;
+    if(idx < 0 || idx >= BOOK_ORDER.length){ stopListen(); return; }
+    book = BOOK_ORDER[idx];
+    const nc = BIBLE_DATA[book];
+    if(!nc){ stopListen(); return; }
+    ch = dir > 0 ? 1 : nc.length;
+  }
+  const my = ++audioToken;
+  let verses = null;
+  try{ const r = await fetchLiveChapter(book, ch); verses = r.verses; }catch(e){}
+  if(!verses || !verses.length) verses = (BIBLE_DATA[book] || [])[ch-1];
+  if(my !== audioToken) return;
+  if(!verses || !verses.length){ stopListen(); return; }
+  currentReaderBook = book; currentReaderChapter = ch; currentReaderVerses = verses;
+  audioCtx = { book, chapter: ch, verses };
+  if(currentScreen === 'reader') openChapter(book, ch, {keepAudio:true});
+  audioPaused = false; isListening = true;
+  setListenBtn('pause');
+  if(neuralActive()) startNeural(0);
+  else {
+    listenQueue = buildListenQueue(verses); listenPos = 0; speakNext();
+  }
+  updateMediaSession(); updateBibleMini();
 }
 function speakNext(){
   if(!isListening || listenPos >= listenQueue.length){
     const finished = listenQueue.length>0 && listenPos>=listenQueue.length;
+    if(finished){ audioAdvance(1); return; }
     stopListen();
-    // al terminar el capítulo, pasa automáticamente al siguiente
-    if(finished) stepChapter(1);
     return;
   }
   setAudiobarProgress(listenQueue.length ? listenPos/listenQueue.length : 0);
@@ -6040,17 +6148,59 @@ function speakNext(){
   };
   u.onerror = ()=>{ stopListen(); };
   window.speechSynthesis.speak(u);
+  updateBibleMini();
 }
 function stopListen(){
-  isListening = false;
+  isListening = false; audioPaused = false; chapterMode = false;
+  audioToken++;
   listenPos = 0;
   listenQueue = [];
   neuralQueue = [];
-  try{ if(neuralAudio){ neuralAudio.onended = null; neuralAudio.onerror = null; neuralAudio.pause(); } }catch(e){}
+  try{ if(neuralAudio){ neuralAudio.onended = null; neuralAudio.onerror = null; neuralAudio.ontimeupdate = null; neuralAudio.pause(); } }catch(e){}
   if('speechSynthesis' in window) window.speechSynthesis.cancel();
   document.querySelectorAll('#reader-content .vtext').forEach(v=>v.classList.remove('speaking'));
   setListenBtn('play');
   setAudiobarProgress(0);
+  try{ if('mediaSession' in navigator){ navigator.mediaSession.playbackState = 'none'; } }catch(e){}
+  updateBibleMini();
+}
+function openBibleFromMini(){
+  if(!audioCtx) return;
+  openChapter(audioCtx.book, audioCtx.chapter, {keepAudio:true});
+}
+function updateBibleMini(){
+  const bar = document.getElementById('bible-mini');
+  if(!bar) return;
+  const show = isListening && audioCtx && currentScreen!=='reader';
+  bar.classList.toggle('show', !!show);
+  if(!show) return;
+  document.getElementById('bible-mini-title').textContent = `${audioCtx.book} ${audioCtx.chapter}`;
+  const playing = !audioPaused;
+  document.getElementById('bible-mini-toggle').innerHTML = miniPlayIcon(playing);
+  bar.classList.toggle('is-playing', playing);
+  // si también suena música, la minibarra de la Biblia se coloca un poco más arriba
+  const music = document.getElementById('mini-player');
+  bar.style.bottom = (music && music.classList.contains('show')) ? '150px' : '';
+}
+// pantalla de bloqueo / notificación: título y controles del sistema
+function updateMediaSession(){
+  if(!('mediaSession' in navigator) || !audioCtx) return;
+  try{
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: `${audioCtx.book} ${audioCtx.chapter}`, artist: 'HERE', album: 'La Biblia',
+      artwork: [{ src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' }]
+    });
+    const set = (a, f)=>{ try{ navigator.mediaSession.setActionHandler(a, f); }catch(e){} };
+    set('play',  ()=>{ if(isListening && audioPaused) toggleListen(); });
+    set('pause', ()=>{ if(isListening && !audioPaused) toggleListen(); });
+    set('stop',  ()=>stopListen());
+    set('nexttrack',     ()=>audioAdvance(1));
+    set('previoustrack', ()=>audioAdvance(-1));
+  }catch(e){}
+}
+function syncMediaState(){
+  try{ if('mediaSession' in navigator) navigator.mediaSession.playbackState = audioPaused ? 'paused' : 'playing'; }catch(e){}
+  updateBibleMini();
 }
 let tappedVerseEl = null;
 const HIGHLIGHT_COLORS = {
