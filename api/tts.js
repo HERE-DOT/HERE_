@@ -43,6 +43,7 @@ module.exports = async function handler(req, res) {
     if (!key || !region) return res.status(200).json({ ok: false });
     return res.status(200).json({
       ok: true,
+      chapters: !!(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_KEY),
       voices: Object.keys(VOICES).map((k) => ({ id: k, label: VOICES[k].label, desc: VOICES[k].desc })),
     });
   }
@@ -52,7 +53,7 @@ module.exports = async function handler(req, res) {
 
   // Solo desde la propia app (frena que otros sitios gasten tu cuota).
   const site = req.headers['sec-fetch-site'];
-  if (site && site !== 'same-origin') return res.status(403).end();
+  if (site && site !== 'same-origin' && site !== 'none') return res.status(403).end();  // 'none' = abrir la dirección a mano (para diagnosticar)
   const host = req.headers.host || '';
   const origin = req.headers.origin || req.headers.referer || '';
   if (origin && !origin.includes(host)) return res.status(403).end();
@@ -78,7 +79,11 @@ module.exports = async function handler(req, res) {
       },
       body: ssml,
     });
-    if (!r.ok) return res.status(502).json({ error: 'azure-' + r.status });
+    if (!r.ok) {
+      let detail = '';
+      try { detail = (await r.text()).slice(0, 160); } catch (e) {}
+      return res.status(502).json({ error: 'azure-' + r.status, region, detail });
+    }
     const buf = Buffer.from(await r.arrayBuffer());
     res.setHeader('Content-Type', 'audio/mpeg');
     res.setHeader('Cache-Control', 'public, max-age=31536000, s-maxage=31536000, immutable');
