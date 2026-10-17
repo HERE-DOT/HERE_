@@ -676,12 +676,12 @@
   .abib-cover{
     position:relative; width:100%; aspect-ratio:1/0.95; border-radius:26px; overflow:hidden; color:#fff;
     display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;
-    background:
-      radial-gradient(ellipse 60% 38% at 78% 14%, rgba(255,255,255,.55), transparent 70%),
+    --abib-sky:radial-gradient(ellipse 60% 38% at 78% 14%, rgba(255,255,255,.55), transparent 70%),
       radial-gradient(ellipse 55% 34% at 20% 78%, rgba(255,255,255,.34), transparent 70%),
       radial-gradient(ellipse 70% 40% at 85% 68%, rgba(74,70,110,.30), transparent 72%),
       radial-gradient(ellipse 50% 30% at 12% 24%, rgba(255,255,255,.28), transparent 70%),
       linear-gradient(165deg, #aab0cf 0%, #b9b2cf 38%, #a79fc0 70%, #8f89ad 100%);
+    background:var(--abib-sky);
     box-shadow:var(--shadow-md);
   }
   .abib-cover::after{ content:''; position:absolute; inset:0; background:radial-gradient(circle at 50% 42%, rgba(255,255,255,.18), transparent 55%); pointer-events:none; }
@@ -1907,13 +1907,13 @@
   .player-now{text-align:center; padding:0 32px 4px;}
   .player-now .player-now-name{font-family:'Fraunces'; font-size:18px; font-weight:500; color:var(--ink);}
   .player-now .player-now-role{font-size:12.5px; color:var(--ink-soft); margin-top:3px;}
-  .player-audio-wrap{display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:10px 32px 16px; gap:8px;}
+  .player-audio-wrap{display:flex; flex-direction:column; align-items:stretch; text-align:left; padding:6px 24px 16px; max-width:460px; margin:0 auto;}
+  #reproductor.audio-mode .player-now{display:none;}
+  #reproductor.audio-mode .player-float-btn{display:none;}
   .player-audio-art{
-    width:150px; height:150px; border-radius:24px; display:flex; align-items:center; justify-content:center;
-    background:linear-gradient(135deg,var(--sage-deep),var(--gold-deep)) center/cover no-repeat; box-shadow:var(--shadow-md);
-    animation:playerPulse 2.6s ease-in-out infinite; color:rgba(255,255,255,0.92);
+    background-size:cover; background-position:center; background-repeat:no-repeat; color:rgba(255,255,255,0.92);
   }
-  .player-audio-art svg{width:38px; height:38px;}
+  .player-audio-art .abib-note{width:56px; height:56px; position:relative; z-index:1;}
   @keyframes playerPulse{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.02); } }
   /* barra de progreso + tiempos del modo "solo escuchar": mismo dorado que
      el mini reproductor, para que se sientan la misma familia de reproductor */
@@ -2617,6 +2617,7 @@
       <button class="btn btn-primary" style="margin-top:10px;" onclick="runSearch()">Buscar</button>
     </div>
     <div id="search-results"></div>
+    <div class="abib-entry" style="margin:6px 24px 14px;" onclick="openAudioBiblia()"><div class="abib-cover"></div><div><div class="abib-entry-t">Audio Biblia</div><div class="abib-entry-s">Escucha la Palabra, también con la pantalla apagada</div></div><span class="abib-entry-go">›</span></div>
     <div id="biblia-continue" style="padding:0 24px; margin:4px 0 2px; display:none;"></div>
     <div class="section-title" style="margin-top:8px;">Hoy <span class="sec-link" onclick="go('devocionales')">Todos los devocionales</span></div>
     <div id="biblia-devo" style="padding:4px 24px 8px;"></div>
@@ -3029,21 +3030,24 @@
         </div>
         <div class="player-video-wrap" id="player-video-wrap"><div id="yt-player"></div></div>
         <div class="player-audio-wrap" id="player-audio-wrap" style="display:none;">
-          <div class="player-audio-art" id="player-audio-art">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+          <div class="player-audio-art abib-cover" id="player-audio-art"><svg class="abib-note" viewBox="0 0 24 24" fill="currentColor"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg></div>
+          <div class="abib-title" id="player-a-title" style="margin-top:20px;"></div>
+          <div class="abib-sub" id="player-a-sub"></div>
+          <div class="abib-bar" style="width:100%;">
+            <div class="abib-track" onclick="playerSeekClick(event)"><div class="abib-fill" id="player-progress-fill"></div><div class="abib-knob" id="player-progress-knob"></div></div>
+            <div class="abib-times"><span id="player-time-current">0:00</span><span id="player-time-duration">0:00</span></div>
           </div>
-          <div class="player-progress-wrap">
-            <div class="player-progress-track"><div class="player-progress-fill" id="player-progress-fill"></div></div>
-            <div class="player-time-row"><span id="player-time-current">0:00</span><span id="player-time-duration">0:00</span></div>
+          <div class="abib-main">
+            <button class="abib-skip" onclick="playerSkip(-15)" aria-label="Retroceder 15 segundos"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 11.5A10 10 0 1 1 6 17"/><path d="M6.5 5.5v6.2h6.2"/><text x="16" y="21" text-anchor="middle" font-size="9.5" font-weight="700" fill="currentColor" stroke="none" font-family="Inter,system-ui,sans-serif">15</text></svg></button>
+            <button class="abib-play" id="player-audio-toggle" aria-label="Pausar" onclick="togglePlayerPlayback()"></button>
+            <button class="abib-skip" onclick="playerSkip(30)" aria-label="Adelantar 30 segundos"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M24.5 11.5A10 10 0 1 0 26 17"/><path d="M25.5 5.5v6.2h-6.2"/><text x="16" y="21" text-anchor="middle" font-size="9.5" font-weight="700" fill="currentColor" stroke="none" font-family="Inter,system-ui,sans-serif">30</text></svg></button>
           </div>
-          <div class="player-audio-controls">
-            <button class="player-audio-toggle" id="player-audio-toggle" aria-label="Pausar" onclick="togglePlayerPlayback()">
-              <svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect></svg>
-            </button>
-            <button class="player-skip-btn" aria-label="Siguiente" onclick="playNextRelated()">
-              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 5.5v13c0 .8.9 1.3 1.6.9L17 13l-9.4-6.4c-.7-.4-1.6.1-1.6.9z"></path><rect x="17.5" y="5" width="2.2" height="14" rx="1"></rect></svg>
-            </button>
+          <div class="abib-tools" style="width:100%;">
+            <button class="abib-tool" onclick="playerSpeed()"><b id="player-speed">1x</b>Velocidad</button>
+            <button class="abib-tool" onclick="playerVolume()"><b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg></b>Volumen</button>
+            <button class="abib-tool" id="player-sleep-btn" onclick="abibSleep('track')"><b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg></b>Dormir</button>
           </div>
+          <div class="abib-chapters" style="width:100%; justify-content:flex-end;"><button onclick="playNextRelated()">Siguiente ›</button></div>
         </div>
         <div class="player-fallback" id="player-fallback" style="display:none;">
           No pudimos cargar el reproductor aquí.
@@ -6337,7 +6341,7 @@ function stopListen(){
 }
 function openBibleFromMini(){
   if(!audioCtx) return;
-  openChapter(audioCtx.book, audioCtx.chapter, {keepAudio:true});
+  go('audioBiblia');
 }
 /* ================= Audio Biblia: pantalla de reproductor ================= */
 let readerVolume = load('here_reader_volume', 1);
@@ -6444,7 +6448,8 @@ function setReaderVolume(v){
   readerVolume = v; save('here_reader_volume', v);
   try{ if(neuralAudio) neuralAudio.volume = v; }catch(e){}
 }
-function abibSleep(){
+function abibSleep(kind){
+  const endLabel = kind==='track' ? 'Al terminar esta pista' : 'Al terminar el capítulo';
   const opt = (label, fn)=>`<div class="vmenu-row" onclick="${fn}"><span>${label}</span><span class="vmenu-icon">${abibSleepMode===label?'✓':''}</span></div>`;
   openSheet(`<div class="handle"></div>
     <p class="serif" style="font-size:19px; margin-bottom:14px;">Dormir</p>
@@ -6453,7 +6458,7 @@ function abibSleep(){
       ${opt('30 minutos',"setAbibSleep(30,'30 minutos')")}
       ${opt('45 minutos',"setAbibSleep(45,'45 minutos')")}
       ${opt('1 hora',"setAbibSleep(60,'1 hora')")}
-      ${opt('Al terminar el capítulo',"setAbibSleep(0,'Al terminar el capítulo')")}
+      ${opt(endLabel,`setAbibSleep(0,'${endLabel}')`)}
       ${abibSleepMode ? `<div class="vmenu-row" onclick="setAbibSleep(null)"><span>Desactivar</span><span class="vmenu-icon"></span></div>` : ''}
     </div>`);
 }
@@ -6463,10 +6468,10 @@ function setAbibSleep(min, label){
   else{
     abibSleepMode = label;
     if(min === 0) abibSleepEnd = true;
-    else abibSleepTimer = setTimeout(()=>{ abibSleepMode = null; stopListen(); abibSync(); showHereToast('Temporizador terminado. Descansa en paz.'); }, min*60000);
-    showHereToast(min===0 ? 'Se detendrá al terminar el capítulo' : `Se detendrá en ${label}`);
+    else abibSleepTimer = setTimeout(()=>{ abibSleepMode = null; stopListen(); pausePlayerIfPlaying(); abibSync(); playerToolsSync(); showHereToast('Temporizador terminado. Descansa en paz.'); }, min*60000);
+    showHereToast(min===0 ? 'Se detendrá al terminar' : `Se detendrá en ${label}`);
   }
-  closeSheet(); abibSync();
+  closeSheet(); abibSync(); playerToolsSync();
 }
 async function abibChapter(dir){
   haptic(8);
@@ -8693,6 +8698,7 @@ function featuredPhotoUrl(item){
 function setPlayerMode(mode){
   playerMode = mode;
   document.querySelectorAll('.player-mode-btn').forEach(b=>b.classList.toggle('active', b.dataset.m===mode));
+  const rs = document.getElementById('reproductor'); if(rs) rs.classList.toggle('audio-mode', mode==='audio');
   const videoWrap = document.getElementById('player-video-wrap');
   const audioWrap = document.getElementById('player-audio-wrap');
   if(mode==='audio'){
@@ -8718,14 +8724,17 @@ function playTrack(item, mode){
   document.getElementById('player-title').textContent = item.name;
   document.getElementById('player-now-name').textContent = item.name;
   document.getElementById('player-now-role').textContent = item.role || item.s || '';
+  document.getElementById('player-a-title').textContent = item.name;
+  document.getElementById('player-a-sub').textContent = item.role || item.s || '';
   const thumb = trackThumbUrl(item);
   const art = document.getElementById('player-audio-art');
   if(art){
-    art.style.backgroundImage = thumb ? `url('${thumb}')` : '';
+    art.style.backgroundImage = thumb ? `url('${thumb}'), var(--abib-sky)` : '';
     if(thumb){ art.innerHTML = ''; }
-    else { art.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>'; }
+    else { art.innerHTML = '<svg class="abib-note" viewBox="0 0 24 24" fill="currentColor"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>'; }
   }
   document.getElementById('player-fallback').style.display = 'none';
+  { const pb = document.getElementById('player-audio-toggle'); if(pb) pb.innerHTML = miniPlayIcon(true); }
   go('reproductor');
   setPlayerMode(mode || playerMode);
   const autoplayToggle = document.getElementById('player-autoplay-toggle');
@@ -8854,6 +8863,7 @@ function onPlayerStateChange(e){
   // 0 = YT.PlayerState.ENDED: el video terminó solo (no lo pausó la
   // persona) — ahí es cuando entra la reproducción continua.
   if(e.data===0) handleTrackEnded();
+  playerToolsSync();
 }
 // Barra de progreso del mini reproductor: un vistazo rápido de cuánto va
 // la canción/predicación sin tener que abrir el reproductor grande.
@@ -8891,6 +8901,7 @@ function stopPlayerProgressTimer(){
   if(playerProgressTimer){ clearInterval(playerProgressTimer); playerProgressTimer = null; }
   const fill = document.getElementById('player-progress-fill');
   if(fill) fill.style.width = '0%';
+  const kn0 = document.getElementById('player-progress-knob'); if(kn0) kn0.style.left = '0%';
   const cur = document.getElementById('player-time-current');
   if(cur) cur.textContent = '0:00';
   const dur = document.getElementById('player-time-duration');
@@ -8903,6 +8914,7 @@ function updatePlayerProgress(){
     const dur = ytPlayer.getDuration() || 0;
     const cur = ytPlayer.getCurrentTime() || 0;
     fill.style.width = (dur > 0 ? Math.min(100, (cur/dur)*100) : 0) + '%';
+    const kn = document.getElementById('player-progress-knob'); if(kn) kn.style.left = (dur > 0 ? Math.min(100, (cur/dur)*100) : 0) + '%';
     const curEl = document.getElementById('player-time-current');
     if(curEl) curEl.textContent = formatPlayerTime(cur);
     const durEl = document.getElementById('player-time-duration');
@@ -8910,6 +8922,7 @@ function updatePlayerProgress(){
   }catch(e){}
 }
 function handleTrackEnded(){
+  if(abibSleepEnd){ abibSleepEnd = false; abibSleepMode = null; pausePlayerIfPlaying(); playerToolsSync(); showHereToast('Terminó la pista. Descansa en paz.'); return; }
   if(!autoplayNext) return;
   // una lista de reproducción (ytList) ya avanza sola de un video al
   // siguiente por su cuenta — no hay que duplicar el avance aquí.
@@ -8921,6 +8934,44 @@ function playNextRelated(){
   const next = currentRelatedVideos.shift();
   haptic(8);
   playAdhocVideo(next.id, next.title, next.channel);
+}
+/* ---- controles del reproductor grande de música / predicaciones (mismo diseño que Audio Biblia) ---- */
+const YT_RATES = [0.75, 1, 1.25, 1.5];
+function playerToolsSync(){
+  const sp = document.getElementById('player-speed');
+  if(sp){ let r = 1; try{ if(ytPlayer && ytPlayer.getPlaybackRate) r = ytPlayer.getPlaybackRate(); }catch(e){} sp.textContent = r+'x'; }
+  const sl = document.getElementById('player-sleep-btn'); if(sl) sl.classList.toggle('on', !!abibSleepMode);
+}
+function playerSkip(sec){
+  if(!ytPlayer || !ytPlayer.seekTo) return;
+  haptic(8);
+  try{
+    const dur = ytPlayer.getDuration() || 0, cur = ytPlayer.getCurrentTime() || 0;
+    ytPlayer.seekTo(Math.max(0, dur ? Math.min(dur-1, cur+sec) : cur+sec), true);
+    updatePlayerProgress();
+  }catch(e){}
+}
+function playerSeekClick(e){
+  if(!ytPlayer || !ytPlayer.seekTo) return;
+  const r = e.currentTarget.getBoundingClientRect();
+  try{ const dur = ytPlayer.getDuration() || 0; if(dur){ ytPlayer.seekTo(Math.max(0, Math.min(1,(e.clientX-r.left)/r.width))*dur, true); updatePlayerProgress(); } }catch(err){}
+}
+function playerSpeed(){
+  if(!ytPlayer || !ytPlayer.setPlaybackRate) return;
+  try{
+    const cur = ytPlayer.getPlaybackRate ? ytPlayer.getPlaybackRate() : 1;
+    const i = YT_RATES.indexOf(cur);
+    ytPlayer.setPlaybackRate(YT_RATES[(i+1) % YT_RATES.length]);
+  }catch(e){}
+  setTimeout(playerToolsSync, 120);
+}
+function playerVolume(){
+  let v = 100; try{ if(ytPlayer && ytPlayer.getVolume) v = ytPlayer.getVolume(); }catch(e){}
+  openSheet(`<div class="handle"></div>
+    <p class="serif" style="font-size:19px; margin-bottom:6px;">Volumen</p>
+    <p style="font-size:13px; color:var(--ink-soft); margin-bottom:18px; line-height:1.5;">También puedes usar los botones de volumen de tu teléfono.</p>
+    <input type="range" min="0" max="100" value="${v}" style="width:100%; accent-color:var(--sage-deep);" oninput="try{ytPlayer.setVolume(+this.value)}catch(e){}">
+    <button class="btn btn-ghost" style="width:100%; margin-top:20px;" onclick="closeSheet()">Listo</button>`);
 }
 function togglePlayerPlayback(){
   if(!ytPlayer || !ytPlayer.getPlayerState) return;
