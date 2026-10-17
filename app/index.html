@@ -1333,6 +1333,47 @@
     }
   }
 
+  /* ---------- Orar: misma estética que Tu camino ---------- */
+  #orar .topbar.orar-top{display:block; padding:34px 24px 2px;}
+  #orar .orar-top h2{font-size:38px; font-weight:400; letter-spacing:-.4px; line-height:1.1; margin:4px 0 0;}
+  .orar-leaf{display:block; width:28px; height:28px; color:var(--gold-deep);}
+  .orar-leaf svg, .orar-help svg{width:100%; height:100%;}
+  .orar-guide{
+    position:relative; overflow:hidden; display:flex; align-items:center; gap:16px; padding:26px 22px; border-radius:26px; cursor:pointer;
+    background:
+      linear-gradient(90deg, color-mix(in srgb, var(--card) 70%, transparent), color-mix(in srgb, var(--card) 25%, transparent) 70%, transparent),
+      url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1000&q=65') center 70%/cover no-repeat,
+      linear-gradient(160deg,#F6E7CE,#EBC9A4 55%,#D3A58E);
+    box-shadow:var(--shadow-md); transition:transform .15s ease;
+  }
+  :root[data-theme="dark"] .orar-guide{
+    background:
+      linear-gradient(90deg, rgba(18,14,8,.78), rgba(18,14,8,.45) 70%, rgba(18,14,8,.3)),
+      url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1000&q=65') center 70%/cover no-repeat,
+      linear-gradient(160deg,#3A3026,#1B1612);
+  }
+  .orar-guide:active, .orar-comm:active{ transform:scale(.985); }
+  .orar-guide-icon{ flex:none; width:56px; height:56px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(135deg,var(--sage-deep),var(--sage-deeper)); color:#EBD9A8; box-shadow:0 8px 18px rgba(44,79,59,.3); }
+  .orar-guide-icon svg{ width:30px; height:30px; }
+  .orar-guide-b{ flex:1; min-width:0; }
+  .orar-guide .t, .orar-comm .t{ font-family:'Fraunces',serif; font-size:22px; font-weight:500; line-height:1.2; color:var(--ink); }
+  .orar-guide .s, .orar-comm .s{ font-size:14px; color:var(--ink-soft); margin-top:4px; line-height:1.4; }
+  .orar-arrow{ flex:none; color:var(--ink); opacity:.75; font-size:20px; }
+  .orar-comm{ display:flex; align-items:center; gap:16px; margin-top:14px; padding:20px 22px; border-radius:24px; cursor:pointer;
+    background:var(--card); border:1px solid var(--line); box-shadow:var(--shadow-sm); transition:transform .15s ease; }
+  .orar-comm-icon{ flex:none; width:56px; height:56px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:var(--bg-warm); color:var(--gold-deep); }
+  .orar-comm-icon svg{ width:30px; height:30px; }
+  .orar-or{ display:flex; align-items:center; gap:14px; margin:34px 0 26px; }
+  .orar-or span{ flex:1; height:1px; background:linear-gradient(90deg,transparent,var(--gold)); opacity:.7; }
+  .orar-or span:last-child{ background:linear-gradient(270deg,transparent,var(--gold)); }
+  .orar-or p{ margin:0; font-size:14px; color:var(--ink-soft); text-align:center; }
+  .orar-q{ font-size:25px; font-weight:600; line-height:1.25; text-align:center; margin:0 0 18px; color:var(--ink); }
+  .orar-text{ padding:22px; line-height:1.7; border-radius:24px; min-height:170px; box-shadow:none; background:var(--card); }
+  .orar-go{ width:100%; margin-top:20px; padding:19px; font-size:18px; font-family:'Fraunces',serif; border-radius:999px; }
+  .orar-help{ text-align:center; margin-top:18px; }
+  .orar-help .btn-text{ display:inline-flex; align-items:center; gap:10px; text-align:left; color:var(--ink-soft); font-size:14px; line-height:1.4; }
+  .orar-help svg{ width:24px; height:24px; flex:none; color:var(--gold-deep); }
   /* ---------- Orar: "Guíame" como la puerta principal — más presencia que
      un list-card cualquiera, sin llegar a ser un CTA que grite. Un tinte
      cálido, un ícono con algo de color, y aire generoso alrededor. ---------- */
@@ -2669,37 +2710,30 @@
 
   <!-- ORAR -->
   <section class="screen" id="orar">
-    <div class="topbar" style="flex-direction:column; align-items:flex-start; gap:3px;">
+    <div class="topbar orar-top">
+      <span class="orar-leaf" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20c1.5-6 5-11 14-14-.5 8-5 12-11 13"/><path d="M4 20l7-7M9 14.5l-.5-3.2M12.5 11l-.6-3"/></svg></span>
       <h2>Quiero orar</h2>
-      <p style="color:var(--ink-soft); font-size:13px; margin:0;">Un momento para detenerte. No hay prisa.</p>
+      <p class="camino-sub">Un momento para detenerte. No hay prisa.</p>
     </div>
     <div class="container" style="padding-top:10px;">
-      <!-- "Guíame" — la puerta principal de este espacio: la que más se
-           cuida, sin dejar de sentirse serena. -->
-      <div class="orar-primary" onclick="startGuidedPrayer()">
-        <div style="display:flex; align-items:center; gap:15px;">
-          <span class="orar-primary-icon" aria-hidden="true">🙏</span>
-          <div><div class="t">Guíame</div><div class="s">Un momento paso a paso, contigo</div></div>
-        </div>
-        <span class="orar-primary-arrow">→</span>
+      <div class="orar-guide" onclick="startGuidedPrayer()" role="button" tabindex="0">
+        <span class="orar-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5v2M7.2 5l1 1.7M16.8 5l-1 1.7"/><path d="M12 9.5c-1.2 0-2 1-2.2 2.4l-.9 5.2c-.2 1.2.6 2.2 1.7 2.4l1.4.2"/><path d="M12 9.5c1.2 0 2 1 2.2 2.4l.9 5.2c.2 1.2-.6 2.2-1.7 2.4l-1.4.2"/><path d="M12 9.5v10.2"/></svg></span>
+        <div class="orar-guide-b"><div class="t">Guíame</div><div class="s">Un momento paso a paso, contigo</div></div>
+        <span class="orar-arrow">→</span>
       </div>
 
-      <div class="list-card" style="margin:14px 0 0;" onclick="go('comunidadOrar')">
-        <div style="display:flex; align-items:center; gap:14px;">
-          <span style="font-size:19px; flex:none;" aria-hidden="true">🤝</span>
-          <div><div class="t">Orar en comunidad</div><div class="s">Comparte una petición, o ora por las de otros</div></div>
-        </div>
-        <span style="color:var(--ink-soft); flex:none;">→</span>
+      <div class="orar-comm" onclick="go('comunidadOrar')" role="button" tabindex="0">
+        <span class="orar-comm-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 11.5l3.2-3.2 3-.5 3.3 1.6 3.3-1.6 3 .5 3.2 3.2-6 7a2.2 2.2 0 01-3.2.2L2.5 11.5z"/><path d="M8.7 11.8l2.4 2.2M11 14l1.8 1.6"/></svg></span>
+        <div class="orar-guide-b"><div class="t">Orar en comunidad</div><div class="s">Comparte una petición, o ora por las de otros</div></div>
+        <span class="orar-arrow">→</span>
       </div>
 
-      <p style="color:var(--ink-soft); font-size:13px; text-align:center; letter-spacing:.2px; margin-top:34px;">o, si prefieres, con tus propias palabras</p>
-      <p class="serif" style="margin-top:22px; font-size:17px; line-height:1.5; text-align:center; color:var(--ink);">¿Qué quieres poner en manos de Dios?</p>
-      <textarea id="orar-input" rows="5" placeholder="Escribe aquí, con calma…" style="margin-top:22px; padding:22px; line-height:1.7; box-shadow:none;"></textarea>
-      <div class="stack" style="margin-top:18px;">
-        <button class="btn btn-ghost" style="color:var(--sage-deep); font-weight:600;" onclick="orarConMisPalabras()">Orar con mis palabras</button>
-      </div>
-      <div style="text-align:center; margin-top:16px;">
-        <button class="btn-text" onclick="ayudaOracion()">¿No sabes por dónde empezar? Te acompaño a encontrar las palabras</button>
+      <div class="orar-or"><span></span><p>o, si prefieres, con tus propias palabras</p><span></span></div>
+      <h3 class="orar-q serif">¿Qué quieres poner en manos de Dios?</h3>
+      <textarea id="orar-input" rows="6" placeholder="Escribe aquí, con calma…" class="orar-text"></textarea>
+      <button class="btn btn-primary orar-go" onclick="orarConMisPalabras()">Orar con mis palabras</button>
+      <div class="orar-help">
+        <button class="btn-text" onclick="ayudaOracion()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20c1.5-6 5-11 14-14-.5 8-5 12-11 13"/><path d="M4 20l7-7M9 14.5l-.5-3.2M12.5 11l-.6-3"/></svg><span>¿No sabes por dónde empezar? Te acompaño a encontrar las palabras</span></button>
       </div>
       <div id="orar-output" style="margin-top:22px;"></div>
     </div>
