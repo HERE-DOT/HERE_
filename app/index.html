@@ -2282,6 +2282,54 @@
     .feel-grid, .chapter-picker{ max-width:760px; }
     .chapter-verse{ max-width:640px; }
   }
+  /* ===== Biblioteca HERE (R2 + Supabase) ===== */
+  #lib-section{padding:4px 0 6px;}
+  .lib-head{display:flex; align-items:baseline; justify-content:space-between; padding:0 24px; margin:14px 0 8px;}
+  .lib-head h3{font-family:'Cormorant Garamond',Georgia,serif; font-size:22px; font-weight:600; margin:0;}
+  .lib-chips{display:flex; gap:8px; overflow-x:auto; padding:2px 24px 10px; scrollbar-width:none;}
+  .lib-chips::-webkit-scrollbar{display:none;}
+  .lib-chip{flex:none; padding:7px 14px; border-radius:999px; border:1px solid var(--line); background:var(--card); color:var(--ink-soft); font-size:13px; font-weight:600; cursor:pointer;}
+  .lib-chip.on{background:var(--sage-deep); color:#fff; border-color:transparent;}
+  .lib-search{margin:0 24px 10px; width:calc(100% - 48px); box-sizing:border-box; padding:11px 14px; border-radius:14px; border:1px solid var(--line); background:var(--card); color:var(--ink); font-size:14.5px;}
+  .lib-list{display:flex; flex-direction:column; gap:10px; padding:0 24px;}
+  .lib-card{display:flex; align-items:center; gap:12px; padding:10px; border-radius:16px; background:var(--card); border:1px solid var(--line); cursor:pointer; box-shadow:var(--shadow-sm);}
+  .lib-card:active{transform:scale(.985);}
+  .lib-cover{width:56px; height:56px; border-radius:12px; flex:none; background:var(--abib-sky, var(--sage-deep)) center/cover; display:flex; align-items:center; justify-content:center; color:#EBD9A8;}
+  .lib-cover svg{width:22px; height:22px;}
+  .lib-meta{flex:1; min-width:0;}
+  .lib-t{font-size:15px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .lib-s{font-size:12.5px; color:var(--ink-soft); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px;}
+  .lib-fav{flex:none; width:38px; height:38px; border-radius:50%; border:0; background:transparent; color:var(--ink-soft); cursor:pointer; display:flex; align-items:center; justify-content:center;}
+  .lib-fav svg{width:20px; height:20px;}
+  .lib-fav.on{color:var(--gold);}
+  .lib-fav.on svg{fill:currentColor;}
+  .lib-state{margin:0 24px; padding:18px; border-radius:16px; border:1px dashed var(--line); text-align:center; color:var(--ink-soft); font-size:14px; line-height:1.5;}
+  .lib-skel{height:76px; border-radius:16px; background:linear-gradient(90deg,var(--card),var(--bg-warm),var(--card)); background-size:200% 100%; animation:libsk 1.4s linear infinite;}
+  @keyframes libsk{to{background-position:-200% 0;}}
+  @media (prefers-reduced-motion:reduce){ .lib-skel{animation:none;} }
+  .lib-resume{margin:0 24px 12px;}
+  #reproductor.lib-mode .player-modes,
+  #reproductor.lib-mode .player-float-btn,
+  #reproductor.lib-mode .player-related-wrap,
+  #reproductor.lib-mode .player-now{display:none !important;}
+  /* administración */
+  #libAdmin .adm-body{padding:6px 24px 120px; max-width:760px; margin:0 auto; width:100%; box-sizing:border-box;}
+  .adm-status{font-size:13px; color:var(--ink-soft); line-height:1.5; margin-bottom:12px;}
+  .adm-row{padding:12px; border-radius:16px; background:var(--card); border:1px solid var(--line); margin-bottom:10px;}
+  .adm-row .adm-t{font-weight:600; font-size:15px;}
+  .adm-badges{display:flex; flex-wrap:wrap; gap:6px; margin:6px 0 8px;}
+  .adm-b{font-size:11.5px; font-weight:600; padding:3px 9px; border-radius:999px; background:var(--bg-warm); color:var(--ink-soft);}
+  .adm-b.ok{background:rgba(143,184,158,.22); color:var(--sage-text, var(--sage-deep));}
+  .adm-b.warn{background:rgba(244,183,99,.22); color:var(--gold-deep);}
+  .adm-acts{display:flex; flex-wrap:wrap; gap:8px;}
+  .adm-acts button{padding:8px 12px; font-size:13px; border-radius:12px; border:1px solid var(--line); background:transparent; color:var(--ink); cursor:pointer; font-weight:600;}
+  .adm-form{max-height:68vh; overflow:auto; padding:2px 2px 8px;}
+  .adm-form label{display:block; font-size:12.5px; font-weight:600; color:var(--ink-soft); margin:12px 0 4px;}
+  .adm-form input[type=text],.adm-form input[type=date],.adm-form textarea,.adm-form select{width:100%; box-sizing:border-box; padding:10px 12px; border-radius:12px; border:1px solid var(--line); background:var(--card); color:var(--ink); font-size:14.5px; font-family:inherit;}
+  .adm-form textarea{min-height:70px; resize:vertical;}
+  .adm-help{font-size:12px; color:var(--ink-soft); line-height:1.45; margin-top:4px;}
+  .adm-prog{height:6px; border-radius:6px; background:var(--bg-warm); overflow:hidden; margin-top:8px; display:none;}
+  .adm-prog i{display:block; height:100%; width:0; background:var(--gold);}
 </style>
 </head>
 <body>
@@ -2855,6 +2903,7 @@
          primero que se ve — reutiliza la misma tarjeta visual que "Continúa
          tu plan" en el Home (.plan-continue), nada nuevo que aprender. -->
     <div id="musica-continue" style="padding:0 24px; margin-bottom:4px; display:none;"></div>
+    <div id="lib-section" style="display:none;"></div>
 
     <!-- Destacado de la semana: lo primero que se ve, arriba de "Para este
          momento" — más grande y con vida, para que abra la pantalla. -->
@@ -3035,11 +3084,24 @@
     </div>
   </section>
 
+  <!-- BIBLIOTECA: administración (solo la ven las personas listadas en library_admins) -->
+  <section class="screen noNav" id="libAdmin">
+    <div class="topbar"><div class="backbtn" aria-label="Atrás" onclick="go('perfil')">←</div><h2>Biblioteca</h2></div>
+    <div class="adm-body">
+      <div class="adm-status" id="adm-status"></div>
+      <div class="adm-acts" style="margin-bottom:14px;">
+        <button class="btn btn-primary" style="flex:1; padding:12px;" onclick="libAdminForm()">＋ Nuevo contenido</button>
+        <button onclick="libAdminCheck()">Revisar archivos</button>
+      </div>
+      <div id="adm-list"></div>
+    </div>
+  </section>
+
   <!-- PERFIL -->
   <section class="screen" id="perfil">
     <div class="topbar"><h2>Tu camino</h2><p class="camino-sub">Dios tiene un plan para ti. Sigue explorando.</p></div>
     <div class="container" style="padding-top:6px;" id="perfil-body"></div>
-    <div style="text-align:center; padding:6px 24px 120px; font-size:12.5px; color:var(--ink-soft); line-height:2;"><a href="/privacy.html" target="_blank" rel="noopener" style="color:inherit;">Privacidad</a> · <a href="/terms.html" target="_blank" rel="noopener" style="color:inherit;">Condiciones</a> · <a href="/eliminar-cuenta.html" target="_blank" rel="noopener" style="color:inherit;">Eliminar mi cuenta</a></div>
+    <div style="text-align:center; padding:6px 24px 120px; font-size:12.5px; color:var(--ink-soft); line-height:2;"><a href="/privacy.html" target="_blank" rel="noopener" style="color:inherit;">Privacidad</a> · <a href="/terms.html" target="_blank" rel="noopener" style="color:inherit;">Condiciones</a> · <a href="/eliminar-cuenta.html" target="_blank" rel="noopener" style="color:inherit;">Eliminar mi cuenta</a><br><a id="lib-admin-link" href="#" onclick="event.preventDefault(); go('libAdmin');" style="display:none; color:inherit;">Administrar biblioteca</a></div>
   </section>
 
   <!-- MINI REPRODUCTOR: sigue sonando aunque salgas del reproductor a explorar otra pantalla -->
@@ -4713,12 +4775,13 @@ function go(id, opts){
   document.getElementById('navbar').style.display = showNav ? 'flex' : 'none';
   if(id==='home') renderHomeQuick();
   if(id==='home' && splashDone && pendingOpenParams) setTimeout(runPendingOpen, 450);
-  if(id==='perfil') renderPerfil();
+  if(id==='perfil'){ renderPerfil(); libCheckAdmin(); }
   if(id==='misPalabras') renderMisPalabras();
   if(id==='misPastores') renderMisPastores();
   if(id==='hoy') renderHoy();
   if(id==='diario') renderDiario();
-  if(id==='musica') renderMusica();
+  if(id==='musica'){ renderMusica(); libRender(); }
+  if(id==='libAdmin') libAdminOpen();
   if(id==='chat' && !chatStarted) startChat();
   if(id==='biblia') { renderBooks(); renderPlanRow(); renderBibliaContinue(); renderBibliaDevo(); document.getElementById('search-results').innerHTML=''; }
   if(id==='historialLecturas') renderHistorialLecturas();
@@ -10296,5 +10359,371 @@ window.addEventListener('load', ()=>{
   dismissTimer = setTimeout(dismiss, 4050);
 });
 </script>
+<script>
+/* =====================================================================================
+   Biblioteca HERE — catálogo en Supabase, archivos en Cloudflare R2.
+   - El catálogo y las direcciones de audio llegan de /api/library y /api/library-media.
+   - El audio se reproduce con un <audio> nativo que se "disfraza" de ytPlayer (mismos métodos),
+     así el reproductor grande, el mini reproductor, la velocidad, los saltos y el temporizador
+     de sueño funcionan sin duplicar nada y sin dos reproducciones a la vez.
+   - Nada de esto muestra contenido inventado: si no hay nada publicado, la sección no aparece.
+   ===================================================================================== */
+const LIB = { items:null, error:false, off:false, type:'all', q:'', favs:new Set(load('here_lib_favs',[])), prog:load('here_lib_prog',{}), remoteDone:false, isAdmin:false, adminChecked:false };
+const LIB_LABEL = { bible:'Biblia', verse:'Versículo', podcast:'Podcast', episode:'Episodio', sermon:'Predicación', music:'Música', reflection:'Reflexión', devotional:'Devocional', prayer:'Oración', original:'Original HERE' };
+const LIB_CHIPS = { all:'Todo', fav:'Favoritos', bible:'Biblia', podcast:'Podcasts', sermon:'Predicaciones', music:'Música', reflection:'Reflexiones', devotional:'Devocionales', prayer:'Oraciones', original:'Originales' };
+const libEsc = (s)=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const libDur = (s)=>{ s=Math.round(s||0); if(!s) return ''; const h=Math.floor(s/3600), m=Math.floor(s%3600/60); return h? h+' h '+m+' min' : Math.max(1,m)+' min'; };
+async function libToken(){ try{ const sb=getSupabase(); if(!sb) return null; const {data}=await sb.auth.getSession(); return data&&data.session?data.session.access_token:null; }catch(e){ return null; } }
+async function libApi(path, opts){
+  opts = opts||{}; const h = {};
+  const tk = await libToken(); if(tk) h.Authorization='Bearer '+tk;
+  if(opts.body){ h['Content-Type']='application/json'; }
+  const r = await fetch(path, { method:opts.method||'GET', headers:h, body:opts.body?JSON.stringify(opts.body):undefined });
+  let j=null; try{ j=await r.json(); }catch(e){}
+  return { ok:r.ok, status:r.status, data:j||{} };
+}
+
+/* ---------- catálogo ---------- */
+async function libLoad(force){
+  if(LIB.items && !force && Date.now()-(LIB.at||0) < 120000) return;
+  try{
+    const r = await libApi('/api/library?limit=60');
+    if(r.status===501 || r.status===404){ LIB.off=true; LIB.items=[]; LIB.error=false; }
+    else if(!r.ok) throw new Error('lib');
+    else { LIB.items=r.data.items||[]; LIB.off=false; LIB.error=false; LIB.at=Date.now(); save('here_lib_cache', LIB.items); }
+  }catch(e){
+    LIB.off=false;
+    const cached = load('here_lib_cache', null);
+    if(cached && cached.length){ LIB.items=cached; LIB.error=false; } else { LIB.items=[]; LIB.error=true; }
+  }
+  libPullRemote();
+}
+async function libPullRemote(){
+  if(LIB.remoteDone || typeof hereUser==='undefined' || !hereUser) return;
+  const sb=getSupabase(); if(!sb) return; LIB.remoteDone=true;
+  try{
+    const f = await sb.from('library_favorites').select('item_id'); if(f.data) f.data.forEach(x=>LIB.favs.add(x.item_id));
+    const p = await sb.from('library_progress').select('item_id,position_sec,duration_sec,completed,last_played_at').order('last_played_at',{ascending:false}).limit(30);
+    if(p.data) p.data.forEach(x=>{ const t=Date.parse(x.last_played_at)||0; const cur=LIB.prog[x.item_id]; if(!cur||t>cur.t) LIB.prog[x.item_id]={pos:x.position_sec,dur:x.duration_sec,done:x.completed,t}; });
+    save('here_lib_favs',[...LIB.favs]); save('here_lib_prog',LIB.prog);
+    if(currentScreen==='musica') libRender();
+  }catch(e){ LIB.remoteDone=false; }
+}
+function libVisible(){
+  let a = LIB.items||[];
+  if(LIB.type!=='all') a = a.filter(i=> i.type===LIB.type || (LIB.type==='podcast'&&i.type==='episode') || (LIB.type==='bible'&&i.type==='verse'));
+  const q=LIB.q.trim().toLowerCase();
+  if(q) a = a.filter(i=> (i.title+' '+(i.creator||'')+' '+(i.description||'')).toLowerCase().includes(q));
+  return a;
+}
+const libHeart = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5s-7.5-4.6-9-9.6C2.1 7.6 4 5 6.9 5c1.9 0 3.4 1 5.1 3 1.7-2 3.2-3 5.1-3 2.9 0 4.8 2.6 3.9 5.9-1.5 5-9 9.6-9 9.6z"/></svg>';
+const libNote = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>';
+function libCardHTML(i){
+  const fav = LIB.favs.has(i.id), pr = LIB.prog[i.id];
+  const bits = [LIB_LABEL[i.type]||'', i.creator||'', libDur(i.durationSec)].filter(Boolean).join(' · ');
+  const cv = i.cover ? `style="background-image:url('${libEsc(i.cover)}'), var(--abib-sky, var(--sage-deep));"` : '';
+  return `<div class="lib-card" onclick="libPlay('${i.id}')" role="button" tabindex="0">
+    <div class="lib-cover" ${cv}>${i.cover?'':libNote}</div>
+    <div class="lib-meta"><div class="lib-t">${libEsc(i.title)}</div><div class="lib-s">${libEsc(bits)}${pr&&pr.pos>10&&!pr.done?' · retoma en '+libEsc(formatPlayerTime(pr.pos)):''}</div></div>
+    <button class="lib-fav ${fav?'on':''}" aria-label="${fav?'Quitar de favoritos':'Guardar en favoritos'}" onclick="event.stopPropagation(); libToggleFav('${i.id}')">${libHeart}</button>
+  </div>`;
+}
+function libRender(){
+  const el = document.getElementById('lib-section'); if(!el) return;
+  if(LIB.items===null){
+    el.style.display=''; el.innerHTML='<div class="lib-head"><h3>Biblioteca HERE</h3></div><div class="lib-list"><div class="lib-skel"></div><div class="lib-skel"></div></div>';
+    libLoad().then(libRender); return;
+  }
+  if(LIB.off || (!LIB.items.length && !LIB.error)){ el.style.display='none'; el.innerHTML=''; return; }   // nada publicado: no se muestra
+  el.style.display='';
+  if(LIB.error){
+    el.innerHTML='<div class="lib-head"><h3>Biblioteca HERE</h3></div><div class="lib-state">No pudimos cargar la biblioteca. Revisa tu conexión.<br><button class="btn btn-ghost" style="margin-top:10px;" onclick="LIB.items=null; libRender()">Reintentar</button></div>';
+    return;
+  }
+  const present = new Set(LIB.items.map(i=> i.type==='episode'?'podcast': i.type==='verse'?'bible': i.type));
+  const types = ['all', ...Object.keys(LIB_LABEL).filter(t=>present.has(t)&&t!=='episode'&&t!=='verse')];
+  if(LIB.favs.size) types.push('fav');
+  const chips = types.map(t=>`<button class="lib-chip ${LIB.type===t?'on':''}" onclick="libSetType('${t}')">${LIB_CHIPS[t]||t}</button>`).join('');
+  let list = LIB.type==='fav' ? (LIB.items||[]).filter(i=>LIB.favs.has(i.id)) : libVisible();
+  if(LIB.type==='fav' && LIB.q) list = list.filter(i=>(i.title+' '+(i.creator||'')).toLowerCase().includes(LIB.q.toLowerCase()));
+  // continuar escuchando: lo último empezado y sin terminar
+  const resume = Object.entries(LIB.prog).filter(([id,p])=>p&&!p.done&&p.pos>15&&LIB.items.some(i=>i.id===id)).sort((a,b)=>b[1].t-a[1].t)[0];
+  const ri = resume && LIB.items.find(i=>i.id===resume[0]);
+  el.innerHTML = `<div class="lib-head"><h3>Biblioteca HERE</h3></div>
+    ${ri?`<div class="lib-resume"><div class="plan-continue" onclick="libPlay('${ri.id}')"><span class="emoji">🎧</span><div style="flex:1;min-width:0;"><div style="font-size:11.5px;color:var(--ink-soft);font-weight:600;">Continuar escuchando</div><div style="font-size:14.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${libEsc(ri.title)}</div></div><span style="color:var(--ink-soft);">→</span></div></div>`:''}
+    <div class="lib-chips">${chips}</div>
+    <input class="lib-search" type="search" placeholder="Buscar en la biblioteca…" value="${libEsc(LIB.q)}" oninput="LIB.q=this.value; libRenderList()">
+    <div class="lib-list" id="lib-list">${list.length? list.map(libCardHTML).join('') : '<div class="lib-state">No hay resultados. Prueba con otra palabra o categoría.</div>'}</div>`;
+}
+function libRenderList(){
+  const l=document.getElementById('lib-list'); if(!l) return;
+  let list = LIB.type==='fav' ? (LIB.items||[]).filter(i=>LIB.favs.has(i.id)) : libVisible();
+  if(LIB.type==='fav' && LIB.q) list = list.filter(i=>(i.title+' '+(i.creator||'')).toLowerCase().includes(LIB.q.toLowerCase()));
+  l.innerHTML = list.length? list.map(libCardHTML).join('') : '<div class="lib-state">No hay resultados. Prueba con otra palabra o categoría.</div>';
+}
+function libSetType(t){ haptic(6); LIB.type=t; libRender(); }
+async function libToggleFav(id){
+  haptic(8);
+  const on = !LIB.favs.has(id);
+  on ? LIB.favs.add(id) : LIB.favs.delete(id);
+  save('here_lib_favs',[...LIB.favs]); libRenderList();
+  if(LIB.type==='fav') libRender();
+  if(typeof hereUser!=='undefined' && hereUser){
+    const sb=getSupabase(); if(!sb) return;
+    try{ on ? await sb.from('library_favorites').upsert({user_id:hereUser.id,item_id:id}) : await sb.from('library_favorites').delete().eq('item_id',id).eq('user_id',hereUser.id); }catch(e){}
+  }
+}
+
+/* ---------- reproducción nativa ---------- */
+const libEl = new Audio(); libEl.preload = 'metadata';
+let libItem = null, libStash = null, libRetried = false, libSavedAt = 0;
+const libShim = {
+  getPlayerState(){ return libEl.ended ? 0 : (!libEl.paused ? 1 : 2); },
+  playVideo(){ const p=libEl.play(); if(p&&p.catch) p.catch(()=>{ showHereToast('Toca reproducir para continuar.'); }); },
+  pauseVideo(){ libEl.pause(); },
+  seekTo(s){ try{ libEl.currentTime = Math.max(0, s); }catch(e){} },
+  getDuration(){ return isFinite(libEl.duration) && libEl.duration>0 ? libEl.duration : ((libItem&&libItem.durationSec)||0); },
+  getCurrentTime(){ return libEl.currentTime||0; },
+  getPlaybackRate(){ return libEl.playbackRate||1; },
+  setPlaybackRate(r){ libEl.playbackRate = r; },
+  getVolume(){ return Math.round(libEl.volume*100); },
+  setVolume(v){ libEl.volume = Math.max(0,Math.min(1,v/100)); },
+  getIframe(){ return null; }
+};
+const libActive = ()=> ytPlayer===libShim && !!currentPlayItem && !!currentPlayItem.lib;
+function libStateEvt(d){ try{ onPlayerStateChange({data:d}); }catch(e){} try{ if('mediaSession' in navigator) navigator.mediaSession.playbackState = d===1?'playing':'paused'; }catch(e){} }
+libEl.addEventListener('play',()=>libStateEvt(1));
+libEl.addEventListener('playing',()=>libStateEvt(1));
+libEl.addEventListener('pause',()=>{ if(!libEl.ended){ libStateEvt(2); libSaveProgress(true); } });
+libEl.addEventListener('timeupdate',()=>{ if(Date.now()-libSavedAt>15000) libSaveProgress(false); });
+libEl.addEventListener('ended',()=>{
+  libSaveProgress(true, true); libStateEvt(2);
+  if(typeof abibSleepEnd!=='undefined' && abibSleepEnd){ handleTrackEnded(); return; }
+  if(autoplayNext) libNext();
+});
+libEl.addEventListener('loadedmetadata',()=>{
+  const p = libItem && LIB.prog[libItem.id];
+  if(p && !p.done && p.pos>5 && libEl.duration && p.pos < libEl.duration-10){ try{ libEl.currentTime = p.pos; }catch(e){} }
+});
+libEl.addEventListener('error',async()=>{
+  if(!libItem) return;
+  if(!libRetried){ libRetried = true; const u = await libMediaUrl(libItem.id); if(u){ const t=libEl.currentTime; libEl.src=u; libEl.load(); libEl.play().catch(()=>{}); return; } }
+  libStateEvt(2);
+  showHereToast('No pudimos reproducir este audio. Revisa tu conexión e inténtalo de nuevo.');
+});
+async function libMediaUrl(id){
+  const r = await libApi('/api/library-media?id='+encodeURIComponent(id));
+  if(r.status===401){ showHereToast('Inicia sesión para escuchar este contenido.'); return null; }
+  if(!r.ok || !r.data.url){ showHereToast('Este audio no está disponible por ahora.'); return null; }
+  return r.data.url;
+}
+function libSaveProgress(force, done){
+  if(!libItem) return;
+  libSavedAt = Date.now();
+  const pos = Math.floor(libEl.currentTime||0), dur = Math.floor(libShim.getDuration()||0);
+  if(!force && pos<5) return;
+  const rec = { pos: done?0:pos, dur, done: !!done || (dur>0 && pos>=dur-10), t: Date.now() };
+  LIB.prog[libItem.id] = rec; save('here_lib_prog', LIB.prog);
+  if(typeof hereUser!=='undefined' && hereUser){
+    const sb=getSupabase(); if(sb) sb.from('library_progress').upsert({ user_id:hereUser.id, item_id:libItem.id, position_sec:rec.pos, duration_sec:dur||null, completed:rec.done, last_played_at:new Date().toISOString() }).then(()=>{},()=>{});
+  }
+}
+function libLeave(){            // otra fuente (YouTube) va a sonar: la biblioteca cede el paso
+  const rs=document.getElementById('reproductor'); if(rs) rs.classList.remove('lib-mode');
+  if(ytPlayer===libShim){ try{ libEl.pause(); }catch(e){} ytPlayer = libStash || null; }
+  libItem = null;
+}
+async function libPlay(id){
+  const it = (LIB.items||[]).find(x=>x.id===id); if(!it) return;
+  haptic(10);
+  showHereToast('Preparando audio…');
+  const url = await libMediaUrl(id); if(!url) return;
+  if(typeof isListening!=='undefined' && isListening){ try{ stopListen(); }catch(e){} }   // una sola cosa sonando a la vez
+  if(floatWindow){ try{ floatWindow.close(); }catch(e){} floatWindow=null; }
+  if(ytPlayer && ytPlayer!==libShim){ try{ ytPlayer.pauseVideo(); }catch(e){} libStash = ytPlayer; }
+  libSaveProgress(true);
+  libItem = it; libRetried = false; ytPlayer = libShim; currentRelatedVideos = [];
+  currentPlayItem = { id:'lib-'+it.id, name:it.title, role: it.creator || LIB_LABEL[it.type] || '', thumb: it.cover||'', lib:true, libId:it.id };
+  document.getElementById('player-title').textContent = it.title;
+  document.getElementById('player-a-title').textContent = it.title;
+  document.getElementById('player-a-sub').textContent = currentPlayItem.role;
+  const art = document.getElementById('player-audio-art');
+  if(art){ art.style.backgroundImage = it.cover ? `url('${it.cover}'), var(--abib-sky)` : ''; art.innerHTML = it.cover ? '' : '<svg class="abib-note" viewBox="0 0 24 24" fill="currentColor"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>'; }
+  const fb=document.getElementById('player-fallback'); if(fb) fb.style.display='none';
+  const sw=document.getElementById('player-audio-toggle'); if(sw) sw.innerHTML = miniPlayIcon(true);
+  go('reproductor'); setPlayerMode('audio');
+  document.getElementById('reproductor').classList.add('lib-mode');
+  const at=document.getElementById('player-autoplay-toggle'); if(at) at.checked = autoplayNext;
+  libEl.src = url; libEl.playbackRate = 1; libEl.load();
+  const pr = libEl.play(); if(pr&&pr.catch) pr.catch(()=>showHereToast('Toca reproducir para empezar.'));
+  updateMiniPlayer(); startMiniProgressTimer(); startPlayerProgressTimer(); playerToolsSync();
+  libMediaSession(it);
+}
+function libNext(){
+  if(!libItem) return;
+  const list = (LIB.type==='fav'? (LIB.items||[]).filter(i=>LIB.favs.has(i.id)) : libVisible());
+  const i = list.findIndex(x=>x.id===libItem.id);
+  const nxt = i>=0 ? list[i+1] : null;
+  if(nxt) libPlay(nxt.id); else showHereToast('Ese fue el último de la lista.');
+}
+function libMediaSession(it){
+  if(!('mediaSession' in navigator)) return;
+  try{
+    navigator.mediaSession.metadata = new MediaMetadata({ title: it.title, artist: it.creator||'HERE', album: LIB_LABEL[it.type]||'HERE', artwork: it.cover?[{src:it.cover,sizes:'512x512'}]:[] });
+    const set=(a,f)=>{ try{ navigator.mediaSession.setActionHandler(a,f); }catch(e){} };
+    set('play',()=>libShim.playVideo()); set('pause',()=>libShim.pauseVideo());
+    set('seekbackward',()=>playerSkip(-15)); set('seekforward',()=>playerSkip(30));
+    set('seekto',(d)=>{ if(d&&d.seekTime!=null) libShim.seekTo(d.seekTime); });
+    set('nexttrack',()=>libNext()); set('previoustrack',null);
+  }catch(e){}
+}
+/* una sola fuente a la vez: si empieza YouTube o la lectura de la Biblia, la biblioteca se detiene */
+(function(){
+  const wrap=(name,fn)=>{ const orig=window[name]; if(typeof orig!=='function') return; window[name]=function(){ fn.apply(null,arguments); return orig.apply(this,arguments); }; };
+  wrap('playTrack', ()=>libLeave());
+  wrap('startNeural', ()=>{ if(!libEl.paused) libEl.pause(); });
+  wrap('playChapterAudio', ()=>{ if(!libEl.paused) libEl.pause(); });
+  wrap('toggleListen', ()=>{ if(typeof isListening!=='undefined' && !isListening && !libEl.paused) libEl.pause(); });
+  const pn=window.playNextRelated; if(typeof pn==='function') window.playNextRelated=function(){ return libActive()? libNext() : pn.apply(this,arguments); };
+  const sp=window.stopPlayback; if(typeof sp==='function') window.stopPlayback=function(){ if(libActive()){ libSaveProgress(true); } return sp.apply(this,arguments); };
+})();
+
+/* ---------- administración ---------- */
+async function libCheckAdmin(){
+  const link=document.getElementById('lib-admin-link'); if(!link) return;
+  if(typeof hereUser==='undefined' || !hereUser){ link.style.display='none'; return; }
+  if(!LIB.adminChecked){ LIB.adminChecked=true; try{ const r=await libApi('/api/library-admin',{method:'POST',body:{action:'whoami'}}); LIB.isAdmin = r.ok && r.data.admin===true; LIB.admin = r.data; }catch(e){} }
+  link.style.display = LIB.isAdmin ? '' : 'none';
+}
+const ADM_ERR = { 'forbidden':'Tu cuenta no es de administración.', 'login-required':'Inicia sesión.', 'r2-not-configured':'Cloudflare R2 todavía no está configurado en Vercel.', 'rights-not-verified':'Primero verifica los derechos (propio, con licencia o dominio público).', 'license-expired':'La licencia está vencida.', 'no-audio':'Falta subir el audio.', 'audio-not-ready':'El audio aún no está listo.', 'not-uploaded':'El archivo no llegó a R2. Intenta de nuevo.', 'size-mismatch':'El archivo no coincide con lo declarado. Súbelo otra vez.', 'bad-content-type':'Formato no permitido (usa MP3 o M4A; portada JPG, PNG o WebP).', 'bad-size':'El archivo es demasiado grande (audio máx. 300 MB, portada 5 MB).', 'unpublish-first':'Despublica antes de borrar.', 'confirm-title':'El título de confirmación no coincide.', 'title-and-type-required':'Falta el título o el tipo.' };
+const admMsg = (r)=> ADM_ERR[r.data && r.data.error] || (r.data && r.data.message) || 'Algo falló. Intenta de nuevo.';
+let ADM = { items:[] };
+async function libAdminOpen(){
+  const st=document.getElementById('adm-status'); st.textContent='Cargando…';
+  const w = await libApi('/api/library-admin',{method:'POST',body:{action:'whoami'}});
+  if(!w.ok || !w.data.admin){ st.textContent='Esta sección es solo para administración.'; document.getElementById('adm-list').innerHTML=''; return; }
+  st.innerHTML = w.data.r2 ? ('Cloudflare R2 conectado.' + (w.data.publicBase ? ' Dominio público activo.' : ' <b>Sin dominio público</b>: se usan enlaces firmados temporales (funciona, pero sin caché de largo plazo).')) : '<b>R2 no está configurado.</b> Agrega las variables en Vercel (ver guía) para poder subir audios.';
+  await libAdminRefresh();
+}
+async function libAdminRefresh(){
+  const r = await libApi('/api/library-admin',{method:'POST',body:{action:'list'}});
+  const box=document.getElementById('adm-list');
+  if(!r.ok){ box.innerHTML='<div class="lib-state" style="margin:0;">'+libEsc(admMsg(r))+'</div>'; return; }
+  ADM.items=r.data.items||[];
+  if(!ADM.items.length){ box.innerHTML='<div class="lib-state" style="margin:0;">Aún no hay contenido. Crea el primero con “Nuevo contenido”.</div>'; return; }
+  const RL={own:'Propio',licensed:'Con licencia',public_domain:'Dominio público',pending:'Derechos pendientes',denied:'Derechos denegados'};
+  box.innerHTML = ADM.items.map(i=>{
+    const okR=['own','licensed','public_domain'].includes(i.rights_status);
+    const ms=i.media&&i.media.status;
+    return `<div class="adm-row"><div class="adm-t">${libEsc(i.title)}</div>
+      <div class="adm-badges"><span class="adm-b">${libEsc(LIB_LABEL[i.type]||i.type)}</span>
+      <span class="adm-b ${i.status==='published'?'ok':'warn'}">${i.status==='published'?'Publicado':i.status==='archived'?'Archivado':'Borrador'}</span>
+      <span class="adm-b ${okR?'ok':'warn'}">${RL[i.rights_status]}</span>
+      <span class="adm-b ${ms==='ready'?'ok':'warn'}">${ms==='ready'?'Audio listo':ms==='missing'?'Audio perdido':ms?'Audio '+ms:'Sin audio'}</span>
+      ${i.visibility==='members'?'<span class="adm-b">Solo miembros</span>':''}</div>
+      <div class="adm-acts"><button onclick="libAdminForm('${i.id}')">Editar / subir</button>
+      ${ms==='ready'?`<button onclick="libAdminPreview('${i.id}')">Escuchar</button>`:''}
+      ${i.status==='published'?`<button onclick="libAdminAct('unpublish','${i.id}')">Despublicar</button>`:`<button onclick="libAdminAct('publish','${i.id}')">Publicar</button>`}
+      <button onclick="libAdminAct('archive','${i.id}')">Archivar</button>
+      <button onclick="libAdminDelete('${i.id}')">Borrar</button></div></div>`;
+  }).join('');
+}
+async function libAdminAct(a,id){
+  haptic(8); const r=await libApi('/api/library-admin',{method:'POST',body:{action:a,id}});
+  if(!r.ok){ showHereToast(admMsg(r)); return; }
+  showHereToast(a==='publish'?'Publicado':a==='unpublish'?'Vuelve a borrador':'Archivado'); LIB.items=null; libAdminRefresh();
+}
+async function libAdminPreview(id){
+  const r=await libApi('/api/library-admin',{method:'POST',body:{action:'preview',id}});
+  if(!r.ok){ showHereToast(admMsg(r)); return; }
+  const a=new Audio(r.data.url); a.play().then(()=>{ showHereToast('Reproduciendo vista previa…'); setTimeout(()=>a.pause(),20000); }).catch(()=>showHereToast('No se pudo reproducir la vista previa.'));
+}
+async function libAdminDelete(id){
+  const it=ADM.items.find(x=>x.id===id); if(!it) return;
+  const t = prompt('Esto borra el contenido y sus archivos para siempre.\nEscribe el título exacto para confirmar:\n\n'+it.title);
+  if(t===null) return;
+  const r=await libApi('/api/library-admin',{method:'POST',body:{action:'delete',id,confirm:t}});
+  if(!r.ok){ showHereToast(admMsg(r)); return; }
+  showHereToast('Borrado'); libAdminRefresh();
+}
+async function libAdminCheck(){
+  showHereToast('Revisando archivos…'); const r=await libApi('/api/library-admin',{method:'POST',body:{action:'check'}});
+  if(!r.ok){ showHereToast(admMsg(r)); return; }
+  showHereToast(r.data.missing.length ? r.data.missing.length+' archivo(s) perdido(s). Vuelve a subirlos.' : 'Todo en orden ('+r.data.checked+' revisados).'); libAdminRefresh();
+}
+function libAdminForm(id){
+  const it = id ? ADM.items.find(x=>x.id===id) : null;
+  const v=(k,d)=> libEsc(it&&it[k]!=null? it[k] : (d||''));
+  const opt=(val,lab,cur)=>`<option value="${val}" ${cur===val?'selected':''}>${lab}</option>`;
+  openSheet(`<div class="handle"></div><p class="serif" style="font-size:20px;margin-bottom:4px;">${it?'Editar contenido':'Nuevo contenido'}</p>
+  <div class="adm-form" id="adm-form" data-id="${it?it.id:''}">
+    <label>Título</label><input type="text" id="af-title" maxlength="160" value="${v('title')}">
+    <label>Tipo</label><select id="af-type">${Object.keys(LIB_LABEL).map(k=>opt(k,LIB_LABEL[k],it?it.type:'sermon')).join('')}</select>
+    <label>Autor, artista o pastor</label><input type="text" id="af-creator" maxlength="120" value="${v('creator')}">
+    <label>Descripción</label><textarea id="af-desc" maxlength="2000">${v('description')}</textarea>
+    <label>Categorías (separadas por coma)</label><input type="text" id="af-cats" value="${libEsc(it?(it.categories||[]).join(', '):'')}">
+    <label>Quién puede escucharlo</label><select id="af-vis">${opt('public','Todo el mundo',it?it.visibility:'public')}${opt('members','Solo personas con cuenta',it?it.visibility:'public')}</select>
+    <label>Derechos de uso</label><select id="af-rights">${opt('pending','Pendiente de verificar',it?it.rights_status:'pending')}${opt('own','Contenido propio de HERE',it?it.rights_status:'')}${opt('licensed','Con licencia o permiso escrito',it?it.rights_status:'')}${opt('public_domain','Dominio público',it?it.rights_status:'')}${opt('denied','Sin permiso (no publicar)',it?it.rights_status:'')}</select>
+    <div class="adm-help">Solo puedes publicar si es propio, con licencia o dominio público. HERE no certifica que sea legal: confirma tú los permisos.</div>
+    <label>Titular de los derechos</label><input type="text" id="af-holder" value="${v('rights_holder')}">
+    <label>Condiciones del permiso</label><input type="text" id="af-terms" value="${v('rights_terms')}">
+    <label>La licencia vence (opcional)</label><input type="date" id="af-exp" value="${v('rights_expires')}">
+    <label>${it&&it.media?'Reemplazar audio (MP3 o M4A, máx. 300 MB)':'Audio (MP3 o M4A, máx. 300 MB)'}</label><input type="file" id="af-audio" accept="audio/mpeg,audio/mp4,audio/x-m4a,audio/aac,.mp3,.m4a">
+    <label>Portada (JPG, PNG o WebP, máx. 5 MB)</label><input type="file" id="af-cover" accept="image/jpeg,image/png,image/webp">
+    <div class="adm-prog" id="af-prog"><i></i></div><div class="adm-help" id="af-msg"></div>
+  </div>
+  <button class="btn btn-primary" id="af-save" style="width:100%;margin-top:14px;" onclick="libAdminSave()">Guardar</button>
+  <button class="btn btn-ghost" style="width:100%;margin-top:8px;" onclick="closeSheet()">Cancelar</button>`);
+}
+function admProg(p,msg){ const b=document.getElementById('af-prog'); if(b){ b.style.display='block'; b.firstElementChild.style.width=p+'%'; } const m=document.getElementById('af-msg'); if(m&&msg) m.textContent=msg; }
+function admPut(url, headers, file){
+  return new Promise((res,rej)=>{
+    const x=new XMLHttpRequest(); x.open('PUT',url);
+    Object.keys(headers||{}).forEach(k=>x.setRequestHeader(k,headers[k]));
+    x.upload.onprogress=e=>{ if(e.lengthComputable) admProg(Math.round(e.loaded/e.total*100)); };
+    x.onload=()=> x.status>=200&&x.status<300 ? res() : rej(new Error('put-'+x.status));
+    x.onerror=()=>rej(new Error('network')); x.send(file);
+  });
+}
+function admDuration(file){
+  return new Promise(res=>{ const a=new Audio(), u=URL.createObjectURL(file); const done=(d)=>{ URL.revokeObjectURL(u); res(d); };
+    a.preload='metadata'; a.onloadedmetadata=()=>done(isFinite(a.duration)?Math.round(a.duration):null); a.onerror=()=>done(null); setTimeout(()=>done(null),5000); a.src=u; });
+}
+async function libAdminSave(){
+  const g=(i)=>document.getElementById(i).value;
+  const btn=document.getElementById('af-save'); btn.disabled=true;
+  try{
+    const id=document.getElementById('adm-form').dataset.id||undefined;
+    admProg(2,'Guardando datos…');
+    const s = await libApi('/api/library-admin',{method:'POST',body:{action:'save',id,title:g('af-title'),type:g('af-type'),creator:g('af-creator'),description:g('af-desc'),categories:g('af-cats'),visibility:g('af-vis'),rights_status:g('af-rights'),rights_holder:g('af-holder'),rights_terms:g('af-terms'),rights_expires:g('af-exp')}});
+    if(!s.ok) throw new Error(admMsg(s));
+    const itemId=s.data.item.id;
+    const audio=document.getElementById('af-audio').files[0], cover=document.getElementById('af-cover').files[0];
+    if(audio){
+      admProg(0,'Subiendo audio…');
+      const sg=await libApi('/api/library-admin',{method:'POST',body:{action:'sign-upload',itemId,kind:'audio',contentType:audio.type||'audio/mpeg',size:audio.size}});
+      if(!sg.ok) throw new Error(admMsg(sg));
+      const dur=await admDuration(audio);
+      await admPut(sg.data.putUrl, sg.data.headers, audio);
+      admProg(100,'Verificando en R2…');
+      const c=await libApi('/api/library-admin',{method:'POST',body:{action:'complete',mediaId:sg.data.mediaId,durationSec:dur}});
+      if(!c.ok) throw new Error(admMsg(c));
+    }
+    if(cover){
+      admProg(0,'Subiendo portada…');
+      const sg=await libApi('/api/library-admin',{method:'POST',body:{action:'sign-upload',itemId,kind:'cover',contentType:cover.type,size:cover.size}});
+      if(!sg.ok) throw new Error(admMsg(sg));
+      await admPut(sg.data.putUrl, sg.data.headers, cover);
+      const c=await libApi('/api/library-admin',{method:'POST',body:{action:'complete',itemId,coverKey:sg.data.key}});
+      if(!c.ok) throw new Error(admMsg(c));
+    }
+    closeSheet(); showHereToast('Guardado'); LIB.items=null; libAdminRefresh();
+  }catch(e){
+    const m=document.getElementById('af-msg'); if(m) m.textContent = (e.message==='network'||/^put-/.test(e.message)) ? 'La subida falló. Revisa tu conexión y la configuración CORS del bucket en Cloudflare.' : e.message;
+    btn.disabled=false;
+  }
+}
+</script>
+
 </body>
 </html>

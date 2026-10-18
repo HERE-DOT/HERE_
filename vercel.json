@@ -1,5 +1,6 @@
 {
   "functions": {
-    "api/tts-chapter.js": { "maxDuration": 60 }
+    "api/tts-chapter.js": { "maxDuration": 60 },
+    "api/library-admin.js": { "maxDuration": 30 }
   }
 }
