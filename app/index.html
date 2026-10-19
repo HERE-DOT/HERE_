@@ -2289,6 +2289,19 @@
   .lib-seg{display:flex; gap:4px; margin:0 24px 12px; padding:4px; border-radius:14px; background:var(--bg-warm); border:1px solid var(--line);}
   .lib-seg button{flex:1; padding:9px 4px; border:0; border-radius:10px; background:transparent; color:var(--ink-soft); font-size:12.5px; font-weight:700; letter-spacing:.2px; cursor:pointer; white-space:nowrap;}
   .lib-seg button.on{background:var(--card); color:var(--ink); box-shadow:var(--shadow-sm);}
+  .lib-sub{font-size:13px; font-weight:700; color:var(--ink-soft); padding:0 24px; margin:2px 0 8px;}
+  .lib-hrow{display:flex; gap:14px; overflow-x:auto; padding:0 24px 14px; scrollbar-width:none;}
+  .lib-hrow::-webkit-scrollbar{display:none;}
+  .lib-person,.lib-show{flex:none; width:76px; border:0; background:transparent; padding:0; cursor:pointer; text-align:center; color:var(--ink);}
+  .lib-show{width:92px;}
+  .lib-avatar{display:flex; align-items:center; justify-content:center; width:64px; height:64px; margin:0 auto 6px; border-radius:50%; background:var(--abib-sky, var(--sage-deep)) center/cover; color:#EBD9A8; font-weight:700; font-size:22px; font-family:'Cormorant Garamond',Georgia,serif;}
+  .lib-avatar.big{width:72px; height:72px; margin:0; flex:none;}
+  .lib-showcover{display:flex; align-items:center; justify-content:center; width:92px; height:92px; margin:0 auto 6px; border-radius:14px; background:var(--abib-sky, var(--sage-deep)) center/cover; color:#EBD9A8;}
+  .lib-showcover svg{width:26px; height:26px;}
+  .lib-showcover.big{width:84px; height:84px; margin:0; flex:none;}
+  .lib-pn{display:block; font-size:12px; font-weight:600; line-height:1.25; max-height:2.5em; overflow:hidden;}
+  .lib-detail{display:flex; gap:14px; align-items:center; margin:2px 0 10px;}
+  .lib-p{font-size:14px; color:var(--ink-soft); line-height:1.55; margin:8px 0;}
   .lib-chips{display:flex; gap:8px; overflow-x:auto; padding:2px 24px 10px; scrollbar-width:none;}
   .lib-chips::-webkit-scrollbar{display:none;}
   .lib-chip{flex:none; padding:7px 14px; border-radius:999px; border:1px solid var(--line); background:var(--card); color:var(--ink-soft); font-size:13px; font-weight:600; cursor:pointer;}
@@ -3093,9 +3106,10 @@
     <div class="adm-body">
       <div class="adm-status" id="adm-status"></div>
       <div class="adm-acts" style="margin-bottom:14px;">
-        <button class="btn btn-primary" style="flex:1; padding:12px;" onclick="libAdminForm()">＋ Nuevo contenido</button>
+        <button class="btn btn-primary" style="flex:1; padding:12px;" onclick="libAdminNew()">＋ Nuevo</button>
         <button onclick="libAdminCheck()">Revisar archivos</button>
       </div>
+      <div class="lib-seg" id="adm-tabs" style="margin:0 0 12px;"><button class="on" onclick="libAdminTab('items')">Contenido</button><button onclick="libAdminTab('artists')">Artistas</button><button onclick="libAdminTab('series')">Programas</button></div>
       <div id="adm-list"></div>
     </div>
   </section>
@@ -10371,7 +10385,7 @@ window.addEventListener('load', ()=>{
      de sueño funcionan sin duplicar nada y sin dos reproducciones a la vez.
    - Nada de esto muestra contenido inventado: si no hay nada publicado, la sección no aparece.
    ===================================================================================== */
-const LIB = { items:null, error:false, off:false, line:'all', type:'all', q:'', favs:new Set(load('here_lib_favs',[])), prog:load('here_lib_prog',{}), remoteDone:false, isAdmin:false, adminChecked:false };
+const LIB = { artists:load('here_lib_artists',[]), series:load('here_lib_series',[]), items:null, error:false, off:false, line:'all', type:'all', q:'', favs:new Set(load('here_lib_favs',[])), prog:load('here_lib_prog',{}), remoteDone:false, isAdmin:false, adminChecked:false };
 const LIB_LABEL = { bible:'Biblia', verse:'Versículo', podcast:'Podcast', episode:'Episodio', sermon:'Predicación', music:'Música', reflection:'Reflexión', devotional:'Devocional', prayer:'Oración', original:'Original HERE' };
 const LIB_CHIPS = { all:'Todo', fav:'Favoritos', bible:'Biblia', podcast:'Podcasts', sermon:'Predicaciones', music:'Música', reflection:'Reflexiones', devotional:'Devocionales', prayer:'Oraciones', original:'Originales' };
 const libEsc = (s)=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -10393,7 +10407,13 @@ async function libLoad(force){
     const r = await libApi('/api/library?limit=60');
     if(r.status===501 || r.status===404){ LIB.off=true; LIB.items=[]; LIB.error=false; }
     else if(!r.ok) throw new Error('lib');
-    else { LIB.items=r.data.items||[]; LIB.off=false; LIB.error=false; LIB.at=Date.now(); save('here_lib_cache', LIB.items); }
+    else {
+      LIB.items=r.data.items||[]; LIB.off=false; LIB.error=false; LIB.at=Date.now(); save('here_lib_cache', LIB.items);
+      // artistas y programas: complementos del catálogo; si fallan, la biblioteca sigue funcionando
+      try{ const [a,sr] = await Promise.all([libApi('/api/library?kind=artists'), libApi('/api/library?kind=series')]);
+        if(a.ok){ LIB.artists=a.data.artists||[]; save('here_lib_artists',LIB.artists); }
+        if(sr.ok){ LIB.series=sr.data.series||[]; save('here_lib_series',LIB.series); } }catch(e){}
+    }
   }catch(e){
     LIB.off=false;
     const cached = load('here_lib_cache', null);
@@ -10432,7 +10452,8 @@ const libHeart = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" str
 const libNote = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>';
 function libCardHTML(i){
   const fav = LIB.favs.has(i.id), pr = LIB.prog[i.id];
-  const bits = [LIB_LABEL[i.type]||'', i.creator||'', libDur(i.durationSec)].filter(Boolean).join(' · ');
+  const orig = i.origin==='here' ? 'Producción HERE' : i.origin==='community' ? 'Comunidad' : '';
+  const bits = [orig, LIB_LABEL[i.type]||'', i.creator||'', libDur(i.durationSec)].filter(Boolean).join(' · ');
   const cv = i.cover ? `style="background-image:url('${libEsc(i.cover)}'), var(--abib-sky, var(--sage-deep));"` : '';
   return `<div class="lib-card" onclick="libPlay('${i.id}')" role="button" tabindex="0">
     <div class="lib-cover" ${cv}>${i.cover?'':libNote}</div>
@@ -10465,14 +10486,51 @@ function libRender(){
   const chips = types.length>1 ? `<div class="lib-chips">${types.map(t=>`<button class="lib-chip ${LIB.type===t?'on':''}" onclick="libSetType('${t}')">${LIB_CHIPS[t]||t}</button>`).join('')}</div>` : '';
   const resume = Object.entries(LIB.prog).filter(([id,p])=>p&&!p.done&&p.pos>15&&inLine.some(i=>i.id===id)).sort((a,b)=>b[1].t-a[1].t)[0];
   const ri = resume && inLine.find(i=>i.id===resume[0]);
+  const rows = (LIB.line==='music' ? libArtistsRow() : '') + (LIB.line==='originals' ? libSeriesRow() : '');
   let body;
   if(!inLine.length){ const e=LIB_EMPTY[LIB.line]||LIB_EMPTY.all; body=`<div class="lib-state"><b style="display:block;color:var(--ink);margin-bottom:4px;">${e.t}</b>${e.d}</div>`; }
   else body = `${ri?`<div class="lib-resume"><div class="plan-continue" onclick="libPlay('${ri.id}')"><span class="emoji">🎧</span><div style="flex:1;min-width:0;"><div style="font-size:11.5px;color:var(--ink-soft);font-weight:600;">Continuar escuchando</div><div style="font-size:14.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${libEsc(ri.title)}</div></div><span style="color:var(--ink-soft);">→</span></div></div>`:''}
     ${chips}
     <input class="lib-search" type="search" placeholder="Buscar en la biblioteca…" value="${libEsc(LIB.q)}" oninput="LIB.q=this.value; libRenderList()">
     <div class="lib-list" id="lib-list"></div>`;
-  el.innerHTML = head(seg + body);
+  el.innerHTML = head(seg + rows + body);
   if(inLine.length) libRenderList();
+}
+
+const libInitial = (n)=> libEsc((n||'?').trim().charAt(0).toUpperCase());
+function libArtistsRow(){
+  const a = LIB.artists||[]; if(!a.length) return '';
+  return `<div class="lib-sub">Artistas</div><div class="lib-hrow">${a.map(x=>`<button class="lib-person" onclick="libArtistOpen('${x.id}')"><span class="lib-avatar" ${x.photo?`style="background-image:url('${libEsc(x.photo)}')"`:''}>${x.photo?'':libInitial(x.name)}</span><span class="lib-pn">${libEsc(x.name)}</span></button>`).join('')}</div>`;
+}
+function libSeriesRow(){
+  const a = LIB.series||[]; if(!a.length) return '';
+  return `<div class="lib-sub">Programas</div><div class="lib-hrow">${a.map(x=>`<button class="lib-show" onclick="libSeriesOpen('${x.id}')"><span class="lib-showcover" ${x.cover?`style="background-image:url('${libEsc(x.cover)}'), var(--abib-sky, var(--sage-deep))"`:''}>${x.cover?'':libNote}</span><span class="lib-pn">${libEsc(x.title)}</span></button>`).join('')}</div>`;
+}
+function libSheetList(list){
+  return list.length ? `<div class="lib-list" style="padding:0;">${list.map(libCardHTML).join('')}</div>` : '<div class="lib-state" style="margin:0;">Aún no hay audios publicados aquí.</div>';
+}
+function libPlayFromSheet(id){ closeSheet(); libPlay(id); }
+function libArtistOpen(id){
+  const a=(LIB.artists||[]).find(x=>x.id===id); if(!a) return; haptic(6);
+  const songs=(LIB.items||[]).filter(i=>i.artistId===id);
+  openSheet(`<div class="handle"></div><div class="lib-detail"><span class="lib-avatar big" ${a.photo?`style="background-image:url('${libEsc(a.photo)}')"`:''}>${a.photo?'':libInitial(a.name)}</span>
+    <div><div class="serif" style="font-size:22px;">${libEsc(a.name)}</div>${a.featured?'<div class="adm-b warn" style="display:inline-block;margin-top:4px;">Artista destacado</div>':''}</div></div>
+    ${a.bio?`<p class="lib-p">${libEsc(a.bio)}</p>`:''}${a.story?`<p class="lib-p">${libEsc(a.story)}</p>`:''}
+    <div class="lib-sub" style="padding:0;margin:14px 0 8px;">Canciones</div>
+    <div style="max-height:44vh;overflow:auto;">${libSheetList(songs).replace(/libPlay\(/g,'libPlayFromSheet(')}</div>
+    <button class="btn btn-ghost" style="width:100%;margin-top:14px;" onclick="closeSheet()">Cerrar</button>`);
+}
+function libSeriesOpen(id){
+  const sr=(LIB.series||[]).find(x=>x.id===id); if(!sr) return; haptic(6);
+  const eps=(LIB.items||[]).filter(i=>i.seriesId===id).sort((a,b)=>(a.episode||9999)-(b.episode||9999));
+  const orig = sr.origin==='here' ? 'Producción HERE' : sr.origin==='community' ? 'Comunidad' : '';
+  openSheet(`<div class="handle"></div><div class="lib-detail"><span class="lib-showcover big" ${sr.cover?`style="background-image:url('${libEsc(sr.cover)}'), var(--abib-sky, var(--sage-deep))"`:''}>${sr.cover?'':libNote}</span>
+    <div><div class="serif" style="font-size:22px;">${libEsc(sr.title)}</div><div style="font-size:12.5px;color:var(--ink-soft);margin-top:2px;">${libEsc([orig,sr.creator].filter(Boolean).join(' · '))}</div></div></div>
+    ${sr.description?`<p class="lib-p">${libEsc(sr.description)}</p>`:''}
+    ${eps.length?`<button class="btn btn-primary" style="width:100%;margin-top:6px;" onclick="libPlayFromSheet('${eps[0].id}')">Empezar desde el primer episodio</button>`:''}
+    <div class="lib-sub" style="padding:0;margin:14px 0 8px;">Episodios</div>
+    <div style="max-height:40vh;overflow:auto;">${libSheetList(eps).replace(/libPlay\(/g,'libPlayFromSheet(')}</div>
+    <button class="btn btn-ghost" style="width:100%;margin-top:14px;" onclick="closeSheet()">Cerrar</button>`);
 }
 function libSetLine(k){ haptic(6); LIB.line=k; LIB.type='all'; libRender(); }
 function libRenderList(){
@@ -10615,9 +10673,9 @@ async function libCheckAdmin(){
   if(!LIB.adminChecked){ LIB.adminChecked=true; try{ const r=await libApi('/api/library-admin',{method:'POST',body:{action:'whoami'}}); LIB.isAdmin = r.ok && r.data.admin===true; LIB.admin = r.data; }catch(e){} }
   link.style.display = LIB.isAdmin ? '' : 'none';
 }
-const ADM_ERR = { 'forbidden':'Tu cuenta no es de administración.', 'login-required':'Inicia sesión.', 'r2-not-configured':'Cloudflare R2 todavía no está configurado en Vercel.', 'rights-not-verified':'Primero verifica los derechos (propio, con licencia o dominio público).', 'license-expired':'La licencia está vencida.', 'no-audio':'Falta subir el audio.', 'audio-not-ready':'El audio aún no está listo.', 'not-uploaded':'El archivo no llegó a R2. Intenta de nuevo.', 'size-mismatch':'El archivo no coincide con lo declarado. Súbelo otra vez.', 'bad-content-type':'Formato no permitido (usa MP3 o M4A; portada JPG, PNG o WebP).', 'bad-size':'El archivo es demasiado grande (audio máx. 300 MB, portada 5 MB).', 'unpublish-first':'Despublica antes de borrar.', 'confirm-title':'El título de confirmación no coincide.', 'title-and-type-required':'Falta el título o el tipo.' };
+const ADM_ERR = { 'forbidden':'Tu cuenta no es de administración.', 'login-required':'Inicia sesión.', 'r2-not-configured':'Cloudflare R2 todavía no está configurado en Vercel.', 'rights-not-verified':'Primero verifica los derechos (propio, con licencia o dominio público).', 'license-expired':'La licencia está vencida.', 'no-audio':'Falta subir el audio.', 'audio-not-ready':'El audio aún no está listo.', 'not-uploaded':'El archivo no llegó a R2. Intenta de nuevo.', 'size-mismatch':'El archivo no coincide con lo declarado. Súbelo otra vez.', 'bad-content-type':'Formato no permitido (usa MP3 o M4A; portada JPG, PNG o WebP).', 'bad-size':'El archivo es demasiado grande (audio máx. 300 MB, portada 5 MB).', 'unpublish-first':'Despublica antes de borrar.', 'confirm-title':'El título de confirmación no coincide.', 'title-and-type-required':'Falta el título o el tipo.', 'name-required':'Falta el nombre.', 'bad-request':'Solicitud no válida.' };
 const admMsg = (r)=> ADM_ERR[r.data && r.data.error] || (r.data && r.data.message) || 'Algo falló. Intenta de nuevo.';
-let ADM = { items:[] };
+let ADM = { items:[], artists:[], series:[], v2:false, tab:'items' };
 async function libAdminOpen(){
   const st=document.getElementById('adm-status'); st.textContent='Cargando…';
   const w = await libApi('/api/library-admin',{method:'POST',body:{action:'whoami'}});
@@ -10630,7 +10688,13 @@ async function libAdminRefresh(){
   const box=document.getElementById('adm-list');
   if(!r.ok){ box.innerHTML='<div class="lib-state" style="margin:0;">'+libEsc(admMsg(r))+'</div>'; return; }
   ADM.items=r.data.items||[];
-  if(!ADM.items.length){ box.innerHTML='<div class="lib-state" style="margin:0;">Aún no hay contenido. Crea el primero con “Nuevo contenido”.</div>'; return; }
+  const m = await libApi('/api/library-admin',{method:'POST',body:{action:'list-meta'}});   // falla (sin error visible) si aún no se aplicó la migración v2
+  ADM.v2 = m.ok; if(m.ok){ ADM.artists=m.data.artists||[]; ADM.series=m.data.series||[]; }
+  const tabs=document.getElementById('adm-tabs'); if(tabs){ tabs.style.display = ADM.v2 ? '' : 'none'; [...tabs.children].forEach((b,k)=>b.classList.toggle('on', ['items','artists','series'][k]===ADM.tab)); }
+  if(!ADM.v2) ADM.tab='items';
+  if(ADM.tab==='artists') return libAdminMetaList('artist');
+  if(ADM.tab==='series') return libAdminMetaList('series');
+  if(!ADM.items.length){ box.innerHTML='<div class="lib-state" style="margin:0;">Aún no hay contenido. Crea el primero con “＋ Nuevo”.</div>'; return; }
   const RL={own:'Propio',licensed:'Con licencia',public_domain:'Dominio público',pending:'Derechos pendientes',denied:'Derechos denegados'};
   box.innerHTML = ADM.items.map(i=>{
     const okR=['own','licensed','public_domain'].includes(i.rights_status);
@@ -10647,6 +10711,63 @@ async function libAdminRefresh(){
       <button onclick="libAdminAct('archive','${i.id}')">Archivar</button>
       <button onclick="libAdminDelete('${i.id}')">Borrar</button></div></div>`;
   }).join('');
+}
+function libAdminTab(t){ ADM.tab=t; libAdminRefresh(); }
+function libAdminNew(){ ADM.tab==='artists' ? libArtistForm() : ADM.tab==='series' ? libSeriesForm() : libAdminForm(); }
+function libAdminMetaList(kind){
+  const box=document.getElementById('adm-list'); const isA = kind==='artist';
+  const rows = isA ? ADM.artists : ADM.series;
+  if(!rows.length){ box.innerHTML = `<div class="lib-state" style="margin:0;">${isA?'Aún no hay artistas. Crea el primero con “＋ Nuevo”.':'Aún no hay programas. Crea el primero con “＋ Nuevo”.'}</div>`; return; }
+  box.innerHTML = rows.map(x=>{
+    const name = isA ? x.name : x.title; const pub = x.status==='published';
+    return `<div class="adm-row"><div class="adm-t">${libEsc(name)}</div>
+      <div class="adm-badges"><span class="adm-b ${pub?'ok':'warn'}">${pub?'Publicado':x.status==='archived'?'Archivado':'Borrador'}</span>${x.featured?'<span class="adm-b">Destacado</span>':''}${!isA&&x.origin==='here'?'<span class="adm-b ok">Producción HERE</span>':''}</div>
+      <div class="adm-acts"><button onclick="${isA?'libArtistForm':'libSeriesForm'}('${x.id}')">Editar</button>
+      <button onclick="libAdminMetaStatus('${kind}','${x.id}','${pub?'draft':'published'}')">${pub?'Despublicar':'Publicar'}</button>
+      <button onclick="libAdminMetaStatus('${kind}','${x.id}','archived')">Archivar</button></div></div>`;
+  }).join('');
+}
+async function libAdminMetaStatus(kind,id,status){
+  haptic(8); const r=await libApi('/api/library-admin',{method:'POST',body:{action:'set-meta-status',entity:kind,id,status}});
+  if(!r.ok){ showHereToast(admMsg(r)); return; } LIB.items=null; LIB.at=0; libAdminRefresh();
+}
+function libMetaFormHTML(kind, row){
+  const isA = kind==='artist'; const v=(k)=>libEsc(row&&row[k]!=null?row[k]:'');
+  return `<div class="handle"></div><p class="serif" style="font-size:20px;margin-bottom:4px;">${row?'Editar':'Nuevo'} ${isA?'artista':'programa'}</p>
+  <div class="adm-form" id="adm-form" data-id="${row?row.id:''}" data-kind="${kind}">
+    <label>${isA?'Nombre artístico':'Título del programa'}</label><input type="text" id="mf-name" maxlength="160" value="${libEsc(row?(isA?row.name:row.title):'')}">
+    ${isA?`<label>Biografía breve</label><textarea id="mf-bio" maxlength="1500">${v('bio')}</textarea>
+    <label>Presentación o historia (opcional)</label><textarea id="mf-story" maxlength="4000">${v('story')}</textarea>`
+    :`<label>Creador o presentador</label><input type="text" id="mf-creator" maxlength="120" value="${v('creator')}">
+    <label>Descripción</label><textarea id="mf-desc" maxlength="2000">${v('description')}</textarea>
+    <label>Origen</label><select id="mf-origin"><option value="external" ${!row||row.origin==='external'?'selected':''}>De un tercero, con permiso</option><option value="here" ${row&&row.origin==='here'?'selected':''}>Producción de HERE</option><option value="community" ${row&&row.origin==='community'?'selected':''}>Comunidad (aprobado)</option></select>
+    <div class="adm-help">“Producción de HERE” solo si HERE lo produjo o lo encargó. Un pastor que publica no lo convierte en producción de HERE.</div>`}
+    <label><input type="checkbox" id="mf-feat" ${row&&row.featured?'checked':''}> Destacado</label>
+    <label>${isA?'Foto (JPG, PNG o WebP, máx. 5 MB)':'Portada (JPG, PNG o WebP, máx. 5 MB)'}</label><input type="file" id="mf-img" accept="image/jpeg,image/png,image/webp">
+    <div class="adm-prog" id="af-prog"><i></i></div><div class="adm-help" id="af-msg"></div>
+  </div>
+  <button class="btn btn-primary" id="af-save" style="width:100%;margin-top:14px;" onclick="libMetaSave()">Guardar</button>
+  <button class="btn btn-ghost" style="width:100%;margin-top:8px;" onclick="closeSheet()">Cancelar</button>`;
+}
+function libArtistForm(id){ openSheet(libMetaFormHTML('artist', id?ADM.artists.find(x=>x.id===id):null)); }
+function libSeriesForm(id){ openSheet(libMetaFormHTML('series', id?ADM.series.find(x=>x.id===id):null)); }
+async function libMetaSave(){
+  const f=document.getElementById('adm-form'), kind=f.dataset.kind, isA=kind==='artist', g=(i)=>{const e=document.getElementById(i); return e?e.value:'';};
+  const btn=document.getElementById('af-save'); btn.disabled=true;
+  try{
+    admProg(2,'Guardando…');
+    const body = isA ? {action:'save-artist',id:f.dataset.id||undefined,name:g('mf-name'),bio:g('mf-bio'),story:g('mf-story'),featured:document.getElementById('mf-feat').checked}
+                     : {action:'save-series',id:f.dataset.id||undefined,title:g('mf-name'),creator:g('mf-creator'),description:g('mf-desc'),origin:g('mf-origin'),featured:document.getElementById('mf-feat').checked};
+    const s1=await libApi('/api/library-admin',{method:'POST',body}); if(!s1.ok) throw new Error(admMsg(s1));
+    const id=s1.data.row.id, img=document.getElementById('mf-img').files[0];
+    if(img){
+      admProg(0,'Subiendo imagen…');
+      const sg=await libApi('/api/library-admin',{method:'POST',body:{action:'sign-image',entity:kind,id,contentType:img.type,size:img.size}}); if(!sg.ok) throw new Error(admMsg(sg));
+      await admPut(sg.data.putUrl, sg.data.headers, img);
+      const c=await libApi('/api/library-admin',{method:'POST',body:{action:'complete-image',entity:kind,id,key:sg.data.key}}); if(!c.ok) throw new Error(admMsg(c));
+    }
+    closeSheet(); showHereToast('Guardado'); LIB.items=null; LIB.at=0; libAdminRefresh();
+  }catch(e){ const m=document.getElementById('af-msg'); if(m) m.textContent=(e.message==='network'||/^put-/.test(e.message))?'La subida falló. Revisa tu conexión y el CORS del bucket.':e.message; btn.disabled=false; }
 }
 async function libAdminAct(a,id){
   haptic(8); const r=await libApi('/api/library-admin',{method:'POST',body:{action:a,id}});
@@ -10682,6 +10803,12 @@ function libAdminForm(id){
     <label>Autor, artista o pastor</label><input type="text" id="af-creator" maxlength="120" value="${v('creator')}">
     <label>Descripción</label><textarea id="af-desc" maxlength="2000">${v('description')}</textarea>
     <label>Categorías (separadas por coma)</label><input type="text" id="af-cats" value="${libEsc(it?(it.categories||[]).join(', '):'')}">
+    ${ADM.v2?`<label>Artista (opcional)</label><select id="af-artist"><option value="">— Sin artista —</option>${ADM.artists.map(a=>`<option value="${a.id}" ${it&&it.artist_id===a.id?'selected':''}>${libEsc(a.name)}</option>`).join('')}</select>
+    <label>Programa o serie (opcional)</label><select id="af-series"><option value="">— Independiente —</option>${ADM.series.map(a=>`<option value="${a.id}" ${it&&it.series_id===a.id?'selected':''}>${libEsc(a.title)}</option>`).join('')}</select>
+    <label>Número de episodio (si es de un programa)</label><input type="text" id="af-ep" inputmode="numeric" value="${v('episode_number')}">
+    <label>Origen editorial</label><select id="af-origin">${opt('external','De un tercero, con permiso',it?it.origin:'external')}${opt('here','Producción de HERE',it?it.origin:'')}${opt('community','Comunidad (aprobado)',it?it.origin:'')}</select>
+    <div class="adm-help">“Producción de HERE” solo si HERE lo produjo o lo encargó.</div>
+    <label><input type="checkbox" id="af-feat" ${it&&it.featured?'checked':''}> Destacado</label>`:''}
     <label>Quién puede escucharlo</label><select id="af-vis">${opt('public','Todo el mundo',it?it.visibility:'public')}${opt('members','Solo personas con cuenta',it?it.visibility:'public')}</select>
     <label>Derechos de uso</label><select id="af-rights">${opt('pending','Pendiente de verificar',it?it.rights_status:'pending')}${opt('own','Contenido propio de HERE',it?it.rights_status:'')}${opt('licensed','Con licencia o permiso escrito',it?it.rights_status:'')}${opt('public_domain','Dominio público',it?it.rights_status:'')}${opt('denied','Sin permiso (no publicar)',it?it.rights_status:'')}</select>
     <div class="adm-help">Solo puedes publicar si es propio, con licencia o dominio público. HERE no certifica que sea legal: confirma tú los permisos.</div>
@@ -10715,7 +10842,8 @@ async function libAdminSave(){
   try{
     const id=document.getElementById('adm-form').dataset.id||undefined;
     admProg(2,'Guardando datos…');
-    const s = await libApi('/api/library-admin',{method:'POST',body:{action:'save',id,title:g('af-title'),type:g('af-type'),creator:g('af-creator'),description:g('af-desc'),categories:g('af-cats'),visibility:g('af-vis'),rights_status:g('af-rights'),rights_holder:g('af-holder'),rights_terms:g('af-terms'),rights_expires:g('af-exp')}});
+    const s = await libApi('/api/library-admin',{method:'POST',body:{action:'save',id,title:g('af-title'),type:g('af-type'),creator:g('af-creator'),description:g('af-desc'),categories:g('af-cats'),visibility:g('af-vis'),rights_status:g('af-rights'),rights_holder:g('af-holder'),rights_terms:g('af-terms'),rights_expires:g('af-exp'),
+      ...(ADM.v2 ? {artist_id:g('af-artist'),series_id:g('af-series'),episode_number:parseInt(g('af-ep'),10)||null,origin:g('af-origin'),featured:document.getElementById('af-feat').checked} : {})}});
     if(!s.ok) throw new Error(admMsg(s));
     const itemId=s.data.item.id;
     const audio=document.getElementById('af-audio').files[0], cover=document.getElementById('af-cover').files[0];

@@ -14,6 +14,9 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const TYPES = ['bible', 'verse', 'podcast', 'episode', 'sermon', 'music', 'reflection', 'devotional', 'prayer', 'original'];
 const RIGHTS = ['own', 'licensed', 'public_domain', 'pending', 'denied'];
 const VIS = ['public', 'members'];
+const ORIGINS = ['here', 'community', 'external'];
+const STATUSES = ['draft', 'published', 'archived'];
+const ENTITIES = { artist: { table: 'library_artists', imgCol: 'photo_key' }, series: { table: 'library_series', imgCol: 'cover_key' } };
 
 const str = (v, n) => (v == null ? null : String(v).trim().slice(0, n) || null);
 const list = (v) => (Array.isArray(v) ? v : String(v || '').split(','))
@@ -65,6 +68,11 @@ module.exports = async function handler(req, res) {
           episode_number: Number.isInteger(b.episode_number) ? b.episode_number : null,
         };
         if (!row.title || !row.type) return L.send(res, 400, { error: 'title-and-type-required' });
+        // v2 (solo si se envían; así nada se rompe antes de aplicar supabase_library_v2.sql)
+        if (b.artist_id !== undefined) row.artist_id = UUID.test(b.artist_id || '') ? b.artist_id : null;
+        if (b.series_id !== undefined) row.series_id = UUID.test(b.series_id || '') ? b.series_id : null;
+        if (b.origin !== undefined) row.origin = ORIGINS.includes(b.origin) ? b.origin : 'external';
+        if (b.featured !== undefined) row.featured = b.featured === true;
         if (b.id) {
           const cur = await getItem(b.id); if (!cur) return L.send(res, 404, { error: 'not-found' });
           // si el contenido ya está publicado y los derechos dejan de ser válidos, el trigger lo impide: se despublica antes.
@@ -75,6 +83,61 @@ module.exports = async function handler(req, res) {
         row.created_by = user.id; row.status = 'draft';
         const out = await L.rest('library_items', { method: 'POST', body: row, prefer: 'return=representation' });
         return L.send(res, 200, { item: out[0] });
+      }
+
+      case 'list-meta': {
+        const artists = await L.rest('library_artists?select=*&order=name.asc&limit=200');
+        const series = await L.rest('library_series?select=*&order=title.asc&limit=200');
+        return L.send(res, 200, { artists, series });
+      }
+
+      case 'save-artist':
+      case 'save-series': {
+        const isA = b.action === 'save-artist';
+        const name = str(isA ? b.name : b.title, 160);
+        if (!name) return L.send(res, 400, { error: 'name-required' });
+        const row = isA
+          ? { name, bio: str(b.bio, 1500), story: str(b.story, 4000), photo_url: str(b.photo_url, 500), featured: b.featured === true }
+          : { title: name, description: str(b.description, 2000), creator: str(b.creator, 120), cover_url: str(b.cover_url, 500), featured: b.featured === true, origin: ORIGINS.includes(b.origin) ? b.origin : 'external' };
+        const t = isA ? 'library_artists' : 'library_series';
+        if (b.id) {
+          if (!UUID.test(b.id)) return L.send(res, 400, { error: 'bad-id' });
+          row.updated_at = new Date().toISOString();
+          const out = await L.rest(`${t}?id=eq.${b.id}`, { method: 'PATCH', body: row, prefer: 'return=representation' });
+          return L.send(res, 200, { row: out[0] });
+        }
+        if (isA) row.created_by = user.id;
+        const out = await L.rest(t, { method: 'POST', body: row, prefer: 'return=representation' });
+        return L.send(res, 200, { row: out[0] });
+      }
+
+      case 'set-meta-status': {
+        const e = ENTITIES[b.entity];
+        if (!e || !UUID.test(b.id || '') || !STATUSES.includes(b.status)) return L.send(res, 400, { error: 'bad-request' });
+        const out = await L.rest(`${e.table}?id=eq.${b.id}`, { method: 'PATCH', body: { status: b.status }, prefer: 'return=representation' });
+        return L.send(res, 200, { row: out[0] });
+      }
+
+      case 'sign-image': {
+        // foto de artista o portada de programa: misma firma de 15 min que el audio, con tipo y tamaño validados
+        if (!c) return L.send(res, 501, { error: 'r2-not-configured' });
+        const e = ENTITIES[b.entity];
+        if (!e || !UUID.test(b.id || '')) return L.send(res, 400, { error: 'bad-request' });
+        const ct = String(b.contentType || '').toLowerCase(), size = Number(b.size);
+        if (!L.IMAGE_TYPES[ct]) return L.send(res, 400, { error: 'bad-content-type' });
+        if (!(size > 0) || size > L.MAX_COVER) return L.send(res, 400, { error: 'bad-size' });
+        const key = `portadas/${b.entity}/${b.id}/${crypto.randomUUID()}.${L.IMAGE_TYPES[ct]}`;
+        return L.send(res, 200, { key, putUrl: r2.objectUrl(c, key, { method: 'PUT', expires: 900, headers: { 'content-type': ct } }), headers: { 'Content-Type': ct } });
+      }
+
+      case 'complete-image': {
+        if (!c) return L.send(res, 501, { error: 'r2-not-configured' });
+        const e = ENTITIES[b.entity];
+        if (!e || !UUID.test(b.id || '') || !String(b.key || '').startsWith(`portadas/${b.entity}/${b.id}/`)) return L.send(res, 400, { error: 'bad-key' });
+        const h = await r2.head(c, b.key);
+        if (!h || h.size > L.MAX_COVER) return L.send(res, 422, { error: 'cover-missing-or-big' });
+        const out = await L.rest(`${e.table}?id=eq.${b.id}`, { method: 'PATCH', body: { [e.imgCol]: b.key }, prefer: 'return=representation' });
+        return L.send(res, 200, { row: out[0] });
       }
 
       case 'sign-upload': {

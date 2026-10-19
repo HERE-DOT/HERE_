@@ -56,3 +56,9 @@ Las operaciones (subidas/lecturas) quedan casi siempre dentro del nivel gratis a
 - No probado contra un R2 real (no tengo tus credenciales): firma validada con el vector oficial de AWS y endpoints probados con simulaciones.
 - Reproducción en segundo plano con pantalla bloqueada: depende del teléfono; falta probar en iPhone/Android reales.
 - Derechos: el sistema controla el permiso, no certifica legalidad. RVR1960 tiene derechos reservados; verifica antes de subir audio bíblico.
+
+## v2 — Artistas, programas y origen (Fase 3b)
+1. **Supabase → SQL Editor:** ejecuta `supabase_library_v2.sql` (después de `supabase_library.sql`). Es repetible y no borra nada.
+2. Sube los archivos nuevos (`api/library.js`, `api/library-admin.js`, `app/index.html`, `app/service-worker.js`) y espera el deploy.
+3. En el panel: pestañas **Contenido / Artistas / Programas** (aparecen cuando la migración está aplicada). Un artista o programa no es público hasta que lo **publiques**.
+4. **Origen editorial:** por defecto todo es "De un tercero, con permiso". Solo se muestra "Producción HERE" si un administrador lo marca. Un pastor que publica no convierte su contenido en producción de HERE.
