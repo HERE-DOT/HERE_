@@ -2286,6 +2286,9 @@
   #lib-section{padding:4px 0 6px;}
   .lib-head{display:flex; align-items:baseline; justify-content:space-between; padding:0 24px; margin:14px 0 8px;}
   .lib-head h3{font-family:'Cormorant Garamond',Georgia,serif; font-size:22px; font-weight:600; margin:0;}
+  .lib-seg{display:flex; gap:4px; margin:0 24px 12px; padding:4px; border-radius:14px; background:var(--bg-warm); border:1px solid var(--line);}
+  .lib-seg button{flex:1; padding:9px 4px; border:0; border-radius:10px; background:transparent; color:var(--ink-soft); font-size:12.5px; font-weight:700; letter-spacing:.2px; cursor:pointer; white-space:nowrap;}
+  .lib-seg button.on{background:var(--card); color:var(--ink); box-shadow:var(--shadow-sm);}
   .lib-chips{display:flex; gap:8px; overflow-x:auto; padding:2px 24px 10px; scrollbar-width:none;}
   .lib-chips::-webkit-scrollbar{display:none;}
   .lib-chip{flex:none; padding:7px 14px; border-radius:999px; border:1px solid var(--line); background:var(--card); color:var(--ink-soft); font-size:13px; font-weight:600; cursor:pointer;}
@@ -10368,7 +10371,7 @@ window.addEventListener('load', ()=>{
      de sueño funcionan sin duplicar nada y sin dos reproducciones a la vez.
    - Nada de esto muestra contenido inventado: si no hay nada publicado, la sección no aparece.
    ===================================================================================== */
-const LIB = { items:null, error:false, off:false, type:'all', q:'', favs:new Set(load('here_lib_favs',[])), prog:load('here_lib_prog',{}), remoteDone:false, isAdmin:false, adminChecked:false };
+const LIB = { items:null, error:false, off:false, line:'all', type:'all', q:'', favs:new Set(load('here_lib_favs',[])), prog:load('here_lib_prog',{}), remoteDone:false, isAdmin:false, adminChecked:false };
 const LIB_LABEL = { bible:'Biblia', verse:'Versículo', podcast:'Podcast', episode:'Episodio', sermon:'Predicación', music:'Música', reflection:'Reflexión', devotional:'Devocional', prayer:'Oración', original:'Original HERE' };
 const LIB_CHIPS = { all:'Todo', fav:'Favoritos', bible:'Biblia', podcast:'Podcasts', sermon:'Predicaciones', music:'Música', reflection:'Reflexiones', devotional:'Devocionales', prayer:'Oraciones', original:'Originales' };
 const libEsc = (s)=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -10409,9 +10412,18 @@ async function libPullRemote(){
     if(currentScreen==='musica') libRender();
   }catch(e){ LIB.remoteDone=false; }
 }
+/* Dos líneas editoriales sobre el mismo catálogo: HERE MUSIC (canciones) y HERE ORIGINALS (contenido hablado).
+   Por ahora la línea se deduce del tipo; la marca "oficial / comunidad / externo" llegará con la migración de la fase de publicación. */
+const LIB_LINES = { music:['music'], originals:['sermon','podcast','episode','reflection','devotional','prayer','original'] };
+const libLineOf = (i)=> LIB_LINES.music.includes(i.type) ? 'music' : (LIB_LINES.originals.includes(i.type) ? 'originals' : 'other');
+const LIB_EMPTY = {
+  music:{ t:'HERE MUSIC está en preparación', d:'Aquí vivirán las canciones de HERE y los artistas que vayamos descubriendo. Aún no hay música publicada.' },
+  originals:{ t:'HERE ORIGINALS está en preparación', d:'Aquí escucharás predicaciones, podcasts, testimonios y reflexiones. Aún no hay episodios publicados.' },
+  all:{ t:'Aún no hay audios publicados', d:'Cuando se publique contenido, lo encontrarás aquí.' } };
 function libVisible(){
   let a = LIB.items||[];
-  if(LIB.type!=='all') a = a.filter(i=> i.type===LIB.type || (LIB.type==='podcast'&&i.type==='episode') || (LIB.type==='bible'&&i.type==='verse'));
+  if(LIB.line!=='all') a = a.filter(i=>libLineOf(i)===LIB.line);
+  if(LIB.type!=='all' && LIB.type!=='fav') a = a.filter(i=> i.type===LIB.type || (LIB.type==='podcast'&&i.type==='episode') || (LIB.type==='bible'&&i.type==='verse'));
   const q=LIB.q.trim().toLowerCase();
   if(q) a = a.filter(i=> (i.title+' '+(i.creator||'')+' '+(i.description||'')).toLowerCase().includes(q));
   return a;
@@ -10430,35 +10442,43 @@ function libCardHTML(i){
 }
 function libRender(){
   const el = document.getElementById('lib-section'); if(!el) return;
+  const head = (sub)=>`<div class="lib-head"><h3>Biblioteca HERE</h3></div>${sub||''}`;
   if(LIB.items===null){
-    el.style.display=''; el.innerHTML='<div class="lib-head"><h3>Biblioteca HERE</h3></div><div class="lib-list"><div class="lib-skel"></div><div class="lib-skel"></div></div>';
+    el.style.display=''; el.innerHTML=head('<div class="lib-list"><div class="lib-skel"></div><div class="lib-skel"></div></div>');
     libLoad().then(libRender); return;
   }
-  if(LIB.off || (!LIB.items.length && !LIB.error)){ el.style.display='none'; el.innerHTML=''; return; }   // nada publicado: no se muestra
+  if(LIB.off){ el.style.display='none'; el.innerHTML=''; return; }   // R2/Supabase sin configurar: no se muestra nada
   el.style.display='';
   if(LIB.error){
-    el.innerHTML='<div class="lib-head"><h3>Biblioteca HERE</h3></div><div class="lib-state">No pudimos cargar la biblioteca. Revisa tu conexión.<br><button class="btn btn-ghost" style="margin-top:10px;" onclick="LIB.items=null; libRender()">Reintentar</button></div>';
+    el.innerHTML=head('<div class="lib-state">No pudimos cargar la biblioteca. Revisa tu conexión.<br><button class="btn btn-ghost" style="margin-top:10px;" onclick="LIB.items=null; libRender()">Reintentar</button></div>');
     return;
   }
-  const present = new Set(LIB.items.map(i=> i.type==='episode'?'podcast': i.type==='verse'?'bible': i.type));
-  const types = ['all', ...Object.keys(LIB_LABEL).filter(t=>present.has(t)&&t!=='episode'&&t!=='verse')];
+  const lines = [['all','Todo'],['music','HERE MUSIC'],['originals','HERE ORIGINALS']];
+  const seg = `<div class="lib-seg" role="tablist">${lines.map(([k,l])=>`<button role="tab" aria-selected="${LIB.line===k}" class="${LIB.line===k?'on':''}" onclick="libSetLine('${k}')">${l}</button>`).join('')}</div>`;
+  const inLine = (LIB.items||[]).filter(i=> LIB.line==='all' || libLineOf(i)===LIB.line);
+  const present = new Set(inLine.map(i=> i.type==='episode'?'podcast': i.type==='verse'?'bible': i.type));
+  const types = ['all', ...Object.keys(LIB_CHIPS).filter(t=>present.has(t))];
+  if(LIB.line==='all' && types.length<3) types.length = 1;           // sin variedad no hacen falta filtros
+  else if(LIB.line!=='all' && types.length<3) types.length = 1;
   if(LIB.favs.size) types.push('fav');
-  const chips = types.map(t=>`<button class="lib-chip ${LIB.type===t?'on':''}" onclick="libSetType('${t}')">${LIB_CHIPS[t]||t}</button>`).join('');
-  let list = LIB.type==='fav' ? (LIB.items||[]).filter(i=>LIB.favs.has(i.id)) : libVisible();
-  if(LIB.type==='fav' && LIB.q) list = list.filter(i=>(i.title+' '+(i.creator||'')).toLowerCase().includes(LIB.q.toLowerCase()));
-  // continuar escuchando: lo último empezado y sin terminar
-  const resume = Object.entries(LIB.prog).filter(([id,p])=>p&&!p.done&&p.pos>15&&LIB.items.some(i=>i.id===id)).sort((a,b)=>b[1].t-a[1].t)[0];
-  const ri = resume && LIB.items.find(i=>i.id===resume[0]);
-  el.innerHTML = `<div class="lib-head"><h3>Biblioteca HERE</h3></div>
-    ${ri?`<div class="lib-resume"><div class="plan-continue" onclick="libPlay('${ri.id}')"><span class="emoji">🎧</span><div style="flex:1;min-width:0;"><div style="font-size:11.5px;color:var(--ink-soft);font-weight:600;">Continuar escuchando</div><div style="font-size:14.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${libEsc(ri.title)}</div></div><span style="color:var(--ink-soft);">→</span></div></div>`:''}
-    <div class="lib-chips">${chips}</div>
+  if(!types.includes(LIB.type)) LIB.type='all';
+  const chips = types.length>1 ? `<div class="lib-chips">${types.map(t=>`<button class="lib-chip ${LIB.type===t?'on':''}" onclick="libSetType('${t}')">${LIB_CHIPS[t]||t}</button>`).join('')}</div>` : '';
+  const resume = Object.entries(LIB.prog).filter(([id,p])=>p&&!p.done&&p.pos>15&&inLine.some(i=>i.id===id)).sort((a,b)=>b[1].t-a[1].t)[0];
+  const ri = resume && inLine.find(i=>i.id===resume[0]);
+  let body;
+  if(!inLine.length){ const e=LIB_EMPTY[LIB.line]||LIB_EMPTY.all; body=`<div class="lib-state"><b style="display:block;color:var(--ink);margin-bottom:4px;">${e.t}</b>${e.d}</div>`; }
+  else body = `${ri?`<div class="lib-resume"><div class="plan-continue" onclick="libPlay('${ri.id}')"><span class="emoji">🎧</span><div style="flex:1;min-width:0;"><div style="font-size:11.5px;color:var(--ink-soft);font-weight:600;">Continuar escuchando</div><div style="font-size:14.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${libEsc(ri.title)}</div></div><span style="color:var(--ink-soft);">→</span></div></div>`:''}
+    ${chips}
     <input class="lib-search" type="search" placeholder="Buscar en la biblioteca…" value="${libEsc(LIB.q)}" oninput="LIB.q=this.value; libRenderList()">
-    <div class="lib-list" id="lib-list">${list.length? list.map(libCardHTML).join('') : '<div class="lib-state">No hay resultados. Prueba con otra palabra o categoría.</div>'}</div>`;
+    <div class="lib-list" id="lib-list"></div>`;
+  el.innerHTML = head(seg + body);
+  if(inLine.length) libRenderList();
 }
+function libSetLine(k){ haptic(6); LIB.line=k; LIB.type='all'; libRender(); }
 function libRenderList(){
   const l=document.getElementById('lib-list'); if(!l) return;
-  let list = LIB.type==='fav' ? (LIB.items||[]).filter(i=>LIB.favs.has(i.id)) : libVisible();
-  if(LIB.type==='fav' && LIB.q) list = list.filter(i=>(i.title+' '+(i.creator||'')).toLowerCase().includes(LIB.q.toLowerCase()));
+  let list = libVisible();
+  if(LIB.type==='fav') list = list.filter(i=>LIB.favs.has(i.id));
   l.innerHTML = list.length? list.map(libCardHTML).join('') : '<div class="lib-state">No hay resultados. Prueba con otra palabra o categoría.</div>';
 }
 function libSetType(t){ haptic(6); LIB.type=t; libRender(); }
@@ -10561,7 +10581,7 @@ async function libPlay(id){
 }
 function libNext(){
   if(!libItem) return;
-  const list = (LIB.type==='fav'? (LIB.items||[]).filter(i=>LIB.favs.has(i.id)) : libVisible());
+  const list = libVisible().filter(i=>LIB.type!=='fav' || LIB.favs.has(i.id));
   const i = list.findIndex(x=>x.id===libItem.id);
   const nxt = i>=0 ? list[i+1] : null;
   if(nxt) libPlay(nxt.id); else showHereToast('Ese fue el último de la lista.');
