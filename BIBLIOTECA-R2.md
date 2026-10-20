@@ -62,3 +62,13 @@ Las operaciones (subidas/lecturas) quedan casi siempre dentro del nivel gratis a
 2. Sube los archivos nuevos (`api/library.js`, `api/library-admin.js`, `app/index.html`, `app/service-worker.js`) y espera el deploy.
 3. En el panel: pestañas **Contenido / Artistas / Programas** (aparecen cuando la migración está aplicada). Un artista o programa no es público hasta que lo **publiques**.
 4. **Origen editorial:** por defecto todo es "De un tercero, con permiso". Solo se muestra "Producción HERE" si un administrador lo marca. Un pastor que publica no convierte su contenido en producción de HERE.
+
+## v3 — Publicación de canciones por la comunidad (Fase 5)
+1. **Supabase → SQL Editor:** ejecuta `supabase_library_v3.sql` (después de v1 y v2). Es repetible y no borra nada.
+2. Sube `api/library-submit.js`, `api/library-admin.js`, `app/index.html` y `app/service-worker.js`.
+3. **Flujo de la persona:** HERE MUSIC → *Publicar mi canción* → términos (se guarda versión y fecha) → datos y audio (MP3/M4A, máx. 60 MB) → vista previa → *Enviar a revisión*. Nada se publica solo.
+4. **Revisión (administración):** pestaña **Revisión** → escuchar → *Aprobar y publicar* (sale como "Comunidad", nunca como producción de HERE) o *Rechazar* con motivo (lo ve la persona).
+5. **Retiro:** la persona puede retirar su canción desde *Mis publicaciones*; el administrador puede retirar cualquier contenido desde **Reportes**.
+6. **Reportes:** en el reproductor, *Reportar* (derechos de autor, inapropiado, información incorrecta, otro). Máx. 10 por persona al día.
+7. **Límites:** 3 envíos en revisión a la vez y 10 borradores por persona.
+8. **Importante:** el texto de los términos es un BORRADOR. Debe revisarlo un abogado (propiedad intelectual, Ley 1581 de 2012 y procedimiento de reclamaciones) antes de abrir la publicación al público.

@@ -2302,6 +2302,18 @@
   .lib-pn{display:block; font-size:12px; font-weight:600; line-height:1.25; max-height:2.5em; overflow:hidden;}
   .lib-detail{display:flex; gap:14px; align-items:center; margin:2px 0 10px;}
   .lib-p{font-size:14px; color:var(--ink-soft); line-height:1.55; margin:8px 0;}
+  .lib-pubbar{display:flex; align-items:center; gap:14px; padding:0 24px 12px;}
+  .lib-pubbar .btn{flex:1; padding:11px 14px; font-size:14px;}
+  .lib-link{border:0; background:transparent; color:var(--ink-soft); font-size:13.5px; font-weight:700; text-decoration:underline; cursor:pointer; padding:8px 2px;}
+  #player-report-btn{display:none; border:0; background:transparent; color:var(--ink-soft); font-size:12.5px; font-weight:600; text-decoration:underline; cursor:pointer;}
+  #reproductor.lib-mode #player-report-btn{display:inline-block;}
+  #adm-tabs{flex-wrap:wrap;}
+  #adm-tabs button{flex:1 1 30%;}
+  .pub-terms{font-size:13.5px; line-height:1.55; color:var(--ink-soft); padding-left:18px; margin:8px 0 12px;}
+  .pub-terms li{margin-bottom:6px;}
+  .pub-check{display:flex; gap:10px; align-items:flex-start; font-size:13.5px; line-height:1.45; margin:10px 0;}
+  .pub-check input{margin-top:3px; flex:none;}
+  .pub-sum{padding:12px; border-radius:14px; background:var(--bg-warm); font-size:14px; line-height:1.55;}
   .lib-chips{display:flex; gap:8px; overflow-x:auto; padding:2px 24px 10px; scrollbar-width:none;}
   .lib-chips::-webkit-scrollbar{display:none;}
   .lib-chip{flex:none; padding:7px 14px; border-radius:999px; border:1px solid var(--line); background:var(--card); color:var(--ink-soft); font-size:13px; font-weight:600; cursor:pointer;}
@@ -3079,7 +3091,7 @@
             <button class="abib-tool" onclick="playerVolume()"><b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg></b>Volumen</button>
             <button class="abib-tool" id="player-sleep-btn" onclick="abibSleep('track')"><b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg></b>Dormir</button>
           </div>
-          <div class="abib-chapters" style="width:100%; justify-content:flex-end;"><button onclick="playNextRelated()">Siguiente ›</button></div>
+          <div class="abib-chapters" style="width:100%; justify-content:space-between;"><button id="player-report-btn" onclick="libReportOpen()">Reportar</button><button onclick="playNextRelated()">Siguiente ›</button></div>
         </div>
         <div class="player-fallback" id="player-fallback" style="display:none;">
           No pudimos cargar el reproductor aquí.
@@ -3109,7 +3121,7 @@
         <button class="btn btn-primary" style="flex:1; padding:12px;" onclick="libAdminNew()">＋ Nuevo</button>
         <button onclick="libAdminCheck()">Revisar archivos</button>
       </div>
-      <div class="lib-seg" id="adm-tabs" style="margin:0 0 12px;"><button class="on" onclick="libAdminTab('items')">Contenido</button><button onclick="libAdminTab('artists')">Artistas</button><button onclick="libAdminTab('series')">Programas</button></div>
+      <div class="lib-seg" id="adm-tabs" style="margin:0 0 12px;"><button class="on" onclick="libAdminTab('items')">Contenido</button><button onclick="libAdminTab('artists')">Artistas</button><button onclick="libAdminTab('series')">Programas</button><button onclick="libAdminTab('subs')">Revisión</button><button onclick="libAdminTab('reports')">Reportes</button></div>
       <div id="adm-list"></div>
     </div>
   </section>
@@ -10486,7 +10498,8 @@ function libRender(){
   const chips = types.length>1 ? `<div class="lib-chips">${types.map(t=>`<button class="lib-chip ${LIB.type===t?'on':''}" onclick="libSetType('${t}')">${LIB_CHIPS[t]||t}</button>`).join('')}</div>` : '';
   const resume = Object.entries(LIB.prog).filter(([id,p])=>p&&!p.done&&p.pos>15&&inLine.some(i=>i.id===id)).sort((a,b)=>b[1].t-a[1].t)[0];
   const ri = resume && inLine.find(i=>i.id===resume[0]);
-  const rows = (LIB.line==='music' ? libArtistsRow() : '') + (LIB.line==='originals' ? libSeriesRow() : '');
+  const pubBar = LIB.line==='music' ? `<div class="lib-pubbar"><button class="btn btn-ghost" onclick="libPubStart()">Publicar mi canción</button><button class="lib-link" onclick="libMineOpen()">Mis publicaciones</button></div>` : '';
+  const rows = (LIB.line==='music' ? libArtistsRow() + pubBar : '') + (LIB.line==='originals' ? libSeriesRow() : '');
   let body;
   if(!inLine.length){ const e=LIB_EMPTY[LIB.line]||LIB_EMPTY.all; body=`<div class="lib-state"><b style="display:block;color:var(--ink);margin-bottom:4px;">${e.t}</b>${e.d}</div>`; }
   else body = `${ri?`<div class="lib-resume"><div class="plan-continue" onclick="libPlay('${ri.id}')"><span class="emoji">🎧</span><div style="flex:1;min-width:0;"><div style="font-size:11.5px;color:var(--ink-soft);font-weight:600;">Continuar escuchando</div><div style="font-size:14.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${libEsc(ri.title)}</div></div><span style="color:var(--ink-soft);">→</span></div></div>`:''}
@@ -10673,7 +10686,7 @@ async function libCheckAdmin(){
   if(!LIB.adminChecked){ LIB.adminChecked=true; try{ const r=await libApi('/api/library-admin',{method:'POST',body:{action:'whoami'}}); LIB.isAdmin = r.ok && r.data.admin===true; LIB.admin = r.data; }catch(e){} }
   link.style.display = LIB.isAdmin ? '' : 'none';
 }
-const ADM_ERR = { 'forbidden':'Tu cuenta no es de administración.', 'login-required':'Inicia sesión.', 'r2-not-configured':'Cloudflare R2 todavía no está configurado en Vercel.', 'rights-not-verified':'Primero verifica los derechos (propio, con licencia o dominio público).', 'license-expired':'La licencia está vencida.', 'no-audio':'Falta subir el audio.', 'audio-not-ready':'El audio aún no está listo.', 'not-uploaded':'El archivo no llegó a R2. Intenta de nuevo.', 'size-mismatch':'El archivo no coincide con lo declarado. Súbelo otra vez.', 'bad-content-type':'Formato no permitido (usa MP3 o M4A; portada JPG, PNG o WebP).', 'bad-size':'El archivo es demasiado grande (audio máx. 300 MB, portada 5 MB).', 'unpublish-first':'Despublica antes de borrar.', 'confirm-title':'El título de confirmación no coincide.', 'title-and-type-required':'Falta el título o el tipo.', 'name-required':'Falta el nombre.', 'bad-request':'Solicitud no válida.' };
+const ADM_ERR = { 'forbidden':'Tu cuenta no es de administración.', 'login-required':'Inicia sesión.', 'r2-not-configured':'Cloudflare R2 todavía no está configurado en Vercel.', 'rights-not-verified':'Primero verifica los derechos (propio, con licencia o dominio público).', 'license-expired':'La licencia está vencida.', 'no-audio':'Falta subir el audio.', 'audio-not-ready':'El audio aún no está listo.', 'not-uploaded':'El archivo no llegó a R2. Intenta de nuevo.', 'size-mismatch':'El archivo no coincide con lo declarado. Súbelo otra vez.', 'bad-content-type':'Formato no permitido (usa MP3 o M4A; portada JPG, PNG o WebP).', 'bad-size':'El archivo es demasiado grande (audio máx. 300 MB, portada 5 MB).', 'unpublish-first':'Despublica antes de borrar.', 'confirm-title':'El título de confirmación no coincide.', 'title-and-type-required':'Falta el título o el tipo.', 'name-required':'Falta el nombre.', 'not-pending':'Ese envío ya no está pendiente.', 'incomplete-submission':'El envío está incompleto.', 'audio-missing':'El audio no está en R2.', 'note-required':'Escribe el motivo.', 'bad-request':'Solicitud no válida.' };
 const admMsg = (r)=> ADM_ERR[r.data && r.data.error] || (r.data && r.data.message) || 'Algo falló. Intenta de nuevo.';
 let ADM = { items:[], artists:[], series:[], v2:false, tab:'items' };
 async function libAdminOpen(){
@@ -10690,10 +10703,12 @@ async function libAdminRefresh(){
   ADM.items=r.data.items||[];
   const m = await libApi('/api/library-admin',{method:'POST',body:{action:'list-meta'}});   // falla (sin error visible) si aún no se aplicó la migración v2
   ADM.v2 = m.ok; if(m.ok){ ADM.artists=m.data.artists||[]; ADM.series=m.data.series||[]; }
-  const tabs=document.getElementById('adm-tabs'); if(tabs){ tabs.style.display = ADM.v2 ? '' : 'none'; [...tabs.children].forEach((b,k)=>b.classList.toggle('on', ['items','artists','series'][k]===ADM.tab)); }
+  const tabs=document.getElementById('adm-tabs'); if(tabs){ tabs.style.display = ADM.v2 ? '' : 'none'; [...tabs.children].forEach((b,k)=>b.classList.toggle('on', ['items','artists','series','subs','reports'][k]===ADM.tab)); }
   if(!ADM.v2) ADM.tab='items';
   if(ADM.tab==='artists') return libAdminMetaList('artist');
   if(ADM.tab==='series') return libAdminMetaList('series');
+  if(ADM.tab==='subs') return libAdminSubs();
+  if(ADM.tab==='reports') return libAdminReports();
   if(!ADM.items.length){ box.innerHTML='<div class="lib-state" style="margin:0;">Aún no hay contenido. Crea el primero con “＋ Nuevo”.</div>'; return; }
   const RL={own:'Propio',licensed:'Con licencia',public_domain:'Dominio público',pending:'Derechos pendientes',denied:'Derechos denegados'};
   box.innerHTML = ADM.items.map(i=>{
@@ -10713,7 +10728,7 @@ async function libAdminRefresh(){
   }).join('');
 }
 function libAdminTab(t){ ADM.tab=t; libAdminRefresh(); }
-function libAdminNew(){ ADM.tab==='artists' ? libArtistForm() : ADM.tab==='series' ? libSeriesForm() : libAdminForm(); }
+function libAdminNew(){ if(ADM.tab==='subs'||ADM.tab==='reports'){ showHereToast('Aquí solo se revisa; el contenido nuevo se crea en otras pestañas.'); return; } ADM.tab==='artists' ? libArtistForm() : ADM.tab==='series' ? libSeriesForm() : libAdminForm(); }
 function libAdminMetaList(kind){
   const box=document.getElementById('adm-list'); const isA = kind==='artist';
   const rows = isA ? ADM.artists : ADM.series;
@@ -10870,6 +10885,172 @@ async function libAdminSave(){
     const m=document.getElementById('af-msg'); if(m) m.textContent = (e.message==='network'||/^put-/.test(e.message)) ? 'La subida falló. Revisa tu conexión y la configuración CORS del bucket en Cloudflare.' : e.message;
     btn.disabled=false;
   }
+}
+
+/* ---------- publicar una canción (comunidad): términos → datos → vista previa → envío a revisión ---------- */
+const libSubApi = (body)=> libApi('/api/library-submit',{method:'POST',body});
+const PUB_ERR = { 'login-required':'Inicia sesión para continuar.', 'accept-terms-first':'Primero acepta los términos.', 'confirm-rights':'Debes confirmar que tienes los derechos.', 'title-and-artist-required':'Falta el título o el nombre artístico.', 'too-many-pending':'Ya tienes 3 canciones en revisión. Espera a que se revisen.', 'too-many-drafts':'Tienes demasiados borradores. Retira alguno.', 'bad-content-type':'Formato no permitido (usa MP3 o M4A; portada JPG, PNG o WebP).', 'bad-size':'El archivo es muy grande (canción máx. 60 MB, portada 5 MB).', 'not-uploaded':'El archivo no llegó. Intenta de nuevo.', 'size-mismatch':'El archivo no coincide. Súbelo otra vez.', 'r2-not-configured':'La subida aún no está disponible.', 'not-configured':'Esta función aún no está disponible.', 'audio-not-ready':'El audio aún no está listo.', 'too-many-reports':'Has enviado muchos reportes hoy. Inténtalo mañana.' };
+const pubMsg = (r)=> PUB_ERR[r.data && r.data.error] || 'Algo falló. Intenta de nuevo.';
+const PUB_STATUS = { draft:['Borrador','warn'], pending:['En revisión','warn'], approved:['Publicada','ok'], rejected:['Rechazada',''], withdrawn:['Retirada',''] };
+async function libPubStart(){
+  if(typeof hereUser==='undefined' || !hereUser){ showHereToast('Inicia sesión para publicar tu música.'); try{ openAccountSheet(); }catch(e){} return; }
+  haptic(8);
+  const t = await libSubApi({action:'terms'});
+  if(!t.ok){ showHereToast(pubMsg(t)); return; }
+  LIB.terms = t.data;
+  t.data.accepted ? libPubForm() : libPubTerms();
+}
+function libPubTerms(){
+  const t=LIB.terms;
+  openSheet(`<div class="handle"></div><p class="serif" style="font-size:20px;margin-bottom:2px;">Antes de publicar</p>
+    <div class="adm-form"><ul class="pub-terms">${t.text.map(x=>`<li>${libEsc(x)}</li>`).join('')}</ul>
+    <label class="pub-check"><input type="checkbox" id="pub-ok" onchange="document.getElementById('pub-go').disabled=!this.checked"> <span>Leí los términos y confirmo que soy titular de esta música o tengo permiso para publicarla.</span></label></div>
+    <button class="btn btn-primary" id="pub-go" style="width:100%;margin-top:6px;" disabled onclick="libPubAccept()">Aceptar y continuar</button>
+    <button class="btn btn-ghost" style="width:100%;margin-top:8px;" onclick="closeSheet()">Ahora no</button>`);
+}
+async function libPubAccept(){
+  const r = await libSubApi({action:'accept-terms',version:LIB.terms.version});
+  if(!r.ok){ showHereToast(pubMsg(r)); return; }
+  libPubForm();
+}
+function libPubForm(){
+  const d = LIB.pubDraft || {};
+  const gen = ['Alabanza','Adoración','Gospel','Rap cristiano','Pop cristiano','Folclor','Otro'];
+  openSheet(`<div class="handle"></div><p class="serif" style="font-size:20px;margin-bottom:4px;">Publicar mi canción</p>
+  <div class="adm-form" id="pub-form">
+    <label>Título de la canción</label><input type="text" id="pf-title" maxlength="120" value="${libEsc(d.title||'')}">
+    <label>Nombre artístico</label><input type="text" id="pf-artist" maxlength="80" value="${libEsc(d.artist||'')}">
+    <label>Descripción (opcional)</label><textarea id="pf-desc" maxlength="1000">${libEsc(d.desc||'')}</textarea>
+    <label>Género</label><select id="pf-genre">${gen.map(g=>`<option ${d.genre===g?'selected':''}>${g}</option>`).join('')}</select>
+    <label>Archivo de audio (MP3 o M4A, máx. 60 MB)</label><input type="file" id="pf-audio" accept="audio/mpeg,audio/mp4,audio/x-m4a,.mp3,.m4a">
+    <label>Portada (opcional, JPG, PNG o WebP)</label><input type="file" id="pf-cover" accept="image/jpeg,image/png,image/webp">
+    <div class="adm-help" id="af-msg"></div>
+  </div>
+  <button class="btn btn-primary" style="width:100%;margin-top:14px;" onclick="libPubPreview()">Revisar</button>
+  <button class="btn btn-ghost" style="width:100%;margin-top:8px;" onclick="closeSheet()">Cancelar</button>`);
+}
+function libPubPreview(){
+  const g=(i)=>document.getElementById(i).value.trim(), a=document.getElementById('pf-audio').files[0], c=document.getElementById('pf-cover').files[0];
+  const m=document.getElementById('af-msg');
+  if(!g('pf-title')||!g('pf-artist')){ m.textContent='Escribe el título y tu nombre artístico.'; return; }
+  if(!a){ m.textContent='Elige el archivo de audio.'; return; }
+  if(a.size>60*1024*1024){ m.textContent='La canción pesa más de 60 MB.'; return; }
+  LIB.pubDraft={title:g('pf-title'),artist:g('pf-artist'),desc:g('pf-desc'),genre:g('pf-genre')}; LIB.pubFiles={a,c};
+  openSheet(`<div class="handle"></div><p class="serif" style="font-size:20px;margin-bottom:8px;">Así se verá tu envío</p>
+  <div class="pub-sum"><b>${libEsc(LIB.pubDraft.title)}</b><br>${libEsc(LIB.pubDraft.artist)} · ${libEsc(LIB.pubDraft.genre)}<br>${LIB.pubDraft.desc?libEsc(LIB.pubDraft.desc)+'<br>':''}<span style="color:var(--ink-soft)">${libEsc(a.name)} (${(a.size/1048576).toFixed(1)} MB)${c?' · con portada':''}</span></div>
+  <p class="adm-help" style="margin-top:10px;">Tu canción se publicará como contenido de la comunidad, nunca como música oficial de HERE, y solo después de una revisión.</p>
+  <div class="adm-prog" id="af-prog"><i></i></div><div class="adm-help" id="af-msg"></div>
+  <button class="btn btn-primary" id="pub-send" style="width:100%;margin-top:12px;" onclick="libPubSend()">Enviar a revisión</button>
+  <button class="btn btn-ghost" style="width:100%;margin-top:8px;" onclick="libPubForm()">Volver y editar</button>`);
+}
+async function libPubSend(){
+  const btn=document.getElementById('pub-send'); btn.disabled=true; const d=LIB.pubDraft, {a,c}=LIB.pubFiles;
+  try{
+    admProg(2,'Creando tu envío…');
+    const cr=await libSubApi({action:'create',title:d.title,artistName:d.artist,description:d.desc,genre:d.genre,rightsConfirmed:true}); if(!cr.ok) throw new Error(pubMsg(cr));
+    const id=cr.data.item.id;
+    admProg(0,'Subiendo tu canción…');
+    const sg=await libSubApi({action:'sign-upload',id,kind:'audio',contentType:a.type||'audio/mpeg',size:a.size}); if(!sg.ok) throw new Error(pubMsg(sg));
+    const dur=await admDuration(a);
+    await admPut(sg.data.putUrl, sg.data.headers, a);
+    admProg(100,'Verificando…');
+    const cp=await libSubApi({action:'complete',id,durationSec:dur}); if(!cp.ok) throw new Error(pubMsg(cp));
+    if(c){
+      admProg(0,'Subiendo la portada…');
+      const sc=await libSubApi({action:'sign-upload',id,kind:'cover',contentType:c.type,size:c.size}); if(!sc.ok) throw new Error(pubMsg(sc));
+      await admPut(sc.data.putUrl, sc.data.headers, c);
+      const cc=await libSubApi({action:'complete',id,coverKey:sc.data.key}); if(!cc.ok) throw new Error(pubMsg(cc));
+    }
+    const sb=await libSubApi({action:'submit',id}); if(!sb.ok) throw new Error(pubMsg(sb));
+    LIB.pubDraft=null; LIB.pubFiles=null;
+    openSheet(`<div class="handle"></div><p class="serif" style="font-size:20px;margin-bottom:6px;">¡Recibimos tu canción!</p>
+      <p class="lib-p">Está <b>en revisión</b>. Te avisaremos aquí cuando se publique; puedes ver su estado en “Mis publicaciones”.</p>
+      <button class="btn btn-primary" style="width:100%;margin-top:10px;" onclick="libMineOpen()">Ver mis publicaciones</button>
+      <button class="btn btn-ghost" style="width:100%;margin-top:8px;" onclick="closeSheet()">Cerrar</button>`);
+  }catch(e){
+    const m=document.getElementById('af-msg'); if(m) m.textContent=(e.message==='network'||/^put-/.test(e.message))?'La subida falló. Revisa tu conexión e inténtalo de nuevo.':e.message; btn.disabled=false;
+  }
+}
+async function libMineOpen(){
+  if(typeof hereUser==='undefined' || !hereUser){ showHereToast('Inicia sesión para ver tus publicaciones.'); try{ openAccountSheet(); }catch(e){} return; }
+  const r=await libSubApi({action:'my'}); if(!r.ok){ showHereToast(pubMsg(r)); return; }
+  const rows=r.data.items;
+  openSheet(`<div class="handle"></div><p class="serif" style="font-size:20px;margin-bottom:8px;">Mis publicaciones</p>
+    <div style="max-height:56vh;overflow:auto;">${rows.length? rows.map(x=>{ const st=PUB_STATUS[x.status]||[x.status,'']; return `<div class="adm-row"><div class="adm-t">${libEsc(x.title)}</div>
+      <div class="adm-badges"><span class="adm-b ${st[1]}">${st[0]}</span><span class="adm-b">${libEsc(x.artistName)}</span></div>
+      ${x.status==='rejected'&&x.reviewerNote?`<div class="adm-help">Motivo: ${libEsc(x.reviewerNote)}</div>`:''}
+      ${['draft','pending','approved'].includes(x.status)?`<div class="adm-acts" style="margin-top:6px;"><button onclick="libPubWithdraw('${x.id}')">Retirar</button></div>`:''}</div>`; }).join('') : '<div class="lib-state" style="margin:0;">Aún no has enviado canciones.</div>'}</div>
+    <button class="btn btn-primary" style="width:100%;margin-top:12px;" onclick="libPubStart()">Publicar una canción</button>
+    <button class="btn btn-ghost" style="width:100%;margin-top:8px;" onclick="closeSheet()">Cerrar</button>`);
+}
+async function libPubWithdraw(id){
+  if(!confirm('¿Retirar esta canción? Dejará de estar disponible en HERE.')) return;
+  const r=await libSubApi({action:'withdraw',id}); if(!r.ok){ showHereToast(pubMsg(r)); return; }
+  showHereToast('Canción retirada'); LIB.items=null; LIB.at=0; libMineOpen();
+}
+/* ---------- reportar contenido ---------- */
+function libReportOpen(){
+  if(!libItem){ return; }
+  if(typeof hereUser==='undefined' || !hereUser){ showHereToast('Inicia sesión para reportar contenido.'); try{ openAccountSheet(); }catch(e){} return; }
+  openSheet(`<div class="handle"></div><p class="serif" style="font-size:20px;margin-bottom:2px;">Reportar contenido</p>
+   <p class="adm-help" style="margin-bottom:6px;">${libEsc(libItem.title)}</p>
+   <div class="adm-form"><label>Motivo</label><select id="rp-reason"><option value="copyright">Infringe derechos de autor</option><option value="inappropriate">Contenido inapropiado</option><option value="wrong_info">Información incorrecta</option><option value="other">Otro</option></select>
+   <label>Detalles (opcional)</label><textarea id="rp-det" maxlength="1000"></textarea></div>
+   <button class="btn btn-primary" style="width:100%;margin-top:12px;" onclick="libReportSend('${libItem.id}')">Enviar reporte</button>
+   <button class="btn btn-ghost" style="width:100%;margin-top:8px;" onclick="closeSheet()">Cancelar</button>`);
+}
+async function libReportSend(itemId){
+  const r=await libSubApi({action:'report',itemId,reason:document.getElementById('rp-reason').value,details:document.getElementById('rp-det').value});
+  if(!r.ok){ showHereToast(pubMsg(r)); return; }
+  closeSheet(); showHereToast('Gracias. Revisaremos tu reporte.');
+}
+/* ---------- administración: revisión de envíos y reportes ---------- */
+async function libAdminSubs(){
+  const box=document.getElementById('adm-list'); box.innerHTML='<div class="lib-state" style="margin:0;">Cargando…</div>';
+  const r=await libApi('/api/library-admin',{method:'POST',body:{action:'subs-list',status:'pending'}});
+  if(!r.ok){ box.innerHTML='<div class="lib-state" style="margin:0;">'+libEsc(admMsg(r))+(r.data&&r.data.message?'<br><small>¿Aplicaste supabase_library_v3.sql?</small>':'')+'</div>'; return; }
+  const rows=r.data.items;
+  box.innerHTML = rows.length ? rows.map(x=>`<div class="adm-row"><div class="adm-t">${libEsc(x.title)}</div>
+    <div class="adm-badges"><span class="adm-b">${libEsc(x.artist_name)}</span><span class="adm-b">${libEsc(x.genre||'sin género')}</span><span class="adm-b ok">Derechos declarados · ${libEsc(x.terms_version||'')}</span></div>
+    ${x.description?`<div class="adm-help">${libEsc(x.description)}</div>`:''}
+    <div class="adm-acts" style="margin-top:8px;"><button onclick="libAdminSubPreview('${x.id}')">Escuchar</button><button onclick="libAdminSubApprove('${x.id}')">Aprobar y publicar</button><button onclick="libAdminSubReject('${x.id}')">Rechazar</button></div></div>`).join('')
+    : '<div class="lib-state" style="margin:0;">No hay envíos pendientes.</div>';
+}
+async function libAdminSubPreview(id){
+  const r=await libApi('/api/library-admin',{method:'POST',body:{action:'sub-preview',id}}); if(!r.ok){ showHereToast(admMsg(r)); return; }
+  const a=new Audio(r.data.url); a.play().then(()=>{ showHereToast('Reproduciendo vista previa…'); setTimeout(()=>a.pause(),30000); }).catch(()=>showHereToast('No se pudo reproducir.'));
+}
+async function libAdminSubApprove(id){
+  if(!confirm('¿Aprobar y publicar esta canción como contenido de la comunidad?')) return;
+  const r=await libApi('/api/library-admin',{method:'POST',body:{action:'sub-approve',id}});
+  if(!r.ok){ showHereToast(admMsg(r)); return; }
+  showHereToast('Publicada'); LIB.items=null; LIB.at=0; libAdminRefresh();
+}
+function libAdminSubReject(id){
+  openSheet(`<div class="handle"></div><p class="serif" style="font-size:20px;margin-bottom:4px;">Rechazar envío</p>
+   <div class="adm-form"><label>Motivo (lo verá la persona)</label><textarea id="rj-note" maxlength="500"></textarea></div>
+   <button class="btn btn-primary" style="width:100%;margin-top:12px;" onclick="libAdminSubRejectGo('${id}')">Rechazar</button>
+   <button class="btn btn-ghost" style="width:100%;margin-top:8px;" onclick="closeSheet()">Cancelar</button>`);
+}
+async function libAdminSubRejectGo(id){
+  const r=await libApi('/api/library-admin',{method:'POST',body:{action:'sub-reject',id,note:document.getElementById('rj-note').value}});
+  if(!r.ok){ showHereToast(admMsg(r)); return; } closeSheet(); showHereToast('Rechazado'); libAdminRefresh();
+}
+async function libAdminReports(){
+  const box=document.getElementById('adm-list'); box.innerHTML='<div class="lib-state" style="margin:0;">Cargando…</div>';
+  const r=await libApi('/api/library-admin',{method:'POST',body:{action:'reports-list',status:'open'}});
+  if(!r.ok){ box.innerHTML='<div class="lib-state" style="margin:0;">'+libEsc(admMsg(r))+'</div>'; return; }
+  const RS={copyright:'Derechos de autor',inappropriate:'Inapropiado',wrong_info:'Información incorrecta',other:'Otro'};
+  box.innerHTML = r.data.items.length ? r.data.items.map(x=>`<div class="adm-row"><div class="adm-t">${libEsc(x.item?x.item.title:'(contenido borrado)')}</div>
+    <div class="adm-badges"><span class="adm-b warn">${RS[x.reason]||x.reason}</span>${x.item?`<span class="adm-b">${libEsc(x.item.status)}</span>`:''}</div>
+    ${x.details?`<div class="adm-help">${libEsc(x.details)}</div>`:''}
+    <div class="adm-acts" style="margin-top:8px;"><button onclick="libAdminReportGo('${x.id}','remove')">Retirar contenido</button><button onclick="libAdminReportGo('${x.id}','dismiss')">Descartar</button></div></div>`).join('')
+    : '<div class="lib-state" style="margin:0;">No hay reportes abiertos.</div>';
+}
+async function libAdminReportGo(id,outcome){
+  if(outcome==='remove' && !confirm('¿Retirar este contenido de HERE ahora?')) return;
+  const r=await libApi('/api/library-admin',{method:'POST',body:{action:'report-resolve',id,outcome}});
+  if(!r.ok){ showHereToast(admMsg(r)); return; } showHereToast(outcome==='remove'?'Contenido retirado':'Reporte descartado'); LIB.items=null; LIB.at=0; libAdminRefresh();
 }
 </script>
 

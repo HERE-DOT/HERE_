@@ -140,6 +140,69 @@ module.exports = async function handler(req, res) {
         return L.send(res, 200, { row: out[0] });
       }
 
+      case 'subs-list': {
+        const st = ['pending', 'approved', 'rejected', 'withdrawn'].includes(b.status) ? b.status : 'pending';
+        const rows = await L.rest(`library_submissions?status=eq.${st}&select=id,user_id,title,artist_name,description,genre,status,rights_confirmed,terms_version,terms_accepted_at,audio_ready,duration_sec,cover_key,reviewer_note,created_at,published_item_id&order=created_at.asc&limit=100`);
+        return L.send(res, 200, { items: rows });
+      }
+
+      case 'sub-preview': {
+        if (!c) return L.send(res, 501, { error: 'r2-not-configured' });
+        if (!UUID.test(b.id || '')) return L.send(res, 400, { error: 'bad-id' });
+        const s = (await L.rest(`library_submissions?id=eq.${b.id}&select=audio_key,audio_ready`))[0];
+        if (!s || !s.audio_ready) return L.send(res, 404, { error: 'no-audio' });
+        return L.send(res, 200, { url: r2.objectUrl(c, s.audio_key, { method: 'GET', expires: 3600 }) });
+      }
+
+      case 'sub-approve': {
+        if (!UUID.test(b.id || '')) return L.send(res, 400, { error: 'bad-id' });
+        const s = (await L.rest(`library_submissions?id=eq.${b.id}&select=*`))[0];
+        if (!s) return L.send(res, 404, { error: 'not-found' });
+        if (s.status !== 'pending') return L.send(res, 409, { error: 'not-pending' });
+        if (!s.audio_ready || !s.rights_confirmed || !s.terms_version) return L.send(res, 422, { error: 'incomplete-submission' });
+        if (c) { const h = await r2.head(c, s.audio_key).catch(() => null); if (!h) return L.send(res, 422, { error: 'audio-missing' }); }
+        // 1) elemento del catálogo (origen "comunidad": nunca se presenta como producción de HERE)
+        const item = (await L.rest('library_items', { method: 'POST', prefer: 'return=representation', body: {
+          type: 'music', title: s.title, creator: s.artist_name, description: s.description, categories: s.genre ? [String(s.genre).toLowerCase()] : [],
+          cover_key: s.cover_key, status: 'draft', visibility: 'public', origin: 'community', rights_status: 'licensed',
+          rights_holder: s.artist_name, rights_terms: `Declaración de la persona y términos ${s.terms_version} aceptados el ${String(s.terms_accepted_at).slice(0, 10)}`,
+          artist_id: UUID.test(b.artistId || '') ? b.artistId : null, created_by: s.user_id } }))[0];
+        // 2) archivo ya verificado → fila de media lista
+        const media = (await L.rest('library_media', { method: 'POST', prefer: 'return=representation', body: {
+          item_id: item.id, r2_key: s.audio_key, content_type: s.audio_content_type, size_bytes: s.audio_size, duration_sec: s.duration_sec, version: 1, status: 'ready' } }))[0];
+        await L.rest(`library_items?id=eq.${item.id}`, { method: 'PATCH', body: { media_id: media.id, duration_sec: s.duration_sec, status: 'published' } });
+        await L.rest(`library_submissions?id=eq.${s.id}`, { method: 'PATCH', body: { status: 'approved', reviewed_by: user.id, reviewed_at: new Date().toISOString(), reviewer_note: str(b.note, 500), published_item_id: item.id } });
+        return L.send(res, 200, { ok: true, itemId: item.id });
+      }
+
+      case 'sub-reject': {
+        if (!UUID.test(b.id || '')) return L.send(res, 400, { error: 'bad-id' });
+        const note = str(b.note, 500);
+        if (!note) return L.send(res, 400, { error: 'note-required' });
+        const out = await L.rest(`library_submissions?id=eq.${b.id}&status=eq.pending`, { method: 'PATCH', prefer: 'return=representation', body: { status: 'rejected', reviewer_note: note, reviewed_by: user.id, reviewed_at: new Date().toISOString() } });
+        if (!out.length) return L.send(res, 409, { error: 'not-pending' });
+        return L.send(res, 200, { ok: true });
+      }
+
+      case 'reports-list': {
+        const st = ['open', 'reviewing', 'actioned', 'dismissed'].includes(b.status) ? b.status : 'open';
+        const rows = await L.rest(`library_reports?status=eq.${st}&select=id,item_id,reason,details,status,created_at&order=created_at.asc&limit=100`);
+        const ids = [...new Set(rows.map((r) => r.item_id).filter(Boolean))];
+        const items = ids.length ? await L.rest(`library_items?id=in.(${ids.join(',')})&select=id,title,creator,status`) : [];
+        const m = new Map(items.map((i) => [i.id, i]));
+        return L.send(res, 200, { items: rows.map((r) => Object.assign({}, r, { item: m.get(r.item_id) || null })) });
+      }
+
+      case 'report-resolve': {
+        if (!UUID.test(b.id || '')) return L.send(res, 400, { error: 'bad-id' });
+        const status = b.outcome === 'remove' ? 'actioned' : b.outcome === 'reviewing' ? 'reviewing' : 'dismissed';
+        const rep = (await L.rest(`library_reports?id=eq.${b.id}&select=item_id`))[0];
+        if (!rep) return L.send(res, 404, { error: 'not-found' });
+        if (b.outcome === 'remove' && rep.item_id) await L.rest(`library_items?id=eq.${rep.item_id}`, { method: 'PATCH', body: { status: 'archived' } });   // retirada inmediata
+        await L.rest(`library_reports?id=eq.${b.id}`, { method: 'PATCH', body: { status, resolution_note: str(b.note, 500), resolved_by: user.id, resolved_at: new Date().toISOString() } });
+        return L.send(res, 200, { ok: true, removed: b.outcome === 'remove' });
+      }
+
       case 'sign-upload': {
         if (!c) return L.send(res, 501, { error: 'r2-not-configured' });
         const it = await getItem(b.itemId); if (!it) return L.send(res, 404, { error: 'not-found' });
