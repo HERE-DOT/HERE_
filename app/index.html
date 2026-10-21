@@ -2559,6 +2559,43 @@
   #musica .lm-label{ flex:1; display:flex; align-items:center; padding:26px 11px 16px; font-size:12.5px; line-height:1.3; min-height:74px; box-sizing:border-box; }
   #musica .lm-card.lm-photo .lm-scene{ background-size:cover; background-position:center; background-repeat:no-repeat; }
   @media (min-width:900px){ #musica .listen-moment-list{ max-width:560px; } }
+
+  /* Para este momento — más grandes y con aire: en celular se desliza de lado
+     (tarjetas de ~150px, la tercera asoma), en pantallas amplias van las 3 juntas. */
+  @media (max-width:639px){
+    #musica .listen-moment-list{
+      display:flex; gap:14px; overflow-x:auto; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; scrollbar-width:none;
+      margin:0 -24px; padding:4px 24px 20px; scroll-padding-left:24px;
+    }
+    #musica .listen-moment-list::-webkit-scrollbar{ display:none; }
+    #musica .lm-card{ flex:0 0 156px; scroll-snap-align:start; border-radius:22px; }
+    #musica .lm-scene{ aspect-ratio:1.08/1; }
+    #musica .lm-badge{ width:36px; height:36px; left:14px; bottom:-18px; }
+    #musica .lm-badge svg{ width:19px; height:19px; }
+    #musica .lm-label{ font-size:14.5px; line-height:1.35; padding:28px 14px 20px; min-height:92px; }
+  }
+
+  /* Para este momento — proporciones exactas de la maqueta: 3 tarjetas casi cuadradas,
+     foto ancha (1.37:1) y pie de texto corto. Esto reemplaza lo anterior. */
+  #musica .listen-moment-list, #musica .listen-moment-list{ display:grid; grid-template-columns:repeat(3,1fr); gap:9px; overflow:visible; margin:0; padding:0; scroll-snap-type:none; }
+  #musica .lm-card{ flex:none; border-radius:14px; box-shadow:0 1px 6px rgba(0,0,0,.08); }
+  #musica .lm-scene{ aspect-ratio:1.37/1; }
+  #musica .lm-badge{ width:28px; height:28px; left:9px; bottom:-14px; }
+  #musica .lm-badge svg{ width:15px; height:15px; }
+  #musica .lm-label{ min-height:0; padding:20px 9px 11px; font-size:11.5px; line-height:1.3; align-items:center; }
+  @media (max-width:639px){
+    #musica .listen-moment-list{ display:grid; overflow:visible; margin:0; padding:0; gap:9px; }
+    #musica .lm-card{ flex:none; border-radius:14px; }
+    #musica .lm-scene{ aspect-ratio:1.37/1; }
+    #musica .lm-badge{ width:28px; height:28px; left:9px; bottom:-14px; }
+    #musica .lm-badge svg{ width:15px; height:15px; }
+    #musica .lm-label{ font-size:11.5px; line-height:1.3; padding:20px 9px 11px; min-height:0; }
+  }
+  @media (min-width:900px){
+    #musica .listen-moment-list{ max-width:none; gap:14px; }
+    #musica .lm-label{ font-size:14px; padding:26px 14px 16px; }
+    #musica .lm-badge{ width:34px; height:34px; bottom:-17px; left:12px; } #musica .lm-badge svg{ width:18px; height:18px; }
+  }
 </style>
 </head>
 <body>
