@@ -2596,6 +2596,27 @@
     #musica .lm-label{ font-size:14px; padding:26px 14px 16px; }
     #musica .lm-badge{ width:34px; height:34px; bottom:-17px; left:12px; } #musica .lm-badge svg{ width:18px; height:18px; }
   }
+
+  /* Continúa escuchando — como la maqueta: barra con tiempos + botón play redondo + "Continuar" */
+  #musica .cl-card{ align-items:flex-start; padding:16px; gap:16px; }
+  #musica .cl-thumb{ width:84px; height:84px; border-radius:16px; }
+  #musica .cl-row{ display:flex; align-items:center; gap:12px; margin-top:10px; }
+  #musica .cl-prog{ flex:1; min-width:0; }
+  #musica .cl-bar{ height:5px; border-radius:5px; background:var(--line-strong); overflow:hidden; }
+  #musica .cl-fill{ height:100%; border-radius:5px; background:var(--sage-deep); }
+  :root[data-theme="dark"] #musica .cl-fill{ background:var(--gold); }
+  #musica .cl-times{ display:flex; justify-content:space-between; margin-top:6px; font-size:11px; color:var(--ink-soft); font-variant-numeric:tabular-nums; }
+  #musica .cl-play{
+    flex:none; width:46px; height:46px; border-radius:50%; border:none; cursor:pointer; padding:0;
+    display:flex; align-items:center; justify-content:center; background:var(--sage-deep); color:#FFF6E8;
+    transition:transform .2s ease, filter .2s ease;
+  }
+  :root[data-theme="dark"] #musica .cl-play{ background:#3D6A5E; }
+  #musica .cl-play svg{ width:18px; height:18px; margin-left:2px; }
+  #musica .cl-play:active{ transform:scale(.92); }
+  #musica .cl-play:focus-visible{ outline:2px solid var(--gold); outline-offset:3px; }
+  #musica .cl-btn{ margin-top:12px; }
+  @media (max-width:380px){ #musica .cl-thumb{ width:72px; height:72px; } }
 </style>
 </head>
 <body>
@@ -8444,11 +8465,30 @@ async function openDayMoment(id){
 function saveLastListened(item){
   if(!item) return;
   try{
+    const prev = load('here_last_listened', null);
+    const same = prev && prev.yt === (item.yt || null) && prev.ytList === (item.ytList || null);
     save('here_last_listened', {
       id: item.id || null, name: item.name || '', role: item.role || item.s || '',
       yt: item.yt || null, ytList: item.ytList || null, thumb: trackThumbUrl(item),
+      pos: same ? (prev.pos||0) : 0, dur: same ? (prev.dur||0) : 0,
       at: Date.now()
     });
+  }catch(e){}
+}
+// Guarda cada ~5 s en qué segundo va lo que suena (solo YouTube, no la
+// biblioteca, que guarda su propio progreso) para poder mostrar la barra de
+// "Continúa escuchando" y retomar justo ahí.
+let lastPosSavedAt = 0;
+function saveListenPosition(cur, dur){
+  try{
+    if(typeof libShim !== 'undefined' && ytPlayer === libShim) return;
+    if(!currentPlayItem || !(dur > 0) || cur < 3) return;
+    if(Date.now() - lastPosSavedAt < 5000) return;
+    const saved = load('here_last_listened', null);
+    if(!saved || saved.yt !== (currentPlayItem.yt || null) || saved.ytList !== (currentPlayItem.ytList || null)) return;
+    lastPosSavedAt = Date.now();
+    saved.pos = cur; saved.dur = dur; saved.at = Date.now();
+    save('here_last_listened', saved);
   }catch(e){}
 }
 function lastListened(){
@@ -8468,6 +8508,7 @@ function renderContinueListening(){
     return;
   }
   wrap.style.display = '';
+  const hasPos = item.pos > 0 && item.dur > 0;
   wrap.innerHTML = `
     <h3 class="listen-h serif">Continúa escuchando</h3>
     <div class="cl-card" onclick="resumeLastListened()">
@@ -8475,8 +8516,16 @@ function renderContinueListening(){
       <div class="cl-body">
         <div class="cl-name serif">${item.name}</div>
         <div class="cl-role">${item.role||''}</div>
+        <div class="cl-row">
+          <div class="cl-prog">
+            <div class="cl-bar"><div class="cl-fill" style="width:${hasPos ? Math.min(100, Math.round(item.pos/item.dur*100)) : 0}%"></div></div>
+            ${hasPos ? `<div class="cl-times"><span>${formatPlayerTime(item.pos)}</span><span>${formatPlayerTime(item.dur)}</span></div>` : ''}
+          </div>
+          <button class="cl-play" onclick="resumeLastListened(); event.stopPropagation();" aria-label="Reproducir">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.2v13.6c0 .8.9 1.3 1.6.8l10.2-6.8c.6-.4.6-1.2 0-1.6L9.6 4.4C8.9 3.9 8 4.4 8 5.2z"/></svg>
+          </button>
+        </div>
         <button class="cl-btn" onclick="resumeLastListened(); event.stopPropagation();">
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.2v13.6c0 .8.9 1.3 1.6.8l10.2-6.8c.6-.4.6-1.2 0-1.6L9.6 4.4C8.9 3.9 8 4.4 8 5.2z"/></svg>
           Continuar
         </button>
       </div>
@@ -8485,8 +8534,11 @@ function renderContinueListening(){
 function resumeLastListened(){
   const item = lastListened();
   if(!item) return;
+  // si ya sabíamos en qué segundo iba (y no estaba casi terminada), retoma ahí
+  resumeSeekTo = (item.pos > 5 && item.dur > 0 && item.pos < item.dur - 8) ? item.pos : 0;
   playTrack({ id:item.id, name:item.name, role:item.role, yt:item.yt, ytList:item.ytList, thumb:item.thumb });
 }
+let resumeSeekTo = 0;
 function musicSearchUrl(platform, q){
   const enc = encodeURIComponent(q);
   return platform==='spotify' ? `https://open.spotify.com/search/${enc}` : `https://www.youtube.com/results?search_query=${enc}`;
@@ -9286,6 +9338,10 @@ function onPlayerStateChange(e){
   // 0 = YT.PlayerState.ENDED: el video terminó solo (no lo pausó la
   // persona) — ahí es cuando entra la reproducción continua.
   if(e.data===0) handleTrackEnded();
+  if(playing && resumeSeekTo > 0){
+    const t = resumeSeekTo; resumeSeekTo = 0;
+    try{ ytPlayer.seekTo(t, true); }catch(err){}
+  }
   playerToolsSync();
 }
 // Barra de progreso del mini reproductor: un vistazo rápido de cuánto va
@@ -9308,6 +9364,7 @@ function updateMiniProgress(){
     const cur = ytPlayer.getCurrentTime() || 0;
     fill.style.width = (dur > 0 ? Math.min(100, (cur/dur)*100) : 0) + '%';
     miniBar('mp', dur > 0 ? Math.min(1, cur/dur) : 0, formatPlayerTime(cur), formatPlayerTime(dur));
+    saveListenPosition(cur, dur);
   }catch(e){}
 }
 // Barra de progreso + tiempos del reproductor grande (modo "solo escuchar").
