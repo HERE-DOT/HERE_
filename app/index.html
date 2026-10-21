@@ -2358,6 +2358,192 @@
   .adm-help{font-size:12px; color:var(--ink-soft); line-height:1.45; margin-top:4px;}
   .adm-prog{height:6px; border-radius:6px; background:var(--bg-warm); overflow:hidden; margin-top:8px; display:none;}
   .adm-prog i{display:block; height:100%; width:0; background:var(--gold);}
+
+  /* =====================================================================
+     ESCUCHAR — rediseño (solo estilos de #musica). Dirección: cálida,
+     serena y ordenada. Jerarquía: Continúa escuchando → Para este momento
+     → Destacado para ti → Por tu día → Biblioteca → Explorar.
+     ===================================================================== */
+  #musica .listen-wrap{ max-width:760px; margin-left:auto; margin-right:auto; padding-left:24px; padding-right:24px; box-sizing:border-box; width:100%; }
+  #musica .listen-h{ font-family:'Fraunces',serif; font-size:22px; font-weight:500; color:var(--ink); letter-spacing:-.1px; margin:0 0 14px; line-height:1.2; }
+  #musica .listen-head{ width:100%; max-width:760px; margin:0 auto; padding:34px 24px 4px; box-sizing:border-box; display:flex; align-items:flex-start; justify-content:space-between; gap:14px; }
+  #musica .listen-head h2{ font-size:38px; font-weight:400; letter-spacing:-.4px; line-height:1.1; color:var(--ink); margin:0; }
+  #musica .listen-head p{ margin:8px 0 0; font-size:14px; line-height:1.45; color:var(--ink-soft); }
+  #musica .listen-profile{
+    flex:none; width:46px; height:46px; border-radius:50%; border:1px solid var(--sage-surface-line); cursor:pointer;
+    background:var(--sage-surface); color:var(--sage-surface-ink); display:flex; align-items:center; justify-content:center;
+    transition:transform .2s ease, background .25s ease;
+  }
+  #musica .listen-profile svg{ width:21px; height:21px; }
+  #musica .listen-profile:active{ transform:scale(.93); }
+  #musica .listen-profile:focus-visible, #musica .lm-card:focus-visible, #musica .listen-dayrow .chip:focus-visible,
+  #musica .cl-btn:focus-visible, #musica .escuchar-tab:focus-visible{ outline:2px solid var(--gold); outline-offset:3px; }
+
+  /* búsqueda: píldora suave con la lupa dentro */
+  #musica .music-search-bar{ position:relative; width:100%; max-width:760px; margin:0 auto; padding:18px 24px 6px; box-sizing:border-box; display:block; }
+  #musica .music-search-bar input{
+    width:100%; box-sizing:border-box; padding:15px 20px 15px 50px; border-radius:100px; border:1px solid transparent;
+    background:color-mix(in srgb, var(--ink) 6%, transparent); font-size:14.5px; color:var(--ink);
+    transition:border-color .25s ease, background .25s ease;
+  }
+  #musica .music-search-bar input:focus{ border-color:var(--gold); background:color-mix(in srgb, var(--ink) 9%, transparent); }
+  #musica .music-search-bar button{
+    position:absolute; left:30px; top:50%; margin-top:6px; transform:translateY(-50%); width:36px; height:36px;
+    background:none; box-shadow:none; color:var(--ink-soft);
+  }
+  #musica .music-search-bar button:active{ transform:translateY(-50%) scale(.9); }
+
+  /* 1. Continúa escuchando */
+  #musica #musica-continue{ padding-top:22px; }
+  #musica .cl-card{
+    display:flex; gap:16px; align-items:center; padding:14px; border-radius:26px; cursor:pointer;
+    background:var(--card); border:1px solid var(--line); box-shadow:var(--shadow-sm);
+    transition:transform .25s ease, box-shadow .25s ease;
+  }
+  #musica .cl-card:active{ transform:scale(.985); }
+  #musica .cl-thumb{ width:96px; height:96px; flex:none; border-radius:20px; object-fit:cover; background:var(--sage-surface); }
+  #musica .cl-thumb-empty{ display:flex; align-items:center; justify-content:center; color:var(--sage-text); }
+  #musica .cl-thumb-empty svg{ width:34px; height:34px; }
+  #musica .cl-body{ flex:1; min-width:0; }
+  #musica .cl-name{ font-size:19px; font-weight:500; color:var(--ink); line-height:1.2; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  #musica .cl-role{ font-size:13px; color:var(--ink-soft); margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  #musica .cl-btn{
+    margin-top:12px; width:100%; display:flex; align-items:center; justify-content:center; gap:8px; padding:11px 16px; border:none; border-radius:100px; cursor:pointer;
+    background:var(--sage-deep); color:#FFF6E8; font-family:'Manrope',sans-serif; font-size:14px; font-weight:600;
+    transition:transform .2s ease, filter .2s ease;
+  }
+  #musica .cl-btn svg{ width:14px; height:14px; }
+  #musica .cl-btn:active{ transform:scale(.97); filter:brightness(1.1); }
+  :root[data-theme="dark"] #musica .cl-btn{ background:#3D6A5E; }
+
+  /* 2. Para este momento */
+  #musica .listen-moment{ position:static; overflow:visible; margin-top:26px; margin-bottom:6px; padding-top:0; padding-bottom:0; background:none; border:none; box-shadow:none; border-radius:0; }
+  #musica .listen-moment::after{ display:none; }
+  #musica .listen-moment-list{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+  #musica .lm-card{
+    position:relative; display:flex; flex-direction:column; padding:0; overflow:hidden; text-align:left; cursor:pointer;
+    border-radius:22px; border:1px solid var(--line); background:var(--card); box-shadow:var(--shadow-sm); font:inherit; color:inherit;
+    transition:transform .3s cubic-bezier(.22,1,.36,1), box-shadow .3s ease;
+  }
+  #musica .lm-card:active{ transform:scale(.97); }
+  @media (hover:hover){ #musica .lm-card:hover{ transform:translateY(-3px); box-shadow:var(--shadow-md); } }
+  #musica .lm-scene{ position:relative; display:flex; align-items:center; justify-content:center; height:108px; color:#FFF6E8; }
+  #musica .lm-scene::after{ content:''; position:absolute; inset:0; background:radial-gradient(circle at 72% 18%, rgba(255,228,166,.34), transparent 58%); }
+  #musica .lm-bigicon svg{ position:relative; z-index:1; width:44px; height:44px; opacity:.4; stroke-width:1.2; }
+  #musica .lm-tone-0 .lm-scene{ background:linear-gradient(165deg,#3E6B5D,#1F403F); }
+  #musica .lm-tone-1 .lm-scene{ background:linear-gradient(165deg,#4B6E86,#27465A); }
+  #musica .lm-tone-2 .lm-scene{ background:linear-gradient(165deg,#9C7A45,#5C4524); }
+  #musica .lm-badge{
+    position:absolute; top:90px; left:12px; z-index:2; width:34px; height:34px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; background:var(--card); color:var(--sage-text); box-shadow:0 2px 8px rgba(0,0,0,.18);
+  }
+  #musica .lm-badge svg{ width:17px; height:17px; }
+  #musica .lm-label{ padding:26px 12px 15px; font-family:'Fraunces',serif; font-size:14.5px; font-weight:500; line-height:1.28; color:var(--ink); }
+
+  /* 3. Destacado para ti — tarjeta verde profundo, foto a la derecha */
+  #musica .listen-wrap + #musica-featured{ margin-top:0; }
+  #musica #musica-featured{ margin-bottom:0; }
+  #musica .listen-featured-head{ margin-top:30px; }
+  #musica .week-scene{
+    --ws-bg:linear-gradient(135deg,#2C4F3B 0%,#1B3527 100%);
+    display:block; position:relative; min-height:196px; margin:0 24px 8px; border-radius:28px; overflow:hidden; border:1px solid rgba(255,246,232,.10);
+    background:var(--ws-bg); box-shadow:var(--shadow-md);
+  }
+  :root[data-theme="dark"] #musica .week-scene{ --ws-bg:linear-gradient(135deg,#2A5149 0%,#15303A 100%); }
+  #musica .week-scene-photo{
+    position:absolute; top:0; right:0; bottom:0; left:auto; width:60%; min-width:0; flex:none; height:auto;
+    background-size:cover; background-position:center 24%; border-radius:0; box-shadow:none; align-self:auto;
+    -webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 46%); mask-image:linear-gradient(90deg,transparent 0%,#000 46%);
+    opacity:.96;
+  }
+  #musica .week-scene-photo::after{ display:none; }
+  #musica .week-scene-body{ position:relative; z-index:1; width:68%; min-height:196px; box-sizing:border-box; padding:24px 20px 22px 24px; margin:0; justify-content:center; align-items:flex-start; }
+  #musica .week-scene .eyebrow{ flex-direction:column; align-items:flex-start; gap:10px; font-size:13px; font-weight:500; letter-spacing:.2px; text-transform:none; color:rgba(255,246,232,.82); opacity:1; }
+  #musica .week-scene .eyebrow .dot{ width:26px; height:2px; border-radius:2px; background:var(--gold); animation:none; box-shadow:none; }
+  #musica .week-scene .name{ font-size:29px; font-weight:400; line-height:1.1; color:#FFF6E8; margin-top:6px; letter-spacing:-.2px; }
+  #musica .week-scene .role{ color:rgba(255,246,232,.7); font-size:12.5px; margin-top:6px; }
+  #musica .week-scene .blurb{ color:rgba(255,246,232,.68); font-size:12.5px; margin-top:8px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  #musica .week-scene-actions{ margin-top:16px; gap:8px; }
+  #musica .week-scene-btn{
+    flex:none; justify-content:center; padding:11px 20px; background:#FFF6E8; color:#1B3527; font-size:13.5px; box-shadow:0 4px 14px rgba(0,0,0,.22);
+    transition:transform .2s ease, opacity .2s ease;
+  }
+  #musica .week-scene-btn-ghost{ background:rgba(255,246,232,.10); color:#FFF6E8; border:1px solid rgba(255,246,232,.3); box-shadow:none; }
+  #musica .week-scene.song-scene{ text-align:left; align-items:stretch; padding:0; }
+  #musica .week-scene.song-scene .week-scene-photo{ position:absolute; width:56%; height:auto; align-self:auto; border-radius:0; box-shadow:none; background-position:center; overflow:visible; }
+  #musica .week-scene.song-scene .week-scene-body{ width:68%; padding:24px 20px 22px 24px; margin:0; align-items:flex-start; }
+  #musica .week-scene.song-scene .eyebrow{ justify-content:flex-start; }
+  #musica .week-scene.song-scene .name{ font-size:23px; }
+  #musica .week-scene.song-scene .week-scene-actions{ width:auto; }
+  #musica .featured-slide{ display:block; }
+  #musica .featured-dots{ margin:10px 0 4px; }
+  #musica .featured-dot{ background:var(--line-strong); }
+  #musica .featured-dot.active{ width:18px; border-radius:6px; transform:none; background:var(--gold); }
+  #musica .featured-dot{ transition:width .35s ease, background .35s ease; }
+  #musica .featured-nav{ background:rgba(16,42,53,.55); border-color:rgba(255,246,232,.25); color:#FFF6E8; -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); box-shadow:none; }
+  #musica .featured-nav:hover{ background:rgba(16,42,53,.8); }
+  @media (hover:none){ #musica .featured-nav{ display:none; } }
+  /* esqueleto mientras carga la canción del día */
+  #musica .listen-skel .week-scene-body{ gap:12px; display:flex; }
+  #musica .listen-skel .sk{ display:block; border-radius:8px; background:linear-gradient(90deg,rgba(255,246,232,.07),rgba(255,246,232,.18),rgba(255,246,232,.07)); background-size:220% 100%; animation:listenShimmer 1.8s ease-in-out infinite; }
+  #musica .listen-skel .sk-s{ width:90px; height:12px; } #musica .listen-skel .sk-l{ width:70%; height:26px; } #musica .listen-skel .sk-m{ width:45%; height:14px; }
+  @keyframes listenShimmer{ from{ background-position:120% 0; } to{ background-position:-120% 0; } }
+
+  /* 4. Por tu día — chips de una línea; el sugerido por la hora va en verde */
+  #musica .listen-dayrow-wrap{ margin-top:22px; }
+  #musica .listen-dayrow{ width:100%; max-width:760px; margin:0 auto; padding:2px 24px 12px; box-sizing:border-box; gap:9px; }
+  #musica .listen-dayrow .chip{
+    flex-direction:row; align-items:center; gap:8px; padding:12px 18px; border-radius:100px; color:var(--ink);
+    background:var(--card); border:1px solid var(--line); box-shadow:none;
+    transition:background .3s ease, color .3s ease, transform .2s ease, border-color .3s ease;
+  }
+  #musica .listen-dayrow .chip .e svg{ width:18px; height:18px; display:block; }
+  #musica .listen-dayrow .chip .l{ font-size:13.5px; font-weight:600; color:inherit; }
+  #musica .listen-dayrow .chip.active{ background:var(--sage-deep); color:#FFF6E8; border-color:transparent; }
+  :root[data-theme="dark"] #musica .listen-dayrow .chip.active{ background:#3D6A5E; }
+  #musica .listen-dayrow .chip:active{ transform:scale(.95); }
+  @media (hover:hover){ #musica .listen-dayrow .chip:not(.active):hover{ border-color:var(--gold); } }
+
+  #musica #lib-section{ margin-top:14px; }
+
+  /* 5. Explorar — título serif + pestañas en píldoras */
+  #musica .listen-explore-row{ width:100%; max-width:760px; margin:26px auto 14px; padding:0 24px; box-sizing:border-box; align-items:center; }
+  #musica .escuchar-tabs{ gap:6px; }
+  #musica .escuchar-tab-dot{ display:none; }
+  #musica .escuchar-tab{ padding:8px 15px; border:1px solid var(--line); border-radius:100px; background:transparent; font-size:13px; color:var(--ink-soft); transition:background .3s ease,color .3s ease,border-color .3s ease; }
+  #musica .escuchar-tab.active{ background:var(--sage-deep); color:#FFF6E8; border-color:transparent; }
+  :root[data-theme="dark"] #musica .escuchar-tab.active{ background:#3D6A5E; }
+
+  /* entrada lenta y discreta, una sola vez por bloque */
+  #musica .listen-sec{ animation:listenRise .9s cubic-bezier(.22,1,.36,1) both; }
+  #musica #musica-default-sections > .listen-sec:nth-child(2){ animation-delay:.08s; }
+  #musica #musica-default-sections > .listen-sec:nth-child(3){ animation-delay:.16s; }
+  #musica #musica-default-sections > .listen-sec:nth-child(4){ animation-delay:.22s; }
+  #musica #musica-default-sections > .listen-sec:nth-child(5){ animation-delay:.28s; }
+  @keyframes listenRise{ from{ opacity:0; transform:translateY(14px); } to{ opacity:1; transform:none; } }
+  @media (prefers-reduced-motion: reduce){
+    #musica .listen-sec, #musica .week-scene, #musica .listen-skel .sk{ animation:none !important; }
+    #musica .lm-card, #musica .cl-card, #musica .listen-dayrow .chip{ transition:none; }
+  }
+
+  /* pantallas angostas y escritorio */
+  @media (max-width:640px){
+    #musica .week-scene{ min-height:188px; }
+    #musica .week-scene-body, #musica .week-scene.song-scene .week-scene-body{ width:70%; min-height:188px; padding:22px 14px 20px 20px; }
+    #musica .week-scene .name{ font-size:26px; }
+    #musica .week-scene.song-scene .name{ font-size:21px; }
+    #musica .week-scene-photo, #musica .week-scene.song-scene .week-scene-photo{ width:62%; flex:none; }
+    #musica .week-scene-actions{ flex-direction:row; }
+    #musica .week-scene-btn{ flex:none; padding:10px 14px; font-size:12.5px; }
+    #musica .week-scene-actions{ flex-wrap:wrap; gap:6px; }
+    #musica .lm-label{ font-size:13.5px; padding-left:11px; padding-right:9px; }
+  }
+  @media (max-width:360px){ #musica .listen-moment-list{ gap:8px; } #musica .lm-scene{ height:92px; } #musica .lm-badge{ top:74px; } #musica .week-scene .name{ font-size:23px; } }
+  @media (min-width:900px){
+    #musica .week-scene{ margin-left:auto; margin-right:auto; max-width:712px; min-height:230px; }
+    #musica .week-scene-body{ min-height:230px; }
+    #musica .lm-scene{ height:132px; } #musica .lm-badge{ top:114px; }
+  }
 </style>
 </head>
 <body>
@@ -2917,55 +3103,54 @@
 
   <!-- MÚSICA, PODCASTS Y PREDICACIONES -->
   <section class="screen" id="musica">
-    <div class="topbar"><h2>Escuchar</h2></div>
+    <!-- Escuchar rediseñado: encabezado sereno + jerarquía Continúa escuchando →
+         Para este momento → Destacado → Por tu día → Biblioteca → Explorar.
+         Todos los ids y funciones existentes se conservan. -->
+    <header class="listen-head">
+      <div>
+        <h2 class="serif">Escuchar</h2>
+        <p>Encuentra algo que acompañe este momento.</p>
+      </div>
+      <button class="listen-profile" onclick="go('perfil')" aria-label="Mi perfil">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="3.6"/><path d="M5 20c.9-3.6 3.7-5.4 7-5.4s6.1 1.8 7 5.4"/></svg>
+      </button>
+    </header>
     <div class="music-search-bar">
       <input type="text" id="musica-search-input" placeholder="Busca un artista, pastor o tema…" onkeydown="if(event.key==='Enter') runMusicaSearch();">
       <button onclick="runMusicaSearch()" aria-label="Buscar">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
       </button>
     </div>
     <div id="musica-search-results"></div>
     <div id="musica-default-sections">
 
-    <!-- "Continuar escuchando": si hay algo reproducido recientemente, es lo
-         primero que se ve — reutiliza la misma tarjeta visual que "Continúa
-         tu plan" en el Home (.plan-continue), nada nuevo que aprender. -->
-    <div id="musica-continue" style="padding:0 24px; margin-bottom:4px; display:none;"></div>
-    <div id="lib-section" style="display:none;"></div>
+    <!-- 1. Continúa escuchando (solo si hay algo reciente) -->
+    <div id="musica-continue" class="listen-wrap listen-sec" style="display:none;"></div>
 
-    <!-- Destacado de la semana: lo primero que se ve, arriba de "Para este
-         momento" — más grande y con vida, para que abra la pantalla. -->
-    <div id="musica-featured"></div>
-    
-    <!-- CAPA A — "Para este momento": con más peso visual y emocional que la
-         biblioteca de abajo. Exactamente 3 caminos simples y suaves, sin
-         selector de humor. -->
-    <div class="listen-moment" id="listen-moment">
-      <div class="listen-moment-head">
-        <span class="listen-moment-icon" aria-hidden="true">🌿</span>
-        <div>
-          <div class="listen-moment-title serif">Para este momento</div>
-          <div class="listen-moment-sub">Contenido elegido según lo que estás viviendo</div>
-        </div>
-      </div>
+    <!-- 2. Para este momento: 3 caminos suaves según lo que la persona vive -->
+    <div class="listen-moment listen-wrap listen-sec" id="listen-moment">
+      <h3 class="listen-h serif">Para este momento</h3>
       <div class="listen-moment-list" id="listen-moment-list"></div>
     </div>
 
-    <!-- CAPA A2 — "Por tu día": a diferencia de "Para este momento" (humor),
-         esto organiza por lo que la persona está HACIENDO — empezar el día,
-         descansar, orar, caminar, dormir, o atravesar un momento difícil.
-         Mismo mecanismo que "Para este momento" (openMomentCatalog), solo
-         que lee de DAY_MOMENTS en vez de LISTEN_MOODS — nada nuevo que
-         mantener por separado. -->
-    <div class="listen-dayrow-wrap">
-      <div class="section-title" style="margin-top:4px;">Por tu día</div>
+    <!-- 3. Destacado para ti: artista, pastor y canción del día -->
+    <div class="listen-wrap listen-sec listen-featured-head">
+      <h3 class="listen-h serif">Destacado para ti</h3>
+    </div>
+    <div id="musica-featured" class="listen-sec"></div>
+
+    <!-- 4. Por tu día: lo que la persona está haciendo (openMomentCatalog) -->
+    <div class="listen-dayrow-wrap listen-sec">
+      <h3 class="listen-h serif listen-wrap">Por tu día</h3>
       <div class="listen-dayrow" id="listen-dayrow"></div>
     </div>
 
-    <!-- CAPA B — "Explorar": la biblioteca, ahora secundaria a propósito.
-         Etiqueta y tabs en la misma línea, con subrayado discreto. -->
+    <!-- Biblioteca HERE (HERE Music / HERE Originals) -->
+    <div id="lib-section" class="listen-sec" style="display:none;"></div>
+
+    <!-- 5. Explorar: Música, Podcast y Predicaciones -->
     <div class="listen-explore-row">
-      <span class="listen-explore-label" style="padding:0;">Explorar</span>
+      <h3 class="listen-h serif" style="margin:0;">Explorar</h3>
       <div class="escuchar-tabs">
         <button class="escuchar-tab" data-t="musica" onclick="setEscucharTab('musica')">Música</button>
         <span class="escuchar-tab-dot">·</span>
@@ -7840,8 +8025,8 @@ function featuredSlideHTML(item, opts){
 // artistName, thumb, playNow, loading}.
 function songOfDaySlideHTML(data){
   if(data.loading){
-    return `<div class="week-scene" style="align-items:center; justify-content:center;">
-      <div class="light-dot"></div>
+    return `<div class="week-scene listen-skel" aria-busy="true" aria-label="Cargando">
+      <div class="week-scene-body"><span class="sk sk-s"></span><span class="sk sk-l"></span><span class="sk sk-m"></span></div>
     </div>`;
   }
   return `
@@ -8078,16 +8263,36 @@ function listenMomentEntries(){
   }
   return defaults;
 }
+// Iconos de línea (reemplazan los emojis en Escuchar): trazo fino, un solo
+// color, para que la sección se sienta serena y coherente con el resto.
+const LISTEN_ICONS = {
+  waves:'<path d="M3 9c2.2 0 2.2-1.6 4.5-1.6S9.8 9 12 9s2.2-1.6 4.5-1.6S18.8 9 21 9M3 14c2.2 0 2.2-1.6 4.5-1.6S9.8 14 12 14s2.2-1.6 4.5-1.6S18.8 14 21 14M3 19c2.2 0 2.2-1.6 4.5-1.6S9.8 19 12 19s2.2-1.6 4.5-1.6S18.8 19 21 19"/>',
+  person:'<circle cx="12" cy="8" r="3.4"/><path d="M5.5 20c.8-3.6 3.4-5.4 6.5-5.4s5.7 1.8 6.5 5.4"/>',
+  hands:'<path d="M12 3.5c-1.6 2.6-3.6 4.6-3.6 8.2 0 1.8.6 3 1.6 4.1L8 19c-.5.6-.2 1.5.6 1.6 2.4.4 4.8.4 7.2 0 .8-.1 1.1-1 .6-1.6l-2-2.2c1-1.1 1.6-2.3 1.6-4.1 0-3.6-2-5.6-4-8.2z"/>',
+  moon:'<path d="M20 14.6A8.2 8.2 0 0 1 9.4 4 8.2 8.2 0 1 0 20 14.6z"/>',
+  sun:'<circle cx="12" cy="12" r="3.8"/><path d="M12 3v2.2M12 18.8V21M3 12h2.2M18.8 12H21M5.6 5.6l1.5 1.5M16.9 16.9l1.5 1.5M5.6 18.4l1.5-1.5M16.9 7.1l1.5-1.5"/>',
+  sunrise:'<path d="M4 18h16M7 18a5 5 0 0 1 10 0M12 6v3M5.5 10.5l1.6 1.6M18.5 10.5l-1.6 1.6"/>',
+  heart:'<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>',
+  dove:'<path d="M3 15c3.5.4 6-1 7.5-3.5C12 9 14 7.5 17 8c1.2-1.5 2.4-2 4-2-.3 1.4-.9 2.4-2 3 0 5-3.8 9.5-9 9.5-2.6 0-4.6-1-6-3.5z"/>',
+  walk:'<circle cx="13" cy="4.6" r="1.8"/><path d="M10.5 21l1.6-6.2-2.6-2.6 1.2-4.2 3.2 1.6 2.6 2.4M9.5 12.2L7.5 15M12.1 14.8l1.9 3.2 1.6 3"/>',
+  bed:'<path d="M3 18V7M3 14h18v4M21 14v-2.6a2.4 2.4 0 0 0-2.4-2.4H11v5"/><circle cx="7" cy="11.3" r="1.7"/>',
+  cloud:'<path d="M7 18a4 4 0 0 1-.6-7.9A5.5 5.5 0 0 1 17 9.2 4.4 4.4 0 0 1 17.5 18z"/>'
+};
+const LISTEN_ICON_FOR = { cansado:'moon', miedo:'dove', ansiedad:'waves', triste:'person', esperanza:'sunrise', agradecido:'heart', paz:'waves', oracion:'hands',
+  empezar:'sun', descansar:'moon', orar:'hands', caminar:'walk', dormir:'bed', dificil:'heart' };
+function listenIcon(id){
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${LISTEN_ICONS[LISTEN_ICON_FOR[id]||'heart']}</svg>`;
+}
 function renderListenMoment(){
   const listEl = document.getElementById('listen-moment-list');
   if(!listEl) return;
   const entries = listenMomentEntries();
-  listEl.innerHTML = entries.map(m=>`
-    <div class="listen-moment-row" onclick="openListenMoment('${m.id}')">
-      <span class="listen-moment-row-icon" aria-hidden="true">${m.emoji}</span>
-      <span class="listen-moment-row-label">${m.promptLabel || m.label}</span>
-      <span class="listen-moment-row-arrow">→</span>
-    </div>
+  listEl.innerHTML = entries.map((m,i)=>`
+    <button class="lm-card lm-tone-${i%3}" onclick="openListenMoment('${m.id}')">
+      <span class="lm-scene" aria-hidden="true"><span class="lm-bigicon">${listenIcon(m.id)}</span></span>
+      <span class="lm-badge" aria-hidden="true">${listenIcon(m.id)}</span>
+      <span class="lm-label">${m.promptLabel || m.label}</span>
+    </button>
   `).join('');
 }
 // Toca una de las 3 filas de "Para este momento": abre un catálogo curado
@@ -8161,11 +8366,16 @@ const DAY_MOMENTS = [
 function renderListenDayrow(){
   const el = document.getElementById('listen-dayrow');
   if(!el) return;
+  // Solo visual: resalta el momento que suele corresponder a esta hora del
+  // día. Tocar cualquier chip sigue abriendo su catálogo igual que antes.
+  const h = new Date().getHours();
+  const suggested = h>=5&&h<11 ? 'empezar' : h<15&&h>=11 ? 'caminar' : h>=15&&h<19 ? 'descansar' : h>=19&&h<21 ? 'orar' : 'dormir';
+  const short = { empezar:'Empezar', descansar:'Descansar', orar:'Orar', caminar:'Caminar', dormir:'Dormir', dificil:'Momento difícil' };
   el.innerHTML = DAY_MOMENTS.map(m=>`
-    <div class="chip" onclick="openDayMoment('${m.id}')">
-      <span class="e" aria-hidden="true">${m.emoji}</span>
-      <span class="l">${m.label}</span>
-    </div>
+    <button class="chip${m.id===suggested?' active':''}" onclick="openDayMoment('${m.id}')" aria-label="${m.label}">
+      <span class="e" aria-hidden="true">${listenIcon(m.id)}</span>
+      <span class="l">${short[m.id]||m.label}</span>
+    </button>
   `).join('');
 }
 async function openDayMoment(id){
@@ -8205,13 +8415,17 @@ function renderContinueListening(){
   }
   wrap.style.display = '';
   wrap.innerHTML = `
-    <div class="plan-continue" onclick="resumeLastListened()">
-      ${item.thumb ? `<img src="${item.thumb}" alt="" style="width:46px; height:46px; border-radius:12px; object-fit:cover; flex:none;">` : `<span class="emoji">🎧</span>`}
-      <div style="flex:1; min-width:0;">
-        <div style="font-size:11.5px; color:var(--ink-soft); font-weight:600; letter-spacing:.2px;">Continuar escuchando</div>
-        <div style="font-size:14.5px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${item.name}</div>
+    <h3 class="listen-h serif">Continúa escuchando</h3>
+    <div class="cl-card" onclick="resumeLastListened()">
+      ${item.thumb ? `<img class="cl-thumb" src="${item.thumb}" alt="" onerror="this.style.visibility='hidden'">` : `<span class="cl-thumb cl-thumb-empty" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="14" width="4.5" height="6.5" rx="2"/><rect x="16.5" y="14" width="4.5" height="6.5" rx="2"/></svg></span>`}
+      <div class="cl-body">
+        <div class="cl-name serif">${item.name}</div>
+        <div class="cl-role">${item.role||''}</div>
+        <button class="cl-btn" onclick="resumeLastListened(); event.stopPropagation();">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.2v13.6c0 .8.9 1.3 1.6.8l10.2-6.8c.6-.4.6-1.2 0-1.6L9.6 4.4C8.9 3.9 8 4.4 8 5.2z"/></svg>
+          Continuar
+        </button>
       </div>
-      <span style="color:var(--ink-soft); flex:none;">→</span>
     </div>`;
 }
 function resumeLastListened(){
